@@ -22,21 +22,42 @@
 @import common.services.DateServiceInterface
 @import financials.views.html.partials.whatYouOwe._
 @import common.auth.MtdItUser
+@import common.views.html.components._
+@import common.viewUtils.ExternalUrlHelper
+@import common.config.FrontendAppConfig
 
 @this(
+        p: p,
+        h2: h2,
+        link: link,
+        appConfig: FrontendAppConfig,
         chargeInfo: ChargeInfo,
+        paymentsMadeContent: PaymentsMadeContent,
+        earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara,
         taxYearSummaryLink: TaxYearSummaryLink,
-        implicitDateFormatter: ImplicitDateFormatterImpl
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        saNoteParagraph: SaNoteParagraph,
+        saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
+        availableCreditInAccount: AvailableCreditInAccount
 )
 
-@(viewModel: WhatYouOweViewModel, origin: Option[String] = None)(implicit messages: Messages, dateService: DateServiceInterface, user: MtdItUser[_])
+@(viewModel: WhatYouOweViewModel, origin: Option[String] = None, isSelfServeTimeToPayEnabled: Boolean)(implicit messages: Messages, dateService: DateServiceInterface, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
 <h2 class="govuk-heading-m" id="suspended-charges-in-order-due">@getMessage("suspended-charges")</h2>
 
-<p class="govuk-body">Tax is suspended because there is an appeal</p>
-<p class="govuk-body">You'll be charged interest paragraph</p>
+@if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
+
+    <p class="govuk-body">@getMessage("suspended-charges.informal.p1")</p>
+    <p class="govuk-body">@getMessage("suspended-charges.informal.p2")</p>
+}
+
+@if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.isEmpty) {
+
+    <p class="govuk-body">@getMessage("suspended-charges-informalOnly.p1")</p>
+    <p class="govuk-body">@getMessage("suspended-charges-informalOnly.p2")</p>
+}
 
 <table class="govuk-table" aria-labelledby="suspended-charges-in-order-due">
 
@@ -45,33 +66,61 @@
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.charge-type")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>
-            @Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest){
-            <th scope="col" class="govuk-table__header @if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields){govuk-!-text-align-right} else {govuk-!-text-align-left}">
+            @Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
+                <th scope="col" class="govuk-table__header @if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) {govuk-!-text-align-right} else {govuk-!-text-align-left}">
             }
             <th scope="col" class="govuk-table__header govuk-table__cell--numeric">@getMessage("tableHead.amount-due").toNonBreaking</th>
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        @viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.zipWithIndex.map { case (charge, index) =>
-           <tr class="govuk-table__row">
-                <td class="govuk-table__cell" id="due-charge-due-date-@{index}">@charge.getChargeDueDate.toLongDateShort.toNonBreaking</td>
-                <td class="govuk-table__cell" id="due-@{index}">@chargeInfo(viewModel.lpp2Url, s"due-${index}", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false)</td>
-                <td class="govuk-table__cell" id="due-charge-tax-year-@{index}">@taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl)</td>
-                @if(charge.isAccruingInterest) {
-                    <td class="govuk-table__cell" id="accrued-interest-amount-due-@{index}">
-                        @charge.accruingInterestAmount.get.toCurrency
-                    </td>
-                } else if(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
-                    <td class="govuk-table__cell" id="fallback-@{index}">
-                        @getMessage("tableRow.na")
-                    </td>
-                }
-               <td class="govuk-table__cell govuk-table__cell--numeric" id="due-charge-amount-due-@{
-                   index
-               }">@charge.remainingToPayOnCharge.toCurrency</td>
-           </tr>
-            }
+    @viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.zipWithIndex.map { case (charge, index) =>
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell" id="due-charge-due-date-@{
+            index
+        }">@charge.getChargeDueDate.toLongDateShort.toNonBreaking</td>
+        <td class="govuk-table__cell" id="due-@{
+            index
+        }">@chargeInfo(viewModel.lpp2Url, s"due-${index}", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false)</td>
+        <td class="govuk-table__cell" id="due-charge-tax-year-@{
+            index
+        }">@taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl)</td>
+        @if(charge.isAccruingInterest) {
+            <td class="govuk-table__cell" id="accrued-interest-amount-due-@{
+                index
+            }">
+            @charge.accruingInterestAmount.get.toCurrency
+            </td>
+        } else if(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
+        <td class="govuk-table__cell" id="fallback-@{
+            index
+        }">
+        @getMessage("tableRow.na")
+        </td>
+        }
+        <td class="govuk-table__cell govuk-table__cell--numeric" id="due-charge-amount-due-@{
+            index
+        }">
+        @charge.remainingToPayOnCharge.toCurrency
+    </td>
+    </tr>
+    }
     </tbody>
 </table>
 
+@if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.isEmpty) {
 
+    @h2(msg = getMessage("paying-suspended-tax.heading"))
+    <p class="govuk-body">@getMessage("paying-suspended-tax.p2")</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@getMessage("paying-suspended-tax.bullet1")</li>
+        <li>@getMessage("paying-suspended-tax.bullet2")</li>
+    </ul>
+    <p class="govuk-body">@getMessage("paying-suspended-tax.p3")</p>
+    <p class="govuk-body">@getMessage("paying-suspended-tax.p4")</p>
+
+    @paymentsMadeContent(
+        origin = origin,
+        viewModel = viewModel)
+
+    @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+}

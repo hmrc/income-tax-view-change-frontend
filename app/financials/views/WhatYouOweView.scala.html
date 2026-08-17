@@ -52,7 +52,9 @@
         interestOnBalancingCharge: InterestOnBalancingCharge,
         balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
         totalTableRow: TotalTableRow,
-        suspendedCharges: SuspendedCharges
+        suspendedCharges: SuspendedCharges,
+        chargesAndSuspendedCharges: ChargesAndSuspendedCharges,
+        earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara
 )
 @(
         viewModel: WhatYouOweViewModel,
@@ -82,174 +84,14 @@
         ))
     }
 
-
-    <div id="table-sync-container">
-    @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero) {
-        @govukTable(Table(
-            head = Some(Seq(
-                Some(HeadCell(content = Text(getMessage("tableHead.due-date")))),
-                Some(HeadCell(content = Text(getMessage("tableHead.charge-type")))),
-                Some(HeadCell(content = Text(getMessage("tableHead.tax-year")))),
-                Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)(
-                    HeadCell(content = Text(getMessage("tableHead.interest")),
-                        classes = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) "govuk-!-text-align-right" else "govuk-!-text-align-left"),
-                ),
-                Some(HeadCell(content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking),
-                    format = Some("numeric")))
-            ).flatten),
-            rows = Seq(
-                Option.when(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero)(
-                    Seq[IterableOnce[TableRow]](
-                        Some(TableRow(
-                            attributes = Map("id" -> "balancing-charge-due-date-0"),
-                            content = Text(viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDateShort)
-                        )),
-                        Some(TableRow(
-                            attributes = Map("id" -> "balancing-charge-type-0"),
-                            content = HtmlContent(balancingChargePreMtdDigital(viewModel.whatYouOweChargesList, viewModel.currentDate))
-                        )),
-                        Some(TableRow(
-                            attributes = Map("id" -> "balancing-charge-tax-year-0"),
-                            content = Text(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
-                        )),
-                        Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)(
-                            TableRow(
-                                attributes = Map("id" -> "balancing-charge-na"),
-                                content = Text(getMessage("tableRow.na"))
-                            )
-                        ),
-                        Some(TableRow(
-                            attributes = Map("id" -> "balancing-charge-amount-due-0"),
-                            content = HtmlContent(viewModel.whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency),
-                            format = Some("numeric")
-                        ))
-                    ).flatten
-                ),
-                Option.when(viewModel.chargeIsNotDueAndChargesDefinedAndGreaterThanZero)(
-                    Seq[IterableOnce[TableRow]](
-                        Some(TableRow(
-                            content = Empty
-                        )),
-                        Some(TableRow(
-                            attributes = Map("id" -> "balancing-charge-due-date-1"),
-                            content = HtmlContent(interestOnBalancingCharge(viewModel.whatYouOweChargesList, viewModel.currentDate))
-                        )),
-                        Some(TableRow(
-                            attributes = Map("id" -> "balancing-charge-type-1"),
-                            content = HtmlContent(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
-                        )),
-                        Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)(
-                            TableRow(
-                                attributes = Map("id" -> "balancing-charge-na"),
-                                content = HtmlContent(getMessage("tableRow.na"))
-                            )
-                        ),
-                        Some(TableRow(
-                            attributes = Map("id" -> "balancing-charge-amount-due-1"),
-                            content = HtmlContent(viewModel.whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency),
-                            format = Some("numeric")
-                        ))
-                    ).flatten
-                ),
-                viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.zipWithIndex.flatMap { case (charge, index) =>
-                    Seq(
-                        Some(Seq[IterableOnce[TableRow]](
-                            Some(TableRow(
-                                attributes = Map("id" -> s"due-charge-due-date-$index"),
-                                content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNonBreaking)
-                            )),
-                            Some(TableRow(
-                                attributes = Map("id" -> s"due-$index"),
-                                content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), showLabel = false))
-                            )),
-                            Some(TableRow(
-                                attributes = Map("id" -> s"due-charge-tax-year-$index"),
-                                content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
-                            )),
-                            Option.when(charge.isAccruingInterest)(
-                                TableRow(
-                                    attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
-                                    content = HtmlContent(charge.accruingInterestAmount.get.toCurrency),
-                                    format = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) Some("numeric") else None
-                                )
-                            ).orElse(
-                                if(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
-                                    Some(TableRow(
-                                        attributes = Map("id" -> s"fallback-$index"),
-                                        content = HtmlContent(getMessage("tableRow.na"))))
-                                } else {
-                                    None
-                                }
-
-                            ),
-                            Some(TableRow(
-                                attributes = Map("id" -> s"due-charge-amount-due-$index"),
-                                content = HtmlContent(charge.remainingToPayOnCharge.toCurrency),
-                                format = Some("numeric")
-                            ))
-                        ).flatten)
-                    ).flatten
-                }
-            ).flatten,
-            caption = Some(getMessage("payments-due")),
-            attributes = Map("id" -> "what-you-owe-payments-due-table"),
-            captionClasses = "govuk-table__caption govuk-table__caption--m"
-        ))
-
-        @viewModel.totalBalance.map { total =>
-            @totalTableRow(total)
+    @if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
+        @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+        } else if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.isEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
+            @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+        } else if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.isEmpty) {
+            @suspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+        } else {
+            @p(id = Some("no-payments-due"))(Html(getMessage(if(user.isAgent) "no-payments-due-agent" else "no-payments-due")))
+            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
         }
-    </div>
-
-
-    @govukInsetText(InsetText(
-        attributes = Map("id" -> "payments-processing-note"),
-        content = Text(getMessage("payments-processing-note"))
-    ))
-}
-
-    @paymentsMadeContent(
-        origin = origin,
-        viewModel = viewModel)
-
-    @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
-        @saPaymentsPreMTDParagraph(utr = viewModel.utr,
-            claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
-            adjustPoaUrl = viewModel.adjustPoaUrl,
-            isAgent = user.isAgent)
-
-        @if(viewModel.creditAndRefundEnabled) {
-            @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
-                @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
-            }
-        }
-    } else {
-        @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.map { taxYear =>
-            @p(id = Some("adjust-poa-content")) {
-                @link(
-                    link = viewModel.adjustPoaUrl,
-                    messageKey = getMessage("sa-link-1-body-3", taxYear.startYear.toString, taxYear.endYear.toString),
-                    id = Some("adjust-poa-link"),
-                    rel = Some("noreferrer noopener")
-                )
-            }
-        }
-
-        @if(viewModel.suspendedChargesListNonEmpty) {
-            <div id="suspended-charges">
-                @suspendedCharges(viewModel)
-            </div>
-        }
-
-        @if(viewModel.creditAndRefundEnabled) {
-            @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
-                @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
-            }
-        }
-
-        @saNoteParagraph(utr = viewModel.utr,
-            budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL,
-            isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0,
-            isSelfServeTimeToPayEnabled)
-    }
 }
