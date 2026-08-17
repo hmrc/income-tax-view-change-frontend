@@ -188,6 +188,12 @@
         viewModel = viewModel)
 }
 
+@if(viewModel.suspendedChargesListNonEmpty) {
+    <div id="suspended-charges">
+    @suspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+    </div>
+}
+
 @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
     @saPaymentsPreMTDParagraph(utr = viewModel.utr,
         claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
@@ -211,11 +217,6 @@
         }
     }
 
-    @if(viewModel.suspendedChargesListNonEmpty) {
-        <div id="suspended-charges">
-        @suspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
-        </div>
-    }
 
     @if(viewModel.creditAndRefundEnabled) {
         @viewModel.whatYouOweChargesList.availableCredit.map { ac =>

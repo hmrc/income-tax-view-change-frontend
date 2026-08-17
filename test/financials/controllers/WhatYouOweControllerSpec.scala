@@ -62,11 +62,11 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
-  def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweChargesListFull(lpiWithDunningLock: Option[BigDecimal] = Some(0.0)): WhatYouOweChargesList = WhatYouOweChargesList(
     BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
-    List(chargeItemModel(TaxYear.forYearEnd(2019)))
-      ++ List(chargeItemModel(TaxYear.forYearEnd(2020)))
-      ++ List(chargeItemModel(TaxYear.forYearEnd(2021))),
+    List(chargeItemModel(TaxYear.forYearEnd(2019), lpiWithDunningLock = lpiWithDunningLock))
+      ++ List(chargeItemModel(TaxYear.forYearEnd(2020), lpiWithDunningLock = lpiWithDunningLock))
+      ++ List(chargeItemModel(TaxYear.forYearEnd(2021), lpiWithDunningLock = lpiWithDunningLock)),
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
     ))
@@ -119,7 +119,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
   }
 
   def wyoViewModel(isAgent: Boolean,
-                   charges: WhatYouOweChargesList = whatYouOweChargesListFull,
+                   charges: WhatYouOweChargesList = whatYouOweChargesListFull(),
                    currentTaxYear: Int = fixedDate.getYear,
                    hasLpiWithDunningLock: Boolean = false,
                    dunningLock: Boolean = false,
