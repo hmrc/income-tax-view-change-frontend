@@ -116,16 +116,15 @@ object RepaymentHistoryUtils extends Logging {
     val hasCredit = payment.credit.isDefined
     val hasLot = payment.lot.isDefined && payment.lotItem.isDefined
 
-    (hasCredit,  hasLot, payment.creditType) match {
-      case (true, _, Some(MfaCreditType))                                   => Right(mfaCreditEntry(payment, isAgent))
-      case (true, _, Some(CutOverCreditType))                               => creditEntry(payment, isAgent)
-      case (true, _, Some(PoaOneReconciliationCredit))                      => creditEntry(payment, isAgent, true)
-      case (true, _, Some(PoaTwoReconciliationCredit))                      => creditEntry(payment, isAgent, true)
-      case (true, _ ,Some(ITSAReturnAmendmentCredit))                       => creditEntry(payment, isAgent, true)
-      case (true, _, Some(BalancingChargeCreditType))                       => creditEntry(payment, isAgent)
-      case (true, _, Some(RepaymentInterest))                               => creditEntry(payment, isAgent)
-      case (false, true, Some(PaymentType))                                 => Right(paymentToHMRCEntry(payment, isAgent))
-      case (_, _, _)                                                        => Left(MissingFieldException("Invalid Payment Data"))
+    payment.creditType match {
+      case Some(PaymentType) if !hasCredit && hasLot =>
+        Right(paymentToHMRCEntry(payment, isAgent))
+      case Some(MfaCreditType) if hasCredit =>
+        Right(mfaCreditEntry(payment, isAgent))
+      case Some(PoaOneReconciliationCredit | PoaTwoReconciliationCredit | ITSAReturnAmendmentCredit) if hasCredit =>
+        creditEntry(payment, isAgent, true)
+      case _ =>
+        creditEntry(payment, isAgent)
     }
   }
 
