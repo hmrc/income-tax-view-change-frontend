@@ -28,7 +28,8 @@
     chargeItem: financials.models.ChargeItem,
     dueDate: Option[LocalDate],
     latePaymentInterestCharge: Boolean,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    chargeHistoryEnabled: Boolean
 )(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
@@ -49,7 +50,7 @@
                 target = Some("_blank"),
                 messageKey = "chargeSummary.dunning.locks.banner.linkText"
             )
-        } else @if(chargeItem.dunningLock) {
+        } else @if(chargeItem.dunningLock && chargeHistoryEnabled) {
                 @messages("chargeSummary.dunning.locks.informal.standover1.banner.note")
                 <br></br>
                 @messages("chargeSummary.dunning.locks.informal.standover2.banner.note")

@@ -103,6 +103,8 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   def successHeadingRAR1Interest = s"${messages("yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading")}"
 
   val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
+  val dunningLocksStandOverBannerHeading: String = s"${messages("chargeSummary.dunning.locks.informal.standover1.banner.note")} ${messages("chargeSummary.dunning.locks.informal.standover2.banner.note")}"
+  val dunningLocksBannerTitle: String = messages("chargeSummary.dunning.locks.banner.title")
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
   val paymentHistoryHeadingForPOA1Charge: String = messages("chargeSummary.chargeHistory.Poa1heading")
   val paymentHistoryHeadingForRARCharge: String = messages("chargeSummary.chargeHistory.heading")
@@ -119,6 +121,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   val descriptionTextRARLpiBulletPara: String = messages("yourSelfAssessmentChargeSummary.paragraphList.intro")
   val descriptionTextRARLpiBulletList: String = messages("yourSelfAssessmentChargeSummary.paragraphList.bullet1") + " " + messages("yourSelfAssessmentChargeSummary.paragraphList.bullet2")
   val descriptionTextRARLpiPara2: String = messages("yourSelfAssessmentChargeSummary.extraAmountInterest.p1")
+  val createdFirstLatePaymentPenaltyStoodOverText: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text")
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
               chargeHistoryHasError: Boolean = false,

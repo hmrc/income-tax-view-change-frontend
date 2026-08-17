@@ -18,13 +18,13 @@ package financials.views
 
 import common.config.featureswitch.FeatureSwitching
 import common.testUtils.ViewSpec
+import financials.controllers.routes as financialsRoutes
+import financials.enums.*
 import financials.models.*
 import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import financials.testConstants.ChargeConstants
 import financials.views.html.YourSelfAssessmentChargeSummaryView
-import financials.controllers.routes as financialsRoutes
-import financials.enums.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
@@ -126,17 +126,16 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
       "display the correct content" in new TestSetup(chargeItem = chargeItemModel(dunningLock = true)) {
         document.select("#dunningLocksBanner").size() shouldBe 1
         document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
-        document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe s"$dunningLocksBannerHeading"
+        document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe dunningLocksBannerHeading
         document.getElementById("charge-history-heading").text() shouldBe firstPaymentOnAccountHeading
         document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
         document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
-        document.select("#payment-history-table > tbody > tr > td:nth-child(1)").text() shouldBe "29 Mar 2018"
-        document.select("#payment-history-table > tbody > tr > td:nth-child(2)").text() shouldBe createdYourFirstPaymentOnAccountText
-        document.select("#payment-history-table > tbody > tr > td:nth-child(3)").text() shouldBe "£1,400.00"
-//        TODO finish the  test by adding the implementation by adding a suspended charge to the table
-        document.select("#payment-history-table > tbody > tr > td:nth-child(4)").text() shouldBe "29 Mar 2018"
-        document.select("#payment-history-table > tbody > tr > td:nth-child(6)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
-        document.select("#payment-history-table > tbody > tr > td:nth-child(3)").text() shouldBe "£500.00"
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe createdYourFirstPaymentOnAccountText
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(3)").text() shouldBe "£1,400.00"
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£1,400.00"
       }
     }
   }

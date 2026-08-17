@@ -118,6 +118,19 @@
                 )
             ) else Nil,
 
+        if(viewModel.chargeItem.dunningLock && viewModel.chargeHistoryEnabled)
+            Seq(
+                TableRow(
+                   content = HtmlContent(viewModel.chargeItem.dueDate.map(_.toLongDateShort.toNonBreaking).getOrElse(Html(messages("paymentHistory.unknown"))))
+                ),
+                TableRow(
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text"))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.originalAmount.toCurrencyString), format = Some("numeric")
+                )
+            ) else Nil,
+
         if(viewModel.isCodedOut)
             Seq(
                 TableRow(

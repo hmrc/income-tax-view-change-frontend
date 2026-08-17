@@ -900,7 +900,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  lazy val testValidFinancialDetailsModelWithBalancingCharge: FinancialDetailsModel = FinancialDetailsModel(
+  def testValidFinancialDetailsModelWithBalancingCharge(dunningLock: Option[String] = None): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -940,7 +940,7 @@ object FinancialDetailsTestConstants {
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
           amount = Some(100),
-          dunningLock = Some("Stand over order"),
+          dunningLock = dunningLock,
           interestLock = Some("interestLock"),
           clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
@@ -995,7 +995,7 @@ object FinancialDetailsTestConstants {
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
           amount = Some(100),
-          dunningLock = Some("Stand over order"),
+//          dunningLock = Some("Stand over order"),
           interestLock = Some("interestLock"),
           clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
@@ -1010,7 +1010,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  lazy val testValidFinancialDetailsModelWithLateSubmissionPenalty: FinancialDetailsModel = FinancialDetailsModel(
+  def testValidFinancialDetailsModelWithLateSubmissionPenalty(dunningLock: Option[String] = None): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -1050,7 +1050,7 @@ object FinancialDetailsTestConstants {
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
           amount = Some(100),
-          dunningLock = Some("Stand over order"),
+          dunningLock = dunningLock,
           interestLock = Some("interestLock"),
           clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
@@ -1066,7 +1066,7 @@ object FinancialDetailsTestConstants {
   )
 
 
-  lazy val testValidFinancialDetailsModelWithLspCrystallisedInterest: FinancialDetailsModel = FinancialDetailsModel(
+  def testValidFinancialDetailsModelWithLspCrystallisedInterest(dunningLock: Option[String] = None): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -1106,7 +1106,7 @@ object FinancialDetailsTestConstants {
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
           amount = Some(100),
-          dunningLock = Some("Stand over order"),
+          dunningLock = dunningLock,
           interestLock = Some("interestLock"),
           clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
@@ -1121,7 +1121,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  lazy val testValidFinancialDetailsModelWithLatePaymentPenalty: FinancialDetailsModel = FinancialDetailsModel(
+  def testValidFinancialDetailsModelWithLatePaymentPenalty(dunningLock: Option[String] = None): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2021,
@@ -1161,7 +1161,7 @@ object FinancialDetailsTestConstants {
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
           amount = Some(100),
-          dunningLock = Some("Stand over order"),
+          dunningLock = dunningLock,
           interestLock = Some("interestLock"),
           clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
@@ -1176,7 +1176,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  lazy val testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest: FinancialDetailsModel = FinancialDetailsModel(
+  def testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest(dunningLock: Option[String] = None): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -1216,7 +1216,7 @@ object FinancialDetailsTestConstants {
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
           amount = Some(100),
-          dunningLock = Some("Stand over order"),
+          dunningLock = dunningLock,
           interestLock = Some("interestLock"),
           clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
@@ -1271,7 +1271,7 @@ object FinancialDetailsTestConstants {
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
           amount = Some(100),
-          dunningLock = Some("Stand over order"),
+//          dunningLock = Some("Stand over order"),
           interestLock = Some("interestLock"),
           clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
