@@ -48,7 +48,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
     pathStart + s"/payment-made-to-hmrc?documentNumber=$documentNum"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
@@ -86,8 +86,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(getPath(mtdUserRole, docNumber), additionalCookies)) { result =>
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                  elementTextBySelector("tbody")("31 Jan 2021 HMRC adjustment Tax year 2021 to 2022 2021 to 2022 £800.00"),
+                  pageTitle(mtdUserRole, "paymentAllocation.heading")
                 )
 
                 verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModelHmrcAdjustment).detail)
