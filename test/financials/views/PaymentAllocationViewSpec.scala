@@ -81,21 +81,23 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationsHmrcAdjustment: String = messages("paymentAllocation.paymentAllocations.hmrcAdjustment.text")
   val noData: String = "No data"
 
-  class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel, saUtr: Option[String] = None,
-                               creditsRefundsRepayEnabled: Boolean = true) extends Setup(
-    paymentAllocationView(viewModel, backUrl, saUtr = saUtr,
-      creditsRefundsRepayEnabled = creditsRefundsRepayEnabled)) {
-    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  class PaymentAllocationSetup(
+                                viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
+                                saUtr: Option[String] = None,
+                                creditsRefundsRepayEnabled: Boolean = true
+                              )
+    extends Setup(paymentAllocationView(viewModel, backUrl, saUtr = saUtr, creditsRefundsRepayEnabled = creditsRefundsRepayEnabled)) {
+    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate.head.allocationDetail.get.chargeType.get
   }
 
   class PaymentAllocationSetupCreditZeroOutstanding(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithCreditZeroOutstanding) extends Setup(
     paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"))) {
-    paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+    paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate.head.allocationDetail.get.chargeType.get
   }
 
   class PaymentAllocationSetupNoTaxPeriodEndDate(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithNoTaxPeriodEndDate) extends Setup(
     paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"))) {
-    paymentAllocationViewModelWithNoTaxPeriodEndDate.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+    paymentAllocationViewModelWithNoTaxPeriodEndDate.originalPaymentAllocationWithClearingDate.head.allocationDetail.get.chargeType.get
   }
 
   "Payment Allocation Page for non LPI" should {
@@ -151,7 +153,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has table headers" in new PaymentAllocationSetup() {
         val allTableHeadings: Element = document.selectHead("thead")
-        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
+        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings.head
         allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
         allTableHeadings.selectNth("th", 4).text() shouldBe tableHeadings(3)
@@ -271,7 +273,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has table headers" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableHeadings: Element = document.selectHead("thead")
-        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
+        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings.head
         allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
         allTableHeadings.selectNth("th", 4).text() shouldBe tableHeadings(3)

@@ -122,8 +122,8 @@
                 classes = "govuk-table__cell",
                 content = HtmlContent({
                     Html(s"""
-                        | <span class="govuk-visually-hidden">${messages("paymentAllocation.taxYearHidden", (latePaymentInterestPaymentAllocationDetails.documentDetail.taxYear.toInt - 1).toString, latePaymentInterestPaymentAllocationDetails.documentDetail.taxYear.toString)}</span>
-                        | <span class="govuk-body no-wrap" aria-hidden="true">${messages("paymentAllocation.taxYear", (latePaymentInterestPaymentAllocationDetails.documentDetail.taxYear.toInt - 1).toString, latePaymentInterestPaymentAllocationDetails.documentDetail.taxYear.toString)}</span>
+                        | <span class="govuk-visually-hidden">${messages("paymentAllocation.taxYearHidden", (latePaymentInterestPaymentAllocationDetails.documentDetail.taxYear - 1).toString, latePaymentInterestPaymentAllocationDetails.documentDetail.taxYear.toString)}</span>
+                        | <span class="govuk-body no-wrap" aria-hidden="true">${messages("paymentAllocation.taxYear", (latePaymentInterestPaymentAllocationDetails.documentDetail.taxYear - 1).toString, latePaymentInterestPaymentAllocationDetails.documentDetail.taxYear.toString)}</span>
                     |""".stripMargin)
 
                 })
@@ -203,12 +203,8 @@
         }
     }
     paymentAllocations.outstandingAmount match {
-        case Some(amount) if(amount != 0) => {
-            rows ++ outstandingAmount(amount)
-        }
-        case _ => {
-            rows
-        }
+        case Some(amount) if amount != 0 => rows ++ outstandingAmount(amount)
+        case _ => rows
     }
 }
 
