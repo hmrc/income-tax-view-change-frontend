@@ -18,7 +18,7 @@ package financials.models.creditsandrefunds
 
 import financials.models.core.ResponseModel.{AResponseReads, SuccessModel}
 import common.models.incomeSourceDetails.TaxYear
-import financials.enums.ChargeClassificationType
+import shared.enums.ChargeClassificationType
 import financials.models.*
 import play.api.libs.json.*
 
