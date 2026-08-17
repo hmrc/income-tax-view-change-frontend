@@ -41,6 +41,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
     s"${taxYear2.toString}, resulting in an extra amount to pay towards your tax bill."
   val warningText: String = "Warning Pay this charge to stop this interest from increasing daily."
   val enquiryAmendmentDescriptionText: String = "Extra amount created when HMRC amended your tax return"
+  val itsaEnquiryAmendmentCreditHeading: String = "Credit from HMRC enquiry amendment"
 
   def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
@@ -114,6 +115,13 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
         document.getElementById("charge-history-caption").text() shouldBe "This extra amount goes towards your 2017 to 2018 tax bill."
         document.select("#payment-history-table > tbody > tr > td:nth-child(2)").text() shouldBe enquiryAmendmentDescriptionText
+      }
+    }
+    "charge is an ITSAReturnAmendmentCredit type and has a charge classification of 'RA'" should {
+      "display the correct content" in new TestSetup(chargeItem = chargeItemModel(transactionType = ITSAReturnAmendmentCredit, chargeClassification = Some("RA"))){
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe itsaEnquiryAmendmentCreditHeading
+        Option(document.getElementById("itsa-enquiry-amendment-credit-p1")).isDefined shouldBe true
+        Option(document.getElementById("itsa-enquiry-amendment-credit-p2")).isDefined shouldBe true
       }
     }
   }

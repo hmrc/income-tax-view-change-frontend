@@ -2686,6 +2686,12 @@ yourSelfAssessmentChargeSummary.enquiryAmendment.p2                             
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
 
+
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.1                     = Following a compliance check, HMRC made a change to your tax return known as an ‘enquiry amendment’. Your amended tax return shows that your
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.link-text             = {0} to {1} tax calculation
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.2                     = was too high, and HMRC has added a credit to your account.
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p2                       = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
+
 #######################################################################################################################
 ## Business Details
 #######################################################################################################################
