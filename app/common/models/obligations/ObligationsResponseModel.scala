@@ -27,7 +27,7 @@ sealed trait ObligationsResponseModel
 
 case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends ObligationsResponseModel {
 
-  def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] = {
+  def allDeadlinesWithSource(previous: Boolean = false, hideUnknownBusinessName: Boolean)(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] = {
     val deadlines = obligations.flatMap { groupedObligationsModel =>
       mtdItUser.incomeSources.properties.find(_.incomeSourceId == groupedObligationsModel.identification) match {
         case Some(property) if property.incomeSourceType.contains("foreign-property") =>
@@ -44,7 +44,7 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
                   .find(_.incomeSourceId == groupedObligationsModel.identification)
                   .get
                   .tradingName
-                  .getOrElse("nextUpdates.business"),
+                  .getOrElse(getUnknownBusinessName(hideUnknownBusinessName)),
                 obligation = deadline
               )
               )
@@ -58,17 +58,17 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
     if (previous) deadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
   }
 
-  def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =
-    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
+  def allQuarterly(hideBusinessName: Boolean)(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =
+    allDeadlinesWithSource(hideUnknownBusinessName = hideBusinessName)(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
 
-  def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =
-    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallisation")
+  def allCrystallised(hideBusinessName: Boolean)(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =
+    allDeadlinesWithSource(hideUnknownBusinessName = hideBusinessName)(mtdItUser).filter(_.obligation.obligationType == "Crystallisation")
 
-  def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[ObligationWithIncomeType])] =
-    allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
+  def obligationsByDate(hideBusinessName: Boolean)(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[ObligationWithIncomeType])] =
+    allDeadlinesWithSource(hideUnknownBusinessName = hideBusinessName).groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
-  def quarterlyUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
-    allDeadlinesWithSource()(mtdItUser)
+  def quarterlyUpdatesCounts(hideBusinessName: Boolean)(implicit mtdItUser: MtdItUser[_]): Int =
+    allDeadlinesWithSource(hideUnknownBusinessName = hideBusinessName)(mtdItUser)
       .filter(_.obligation.obligationType == "Quarterly")
       .count(_.obligation.status == StatusFulfilled)
 
@@ -100,6 +100,10 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
         (period, sortedObligations)
       }
       .toMap
+  }
+
+  private def getUnknownBusinessName(hideBusinessName: Boolean): String = {
+    if (hideBusinessName) "" else "nextUpdates.business"
   }
 
 }

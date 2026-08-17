@@ -34,7 +34,8 @@ case class TaxYearSummaryViewModel(
                                     ctaViewModel: TYSClaimToAdjustViewModel,
                                     LPP2Url: String,
                                     pfaEnabled: Boolean,
-                                    financialsFrontendEnabled: Boolean
+                                    financialsFrontendEnabled: Boolean,
+                                    hideUnknownBusinessName: Boolean
                                   ) {
 
   def showSubmissions: Boolean = {
@@ -56,7 +57,7 @@ case class TaxYearSummaryViewModel(
     }
   }
 
-  def groupedObligations(implicit user: MtdItUser[_]) = obligations.allDeadlinesWithSource(previous = true)
+  def groupedObligations(implicit user: MtdItUser[_]) = obligations.allDeadlinesWithSource(previous = true, hideUnknownBusinessName)
     .reverse.groupBy[LocalDate] { nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due }
     .toList
     .collect {

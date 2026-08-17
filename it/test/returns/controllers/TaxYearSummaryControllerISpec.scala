@@ -296,7 +296,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
                     None, financialDetailsDunningLockSuccess.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
-                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
+                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false)))
               }
 
               "has payments with enquiry amendment RA in the payments tab" in {
@@ -354,7 +354,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
                     None, financialDetailsSuccessWithEnquiryAmendment.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
-                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
+                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false)))
               }
 
 
@@ -565,7 +565,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                       Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                       None, emptyPaymentsList,
                       allObligations, showForecastData = true, ctaViewModel = emptyCTAModel,
-                      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false
+                      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false
                     )))
                 }
 
@@ -712,7 +712,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   messagesAPI, TaxYearSummaryViewModel(
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                     None, auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
+                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false)))
 
                 allObligations.obligations.foreach {
                   obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)

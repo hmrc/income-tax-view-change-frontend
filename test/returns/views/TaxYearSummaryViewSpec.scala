@@ -251,11 +251,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2023, 2024)))
 
-  def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html =
+  def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel, hideBusinessName: Boolean = false): Html =
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, chargeItems, obligations, ctaViewModel = emptyCTAModel, LPP2Url = "",
-        pfaEnabled = false, financialsFrontendEnabled = true),
+        pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = hideBusinessName),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -278,7 +278,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(calculationSummary = Some(modelComplete(crystallised = isCrystallised, testPeriod = 2017)),
         previousCalculationSummary = None, charges = chargeItems, obligations = obligations, ctaViewModel = emptyCTAModel,
-        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -295,7 +295,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None,
         class2NicsChargesList, testObligationsModel, ctaViewModel = emptyCTAModel,
-        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -312,7 +312,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(None, None, testChargesList,
         testObligationsModel, ctaViewModel = emptyCTAModel,
-        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -328,7 +328,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, unattendedCalc = unattendedCalc)),
       None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel,
-      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackUrl",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -343,7 +343,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testDunningLockChargesList,
-      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -358,7 +358,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def crystallisedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList,
-      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -373,7 +373,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def payeView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, payeChargeList,
-      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -389,7 +389,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None,
       testBalancingPaymentChargeWithZeroValue, testObligationsModel, ctaViewModel = emptyCTAModel,
-      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -405,7 +405,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None,
       testPaymentsOnAccountCodedOut(Accepted), testObligationsModel, ctaViewModel = emptyCTAModel,
-      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -421,7 +421,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None,
       testPaymentsOnAccountCodedOut(FullyCollected), testObligationsModel, ctaViewModel = emptyCTAModel,
-      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -438,7 +438,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None,
       testPaymentsOnAccountCodedOutCancelled, testObligationsModel, ctaViewModel = emptyCTAModel,
-      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -453,7 +453,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def immediatelyRejectedByNpsView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, immediatelyRejectedByNps,
-      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -468,7 +468,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def rejectedByNpsPartWayView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, rejectedByNpsPartWay,
-      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -483,7 +483,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def codingOutPartiallyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, codingOutPartiallyCollected,
-      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -499,7 +499,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList,
       testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel,
-      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -515,7 +515,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList,
       testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel,
-      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -530,7 +530,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def noForecastDataView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList,
-      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -546,7 +546,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, showForecastData = true,
-        ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+        ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -561,7 +561,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def mfaDebitsView(isAgent: Boolean): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, mfaCharges, testObligationsModel,
-      ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -576,7 +576,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def calculationMultipleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), None, testChargesList,
-      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -591,7 +591,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel,
-      ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+      ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -608,7 +608,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel,
-        ctaViewModel = testCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+        ctaViewModel = testCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -624,7 +624,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def calculationWithLatestAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
     taxYear = testYear,
     viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, calculationRevisionType = Some(CalculationRevisionType.Amendment))), None,
-      List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
+      List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -642,7 +642,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, calculationRevisionType = Some(calculationRevisionType))),
         Some(modelComplete(crystallised = false, calculationRevisionType = Some(calculationRevisionType))), List.empty, testObligationsModel,
-        ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
+        ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -658,7 +658,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty,
-        testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
+        testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -675,7 +675,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty,
-        testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
+        testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -697,7 +697,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         obligations = testObligationsModel,
         ctaViewModel = emptyCTAModel,
         LPP2Url = "",
-        pfaEnabled = true, financialsFrontendEnabled = true
+        pfaEnabled = true, financialsFrontendEnabled = true,
+        hideUnknownBusinessName = false
       ),
       backUrl = "testBackUrl",
       isAgent = isAgent,
@@ -1291,7 +1292,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
       "display submissions by due-date" in new Setup(estimateView()) {
 
-        testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { nextUpdateWithIncomeType =>
+        testObligationsModel.allDeadlinesWithSource(previous = true, hideUnknownBusinessName = false).groupBy[LocalDate] { nextUpdateWithIncomeType =>
           nextUpdateWithIncomeType.obligation.due
         }.toList.sortBy(_._1)(localDateOrdering).reverse.foreach { case (due: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
           layoutContent.selectHead(s"#table-default-content-$due").text shouldBe s"Due ${due.toLongDate}"
@@ -1315,6 +1316,35 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display submissions by due-date should be in chronological order" in new Setup(estimateView(obligations = testObligationsChronologicalModel)) {
+        val submissions: Element = document.getElementById("submissions").selectHead(s"div:nth-of-type(3)")
+        document.getElementById("submissions-tab-description").text() shouldBe submissionsDescription
+
+        submissions.selectHead("thead").selectNth("th", 1).text shouldBe submission
+        submissions.selectHead("thead").selectNth("th", 2).text shouldBe updateIncomeSource
+        submissions.selectHead("thead").selectNth("th", 3).text shouldBe updateDateSubmitted
+
+        submissions.select(".govuk-table tbody tr").size() shouldBe 3
+
+        submissions.select(".govuk-table").first().selectHead("caption").text() shouldBe
+          updatePeriod("1 May 2016", "30 Jul 2016")
+        submissions.select(".govuk-table tbody td:nth-child(1)").first().text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").first().text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").first().text() shouldBe "30 Jul 2016"
+
+        submissions.select(".govuk-table").get(1).selectHead("caption").text() shouldBe
+          updatePeriod("1 Jan 2017", "30 Mar 2017")
+        submissions.select(".govuk-table tbody td:nth-child(1)").get(1).text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").get(1).text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").get(1).text() shouldBe "30 Mar 2017"
+
+        submissions.select(".govuk-table").last().selectHead("caption").text() shouldBe
+          updatePeriod("1 Apr 2017", "30 Jun 2017")
+        submissions.select(".govuk-table tbody td:nth-child(1)").last().text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").last().text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").last().text() shouldBe "30 Jun 2017"
+      }
+
+      "display submissions by due-date should be in chronological order - hide business name = true" in new Setup(estimateView(obligations = testObligationsChronologicalModel, hideBusinessName = true)) {
         val submissions: Element = document.getElementById("submissions").selectHead(s"div:nth-of-type(3)")
         document.getElementById("submissions-tab-description").text() shouldBe submissionsDescription
 

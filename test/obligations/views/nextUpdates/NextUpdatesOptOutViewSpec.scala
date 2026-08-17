@@ -84,7 +84,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
         business1.incomeSourceId,
         twoObligationsSuccessModel.obligations
-      ))).obligationsByDate(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+      ))).obligationsByDate(false)(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
       }, isFinancialsEnabled = true)
 
