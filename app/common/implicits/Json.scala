@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package financials.views.helpers.whatYouOweChargesSummary
+package common.implicits
 
-import common.auth.MtdItUser
-import play.api.i18n.Messages
+import play.api.libs.json
+import json.{JsValue, Writes}
 
-object WYOMessagesHelper {
-
-  def getMessage(key: String, args: String*)(implicit messages: Messages): String =
-    messages(s"whatYouOwe.$key", args: _*)
-
-  def getPrefix(key: String): String = s"whatYouOwe.$key"
-
-  def getHeading(implicit user: MtdItUser[_], messages: Messages): String =
-    getMessage(
-      "heading"
-    )
-}
+object Json:
+  extension [T : Writes](t: T)
+    def toJson: JsValue = json.Json.toJson(t)

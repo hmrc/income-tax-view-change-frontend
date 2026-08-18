@@ -174,15 +174,6 @@ language-switcher.nav                                           = Switcher iaith
 getpagehelp.linkText                                            = Help gyda’r dudalen hon
 pagehelp.opensInNewTabText                                      = (yn agor tab newydd)
 
-
-#Not migrated to ETMP
-notmigrated.user.heading                                        = Sut i hawlio ad-daliad
-notmigrated.user.content                                        = Er mwyn bwrw golwg dros yr arian yn eich cyfrif o flynyddoedd treth blaenorol (cyn y gwnaethoch gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm) mae angen i chi fynd i’ch
-notmigrated.agent.content                                       = I hawlio arian o flynyddoedd treth blaenorol (cyn y gwnaeth eich cleient gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm), bydd angen i chi fewngofnodi i’ch
-notmigrated.agent.content_extra                                 = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
-notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
-notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
-
 ## No Income Sources Error Page ##
 noIncomeSources.error.title                                     = Mae angen i chi gysylltu â ni er mwyn defnyddio’r gwasanaeth hwn
 noIncomeSources.error.p1                                        = Mae angen newid cyn y gallwch gael mynediad at y gwasanaeth rheoli’ch Hunanasesiad. Nid yw hyn yn golygu bod unrhyw beth o’i le gyda’ch cofnodion CThEF.
@@ -1947,6 +1938,7 @@ refund-to-taxpayer.tableHead.total-interest                     = Cyfanswm y llo
 refund-to-taxpayer.tableHead.varied-interest-rates-value        = Roedd y gyfradd llog yn amrywio rhwng {0}% a {1}% o {2} i {3}
 refund-to-taxpayer.method-type-bacs                             = Bacs
 refund-to-taxpayer.method-type-card                             = Cerdyn
+refund-to-taxpayer.method-type-repayment-to-card                = Ad-daliad i gerdyn
 refund-to-taxpayer.method-type-postal-order                     = Archeb Bost
 refund-to-taxpayer.method-type-payable-order-repayment          = Ad-daliad archeb talu
 refund-to-taxpayer.method-type-bacs-payment-out                 = Taliad BACS i chi
@@ -2503,6 +2495,7 @@ money-in-your-account.where-from.table-row.tax-year.hidden              = Blwydd
 money-in-your-account.where-from.payment-row.description                = Taliad a wnaethoch i CThEF ar {0}
 money-in-your-account.where-from.credit-row.description                 = Credyd o flwyddyn dreth gynharach
 money-in-your-account.where-from.refund-row.description                 = Ad-daliad ar y gweill
+money-in-your-account.where-from.ra-credit-row.description              = Credyd o ddiwygiad yn sgil ymholiad gan CThEF
 money-in-your-account.claim-refund.button-text                          = Hawlio ad-daliad
 
 # credits

@@ -53,6 +53,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
     val variedInterestTwoRSI: String = s"${messages("refund-to-taxpayer.tableHead.total-interest")} ${messages("refund-to-taxpayer.tableHead.varied-interest-rates-value", "2.01", "3.01", "31 July 2021", "15 October 2021")}"
     val tableValueMethodTypeBacs: String = messages("refund-to-taxpayer.method-type-bacs")
     val tableValueMethodTypeCard: String = messages("refund-to-taxpayer.method-type-card")
+    val tableValueMethodTypeRepaymentToCard: String = messages("refund-to-taxpayer.method-type-repayment-to-card")
     val tableValueMethodTypePostalOrder: String = messages("refund-to-taxpayer.method-type-postal-order")
     val tableValueMethodTypePayableOrderRepayment: String = messages("refund-to-taxpayer.method-type-payable-order-repayment")
     val tableValueMethodTypeBacsPaymentOut: String = messages("refund-to-taxpayer.method-type-bacs-payment-out")
@@ -208,6 +209,11 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeBacsPaymentOut
     )
 
+  val testRefundViewModelRepaymentToCard: RefundToTaxPayerViewModel =
+    testRefundViewModel.copy(
+      repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeRepaymentToCard
+    )
+
   class RefundToTaxPayerViewSetup(testRefundViewModel: RefundToTaxPayerViewModel, saUtr: Option[String] = Some("AY888881A"), isAgent: Boolean = false) extends Setup({
     implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
     refundToTaxPayerView(testRefundViewModel, paymentHistoryRefundsEnabled = false, "testBackURL", saUtr)(FakeRequest(), implicitly, testUser)
@@ -274,6 +280,17 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
           allTableData.get(2).text() shouldBe "£12,345.00"
         }
       }
+
+      s"has a summary list of refund to tax payer" which {
+              s"has summary list values with Repayment to card method" in new RefundToTaxPayerViewSetup(testRefundViewModelRepaymentToCard) {
+                val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dd")
+                allTableData.get(0).text() shouldBe "23 July 2021"
+                println("******************")
+                println(allTableData.get(1).text())
+                allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypeRepaymentToCard
+                allTableData.get(2).text() shouldBe "£12,345.00"
+              }
+            }
 
       s"has a summary list of refund to tax payer" which {
         s"has summary list headings with requested amount present due to difference in refund amount and requested amount fields" in new RefundToTaxPayerViewSetup(testRefundViewModelRequestedAmountDiffersToRefundAmount) {

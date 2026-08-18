@@ -238,217 +238,56 @@ object DocumentDetail {
       documentDate = documentDate
     )
 
-  implicit val writes: OWrites[DocumentDetail] = OWrites { model =>
-    Json
-      .obj(
-        "taxYear" -> model.taxYear.toString,
-        "documentID" -> model.transactionId,
-        "formBundleNumber" -> model.formBundleNumber,
-        "creditReason" -> model.creditReason,
-        "documentDate" -> model.documentDate,
-        "documentText" -> model.documentText,
-        "documentDueDate" -> model.documentDueDate,
-        "documentDescription" -> model.documentDescription,
-        "totalAmount" -> model.originalAmount,
-        "documentOutstandingAmount" -> model.outstandingAmount,
-        "poaRelevantAmount" -> model.poaRelevantAmount,
-        "lastClearingDate" -> model.lastClearingDate,
-        "lastClearingReason" -> model.lastClearingReason,
-        "lastClearedAmount" -> model.lastClearedAmount,
-        "statisticalFlag" -> model.statisticalFlag,
-        "informationCode" -> model.informationCode,
-        "paymentLot" -> model.paymentLot,
-        "paymentLotItem" -> model.paymentLotItem,
-        "effectiveDateOfPayment" -> model.effectiveDateOfPayment,
-        "accruingInterestAmount" -> model.accruingInterestAmount,
-        "interestRate" -> model.interestRate,
-        "interestFromDate" -> model.interestFromDate,
-        "interestEndDate" -> model.interestEndDate,
-        "latePaymentInterestID" -> model.latePaymentInterestId,
-        "latePaymentInterestAmount" -> model.latePaymentInterestAmount,
-        "lpiWithDunningLock" -> model.lpiWithDunningLock,
-        "interestOutstandingAmount" -> model.interestOutstandingAmount,
-        "amountCodedOut" -> model.amountCodedOut,
-        "documentNumberReducedCharge" -> model.documentNumberReducedCharge,
-        "chargeTypeReducedCharge" -> model.chargeTypeReducedCharge,
-        "amendmentDateReducedCharge" -> model.amendmentDateReducedCharge,
-        "chargeClassification" -> model.chargeClassification,
-        "taxYearReducedCharge" -> model.taxYearReducedCharge
+  private val normalise: Reads[JsObject] = Reads { json =>
+    json.validate[JsObject].map { obj =>
+      val taxYearRenamed: Seq[(String, JsValue)] =
+        (obj \ "taxYear").asOpt[Int]
+          .orElse((obj \ "taxYear").asOpt[String].flatMap(_.toIntOption))
+          .map(v => "taxYear" -> Json.toJson(v)).toSeq
+      val transactionIdRenamed: Seq[(String, JsValue)] =
+        (obj \ "transactionId").asOpt[String]
+          .orElse((obj \ "documentID").asOpt[String])
+          .map(v => "transactionId" -> Json.toJson(v)).toSeq
+      val originalAmountRenamed: Seq[(String, JsValue)] =
+        (obj \ "originalAmount").asOpt[BigDecimal]
+          .orElse((obj \ "totalAmount").asOpt[BigDecimal])
+          .map(v => "originalAmount" -> Json.toJson(v)).toSeq
+      val outstandingAmountRenamed: Seq[(String, JsValue)] =
+        (obj \ "outstandingAmount").asOpt[BigDecimal]
+          .orElse((obj \ "documentOutstandingAmount").asOpt[BigDecimal])
+          .map(v => "outstandingAmount" -> Json.toJson(v)).toSeq
+      val latePaymentInterestIdRenamed: Seq[(String, JsValue)] =
+        (obj \ "latePaymentInterestId").asOpt[String]
+          .orElse((obj \ "latePaymentInterestID").asOpt[String])
+          .map(v => "latePaymentInterestId" -> Json.toJson(v)).toSeq
+      val lpiWithDunningLockRenamed: Seq[(String, JsValue)] =
+        (obj \ "lpiWithDunningBlock").asOpt[BigDecimal]
+          .orElse((obj \ "lpiWithDunningLock").asOpt[BigDecimal])
+          .map(v => "lpiWithDunningLock" -> Json.toJson(v)).toSeq
+
+      // merges objects, RHS overriding LHS
+      obj ++ JsObject(
+        taxYearRenamed ++ transactionIdRenamed ++ originalAmountRenamed ++
+          outstandingAmountRenamed ++ latePaymentInterestIdRenamed ++ lpiWithDunningLockRenamed
       )
-      .fields
-      .collect {
-        case (key, value) if value != JsNull =>
-          key -> value
-      }
-      .foldLeft(Json.obj()) {
-        case (json, (key, value)) =>
-          json + (key -> value)
-      }
+    }
   }
+  private val macroReads: Reads[DocumentDetail] = Json.using[Json.WithDefaultValues].reads[DocumentDetail]
 
-  implicit val reads: Reads[DocumentDetail] = Reads { json =>
-    for {
-      taxYear <- (json \ "taxYear")
-        .validate[String]
-        .flatMap { value =>
-          value.toIntOption match {
-            case Some(year) =>
-              JsSuccess(year)
+  implicit val reads: Reads[DocumentDetail] = normalise.andThen(macroReads)
 
-            case None =>
-              JsError("error.expected.validTaxYear")
-          }
-        }
-        .orElse((json \ "taxYear").validate[Int])
+  private val macroWrites: OWrites[DocumentDetail] = Json.writes[DocumentDetail]
 
-      transactionId <-
-        (json \ "transactionId").validate[String]
-          .orElse((json \ "documentID").validate[String])
+  private val legacyRename: Map[String, String] = Map(
+    "transactionId" -> "documentID",
+    "originalAmount" -> "totalAmount",
+    "outstandingAmount" -> "documentOutstandingAmount",
+    "latePaymentInterestId" -> "latePaymentInterestID"
+  )
 
-      formBundleNumber <-
-        (json \ "formBundleNumber").validateOpt[String]
-
-      creditReason <-
-        (json \ "creditReason").validateOpt[String]
-
-      documentDate <-
-        (json \ "documentDate").validate[LocalDate]
-
-      documentText <-
-        (json \ "documentText").validateOpt[String]
-
-      documentDueDate <-
-        (json \ "documentDueDate").validateOpt[LocalDate]
-
-      documentDescription <-
-        (json \ "documentDescription").validateOpt[String]
-
-      originalAmount <-
-        (json \ "originalAmount").validate[BigDecimal]
-          .orElse((json \ "totalAmount").validate[BigDecimal])
-
-      outstandingAmount <-
-        (json \ "outstandingAmount").validate[BigDecimal]
-          .orElse((json \ "documentOutstandingAmount").validate[BigDecimal])
-
-      poaRelevantAmount <-
-        (json \ "poaRelevantAmount").validateOpt[BigDecimal]
-
-      lastClearingDate <-
-        (json \ "lastClearingDate").validateOpt[LocalDate]
-
-      lastClearingReason <-
-        (json \ "lastClearingReason").validateOpt[String]
-
-      lastClearedAmount <-
-        (json \ "lastClearedAmount").validateOpt[BigDecimal]
-
-      statisticalFlag <-
-        (json \ "statisticalFlag").validateOpt[String].map(_.getOrElse(""))
-
-      informationCode <-
-        (json \ "informationCode").validateOpt[String]
-
-      paymentLot <-
-        (json \ "paymentLot").validateOpt[String]
-
-      paymentLotItem <-
-        (json \ "paymentLotItem").validateOpt[String]
-
-      effectiveDateOfPayment <-
-        (json \ "effectiveDateOfPayment").validateOpt[LocalDate]
-
-      accruingInterestAmount <-
-        (json \ "accruingInterestAmount").validateOpt[BigDecimal]
-
-      interestRate <-
-        (json \ "interestRate").validateOpt[BigDecimal]
-
-      interestFromDate <-
-        (json \ "interestFromDate").validateOpt[LocalDate]
-
-      interestEndDate <-
-        (json \ "interestEndDate").validateOpt[LocalDate]
-
-      latePaymentInterestId <-
-        (json \ "latePaymentInterestId").validateOpt[String].flatMap {
-          case value@Some(_) => JsSuccess(value)
-          case None => (json \ "latePaymentInterestID").validateOpt[String]
-        }
-
-      latePaymentInterestAmount <-
-        (json \ "latePaymentInterestAmount").validateOpt[BigDecimal]
-
-      lpiWithDunningLock <- {
-        val oldField =
-          (json \ "lpiWithDunningBlock").validateOpt[BigDecimal]
-
-        val newField =
-          (json \ "lpiWithDunningLock").validateOpt[BigDecimal]
-
-        oldField.flatMap {
-          case value@Some(_) =>
-            JsSuccess(value)
-          case None =>
-            newField
-        }
-      }
-
-      interestOutstandingAmount <-
-        (json \ "interestOutstandingAmount").validateOpt[BigDecimal]
-
-      amountCodedOut <-
-        (json \ "amountCodedOut").validateOpt[BigDecimal]
-
-      documentNumberReducedCharge <-
-        (json \ "documentNumberReducedCharge").validateOpt[String]
-
-      chargeTypeReducedCharge <-
-        (json \ "chargeTypeReducedCharge").validateOpt[String]
-
-      amendmentDateReducedCharge <-
-        (json \ "amendmentDateReducedCharge").validateOpt[LocalDate]
-
-      taxYearReducedCharge <-
-        (json \ "taxYearReducedCharge").validateOpt[String]
-
-      chargeClassification <-
-        (json \ "chargeClassification").validateOpt[String]
-
-    } yield DocumentDetail(
-      taxYear = taxYear,
-      transactionId = transactionId,
-      documentDescription = documentDescription,
-      documentText = documentText,
-      outstandingAmount = outstandingAmount,
-      originalAmount = originalAmount,
-      documentDate = documentDate,
-      interestOutstandingAmount = interestOutstandingAmount,
-      interestRate = interestRate,
-      latePaymentInterestId = latePaymentInterestId,
-      latePaymentInterestAmount = latePaymentInterestAmount,
-      interestFromDate = interestFromDate,
-      interestEndDate = interestEndDate,
-      accruingInterestAmount = accruingInterestAmount,
-      lpiWithDunningLock = lpiWithDunningLock,
-      paymentLotItem = paymentLotItem,
-      paymentLot = paymentLot,
-      effectiveDateOfPayment = effectiveDateOfPayment,
-      amountCodedOut = amountCodedOut,
-      documentDueDate = documentDueDate,
-      poaRelevantAmount = poaRelevantAmount,
-      formBundleNumber = formBundleNumber,
-      creditReason = creditReason,
-      lastClearingDate = lastClearingDate,
-      lastClearingReason = lastClearingReason,
-      lastClearedAmount = lastClearedAmount,
-      statisticalFlag = statisticalFlag,
-      informationCode = informationCode,
-      documentNumberReducedCharge = documentNumberReducedCharge,
-      chargeTypeReducedCharge = chargeTypeReducedCharge,
-      amendmentDateReducedCharge = amendmentDateReducedCharge,
-      taxYearReducedCharge = taxYearReducedCharge,
-      chargeClassification = chargeClassification
-    )
+  implicit val writes: OWrites[DocumentDetail] = OWrites { d =>
+    val base = macroWrites.writes(d).fields.filterNot { case (_, v) => v == JsNull }
+    val renamed = base.map { case (k, v) => legacyRename.getOrElse(k, k) -> v }
+    JsObject(renamed) ++ Json.obj("taxYear" -> d.taxYear.toString)
   }
 }

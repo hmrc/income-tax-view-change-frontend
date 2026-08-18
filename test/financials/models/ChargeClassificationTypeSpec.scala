@@ -17,8 +17,8 @@
 package financials.models
 
 import common.testUtils.UnitSpec
-import financials.enums.ChargeClassificationType
 import org.scalatest.prop.TableDrivenPropertyChecks.*
+import shared.enums.ChargeClassificationType
 
 class ChargeClassificationTypeSpec extends UnitSpec {
 

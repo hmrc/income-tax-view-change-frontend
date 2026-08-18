@@ -10,7 +10,7 @@ GET         /agents/payment-made-to-hmrc                                  financ
 
 #WhatYouOwe
 GET         /what-you-owe                                                 financials.controllers.WhatYouOweController.show(origin: Option[String] ?= None)
-GET         /agents/what-your-client-owes                                 financials.controllers.WhatYouOweController.showAgent()
+GET         /agents/what-you-owe                                         financials.controllers.WhatYouOweController.showAgent()
 
 #Charge summary
 GET         /tax-years/:taxYear/charge                                    financials.controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
@@ -39,13 +39,6 @@ GET         /agents/credits-from-hmrc/:calendarYear                       financ
 #Refund to taxpayer
 GET         /refund-to-taxpayer/:repaymentRequestNumber                    financials.controllers.RefundToTaxPayerController.show(repaymentRequestNumber: String, origin: Option[String] ?= None)
 GET         /agents/refund-to-taxpayer/:repaymentRequestNumber             financials.controllers.RefundToTaxPayerController.showAgent(repaymentRequestNumber: String)
-
-# Users not migrated to ETMP
-GET          /how-to-claim-refund                                         financials.controllers.NotMigratedUserController.show()
-GET          /agents/how-to-claim-refund                                  financials.controllers.NotMigratedUserController.showAgent()
-
-GET          /how-to-claim-refund-external                                financials.controllers.NotMigratedUserController.redirect()
-GET          /agents/how-to-claim-refund-external                         financials.controllers.NotMigratedUserController.redirectAgent()
 
 # Self serve time to pay
 

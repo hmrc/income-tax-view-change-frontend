@@ -17,8 +17,10 @@
 package returns.controllers
 
 import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.implicits.ImplicitDateFormatter
+import common.models.admin.FinancialsFrontend
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.{AuditingService, DateServiceInterface}
 import returns.forms.utils.SessionKeys.calcPagesBackPage
@@ -48,7 +50,7 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
                                                val appConfig: FrontendAppConfig,
                                                val languageUtils: LanguageUtils,
                                                val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with ImplicitDateFormatter with Logging {
+  with I18nSupport with ImplicitDateFormatter with FeatureSwitching with Logging {
 
 
   def handleRequest(isAgent: Boolean, currentDate: LocalDate, timeStamp: String, origin: Option[String] = None)
@@ -76,7 +78,7 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
         auditingService.audit(auditModel)
 
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-        Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp, serviceNavigationPartial = user.serviceNavigationPartial))
+        Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp, serviceNavigationPartial = user.serviceNavigationPartial, financialsFrontendEnabled = isEnabled(FinancialsFrontend)))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         logger.info("No calculation data returned from downstream.")

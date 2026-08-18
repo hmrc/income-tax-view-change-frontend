@@ -19,6 +19,7 @@
 @import returns.models.liabilitycalculation.viewmodels.CalculationSummary
 @import returns.models.taxyearsummary._
 @import common.models.liabilitycalculation.CalculationRevisionType
+@import common.config.FrontendAppConfig
 
 @this(taxCalculationOverview: TaxCalculationOverview, taxCalculationNotPresent: TaxCalculationNotPresent)
 
@@ -34,8 +35,9 @@
         showNoTaxCalc: Boolean,
         viewTaxCalcLink: Option[String],
         selfAssessmentLink: String,
-        contactHmrcLink: String
-)(implicit request: Request[_], messages: Messages)
+        contactHmrcLink: String,
+        financialsFrontendEnabled: Boolean
+)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @taxCalculationOverview(
     calculationSummaryModel = calcSummary,
@@ -49,6 +51,7 @@
     showNoTaxCalc = showNoTaxCalc,
     viewTaxCalcLink = viewTaxCalcLink,
     selfAssessmentLink = selfAssessmentLink,
-    contactHmrcLink = contactHmrcLink
+    contactHmrcLink = contactHmrcLink,
+    financialsFrontendEnabled = financialsFrontendEnabled
 )
 

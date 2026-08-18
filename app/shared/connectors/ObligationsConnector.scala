@@ -24,7 +24,6 @@ import common.services.AuditingService
 import play.api.Logging
 import play.api.http.Status
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
-import shared.models.audit.NextUpdatesResponseAuditModel
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -66,7 +65,7 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
             },
             valid => {
               valid.obligations.foreach { data =>
-                auditingService.extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
+                auditingService.sendViewObligationsResponseAuditEvent(data.identification, data.obligations)
               }
               valid
             }
@@ -142,7 +141,7 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
             },
             valid => {
               valid.obligations.foreach { data =>
-                auditingService.extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
+                auditingService.sendViewObligationsResponseAuditEvent(data.identification, data.obligations)
               }
               valid
             }

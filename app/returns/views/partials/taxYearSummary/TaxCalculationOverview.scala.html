@@ -26,6 +26,7 @@
 @import returns.views.html.partials.taxYearSummary.TaxCalculationAmendmentGuidance
 @import common.models.liabilitycalculation.CalculationRevisionType
 @import common.models.liabilitycalculation.CalculationRevisionType.Amendment
+@import common.config.FrontendAppConfig
 
 @this(
         p: p,
@@ -52,7 +53,7 @@
         viewTaxCalcLink: Option[String],
         selfAssessmentLink: String,
         contactHmrcLink: String,
-)(implicit messages: Messages)
+        financialsFrontendEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @yourTaxCalculationCannotBeDisplayed = {
 
@@ -220,7 +221,7 @@
 
         @if(taxYearViewScenarios == MtdSoftwareShowCalc) {
 
-            @calculationSummaryModel.map(model => breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest))
+            @calculationSummaryModel.map(model => breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest, financialsFrontendEnabled = financialsFrontendEnabled))
 
             @if(!calculationSummaryModel.exists(_.crystallised) && !isLatest && !isPrevious) {
                 @govukInsetText(InsetText(content = HtmlContent(

@@ -173,15 +173,6 @@ language-switcher.nav                                           = Language switc
 getpagehelp.linkText                                            = Get help with this page
 pagehelp.opensInNewTabText                                      = (opens in new tab)
 
-
-#Not migrated to ETMP
-notmigrated.user.heading                                        = How to claim a refund
-notmigrated.user.content                                        = To claim money that’s in your account from earlier tax years (before you signed up to Making Tax Digital for Income Tax), you need to visit your earlier
-notmigrated.agent.content                                       = To claim money from earlier tax years (before your client signed up to Making Tax Digital for Income Tax), you need to visit your
-notmigrated.agent.content_extra                                 = This will be a different Government Gateway ID and password to your agent services account.
-notmigrated.user.link_title                                     = Self Assessment online account
-notmigrated.agent.link_title                                    = Self Assessment for Agents account
-
 ## No Income Sources Page ##
 noIncomeSources.error.title = You need to contact us to access this service
 noIncomeSources.error.p1 = A change is required before you can access the Manage your Self Assessment service. This does not mean there is anything wrong with your HMRC records.
@@ -1961,6 +1952,7 @@ refund-to-taxpayer.tableHead.total-interest                     = Total interest
 refund-to-taxpayer.tableHead.varied-interest-rates-value        = Rate of interest varied between {0}% and {1}% from {2} and {3}
 refund-to-taxpayer.method-type-bacs                             = Bacs
 refund-to-taxpayer.method-type-card                             = Card
+refund-to-taxpayer.method-type-repayment-to-card                = Repayment to card
 refund-to-taxpayer.method-type-postal-order                     = Postal Order
 refund-to-taxpayer.method-type-payable-order-repayment          = Payable order repayment
 refund-to-taxpayer.method-type-bacs-payment-out                 = BACS payment out
@@ -2518,6 +2510,7 @@ money-in-your-account.where-from.table-row.tax-year.hidden              = Tax ye
 money-in-your-account.where-from.payment-row.description                = Payment you made to HMRC on {0}
 money-in-your-account.where-from.credit-row.description                 = Credit from an earlier tax year
 money-in-your-account.where-from.refund-row.description                 = Refund in progress
+money-in-your-account.where-from.ra-credit-row.description              = Credit from HMRC enquiry amendment
 money-in-your-account.claim-refund.button-text                          = Claim a refund
 
 # credits
