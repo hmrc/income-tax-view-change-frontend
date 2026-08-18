@@ -36,34 +36,37 @@
 
 <div id="dunningLocksBanner" class="govuk-!-margin-top-8 govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
     <div class="govuk-notification-banner__header">
-@*        TODO this is where IMPORTANT banner used with Dunning Lock *@
         <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">@messages("chargeSummary.dunning.locks.banner.title")</h2>
     </div>
     <div class="govuk-notification-banner__content">
     @p(){
         <b>
-        @if(latePaymentInterestCharge){
-            @link(
-                classes="govuk-notification-banner__link govuk-notification-banner__heading",
-                link=appConfig.taxAppealsUrl,
-                rel=Some("noreferrer noopener"),
-                target = Some("_blank"),
-                messageKey = "chargeSummary.dunning.locks.banner.linkText"
-            )
-        } else @if(chargeItem.dunningLock && chargeHistoryEnabled) {
+        @(latePaymentInterestCharge, chargeItem.dunningLock) match {
+            case (true, _ ) => {
+                @link(
+                    classes="govuk-notification-banner__link govuk-notification-banner__heading",
+                    link=appConfig.taxAppealsUrl,
+                    rel=Some("noreferrer noopener"),
+                    target = Some("_blank"),
+                    messageKey = "chargeSummary.dunning.locks.banner.linkText"
+                )
+            }
+            case (_ , true) if chargeHistoryEnabled => {
                 @messages("chargeSummary.dunning.locks.informal.standover1.banner.note")
                 <br></br>
                 @messages("chargeSummary.dunning.locks.informal.standover2.banner.note")
-            } else {
-            @link(
-                classes="govuk-notification-banner__link",
-                link=appConfig.taxAppealsUrl,
-                rel=Some("noreferrer noopener"),
-                target = Some("_blank"),
-                messageKey = "chargeSummary.dunning.locks.banner.linkText",
-                additionalOpenTabMessage = Some(".")
-            )
-            @messages("chargeSummary.dunning.locks.banner.note", chargeItem.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
+            }
+            case _ => {
+                @link(
+                    classes="govuk-notification-banner__link",
+                    link=appConfig.taxAppealsUrl,
+                    rel=Some("noreferrer noopener"),
+                    target = Some("_blank"),
+                    messageKey = "chargeSummary.dunning.locks.banner.linkText",
+                    additionalOpenTabMessage = Some(".")
+                )
+                @messages("chargeSummary.dunning.locks.banner.note", chargeItem.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
+            }
         }
         </b>
     }
