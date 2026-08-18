@@ -2831,9 +2831,8 @@ add-international-business-address.countryPicker.heading = Enter the country or 
 add-international-business-address.countryPicker.hint = Enter country or territory
 
 incomeSources.add.UKPropertyStartDate.heading                   = Business start date
-incomeSources.add.UKPropertyStartDate.date-question             = When did your UK property business start?
+incomeSources.add.UKPropertyStartDate.date-question             = When did you first receive rental income from this UK property business?
 incomeSources.add.UKPropertyStartDate.hint                      = The date your business started trading can be today, in the past or up to 7 days in the future.
-incomeSources.add.UKPropertyStartDate.hint2                     = This is the date you first received rental income from this UK property business, such as letting or renting out a property or land.
 incomeSources.add.UKPropertyStartDate.invalid                   = The date must be a real date
 incomeSources.add.UKPropertyStartDate.required.all              = Enter the date your UK property business started
 incomeSources.add.UKPropertyStartDate.required.two              = The date must include a {0} and a {1}
@@ -2917,9 +2916,8 @@ incomeSources.cease.endDate.ukProperty.hint-1                      = This is the
 incomeSources.cease.endDate.foreignProperty.hint-1                 = This is the date you last received rental income or made an expense related to your foreign property business.
 
 incomeSources.add.foreignProperty.startDate.heading                  = Business start date
-incomeSources.add.foreignProperty.startDate.date-question            = When did your foreign property business start?
+incomeSources.add.foreignProperty.startDate.date-question            = When did you first receive rental income from this foreign property business?
 incomeSources.add.foreignProperty.startDate.hint                     = The date your business started trading can be today, in the past or up to 7 days in the future.
-incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
 incomeSources.add.foreignProperty.startDate.invalid                  = The date must be a real date
 incomeSources.add.foreignProperty.startDate.required.all             = Enter the date your foreign property business started
@@ -3613,10 +3611,11 @@ triggered-migration.check-hmrc-records.cessation-section.text-link   = View all 
 
 triggered-migration.check-hmrc-records.heading                       = Check HMRC records only list your active businesses
 triggered-migration.check-hmrc-records.title                         = Check HMRC records only list your active businesses
-triggered-migration.check-hmrc-records.desc                          = You now have quarterly deadlines for your sole trader and/or property businesses listed here.
+triggered-migration.check-hmrc-records.desc                          = You must check and confirm your income sources for the {0} to {1} tax year onwards, before you can continue. These income sources were created using information from your previous tax return.
+triggered-migration.check-hmrc-records.desc2                         = You may now have quarterly deadlines for your sole trader and/or property businesses listed here.
 triggered-migration.check-hmrc-records.inset                         = Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold.
-triggered-migration.check-hmrc-records.bulletStart                   = If necessary, you must:
-triggered-migration.check-hmrc-records.bullet1                       = add any businesses that are missing
+triggered-migration.check-hmrc-records.bulletStart                   = So if necessary, you must:
+triggered-migration.check-hmrc-records.bullet1                       = add any active businesses that are missing
 triggered-migration.check-hmrc-records.bullet2                       = cease any that you no longer get income from
 
 triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Your active businesses
@@ -3626,7 +3625,7 @@ triggered-migration.check-hmrc-records.soleTrader.businessName       = Business 
 triggered-migration.check-hmrc-records.soleTrader.businessState      = Business state
 triggered-migration.check-hmrc-records.soleTrader.active             = Active
 triggered-migration.check-hmrc-records.soleTrader.add.link           = Add a sole trader business
-triggered-migration.check-hmrc-records.soleTrader.guidance           = You’re a sole trader if you run your own business as an individual and work for yourself. This is also known as being self‑employed.
+triggered-migration.check-hmrc-records.soleTrader.guidance           = You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ‘sole trader’. If you work through a limited company, you’re not a sole trader.
 triggered-migration.check-hmrc-records.soleTrader.unknown            = Unknown
 
 triggered-migration.check-hmrc-records.property.heading              = Property businesses

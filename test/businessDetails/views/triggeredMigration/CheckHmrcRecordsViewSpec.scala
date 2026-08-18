@@ -45,7 +45,8 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
       hasActiveUkProperty = activeUkProperty,
       hasActiveForeignProperty = activeForeignProperty,
       triggeredMigrationState = triggeredMigrationState,
-      numberOfCeasedBusinesses = numOfCeasedBusinesses
+      numberOfCeasedBusinesses = numOfCeasedBusinesses,
+      yearOfMigrationEndYear = 2027
     )
     val pageDocument = Jsoup.parse(contentAsString(view(viewModel, isAgent = false)))
   }
@@ -53,16 +54,17 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
   object CheckHmrcRecordsMessages {
     val heading = "Check HMRC records only list your active businesses"
     val title = "Check HMRC records only list your active businesses - Manage your Self Assessment - GOV.UK"
-    val desc = "You now have quarterly deadlines for your sole trader and/or property businesses listed here."
+    val desc = "You must check and confirm your income sources for the 2026 to 2027 tax year onwards, before you can continue. These income sources were created using information from your previous tax return."
+    val desc2 = "You may now have quarterly deadlines for your sole trader and/or property businesses listed here."
     val inset = "Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold."
-    val bulletStart = "If necessary, you must:"
-    val bullet1 = "add any businesses that are missing"
+    val bulletStart = "So if necessary, you must:"
+    val bullet1 = "add any active businesses that are missing"
     val bullet2 = "cease any that you no longer get income from"
 
     val yourActiveBusinessesHeading = "Your active businesses"
     val soleTraderHeading = "Sole trader businesses"
     val addASoleTraderBusinessText = "Add a sole trader business"
-    val soleTraderGuidance = "You’re a sole trader if you run your own business as an individual and work for yourself. This is also known as being self‑employed."
+    val soleTraderGuidance = "You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ‘sole trader’. If you work through a limited company, you’re not a sole trader."
     val visuallyHiddenSoleTraderText = "business"
     val visuallyHiddenTextForeignProperty = "Foreign property"
     val visuallyHiddenTextUkProperty = "UK property"
@@ -276,8 +278,12 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
       pageDocument.select("h1").text() shouldBe CheckHmrcRecordsMessages.heading
     }
 
-    "have the correct description" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBusinesses, None) {
-      pageDocument.getElementById("check-hmrc-records-desc").text() shouldBe CheckHmrcRecordsMessages.desc
+    "have the correct description - 1" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBusinesses, None) {
+      pageDocument.getElementById("check-hmrc-records-desc-1").text() shouldBe CheckHmrcRecordsMessages.desc
+    }
+
+    "have the correct description - 2" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBusinesses, None) {
+      pageDocument.getElementById("check-hmrc-records-desc-2").text() shouldBe CheckHmrcRecordsMessages.desc2
     }
 
     "have the correct inset" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBusinesses, None) {
