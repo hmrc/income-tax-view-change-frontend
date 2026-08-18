@@ -91,7 +91,7 @@
         } else if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.isEmpty) {
             @suspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
         } else {
-            @p(id = Some("no-payments-due"))(Html(getMessage(if(user.isAgent) "no-payments-due-agent" else "no-payments-due")))
+            @paymentsMadeContent(origin, viewModel)
             @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
         }
 }

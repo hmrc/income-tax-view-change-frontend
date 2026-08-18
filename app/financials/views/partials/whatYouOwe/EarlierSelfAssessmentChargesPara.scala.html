@@ -1,5 +1,5 @@
 @*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,56 +16,87 @@
 
 @import _root_.common.implicits.ImplicitDateFormatterImpl
 @import _root_.shared.implicits.ImplicitCurrencyFormatter._
-@import _root_.shared.implicits.HtmlFormatter.NbspString
-@import financials.models.WhatYouOweViewModel
-@import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import common.services.DateServiceInterface
-@import financials.views.html.partials.whatYouOwe._
 @import common.auth.MtdItUser
+@import financials.models.WhatYouOweViewModel
+@import common.services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import financials.views.html.partials.whatYouOwe._
+@import _root_.shared.implicits.HtmlFormatter.NbspString
 @import common.viewUtils.ExternalUrlHelper
 @import common.config.FrontendAppConfig
 
 @this(
-        p: p,
+        h1: h1,
+        appConfig: FrontendAppConfig,
         h2: h2,
         link: link,
-        appConfig: FrontendAppConfig,
+        govukInsetText: GovukInsetText,
+        p: p,
+        govukTable: GovukTable,
         chargeInfo: ChargeInfo,
-        taxYearSummaryLink: TaxYearSummaryLink,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
+        govukButton: GovukButton,
+        mainTemplate: unifiedLayout,
         saNoteParagraph: SaNoteParagraph,
         saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
-        availableCreditInAccount: AvailableCreditInAccount
+        govukWarningText: GovukWarningText,
+        taxYearSummaryLink: TaxYearSummaryLink,
+        paymentsMadeContent: PaymentsMadeContent,
+        dunningLockParagraph: DunningLockParagraph,
+        accruingInterestCharge: AccruingInterestCharge,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        availableCreditInAccount: AvailableCreditInAccount,
+        interestOnBalancingCharge: InterestOnBalancingCharge,
+        balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
+        totalTableRow: TotalTableRow
+)
+@(
+        viewModel: WhatYouOweViewModel,
+        origin: Option[String] = None,
+        isSelfServeTimeToPayEnabled: Boolean
+)(
+        implicit request: Request[_],
+        user: MtdItUser[_],
+        messages: Messages,
+        dateService: DateServiceInterface
 )
 
-@(viewModel: WhatYouOweViewModel, origin: Option[String] = None, isSelfServeTimeToPayEnabled: Boolean)(implicit messages: Messages, dateService: DateServiceInterface, user: MtdItUser[_])
+@import implicitDateFormatter.longDate
 
-@viewModel.utr.map { utr =>
+@if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
+    @saPaymentsPreMTDParagraph(utr = viewModel.utr,
+        claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+        adjustPoaUrl = viewModel.adjustPoaUrl,
+        isAgent = user.isAgent)
 
-    @if(!user.isAgent) {
-        @h2(msg = getMessage("sa-note-2-heading"))
-        @p(id = Some("sa-note-2-migrated")) {
-            @getMessage("sa-note-2-body")
-            @link(link = appConfig.saViewLandPService(utr),
-                outerMessage = ".",
-                messageKey = getMessage("sa-link-2"),
-                id = Some("sa-note-2-migrated"),
-                rel = Some("noreferrer noopener"),
-                target = Some("_blank"))
-        }
-    } else {
-        @h2(msg = getMessage("sa-note-2-heading-agent"))
-        @p(id = Some("sa-note-2-migrated")) {
-            @getMessage("sa-note-2-body-agent-1")
-            @link(link = ExternalUrlHelper.saForAgents,
-                outerMessage = ".",
-                messageKey = getMessage("sa-link-2-agent"),
-                id = Some("sa-note-2-migrated-link"),
-                rel = Some("noreferrer noopener"),
-                target = Some("_blank"))
-            @getMessage("sa-note-2-body-agent-2")
+    @if(viewModel.creditAndRefundEnabled) {
+        @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
+            @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
         }
     }
-    @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
+} else {
+    @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.map { taxYear =>
+        @p(id = Some("adjust-poa-content")) {
+            @link(
+                link = viewModel.adjustPoaUrl,
+                messageKey = getMessage("sa-link-1-body-3", taxYear.startYear.toString, taxYear.endYear.toString),
+                id = Some("adjust-poa-link"),
+                rel = Some("noreferrer noopener")
+            )
+        }
+    }
+
+    @if(viewModel.creditAndRefundEnabled) {
+        @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
+            @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
+        }
+    }
+
+    @saNoteParagraph(utr = viewModel.utr,
+        budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL,
+        isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0,
+        isSelfServeTimeToPayEnabled)
 }
