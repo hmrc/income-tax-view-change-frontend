@@ -67,7 +67,8 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
     hasActiveUkProperty = true,
     hasActiveForeignProperty = true,
     triggeredMigrationState = None,
-    yearOfMigrationEndYear = 2027
+    yearOfMigrationEndYear = 2027,
+    hideBusinessName = false
   )
 
   val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)

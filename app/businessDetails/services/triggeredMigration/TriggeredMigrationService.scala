@@ -33,12 +33,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TriggeredMigrationService @Inject()(sessionService: SessionService) {
 
-  def getCheckHmrcRecordsViewModel(incomeSources: IncomeSourceDetailsModel, state: Option[TriggeredMigrationState], yearOfMigration: String): CheckHmrcRecordsViewModel = {
+  def getCheckHmrcRecordsViewModel(incomeSources: IncomeSourceDetailsModel, state: Option[TriggeredMigrationState], yearOfMigration: String, hideBusinessNameFs: Boolean): CheckHmrcRecordsViewModel = {
     val activeSoleTraderBusinesses = incomeSources.businesses.filterNot(_.isCeased)
 
     val hasActiveUkProperty = incomeSources.properties.filterNot(_.isCeased).exists(_.isUkProperty)
     val hasActiveForeignProperty = incomeSources.properties.filterNot(_.isCeased).exists(_.isForeignProperty)
-
     val numberOfCeasedBusinesses = incomeSources.businesses.count(_.isCeased)
 
     CheckHmrcRecordsViewModel(
@@ -53,7 +52,8 @@ class TriggeredMigrationService @Inject()(sessionService: SessionService) {
       hasActiveForeignProperty = hasActiveForeignProperty,
       triggeredMigrationState = state,
       numberOfCeasedBusinesses = numberOfCeasedBusinesses,
-      yearOfMigrationEndYear = yearOfMigration.toInt
+      yearOfMigrationEndYear = yearOfMigration.toInt,
+      hideBusinessName = hideBusinessNameFs
     )
   }
 

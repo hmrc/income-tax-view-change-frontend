@@ -30,6 +30,7 @@ import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.services.{AuditingService, YearOfMigrationService}
 import play.api.Logging
+import common.models.admin.HideBusinessName
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -63,7 +64,7 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
               Future.failed(new RuntimeException("[CheckHmrcRecordsController][Show] Year of migration not found"))
           }
         }
-        viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, TriggeredMigrationState.getStateFromString(state), yearOfMigration)
+        viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, TriggeredMigrationState.getStateFromString(state), yearOfMigration, isEnabled(HideBusinessName))
       } yield {
         val referer: String = user.headers.get(REFERER).getOrElse("-")
 

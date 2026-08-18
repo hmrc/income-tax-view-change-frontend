@@ -26,7 +26,7 @@ import businessDetails.views.html.manageBusinesses.ManageYourBusinessesView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.DisplayBusinessStartDate
+import common.models.admin.{HideBusinessName, DisplayBusinessStartDate}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 
 import javax.inject.{Inject, Singleton}
@@ -64,7 +64,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
-    incomeSourceDetailsService.getViewIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
+    incomeSourceDetailsService.getViewIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate), isEnabled(HideBusinessName)) match {
       case Right(viewModel) =>
         Future(hc.sessionId.get).flatMap { sessionId =>
           sessionService.clearSession(sessionId.value).map { _ =>

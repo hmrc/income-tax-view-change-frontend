@@ -23,7 +23,7 @@ import common.enums.GatewayPage.TaxYearSummaryPage
 import common.enums.TaxYearSummary.*
 import common.enums.TaxYearSummary.CalculationType.fromStringToCalculationTypeValue
 import common.implicits.ImplicitDateFormatter
-import common.models.admin.{FinancialsFrontend, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
+import common.models.admin.{FinancialsFrontend, HideBusinessName, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation
@@ -263,7 +263,8 @@ class TaxYearSummaryController @Inject()(
         ctaViewModel = claimToAdjustViewModel,
         LPP2Url = lpp2Url,
         pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-        financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
+        financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser),
+        hideUnknownBusinessName = isEnabled(HideBusinessName)
       )
 
     val isNotCrystallisedShowInset: Boolean =
@@ -338,7 +339,8 @@ class TaxYearSummaryController @Inject()(
           ctaViewModel = claimToAdjustViewModel,
           LPP2Url = lpp2Url,
           pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
+          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser),
+          hideUnknownBusinessName = isEnabled(HideBusinessName)
         )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
@@ -401,7 +403,8 @@ class TaxYearSummaryController @Inject()(
           ctaViewModel = claimToAdjustViewModel,
           LPP2Url = lpp2Url,
           pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
+          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser),
+          hideUnknownBusinessName = isEnabled(HideBusinessName)
         )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))

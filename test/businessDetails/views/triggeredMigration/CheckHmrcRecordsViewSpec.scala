@@ -46,7 +46,8 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
       hasActiveForeignProperty = activeForeignProperty,
       triggeredMigrationState = triggeredMigrationState,
       numberOfCeasedBusinesses = numOfCeasedBusinesses,
-      yearOfMigrationEndYear = 2027
+      yearOfMigrationEndYear = 2027,
+      hideBusinessName = false
     )
     val pageDocument = Jsoup.parse(contentAsString(view(viewModel, isAgent = false)))
   }

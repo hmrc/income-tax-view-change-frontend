@@ -65,7 +65,8 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     FinancialsFrontend,
     RevenueAmendments,
     ReturnsFrontend,
-    NewHubContextRootEnabled
+    NewHubContextRootEnabled,
+    HideBusinessName
   )
 
   "FeatureSwitchName" when {
