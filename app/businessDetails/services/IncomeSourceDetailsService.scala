@@ -63,7 +63,7 @@ class IncomeSourceDetailsService @Inject()()(
   def getViewIncomeSourceViewModel(
                                     sources: IncomeSourceDetailsModel,
                                     displayBusinessStartDateFS: Boolean,
-                                    displayBusinessNameFS: Boolean
+                                    hideBusinessNameFS: Boolean
                                   ): Either[Throwable, ViewIncomeSourcesViewModel] = {
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
@@ -99,7 +99,7 @@ class IncomeSourceDetailsService @Inject()()(
         } else None,
         getCeasedBusinesses(sources = sources),
         displayBusinessStartDateFS,
-        displayBusinessNameFS
+        hideBusinessNameFS
       )
     }.toEither
   }
