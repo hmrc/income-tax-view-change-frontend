@@ -14,37 +14,39 @@
  * limitations under the License.
  *@
 
-@import shared.implicits.ImplicitCurrencyFormatter._
-@import common.implicits.ImplicitDateFormatterImpl
-@import common.views.html.components._
-@import common.views.html.components.orderedNumberList
-@import common.views.html.layouts.unifiedLayout
-@import financials.views.html.partials.paymentAllocations._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import common.enums.GatewayPage._
-@import java.time.LocalDate
-@import common.config.FrontendAppConfig
+@import _root_.shared.implicits.HtmlFormatter.NbspString
 @import common.auth.MtdItUser
+@import common.config.FrontendAppConfig
+@import common.enums.GatewayPage.*
+@import common.exceptions.MissingFieldException
+@import common.implicits.ImplicitDateFormatterImpl
+@import common.views.html.components.*
+@import common.views.html.layouts.unifiedLayout
+@import financials.controllers.routes as financialsRoutes
+@import financials.models.paymentAllocationCharges.*
+@import shared.implicits.ImplicitCurrencyFormatter.*
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import financials.views.html.partials.paymentAllocations.PaymentAllocationsTable
+@import java.time.LocalDate
 
-
-@this(mainTemplate: unifiedLayout,
-      paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
-      paymentAllocationsForLpi: PaymentAllocationsForLpi,
-      paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
-      implicitDateFormatter: ImplicitDateFormatterImpl,
-      h1:h1,
-      h2: h2,
-      p:p,
-      govukInsetText: GovukInsetText,
-      link: link,
-      appConfig: FrontendAppConfig,
-      numberList: orderedNumberList
+@this(
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        govukInsetText: GovukInsetText,
+        link: link,
+        appConfig: FrontendAppConfig,
+        numberList: orderedNumberList,
+        govukTable: GovukTable,
+        paymentAllocationTable: PaymentAllocationsTable
 )
 
 @(paymentAllocations: financials.models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
-    serviceNavigationPartial: Option[ServiceNavigation] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(implicit request: Request[_], messages: Messages, user: MtdItUser[_])
-@import implicitDateFormatter._
+        serviceNavigationPartial: Option[ServiceNavigation] = None,
+        origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(implicit request: Request[_], messages: Messages, user: MtdItUser[_])
+@import implicitDateFormatter.*
 
 @pageTitle = @{
     messages(
@@ -71,56 +73,42 @@
     }
 
     @if(saUtr.isDefined && paymentAllocations.hasDocumentDetailWithCredit) {
-        @p(id=Some("sa-note-migrated")){
+        @p(id = Some("sa-note-migrated")) {
             @messages("paymentAllocation.sa.info")
             @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-            outerMessage = ".", id=Some("sa-note-migrated-link"), rel=Some("noreferrer noopener"), target = Some("_blank")
-           )
+                outerMessage = ".", id = Some("sa-note-migrated-link"), rel = Some("noreferrer noopener"), target = Some("_blank")
+            )
         }
     }
 
     <h2 class="govuk-heading-m" id="payment-amount">@messages("paymentAllocation.youPaid") @paymentAllocations.getOriginalAmount</h2>
 
-    @p(id= Some("payment-date")) {
+    @p(id = Some("payment-date")) {
         <b>@messages("paymentAllocation.paymentDate.p") @paymentAllocations.getEffectiveDateOfPayment.toLongDate</b>
     }
 
     @if(!paymentAllocations.allocationsUnavailable) {
-    <details class="govuk-details">
-        <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
                 @messages("paymentAllocation.details.title")
-            </span>
-        </summary>
-        <div class="govuk-details__text">
-            @p(id=Some("paymentAllocation-intro")) {@messages("paymentAllocation.intro")}
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                @p(id = Some("paymentAllocation-intro")) {
+                    @messages("paymentAllocation.intro")
+                }
 
-            @numberList("paymentAllocation.condition-1", "paymentAllocation.condition-2", "paymentAllocation.condition-3")
+                @numberList("paymentAllocation.condition-1", "paymentAllocation.condition-2", "paymentAllocation.condition-3")
 
-            @p(id=Some("paymentAllocation-outro")) {@messages("paymentAllocation.outro")}
-        </div>
-    </details>
+                @p(id = Some("paymentAllocation-outro")) {
+                    @messages("paymentAllocation.outro")
+                }
+            </div>
+        </details>
     }
 
-@if(paymentAllocations.showPaymentAllocationsTable()) {
-
-    @h2(msg = "paymentAllocation.tableSection.heading")
-
-    <table class="govuk-table" id="payment-allocation-table">
-        <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocated-date")</th>
-            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.description")</th>
-            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.tax-year")</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("paymentAllocation.tableHead.amount")</th>
-        </tr>
-        </thead>
-        @if(paymentAllocations.isLpiPayment) {
-            @paymentAllocationsForLpi(paymentAllocations)
-        } else {
-            @paymentAllocationsForNonLpi(paymentAllocations)
-        }
-        @paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundsRepayEnabled, user.isAgent)
-    </table>
-}}
+    @if(paymentAllocations.showPaymentAllocationsTable()) {
+        @paymentAllocationTable(paymentAllocations, creditsRefundsRepayEnabled, origin)
+    }
+}
