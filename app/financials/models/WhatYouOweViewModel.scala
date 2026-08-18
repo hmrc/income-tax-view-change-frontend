@@ -44,8 +44,14 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
   val chargesListAndCodedOutDetailsAreEmpty: Boolean = whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDetails.isEmpty
 
   val chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero: Boolean = whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero
-  
+
   val suspendedChargesListNonEmpty: Boolean = whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty
+
+  val hasNonDunningLockCharges: Boolean =
+    whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty ||
+      whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero
+
+  val hasOnlySuspendedCharges: Boolean = suspendedChargesListNonEmpty && !hasNonDunningLockCharges
 
   val chargesListIsNotEmptyAndDunningLock: Boolean = !whatYouOweChargesList.isChargesListEmpty && (dunningLock || hasLpiWithDunningLock)
 

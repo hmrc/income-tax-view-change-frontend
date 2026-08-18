@@ -1115,7 +1115,10 @@ trait ChargeConstants {
   )
 
 
-  def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks, dueDates: List[Option[LocalDate]] = dueDateMoreThan30Days, codedOutDetails: Option[CodingOutDetails] = None): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks,
+                                                dueDates: List[Option[LocalDate]] = dueDateMoreThan30Days,
+                                                codedOutDetails: Option[CodingOutDetails] = None,
+                                                outstandingCharges: Option[OutstandingChargesModel] = Some(outstandingChargesDueInMoreThan30Days)): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 2.00, 4.00, 2.00, Some(BigDecimal(100.00)), None, None, Some(BigDecimal(350.00)), None, None, Some(BigDecimal(100.00))),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDates,
@@ -1124,7 +1127,7 @@ trait ChargeConstants {
       interestFromDate = List(None, None),
       dueDateForFinancialDetail = List(LocalDate.parse("2024-01-29"), LocalDate.parse("2024-02-03"))
     ),
-    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days),
+    outstandingChargesModel = outstandingCharges,
     codedOutDetails = codedOutDetails
   )
 

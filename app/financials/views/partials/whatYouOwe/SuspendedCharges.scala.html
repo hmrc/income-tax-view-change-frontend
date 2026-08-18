@@ -35,10 +35,7 @@
         paymentsMadeContent: PaymentsMadeContent,
         earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara,
         taxYearSummaryLink: TaxYearSummaryLink,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        saNoteParagraph: SaNoteParagraph,
-        saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
-        availableCreditInAccount: AvailableCreditInAccount
+        implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
 @(viewModel: WhatYouOweViewModel, origin: Option[String] = None, isSelfServeTimeToPayEnabled: Boolean)(implicit messages: Messages, dateService: DateServiceInterface, user: MtdItUser[_])
@@ -59,7 +56,7 @@
     <p class="govuk-body">@getMessage("suspended-charges-informalOnly.p2")</p>
 }
 
-<table class="govuk-table" aria-labelledby="suspended-charges-in-order-due">
+<table class="govuk-table" aria-labelledby="suspended-charges-in-order-due" id="suspended-charges-table">
 
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
@@ -75,17 +72,17 @@
     <tbody class="govuk-table__body">
     @viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.zipWithIndex.map { case (charge, index) =>
     <tr class="govuk-table__row">
-        <td class="govuk-table__cell" id="due-charge-due-date-@{
+        <td class="govuk-table__cell" id="suspended-charge-due-date-@{
             index
         }">@charge.getChargeDueDate.toLongDateShort.toNonBreaking</td>
-        <td class="govuk-table__cell" id="due-@{
+        <td class="govuk-table__cell" id="suspended-due-@{
             index
         }">@chargeInfo(viewModel.lpp2Url, s"due-${index}", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false)</td>
-        <td class="govuk-table__cell" id="due-charge-tax-year-@{
+        <td class="govuk-table__cell" id="suspended-due-charge-tax-year-@{
             index
         }">@taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl)</td>
         @if(charge.isAccruingInterest) {
-            <td class="govuk-table__cell" id="accrued-interest-amount-due-@{
+            <td class="govuk-table__cell" id="suspended-accrued-interest-amount-due-@{
                 index
             }">
             @charge.accruingInterestAmount.get.toCurrency
@@ -97,7 +94,7 @@
         @getMessage("tableRow.na")
         </td>
         }
-        <td class="govuk-table__cell govuk-table__cell--numeric" id="due-charge-amount-due-@{
+        <td class="govuk-table__cell govuk-table__cell--numeric" id="susupended-due-charge-amount-due-@{
             index
         }">
         @charge.remainingToPayOnCharge.toCurrency

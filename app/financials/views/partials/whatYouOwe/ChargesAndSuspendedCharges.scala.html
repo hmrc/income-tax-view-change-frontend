@@ -34,13 +34,9 @@
         govukTable: GovukTable,
         chargeInfo: ChargeInfo,
         govukButton: GovukButton,
-        saNoteParagraph: SaNoteParagraph,
-        saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
         taxYearSummaryLink: TaxYearSummaryLink,
         paymentsMadeContent: PaymentsMadeContent,
-        dunningLockParagraph: DunningLockParagraph,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        availableCreditInAccount: AvailableCreditInAccount,
         interestOnBalancingCharge: InterestOnBalancingCharge,
         balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
         totalTableRow: TotalTableRow,
@@ -61,7 +57,7 @@
 
 @import implicitDateFormatter.longDate
 
-@if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
+@if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero || viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
     <div id="table-sync-container">
         @govukTable(Table(
             head = Some(Seq(

@@ -26,32 +26,17 @@
 @import common.views.html.layouts.unifiedLayout
 @import financials.views.html.partials.whatYouOwe._
 @import _root_.shared.implicits.HtmlFormatter.NbspString
-@import common.viewUtils.ExternalUrlHelper
 @import common.config.FrontendAppConfig
 
 @this(
         h1: h1,
         appConfig: FrontendAppConfig,
-        h2: h2,
         link: link,
-        govukInsetText: GovukInsetText,
-        p: p,
-        govukTable: GovukTable,
-        chargeInfo: ChargeInfo,
         govukButton: GovukButton,
         mainTemplate: unifiedLayout,
-        saNoteParagraph: SaNoteParagraph,
-        saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
         govukWarningText: GovukWarningText,
-        taxYearSummaryLink: TaxYearSummaryLink,
         paymentsMadeContent: PaymentsMadeContent,
-        dunningLockParagraph: DunningLockParagraph,
-        accruingInterestCharge: AccruingInterestCharge,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        availableCreditInAccount: AvailableCreditInAccount,
-        interestOnBalancingCharge: InterestOnBalancingCharge,
-        balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
-        totalTableRow: TotalTableRow,
         suspendedCharges: SuspendedCharges,
         chargesAndSuspendedCharges: ChargesAndSuspendedCharges,
         earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara
@@ -84,14 +69,12 @@
         ))
     }
 
-    @if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
+    @if(viewModel.hasNonDunningLockCharges) {
         @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
-        } else if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.isEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
-            @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
-        } else if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.isEmpty) {
-            @suspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
-        } else {
-            @paymentsMadeContent(origin, viewModel)
-            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
-        }
+    } else if(viewModel.hasOnlySuspendedCharges) {
+        @suspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+    } else {
+        @paymentsMadeContent(origin, viewModel)
+        @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+    }
 }

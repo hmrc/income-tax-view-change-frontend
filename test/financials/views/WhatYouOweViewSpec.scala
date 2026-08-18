@@ -68,7 +68,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saNote2Agent: String = s"${messages("whatYouOwe.sa-note-2-body-agent-1")} $saLink2Agent. ${messages("whatYouOwe.sa-note-2-body-agent-2")}"
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
   val preMtdOsChargesNote: String = messages("whatYouOwe.pre-mtd-outstanding-charges")
-  val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")} ${messages("pagehelp.opensInNewTabText")}")}."
   val chargeType: String = messages("whatYouOwe.tableHead.charge-type")
   val taxYear: String = messages("whatYouOwe.tableHead.tax-year")
   val amountDue: String = messages("whatYouOwe.tableHead.amount-due")
@@ -90,15 +89,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val preMTDRemainingBalance: String = s"${messages("whatYouOwe.balancingCharge.text")} ${messages("whatYouOwe.pre-mtd-digital")}"
   val remainingBalanceLine1: String = messages("whatYouOwe.remaining-balance.line1")
   val remainingBalanceLine1Agent: String = messages("whatYouOwe.remaining-balance.line1.agent")
-  val paymentUnderReview: String = messages("whatYouOwe.paymentUnderReview")
   val poaHeading: String = messages("whatYouOwe.payment-on-account.heading")
   val poaLine1: String = messages("whatYouOwe.payment-on-account.line1")
   val poaLine1Agent: String = messages("whatYouOwe.payment-on-account.line1.agent")
   val lpiHeading: String = messages("whatYouOwe.late-payment-interest.heading")
   val lpiLine1: String = messages("whatYouOwe.late-payment-interest.line1")
   val lpiLine1Agent: String = messages("whatYouOwe.late-payment-interest.line1.agent")
-  val poa1WithTaxYearAndUnderReview: String = s"$poa1Text 1 $paymentUnderReview"
-  val poa1WithTaxYearOverdueAndUnderReview: String = s"$poa1Text 1 $paymentUnderReview"
   val dueDate: String = messages("whatYouOwe.tableHead.due-date")
   val payNow: String = messages("whatYouOwe.payNow")
   val saPaymentOnAccount1: String = "SA Payment on Account 1"
@@ -568,20 +564,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
 
-        "display the paragraph about payments under review and paragraph when there is a dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut)), dunningLock = true) {
-          val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
-
-          pageDocument.getElementById("payment-under-review-info").text shouldBe paymentUnderReviewPara
-          paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
-          paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
-
-          pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
-          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
-          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
-        }
-
         "display bullets and not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
           findElementById("payment-under-review-info") shouldBe None
@@ -667,14 +649,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             makingPayment(5000).url
         }
 
-        "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks), dunningLock = true) {
-          val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
-
-          pageDocument.getElementById("payment-under-review-info").text shouldBe paymentUnderReviewPara
-          paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
-          paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
-        }
         "should have payment made paragraph when there is dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut)), dunningLock = true) {
 
@@ -707,15 +681,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
 
-        s"display $paymentUnderReview when there is a dunningLock against a single charge" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(oneDunningLock)(dateService)) {
-          val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
-          val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(3)
-
-          dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearAndUnderReview
-          dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2"
-        }
-
         "should have payment made paragraph when there is a single charge" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = oneDunningLock, codedOutDetails = Some(balancingCodedOut))) {
 
@@ -728,15 +693,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
           pageDocument.getElementsByTag("h2").text should include(saNote2Heading)
           pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
-        }
-
-        s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)(dateService)) {
-          val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
-          val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(3)
-
-          dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearAndUnderReview
-          dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2 $paymentUnderReview"
         }
 
         "should have payment made paragraph when there is multiple charge" in new TestSetup(
@@ -824,21 +780,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         "have overdue payments header, paragraph and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
           new TestSetup(charges = whatYouOweDataWithOverdueLpiDunningLock(Some(34.56), Some(34.56), Some(100.0), outstandingAmount = List(0.0,0.0))) {
 
-            val overdueTableHeader: Element = pageDocument.select("tr").get(0)
+            val suspendedChargesTable: Element = pageDocument.getElementById("suspended-charges-table")
+            val overdueTableHeader: Element = suspendedChargesTable.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
             overdueTableHeader.select("th").get(1).text() shouldBe chargeType
             overdueTableHeader.select("th").get(2).text() shouldBe taxYear
             overdueTableHeader.select("th").last().text() shouldBe amountDue
 
-            val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-            overduePaymentsTableRow1.select("td").get(1).text() shouldBe
-              latePoa1Text + s" 1" + " " + paymentUnderReview
+            val overduePaymentsTableRow1: Element = suspendedChargesTable.select("tr").get(1)
+            overduePaymentsTableRow1.select("td").get(1).text() shouldBe latePoa1Text + s" 1"
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
-            pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
               appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
@@ -983,36 +938,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById("overdue-inset-migrated-2") shouldBe None
         }
 
-        "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithOverdueDataIt(twoDunningLocks), dunningLock = true) {
-          val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
-
-          pageDocument.getElementById("payment-under-review-info").text shouldBe paymentUnderReviewPara
-          paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
-          paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
-        }
-
         "not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
           charges = whatYouOweDataWithOverdueDataIt(twoDunningLocks)) {
           findElementById("payment-under-review-info") shouldBe None
-        }
-
-        s"display $paymentUnderReview when there is a dunningLock against a single charge" in new TestSetup(
-          charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None), List(Some(100.00), None), oneDunningLock)) {
-          val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-          val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
-
-          overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearOverdueAndUnderReview
-          overduePaymentsTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2"
-        }
-
-        s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
-          charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None), List(Some(100.00), None), twoDunningLocks)) {
-          val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-          val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
-
-          overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearOverdueAndUnderReview
-          overduePaymentsTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2 $paymentUnderReview"
         }
       }
 
@@ -1404,6 +1332,127 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         totalBalance = Some(BigDecimal("4282.20"))
       ) {
         findAgentElementById("what-you-owe-total-row") should not be None
+      }
+    }
+
+    "the suspended charges table" should {
+
+      "show only the normal charges table when all charges have no dunning lock" in new TestSetup(
+        charges = whatYouOweDataWithDataDueInMoreThan30Days()
+      ) {
+        findElementById("what-you-owe-payments-due-table") should not be None
+        findElementById("suspended-charges") shouldBe None
+
+        val chargesTableRow: Element = pageDocument.select("tr").get(1)
+        chargesTableRow.select("td").get(0).text() shouldBe "19 Jan 2024"
+        chargesTableRow.select("td").get(1).text() shouldBe "Balancing payment (Pre-Making Tax Digital)"
+        chargesTableRow.select("td").get(2).text() shouldBe "2021 to 2022"
+        chargesTableRow.select("td").get(3).text() shouldBe "£123,456.67"
+
+        val chargesTableRow2: Element = pageDocument.select("tr").get(2)
+        chargesTableRow2.select("td").get(0).text() shouldBe "29 Jan 2024"
+        chargesTableRow2.select("td").get(1).text() shouldBe "First payment on account 1"
+        chargesTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+        chargesTableRow2.select("td").get(3).text() shouldBe "£50.00"
+
+        val chargesTableRow3: Element = pageDocument.select("tr").get(3)
+        chargesTableRow3.select("td").get(0).text() shouldBe "3 Feb 2024"
+        chargesTableRow3.select("td").get(1).text() shouldBe "Second payment on account 2"
+        chargesTableRow3.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+        chargesTableRow3.select("td").get(3).text() shouldBe "£75.00"
+      }
+
+      "show only the suspended charges table when all charges have a dunning lock" in new TestSetup(
+        charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks, outstandingCharges = None)
+      ) {
+        findElementById("what-you-owe-payments-due-table") shouldBe None
+        findElementById("suspended-charges-in-order-due") should not be None
+
+        val chargesTableRow: Element = pageDocument.select("tr").get(1)
+        chargesTableRow.select("td").get(0).text() shouldBe "29 Jan 2024"
+        chargesTableRow.select("td").get(1).text() shouldBe "First payment on account 1"
+        chargesTableRow.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+        chargesTableRow.select("td").get(3).text() shouldBe "£50.00"
+
+        val chargesTableRow2: Element = pageDocument.select("tr").get(2)
+        chargesTableRow2.select("td").get(0).text() shouldBe "3 Feb 2024"
+        chargesTableRow2.select("td").get(1).text() shouldBe "Second payment on account 2"
+        chargesTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+        chargesTableRow2.select("td").get(3).text() shouldBe "£75.00"
+      }
+
+      "show both the normal and suspended charges tables when charges have a mix of dunning locks" in new TestSetup(
+        charges = WhatYouOweChargesList(
+          balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+          chargesList = List(
+            chargeItemModel(TaxYear.forYearEnd(2019), dunningLock = false, lpiWithDunningLock = None,
+              interestOutstandingAmount = None, accruingInterestAmount = None, latePaymentInterestAmount = None),
+            chargeItemModel(TaxYear.forYearEnd(2020), transactionType = PoaTwoDebit, dunningLock = true,
+              lpiWithDunningLock = None, interestOutstandingAmount = None, accruingInterestAmount = None, latePaymentInterestAmount = None)
+
+          )
+        )
+      ) {
+        findElementById("what-you-owe-payments-due-table") should not be None
+        findElementById("suspended-charges") should not be None
+
+        val chargesTable: Element = pageDocument.getElementById("what-you-owe-payments-due-table")
+        val chargesTableRow: Element = chargesTable.select("tr").get(1)
+        chargesTableRow.select("td").get(0).text() shouldBe "15 May 2019"
+        chargesTableRow.select("td").get(1).text() shouldBe "First payment on account 1"
+        chargesTableRow.select("td").get(2).text() shouldBe taxYearSummaryText("2018", "2019")
+        chargesTableRow.select("td").get(3).text() shouldBe "£1,400.00"
+
+        val suspendedChargesTable: Element = pageDocument.getElementById("suspended-charges-table")
+        val chargesTableRow2: Element = suspendedChargesTable.select("tr").get(1)
+        chargesTableRow2.select("td").get(0).text() shouldBe "15 May 2019"
+        chargesTableRow2.select("td").get(1).text() shouldBe "Second payment on account 1"
+        chargesTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText("2019", "2020")
+        chargesTableRow2.select("td").get(3).text() shouldBe "£1,400.00"
+      }
+
+      "show the no-payments-due paragraph when there are no charges" in new TestSetup(
+        charges = whatYouOweDataNoCharges
+      ) {
+        findElementById("no-payments-due") should not be None
+        findElementById("what-you-owe-payments-due-table") shouldBe None
+        findElementById("suspended-charges-in-order-due") shouldBe None
+      }
+
+      "show available credit when there are no charges but credit exists" in new TestSetup(
+        charges = WhatYouOweChargesList(
+          balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, Some(300.00), None, None, Some(350.00), None, None, None),
+          chargesList = List.empty
+        )
+      ) {
+        findElementById("no-payments-due") should not be None
+        findElementById("money-in-your-account") should not be None
+      }
+
+      "display the suspended charges heading when only suspended charges exist" in new TestSetup(
+        charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks)
+      ) {
+        pageDocument.getElementById("suspended-charges-in-order-due").text() shouldBe messages("whatYouOwe.suspended-charges")
+      }
+
+      "display the informalOnly paragraphs when only suspended charges exist" in new TestSetup(
+        charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks)
+      ) {
+        pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p1"))
+        pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p2"))
+      }
+
+      "display the informal paragraphs when both normal and suspended charges exist" in new TestSetup(
+        charges = WhatYouOweChargesList(
+          balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+          chargesList = List(
+            chargeItemModel(TaxYear.forYearEnd(2019), dunningLock = false),
+            chargeItemModel(TaxYear.forYearEnd(2020), dunningLock = true)
+          )
+        )
+      ) {
+        pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges.informal.p1"))
+        pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges.informal.p2"))
       }
     }
   }
