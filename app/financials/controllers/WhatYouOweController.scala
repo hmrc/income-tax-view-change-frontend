@@ -53,15 +53,13 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    getMoneyInYourAccountUrl.flatMap { getMoneyInYourAccountUrl =>
-      whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, appConfig.taxYearSummaryUrl(user.isAgent, _ , origin=origin, returnsEnabled = isEnabled(ReturnsFrontend)), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
-        case Some(viewModel) =>
-          Ok(whatYouOwe(viewModel, origin, isEnabled(SelfServeTimeToPayR17)))
-            .addingToSession(gatewayPage -> WhatYouOwePage.name)
-        case None =>
-          logger.error(s"${if (isAgent) "Agent - " else ""}" + "Failed to create WhatYouOweViewModel")
-          itvcErrorHandler.showInternalServerError()
-      }
+    whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, appConfig.taxYearSummaryUrl(user.isAgent, _, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend)), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
+      case Some(viewModel) =>
+        Ok(whatYouOwe(viewModel, origin, isEnabled(SelfServeTimeToPayR17)))
+          .addingToSession(gatewayPage -> WhatYouOwePage.name)
+      case None =>
+        logger.error(s"${if (isAgent) "Agent - " else ""}" + "Failed to create WhatYouOweViewModel")
+        itvcErrorHandler.showInternalServerError()
     }
   } recover {
     case ex: Exception =>
@@ -89,22 +87,17 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
-  private[financials] def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): Future[String] = {
-    yearOfMigrationService.getYearOfMigration(user.nino).map(_.yearOfMigrationEndYear).map { yearOfMigration =>
-      (user.isAgent match {
-          case true if yearOfMigration.isDefined  => routes.MoneyInYourAccountController.showAgent()
-          case true                               => routes.NotMigratedUserController.showAgent()
-          case false if yearOfMigration.isDefined => routes.MoneyInYourAccountController.show()
-          case false                              => routes.NotMigratedUserController.show()
-      }).url
-    }
-  }
+  private[financials] def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (if (user.isAgent) {
+    routes.MoneyInYourAccountController.showAgent()
+  } else {
+    routes.MoneyInYourAccountController.show()
+  }).url
 
   private def getAdjustPoaUrl(implicit user: MtdItUser[_]): String = claimToAdjustPoaRoutes.AmendablePoaController.show(user.isAgent).url
 
   private def getChargeSummaryUrl(implicit user: MtdItUser[_]): (Int, String, Boolean, Option[String]) => String = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
     if (user.isAgent) routes.ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
-    else                routes.ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
+    else routes.ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
   }
 
   private def getPaymentHandOffUrl(origin: Option[String]): Long => String = routes.PaymentController.makingPayment(_, origin).url
