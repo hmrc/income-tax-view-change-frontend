@@ -31,7 +31,6 @@ import common.config.FrontendAppConfig
 import common.services.{AuditingService, YearOfMigrationService}
 import play.api.Logging
 import common.models.admin.HideBusinessName
-import common.services.AuditingService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,7 +54,7 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
         }
         sessionService.clearSession(sessionId.value)
       }
-      
+
       for {
         yearOfMigration <- yearOfMigrationService.getYearOfMigration(user.nino).flatMap {
           _.yearOfMigrationEndYear match {
