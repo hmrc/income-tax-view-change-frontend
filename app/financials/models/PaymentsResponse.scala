@@ -17,7 +17,7 @@
 package financials.models
 
 import play.api.libs.json.{Format, Json}
-import financials.enums.ChargeClassificationType
+import shared.enums.ChargeClassificationType
 
 import java.time.LocalDate
 
