@@ -30,28 +30,13 @@
 @import common.config.FrontendAppConfig
 
 @this(
-        h1: h1,
         appConfig: FrontendAppConfig,
-        h2: h2,
         link: link,
-        govukInsetText: GovukInsetText,
         p: p,
-        govukTable: GovukTable,
-        chargeInfo: ChargeInfo,
-        govukButton: GovukButton,
-        mainTemplate: unifiedLayout,
         saNoteParagraph: SaNoteParagraph,
         saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
-        govukWarningText: GovukWarningText,
-        taxYearSummaryLink: TaxYearSummaryLink,
-        paymentsMadeContent: PaymentsMadeContent,
-        dunningLockParagraph: DunningLockParagraph,
-        accruingInterestCharge: AccruingInterestCharge,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         availableCreditInAccount: AvailableCreditInAccount,
-        interestOnBalancingCharge: InterestOnBalancingCharge,
-        balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
-        totalTableRow: TotalTableRow
 )
 @(
         viewModel: WhatYouOweViewModel,
