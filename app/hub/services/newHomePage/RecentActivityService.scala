@@ -23,7 +23,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{FinancialsFrontend, ReturnsFrontend}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
-import common.models.obligations.{ObligationsModel, SingleObligationModel}
+import common.models.obligations.{ObligationsModel, ObligationsResponseModel, SingleObligationModel}
 import common.services.DateServiceInterface
 import financials.models.*
 import financials.models.repaymentHistory.RepaymentHistoryModel
@@ -33,14 +33,15 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.Singleton
+import scala.concurrent.Future
 
 @Singleton
 class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector,
                                       dateService: DateServiceInterface)
                                      (implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
-  def getFulfilledObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]) = {
-    obligationsConnector.getFulfilledObligations()
+  def getFulfilledObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
+    obligationsConnector.getFulfilledObligations(dateService.getCurrentDate.minusDays(90), dateService.getCurrentDate)
   }
 
   def getRecentSubmissionActivity(fulfilledObligations: ObligationsModel, currentItsaStatus: ITSAStatus): RecentActivitySubmissionsModel = {
