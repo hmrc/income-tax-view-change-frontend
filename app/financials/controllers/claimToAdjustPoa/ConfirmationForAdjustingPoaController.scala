@@ -17,7 +17,7 @@
 package financials.controllers.claimToAdjustPoa
 
 import cats.data.EitherT
-import common.auth.AuthActions
+import financials.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.services.AuditingService
@@ -34,7 +34,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActions,
+class ConfirmationForAdjustingPoaController @Inject()(
+                                                      val authActions: AuthActions,
                                                       val claimToAdjustService: ClaimToAdjustService,
                                                       val poaSessionService: PaymentOnAccountSessionService,
                                                       val nrsService: NrsService,

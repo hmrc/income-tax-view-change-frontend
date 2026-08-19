@@ -54,14 +54,6 @@ class AuthActions @Inject()(
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
-  def asMTDIndividualForNrs: ActionBuilder[MtdItUser, AnyContent] = {
-    checkSessionTimeout andThen
-      authoriseAndRetrieveIndividualForNrs andThen
-      incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches andThen
-      retrieveNavBar
-  }
-
   def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
     checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
@@ -76,15 +68,6 @@ class AuthActions @Inject()(
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
-  def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
-    checkSessionTimeout andThen
-      authoriseAndRetrieveAgent.authorise() andThen
-      retrieveClientData.authorise(useCookies = true) andThen
-      authoriseAndRetrieveMtdAgent andThen
-      incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches
-  }
-
   def asMTDPrimaryAgent(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
@@ -95,25 +78,6 @@ class AuthActions @Inject()(
       retrieveFeatureSwitches andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
-  
-  def asMTDPrimaryAgentForNrs: ActionBuilder[MtdItUser, AnyContent] = {
-    checkSessionTimeout andThen
-      authoriseAndRetrieveAgentForNrs.authorise() andThen
-      retrieveClientData.authorise() andThen
-      authoriseAndRetrieveMtdAgent andThen
-      agentIsPrimaryAction andThen
-      incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches
-  }
-
-  def asMTDIndividualWithIncomeSources(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] =
-    asMTDIndividual(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
-
-  def asMTDAgentWithConfirmedClientWithIncomeSources(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] =
-    asMTDAgentWithConfirmedClient(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
-
-  def asMTDPrimaryAgentWithIncomeSources(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] =
-    asMTDPrimaryAgent(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
 
   def asMTDIndividualForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
@@ -136,22 +100,6 @@ class AuthActions @Inject()(
       asMTDAgentWithConfirmedClient(triggeredMigrationPage)
     } else {
       asMTDIndividual(triggeredMigrationPage)
-    }
-  }
-
-  def asMTDIndividualOrPrimaryAgentWithClient(isAgent: Boolean, triggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    if (isAgent) {
-      asMTDPrimaryAgent(triggeredMigrationPage)
-    } else {
-      asMTDIndividual(triggeredMigrationPage)
-    }
-  }
-
-  def asMTDIndividualOrPrimaryAgentWithClientForNrs(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
-    if (isAgent) {
-      asMTDPrimaryAgentForNrs
-    } else {
-      asMTDIndividualForNrs
     }
   }
 

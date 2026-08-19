@@ -17,7 +17,8 @@
 package financials.controllers.claimToAdjustPoa
 
 import cats.data.EitherT
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
+import financials.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.NormalMode
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes

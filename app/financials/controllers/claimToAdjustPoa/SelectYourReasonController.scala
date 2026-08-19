@@ -18,7 +18,8 @@ package financials.controllers.claimToAdjustPoa
 
 import cats.data.EitherT
 import com.google.inject.Singleton
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
+import financials.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.{Mode, NormalMode}
 import financials.controllers.claimToAdjustPoa.routes.*

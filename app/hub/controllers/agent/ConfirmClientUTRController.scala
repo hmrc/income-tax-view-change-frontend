@@ -17,7 +17,7 @@
 package hub.controllers.agent
 
 import hub.audit.models.ConfirmClientDetailsAuditModel
-import common.auth.AuthActions
+import hub.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
 import common.models.sessionData.SessionCookieData
