@@ -57,6 +57,8 @@ case class ChargeSummaryViewModel(
   val hasInterestLocks: Boolean = paymentBreakdown.exists(_.interestLockExists)
   val isAccruingInterest: Boolean = paymentBreakdown.exists(_.isAccruingInterest)
   val chargeHasDunningLock: Boolean = chargeItem.dunningLock
+  val dunningLockSubItemDueDate: Option[LocalDate] = paymentBreakdown.flatMap(_.dunningLocks).headOption.flatMap(_.dueDate)
+  val dunningLockSubItemValue: Option[BigDecimal] = paymentBreakdown.flatMap(_.dunningLocks).headOption.flatMap(_.amount)
 
   val isCredit: Boolean = chargeItem.originalAmount < 0
 

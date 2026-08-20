@@ -17,13 +17,16 @@
 package financials.views
 
 import common.config.featureswitch.FeatureSwitching
+import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.ViewSpec
 import financials.controllers.routes as financialsRoutes
 import financials.enums.*
+import financials.enums.ChargeType.ITSA_ENGLAND_AND_NI
 import financials.models.*
 import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import financials.testConstants.ChargeConstants
+import financials.testConstants.FinancialDetailsTestConstants.id1040000123
 import financials.views.html.YourSelfAssessmentChargeSummaryView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -123,7 +126,38 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
     }
 
     "charge is suspended with dunning lock 'Stand over order'" should {
-      "display the correct content" in new TestSetup(chargeItem = chargeItemModel(dunningLock = true)) {
+      "display the correct content" in new TestSetup(
+        chargeItem = chargeItemModel(dunningLock = true), 
+        paymentBreakdown =
+          List(
+            FinancialDetail(
+              TaxYear.forYearEnd(2018).shortenTaxYearEnd, 
+              Some("SA POA 1 Reconciliation Debit"), 
+              Some("4920"), 
+              Some(id1040000123), 
+              Some(LocalDate.parse("2018-08-16")), 
+              Some("POA1"), 
+              Some("SA POA 1 Reconciliation Debit"), 
+              Some(1400.00), 
+              Some(1400.00), 
+              Some(1400.00), 
+              Some(0), 
+              Some(ITSA_ENGLAND_AND_NI),
+              None, 
+              Some(
+                Seq(
+                  SubItem(
+                    dueDate = Some(LocalDate.of(2019, 5, 15)),
+                    subItemId = Some("001"), 
+                    amount = Some(BigDecimal("1400.00")),
+                    dunningLock = Some("Stand over order")
+                  )
+                )
+              )
+            )
+          )
+      ) {
+            
         document.select("#dunningLocksBanner").size() shouldBe 1
         document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
         document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe dunningLocksBannerHeading

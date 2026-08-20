@@ -697,9 +697,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2018 to 2019 tax bill."
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
                 document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£10.33"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£100.00"
               }
               "provided with an id associated to a Balancing payment with accruing interest and Suspended Charge" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest(Some("Stand over order")), docId = id1040000123) {
                 setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
@@ -724,9 +724,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2018 to 2019 tax bill."
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
                 document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£10.33"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£100.00"
               }
 
               "provided with an id associated to a Late Submission Penalty and Suspended Charge" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty(Some("Stand over order")), docId = id1040000123) {
@@ -753,9 +753,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
                 document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£10.33"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£100.00"
               }
 
               "provided with an id associated to a Late Submission Penalty with crystallised interest and Suspended Charge" in new Setup(testValidFinancialDetailsModelWithLspCrystallisedInterest(Some("Stand over order")), docId = id1040000123) {
@@ -779,9 +779,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal"
                 document.getElementsByClass("govuk-heading-m").get(1).text() shouldBe "Interest on this charge"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
                 document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£10.33"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£100.00"
               }
 
               "provided with an id associated to a Late payment penalty and Suspended Charge" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty(Some("Stand over order")), docId = id1040000123) {
@@ -801,9 +801,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("due-date-text").text() shouldBe "Due 29 March 2020"
                 document.getElementById("first-payment-penalty-p1").text() shouldBe "You have received this penalty because you are late paying your Income Tax."
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "29 Mar 2020"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
                 document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
-                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£10.33"
+                document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£100.00"
               }
             }
 
