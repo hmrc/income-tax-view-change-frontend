@@ -27,6 +27,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
+import shared.enums.ChargeClassificationType
 
 object RepaymentHistoryUtils extends Logging {
 
@@ -138,7 +139,8 @@ object RepaymentHistoryUtils extends Logging {
       amount = payment.amount,
       linkUrl = getControllerHref(payment.transactionId, isAgent),
       visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}",
-      taxYear = Some(payment.taxYear)
+      taxYear = Some(payment.taxYear),
+      chargeClassification = payment.chargeClassification.flatMap(ChargeClassificationType.fromString)
     )
   }
 
@@ -149,7 +151,8 @@ object RepaymentHistoryUtils extends Logging {
       amount = payment.amount,
       linkUrl = getCreditsLinkUrl(payment.documentDate, isAgent),
       visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}",
-      taxYear = Some(payment.taxYear)
+      taxYear = Some(payment.taxYear),
+      chargeClassification = payment.chargeClassification.flatMap(ChargeClassificationType.fromString)
     )
   }
 
@@ -176,7 +179,8 @@ object RepaymentHistoryUtils extends Logging {
           getCreditsLinkUrl(dueDate, isAgent),
         visuallyHiddenText = transactionId,
         taxYear = Some(payment.taxYear),
-        isRevenueAmendment = payment.isRevenueAmendment
+        isRevenueAmendment = payment.isRevenueAmendment,
+        chargeClassification = payment.chargeClassification.flatMap(ChargeClassificationType.fromString)
       )
     }
   }
@@ -189,7 +193,8 @@ object RepaymentHistoryUtils extends Logging {
       transactionId = Some(chargeItem.transactionId),
       linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId, codedOut = Some(true)),
       visuallyHiddenText = chargeItem.transactionType.toString,
-      taxYear = Some(chargeItem.taxYear.endYear)
+      taxYear = Some(chargeItem.taxYear.endYear), 
+      chargeClassification = chargeItem.chargeClassification.flatMap(ChargeClassificationType.fromString)
     )
   }
 

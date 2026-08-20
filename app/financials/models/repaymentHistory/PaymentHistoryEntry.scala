@@ -21,6 +21,9 @@ import common.services.DateServiceInterface
 import financials.models.*
 
 import java.time.LocalDate
+import shared.enums.ChargeClassificationType
+import shared.enums.ChargeClassificationType.*
+import play.api.i18n.Messages
 
 case class PaymentHistoryEntry(date: LocalDate,
                                creditType: TransactionType,
@@ -29,8 +32,8 @@ case class PaymentHistoryEntry(date: LocalDate,
                                linkUrl: String,
                                visuallyHiddenText: String,
                                private val taxYear: Option[Int],
-                               isRevenueAmendment: Boolean = false)(implicit val dateService: DateServiceInterface) {
-
+                               isRevenueAmendment: Boolean = false,
+                               chargeClassification: Option[ChargeClassificationType] = None)(implicit val dateService: DateServiceInterface) {
   def getTaxYear: TaxYear = {
     taxYear match {
       case Some(taxEndYear) if taxEndYear != 9999 => TaxYear.forYearEnd(taxEndYear)
@@ -50,4 +53,10 @@ case class PaymentHistoryEntry(date: LocalDate,
   )
 
   def isCredit: Boolean = creditTypes.contains(creditType)
+
+  def description(using messages: Messages): String = 
+    (creditType, chargeClassification) match
+        case (ITSAReturnAmendmentCredit, Some(AutoCorrection | ManualCorrection)) => messages("paymentHistory.correction")
+        case (_, Some(RevenueAmendments)) => messages("paymentHistory.revenueAmendment")  
+        case _ => messages(s"paymentHistory.${creditType.key}")
 }
