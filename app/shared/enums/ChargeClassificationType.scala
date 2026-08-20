@@ -32,3 +32,9 @@ object ChargeClassificationType:
       case Some(ChargeClassificationType.RevenueAmendments) => true
       case _ => false
     }
+
+  def isCorrection(chargeClassification: Option[String]): Boolean =
+    chargeClassification.flatMap(ChargeClassificationType.fromString) match {
+      case Some(AutoCorrection) | Some(ManualCorrection) => true
+      case _ => false
+    }
