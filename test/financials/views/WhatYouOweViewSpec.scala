@@ -794,7 +794,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
-            pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+            pageDocument.getElementById("suspendedCharge-taxYearSummary-link-0").attr("href") shouldBe
               appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
             pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)

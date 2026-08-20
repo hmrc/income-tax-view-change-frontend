@@ -80,7 +80,7 @@
         }">@chargeInfo(viewModel.lpp2Url, s"due-${index}", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false)</td>
         <td class="govuk-table__cell" id="suspended-due-charge-tax-year-@{
             index
-        }">@taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl)</td>
+        }">@taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl, suspendedCharge = true)</td>
         @if(charge.isAccruingInterest) {
             <td class="govuk-table__cell" id="suspended-accrued-interest-amount-due-@{
                 index
