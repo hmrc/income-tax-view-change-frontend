@@ -45,8 +45,8 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
     s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/$nino/obligations/from/$fromDate/to/$toDate"
   }
 
-  def getFulfilledObligationsUrl(nino: String): String = {
-    s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/$nino/fulfilled-obligations"
+  private def getFulfilledObligationsUrl(nino: String, fromDate: LocalDate, toDate: LocalDate): String = {
+    s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/$nino/fulfilled-obligations/from/$fromDate/to/$toDate"
   }
 
   def getOpenObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
@@ -88,9 +88,9 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
     }
   }
 
-  def getFulfilledObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
+  def getFulfilledObligations(fromDate: LocalDate, toDate: LocalDate)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
 
-    val url = getFulfilledObligationsUrl(mtdUser.nino)
+    val url = getFulfilledObligationsUrl(mtdUser.nino, fromDate, toDate)
     logger.debug(s"[getFulfilledObligations] GET $url")
 
     http.get(url"$url").execute[HttpResponse] map { response =>
