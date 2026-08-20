@@ -51,7 +51,10 @@
                     messageKey = "chargeSummary.dunning.locks.banner.linkText"
                 )
             }
-            case (_ , true) if chargeHistoryEnabled => {
+            case (true , true) if chargeHistoryEnabled => {
+                @messages("chargeSummary.dunning.locks.informal.standover1.banner.note")
+            }
+            case (false , true) if chargeHistoryEnabled => {
                 @messages("chargeSummary.dunning.locks.informal.standover1.banner.note")
                 <br></br>
                 @messages("chargeSummary.dunning.locks.informal.standover2.banner.note")
