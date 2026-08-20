@@ -42,7 +42,7 @@
     @p(){
         <b>
         @(latePaymentInterestCharge, chargeItem.dunningLock) match {
-            case (true, _ ) => {
+            case (true, _) => {
                 @link(
                     classes="govuk-notification-banner__link govuk-notification-banner__heading",
                     link=appConfig.taxAppealsUrl,

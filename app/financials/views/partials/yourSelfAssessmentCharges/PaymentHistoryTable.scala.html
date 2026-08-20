@@ -118,7 +118,7 @@
                 )
             ) else Nil,
 
-        if(viewModel.chargeItem.dunningLock && viewModel.chargeHistoryEnabled)
+        if(viewModel.chargeItem.dunningLock && viewModel.chargeHistoryEnabled || viewModel.latePaymentInterestCharge && viewModel.chargeItem.dunningLock && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
                    content = HtmlContent(viewModel.chargeItem.dueDate.map(_.toLongDateShort.toNonBreaking).getOrElse(Html(messages("paymentHistory.unknown"))))

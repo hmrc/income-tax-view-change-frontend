@@ -106,7 +106,7 @@
     gatewayPage = viewModel.gatewayPage,
     btaAndPtaServiceNavigation = viewModel.serviceNavigationPartial) {
 
-    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
+    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock || (viewModel.chargeHasDunningLock && viewModel.chargeHistoryEnabled)) {
         @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig, viewModel.chargeHistoryEnabled)
     }
 
