@@ -2342,6 +2342,7 @@ paymentHistory.payment                                          = Payment you ma
 paymentHistory.paymentToHmrc                                    = Payment you made to HMRC
 paymentHistory.cutOver                                          = Credit from an earlier tax year
 paymentHistory.mfa                                              = Credit from HMRC adjustment
+paymentHistory.correction                                       = Credit from HMRC correction to your tax return
 paymentHistory.balancingCharge                                  = Credit from overpaid tax
 paymentHistory.repaymentInterest                                = Credit from repayment interest
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return

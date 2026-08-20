@@ -2324,6 +2324,7 @@ paymentHistory.payment                                          = Taliad roeddec
 paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
 paymentHistory.cutOver                                          = Credyd o flwyddyn dreth gynharach
 paymentHistory.mfa                                              = Credyd o ganlyniad i addasiad gan CThEF
+paymentHistory.correction                                       = Credyd o ganlyniad i gywiriad gan CThEF, i’ch Ffurflen Dreth
 paymentHistory.balancingCharge                                  = Credyd o ordaliad treth
 paymentHistory.repaymentInterest                                = Credyd o log ar ad-daliadau
 paymentHistory.POA1RR-credit                                    = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
