@@ -28,7 +28,7 @@ class AgentLanguageController @Inject()(implicit mcc: MessagesControllerComponen
                                         appConfig: FrontendAppConfig,
                                         languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
 
-  override def fallbackURL: String = appConfig.enterClientsUTRUrl //will fall back to Agent home when implemented
+  override def fallbackURL: String = appConfig.enterClientsUTRUrl(false) //will fall back to Agent home when implemented
 
   override protected def languageMap: Map[String, Lang] = appConfig.languageMap
 

@@ -19,7 +19,7 @@ package businessDetails.utils
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.OverseasBusinessAddress
+import common.models.admin.{NewHubContextRootEnabled, OverseasBusinessAddress}
 import common.models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logging
 import play.api.mvc.Result
@@ -53,7 +53,7 @@ trait IncomeSourcesUtils extends FeatureSwitching with Logging {
 
   def withOverseasBusinessFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (!isEnabled(OverseasBusinessAddress)) {
-      Future(Redirect(appConfig.homePageUrl(user.isAgent)))
+      Future(Redirect(appConfig.homePageUrl(user.isAgent, isEnabled(NewHubContextRootEnabled))))
     } else {
       comeBlock
     }

@@ -35,6 +35,13 @@ class FeatureSwitchService @Inject()(val featureSwitchConnector: FeatureSwitchCo
     featureSwitchConnector.getAllSwitches()
   }
 
+  def isEnabled(featureSwitchName: FeatureSwitchName)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    logger.info(s"Checking if feature switch ${featureSwitchName.name} is enabled")
+    getAll().map {featureSwitches =>
+      featureSwitches.exists(x => x.name.name == featureSwitchName.name && x.isEnabled)
+    }
+  }
+
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean)(implicit hc: HeaderCarrier): Future[Boolean] = {
     logger.info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {

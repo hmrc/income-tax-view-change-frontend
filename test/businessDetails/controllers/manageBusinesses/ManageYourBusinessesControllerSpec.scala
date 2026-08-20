@@ -160,10 +160,10 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       s"the $mtdUserRole is authenticated" should {
         "render the manage businesses page" when {
           "the DisplayBusinessStartDate FS in enabled" in {
+            setupMockFeatureSwitches(DisplayBusinessStartDate)
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            setupMockFeatureSwitches(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession()

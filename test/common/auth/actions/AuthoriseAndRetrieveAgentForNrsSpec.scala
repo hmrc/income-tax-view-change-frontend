@@ -79,7 +79,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              fakeRequestWithClientDetails,
+              requestWithFeatureSwitches(fakeRequestWithClientDetails),
               defaultAsyncBody{res =>
                 res.authUserDetails.affinityGroup shouldBe Some(affinityGroup)
                 res.authUserDetails.optNino shouldBe Some(testNino)
@@ -118,7 +118,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsyncBody{res =>
                 res.authUserDetails.affinityGroup shouldBe Some(affinityGroup)
                 res.authUserDetails.optNino shouldBe None
@@ -154,7 +154,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsync)
 
             status(result) shouldBe SEE_OTHER
@@ -175,7 +175,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.authorise(false).invokeBlock(
-          fakeRequestWithActiveSession,
+          requestWithFeatureSwitches(fakeRequestWithActiveSession),
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER
@@ -191,7 +191,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.authorise(false).invokeBlock(
-          fakeRequestWithActiveSession,
+          requestWithFeatureSwitches(fakeRequestWithActiveSession),
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER
@@ -207,7 +207,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.authorise(false).invokeBlock(
-          fakeRequestWithActiveSession,
+          requestWithFeatureSwitches(fakeRequestWithActiveSession),
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER

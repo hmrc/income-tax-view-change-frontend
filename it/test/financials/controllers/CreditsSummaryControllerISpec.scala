@@ -22,6 +22,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.helpers.GetInsourceDetailsStub
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
+import common.helpers.servicemocks.FeatureSwitchStub.featureSwitchesResponse
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
@@ -41,7 +42,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
   def testUser(mtdUserRole: MTDUserRole): AuthorisedAndEnrolledRequest[_] = {
     AuthorisedAndEnrolledRequest(
       testMtditid, mtdUserRole, defaultAuthUserDetails(mtdUserRole),
-      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails)
+      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails),
+      featureSwitchesResponse(newHubContextRootEnabled = newHubContextRootEnabled)
     )(FakeRequest())
   }
 

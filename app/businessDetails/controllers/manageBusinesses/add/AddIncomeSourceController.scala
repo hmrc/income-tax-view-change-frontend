@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.models.admin.DisplayBusinessStartDate
+import common.models.admin.{DisplayBusinessStartDate, NewHubContextRootEnabled}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import shared.enums.JourneyType.Add
 
@@ -50,7 +50,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
       handleRequest(
         isAgent = false,
         sources = user.incomeSources,
-        backUrl = appConfig.individualHomeUrl
+        backUrl = appConfig.individualHomeUrl(isEnabled(NewHubContextRootEnabled))
       )(implicitly, itvcErrorHandler)
   }
 
@@ -59,7 +59,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
       handleRequest(
         isAgent = true,
         sources = mtdItUser.incomeSources,
-        backUrl = appConfig.agentHomeUrl
+        backUrl = appConfig.agentHomeUrl(isEnabled(NewHubContextRootEnabled))
       )(implicitly, itvcErrorHandlerAgent)
 
   }

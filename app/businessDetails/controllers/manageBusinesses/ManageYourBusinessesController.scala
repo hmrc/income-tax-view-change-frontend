@@ -26,7 +26,7 @@ import businessDetails.views.html.manageBusinesses.ManageYourBusinessesView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{HideBusinessName, DisplayBusinessStartDate}
+import common.models.admin.{HideBusinessName, DisplayBusinessStartDate, NewHubContextRootEnabled}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 
 import javax.inject.{Inject, Singleton}
@@ -49,7 +49,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     handleRequest(
       sources = user.incomeSources,
       isAgent = false,
-      backUrl = appConfig.individualHomeUrl
+      backUrl = appConfig.individualHomeUrl(isEnabled(NewHubContextRootEnabled))
     )(user, itvcErrorHandler)
   }
 
@@ -57,7 +57,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     handleRequest(
       sources = user.incomeSources,
       isAgent = true,
-      backUrl = appConfig.agentHomeUrl
+      backUrl = appConfig.agentHomeUrl(isEnabled(NewHubContextRootEnabled))
     )(user, itvcErrorHandlerAgent)
   }
 

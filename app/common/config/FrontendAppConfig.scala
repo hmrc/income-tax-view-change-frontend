@@ -30,9 +30,12 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //App
   lazy val basePath: String = servicesConfig.getString("base.context-root")
+  lazy val hubBasePath: String = servicesConfig.getString("base.context-root-hub")
   lazy val agentBasePath: String = s"$basePath/agents"
+  lazy val agentHubBasePath: String = s"$hubBasePath/agents"
   lazy val baseUrl: String = servicesConfig.getString("base.url")
   override val baseFullUrl: String = s"$baseUrl$basePath"
+  override val hubBaseFullUrl: String = s"$baseUrl$hubBasePath"
   lazy val appName: String = servicesConfig.getString("appName")
 
   //Feedback Config

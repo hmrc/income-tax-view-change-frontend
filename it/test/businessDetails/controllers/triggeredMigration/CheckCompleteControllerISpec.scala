@@ -63,7 +63,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
   mtdAllRoles.foreach { mtdRole =>
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
-    val homePageUrl: String = appConfig.homePageUrl(mtdRole.isAgent)
+    val homePageUrl: String = appConfig.homePageUrl(mtdRole.isAgent, newHubContextRootEnabled)
 
     s"GET $path" when {
       s"user is $mtdRole" should {

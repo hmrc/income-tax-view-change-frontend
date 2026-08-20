@@ -16,20 +16,21 @@
 
 package common.controllers
 
-import common.config.FrontendAppConfig
-import common.testUtils.TestSupport
+import common.mocks.auth.MockAuthActions
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*
 
 import java.net.URLEncoder
 
-class SignInControllerSpec extends TestSupport {
+class SignInControllerSpec extends MockAuthActions {
 
-  object TestSignInController extends SignInController(
-    app.injector.instanceOf[FrontendAppConfig])(app.injector.instanceOf[MessagesControllerComponents])
+  override lazy val app: Application = applicationBuilderWithAuthBindings.build()
+
+  val TestSignInController = app.injector.instanceOf[SignInController]
   
   "navigating to SignIn page" should {
+    setupMockFeatureSwitches()
     lazy val result = TestSignInController.signIn(fakeRequestNoSession)
 
     "return OK (303)" in {
