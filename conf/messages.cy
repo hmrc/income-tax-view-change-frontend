@@ -2481,6 +2481,7 @@ money-in-your-account.where-from.table-row.tax-year                     = {0} i 
 money-in-your-account.where-from.table-row.tax-year.hidden              = Blwyddyn dreth {0} i {1}
 money-in-your-account.where-from.payment-row.description                = Taliad a wnaethoch i CThEF ar {0}
 money-in-your-account.where-from.credit-row.description                 = Credyd o flwyddyn dreth gynharach
+money-in-your-account.where-from.correction-row.description             = Credyd o ganlyniad i gywiriad gan CThEF, i’ch Ffurflen Dreth
 money-in-your-account.where-from.refund-row.description                 = Ad-daliad ar y gweill
 money-in-your-account.where-from.ra-credit-row.description              = Credyd o ddiwygiad yn sgil ymholiad gan CThEF
 money-in-your-account.claim-refund.button-text                          = Hawlio ad-daliad

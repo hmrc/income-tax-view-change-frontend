@@ -2537,6 +2537,15 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
     ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
       Transaction(ITSAReturnAmendmentCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "IRA-credit")))
   }
+  
+  def withHmrcAutoCorrection(dueDate: LocalDate, outstandingAmount: BigDecimal) =
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(ITSAReturnAmendmentCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "IRA-credit", Some("AC"))))
+  
+  def withHmrcManualCorrection(dueDate: LocalDate, outstandingAmount: BigDecimal) =
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(ITSAReturnAmendmentCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "IRA-credit", Some("MC"))))
+  
   def get(): CreditsModel = model
 }
 
