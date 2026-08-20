@@ -18,7 +18,7 @@ package financials.models
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import shared.enums.ChargeClassificationType.isRevenueAmendment
+import shared.enums.ChargeClassificationType.{isRevenueAmendment, isCorrection}
 import play.api.Logging
 import shared.enums.ChargeClassificationType
 
