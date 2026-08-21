@@ -155,28 +155,40 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="govuk-summary-card__content">
-                        <dl class="govuk-summary-list">
-                            @if(sources.displayStartDate) {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key" id="@{s"business-date-started-text-$index"}">
+                    @if(sources.displayStartDate || !sources.hideBusinessName || business.tradingName.nonEmpty) {
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                @if(sources.displayStartDate) {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key" id="@{
+                                            s"business-date-started-text-$index"
+                                        }">
                                         @getMessage("datestarted")
-                                    </dt>
-                                    <dd class="govuk-summary-list__value" id="@{s"business-date-$index"}">
+                                        </dt>
+                                        <dd class="govuk-summary-list__value" id="@{
+                                            s"business-date-$index"
+                                        }">
                                         @business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))
-                                    </dd>
-                                </div>
-                            }
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key no-border" id="@{s"business-trade-name-text-$index"}">
-                                    @getMessage("name")
-                                </dt>
-                                <dd class="govuk-summary-list__value no-border" id="@{s"business-trade-name-$index"}">
-                                    @business.tradingName.getOrElse(getMessage("unknown-field"))
-                                </dd>
-                            </div>
-                        </dl>
-                    </div>
+                                        </dd>
+                                    </div>
+                                }
+                                @if(!sources.hideBusinessName || business.tradingName.nonEmpty) {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key no-border" id="@{
+                                            s"business-trade-name-text-$index"
+                                        }">
+                                        @getMessage("name")
+                                        </dt>
+                                        <dd class="govuk-summary-list__value no-border" id="@{
+                                            s"business-trade-name-$index"
+                                        }">
+                                        @business.tradingName.getOrElse(getMessage("unknown-field"))
+                                        </dd>
+                                    </div>
+                                }
+                            </dl>
+                        </div>
+                    }
                 </div>
             }
 

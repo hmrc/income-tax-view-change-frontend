@@ -20,7 +20,7 @@ import businessDetails.models.audit.TriggeredMigrationStartAuditModel
 import common.enums.TriggeredMigration.Channel.{HmrcConfirmed, HmrcUnconfirmed}
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub, YearOfMigrationStub}
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
@@ -45,16 +45,17 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
   object CheckHmrcRecordsMessages {
     val heading = "Check HMRC records only list your active businesses"
     val title = "Check HMRC records only list your active businesses"
-    val desc = "You now have quarterly deadlines for your sole trader and/or property businesses listed here."
+    val desc = "You must check and confirm your income sources for the 2017 to 2018 tax year onwards, before you can continue. These income sources were created using information from your previous tax return."
+    val desc2 = "You may now have quarterly deadlines for your sole trader and/or property businesses listed here."
     val inset = "Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold."
-    val bulletStart = "If necessary, you must:"
-    val bullet1 = "add any businesses that are missing"
+    val bulletStart = "So if necessary, you must:"
+    val bullet1 = "add any active businesses that are missing"
     val bullet2 = "cease any that you no longer get income from"
 
     val yourActiveBusinessesHeading = "Your active businesses"
     val soleTraderHeading = "Sole trader businesses"
     val addASoleTraderBusinessText = "Add a sole trader business"
-    val soleTraderGuidance = "You’re a sole trader if you run your own business as an individual and work for yourself. This is also known as being self‑employed."
+    val soleTraderGuidance = "You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ‘sole trader’. If you work through a limited company, you’re not a sole trader."
 
     val propertyHeading = "Property businesses"
     val ukPropertyHeading = "UK property"
@@ -93,6 +94,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
+
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveSoleTrader(result)
@@ -109,6 +112,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result:WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
@@ -125,6 +129,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -142,6 +147,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -158,6 +164,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -176,6 +183,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -191,6 +199,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -202,10 +211,11 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
               GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allCeasedBusinesses.copy(channel = HmrcUnconfirmed.getValue, yearOfMigration = None))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
-              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2019", Some("LATEST"))(
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -223,6 +233,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies): Future[WSResponse]) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
@@ -310,7 +321,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       httpStatus(OK),
       pageTitle(mtdUserRole, CheckHmrcRecordsMessages.title),
       elementTextByID("check-hmrc-records-heading")(CheckHmrcRecordsMessages.heading),
-      elementTextByID("check-hmrc-records-desc")(CheckHmrcRecordsMessages.desc),
+      elementTextByID("check-hmrc-records-desc-1")(CheckHmrcRecordsMessages.desc),
+      elementTextByID("check-hmrc-records-desc-2")(CheckHmrcRecordsMessages.desc2),
       elementTextByID("check-hmrc-records-inset")(CheckHmrcRecordsMessages.inset),
       elementTextByID("check-hmrc-records-bullet-start")(CheckHmrcRecordsMessages.bulletStart),
       elementTextByID("check-hmrc-records-bullets")(s"${CheckHmrcRecordsMessages.bullet1} ${CheckHmrcRecordsMessages.bullet2}"),

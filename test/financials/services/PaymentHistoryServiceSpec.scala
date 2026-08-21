@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.incomeSourceDetails.TaxYear
+import common.services.YearOfMigrationService
 import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import common.testUtils.TestSupport
 import financials.connectors.RepaymentHistoryConnector
@@ -27,11 +28,12 @@ import financials.mocks.connectors.MockFinancialDetailsConnector
 import financials.mocks.services.{MockChargeHistoryService, MockFinancialDetailsService}
 import financials.models.{Payment, Payments, PaymentsError}
 import financials.services.PaymentHistoryService.PaymentHistoryError
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class PaymentHistoryServiceSpec
   extends TestSupport
@@ -57,15 +59,17 @@ class PaymentHistoryServiceSpec
   val oldUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), oldUserDetails)
 
   val mockRepaymentHistoryConnector: RepaymentHistoryConnector = mock(classOf[RepaymentHistoryConnector])
+  val mockYearOfMigrationService: YearOfMigrationService = mock(classOf[YearOfMigrationService])
 
   object TestPaymentHistoryService extends PaymentHistoryService(mockRepaymentHistoryConnector,
-    mockFinancialDetailsConnector, mockFinancialDetailsService, mockChargeHistoryService, dateService, appConfig)
+    mockFinancialDetailsConnector, mockFinancialDetailsService, mockChargeHistoryService, mockYearOfMigrationService, dateService, appConfig)
 
   "getPaymentHistory" when {
     "An error is returned from the connector" should {
       "return a payment history error" in {
         setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(500, "ERROR"))
         setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(List.empty))
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(oldUser.nino)).thenReturn(Future.successful(List(getCurrentTaxEndYear - 1, getCurrentTaxEndYear)))
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
 
       }
@@ -73,6 +77,7 @@ class PaymentHistoryServiceSpec
       "return a payment history error for status 422" in {
         setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(UNPROCESSABLE_ENTITY, "ERROR"))
         setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(List.empty))
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(oldUser.nino)).thenReturn(Future.successful(List(getCurrentTaxEndYear - 1, getCurrentTaxEndYear)))
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
 
       }
@@ -82,6 +87,7 @@ class PaymentHistoryServiceSpec
       "return a list of payments and ignore any payment data not found (404s)" in {
         setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(PaymentsError(NOT_FOUND, "NOT FOUND"))
         setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(paymentFull))
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(oldUser.nino)).thenReturn(Future.successful(List(2023)))
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
       }
     }
@@ -90,6 +96,7 @@ class PaymentHistoryServiceSpec
       "return a list of payments with no duplicates" in {
         setupGetPayments(TaxYear(getCurrentTaxEndYear-1, getCurrentTaxEndYear))(Payments(paymentFull))
         setupGetPayments(TaxYear(getCurrentTaxEndYear-2, getCurrentTaxEndYear-1))(Payments(paymentFull))
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(oldUser.nino)).thenReturn(Future.successful(List(2023)))
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
       }
     }
@@ -101,6 +108,7 @@ class PaymentHistoryServiceSpec
       "return a payment history error" in {
         setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
           TaxYear.forYearEnd(getCurrentTaxEndYear))(PaymentsError(500, "ERROR"))
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(oldUser.nino)).thenReturn(Future.successful(List(getCurrentTaxEndYear - 1, getCurrentTaxEndYear)))
         TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Left(PaymentHistoryError)
 
       }
@@ -108,6 +116,7 @@ class PaymentHistoryServiceSpec
       "return a payment history error for status 422" in {
         setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
           TaxYear.forYearEnd(getCurrentTaxEndYear))(PaymentsError(UNPROCESSABLE_ENTITY, "ERROR"))
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(oldUser.nino)).thenReturn(Future.successful(List(getCurrentTaxEndYear - 1, getCurrentTaxEndYear)))
         TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Left(PaymentHistoryError)
 
       }
@@ -117,6 +126,7 @@ class PaymentHistoryServiceSpec
       "return a list of payments" in {
         setupGetPayments(TaxYear.forYearEnd(getCurrentTaxEndYear - 1),
           TaxYear.forYearEnd(getCurrentTaxEndYear))(Payments(paymentFull))
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(oldUser.nino)).thenReturn(Future.successful(List(getCurrentTaxEndYear - 1, getCurrentTaxEndYear)))
         TestPaymentHistoryService.getPaymentHistoryV2.futureValue shouldBe Right(paymentFull)
       }
     }

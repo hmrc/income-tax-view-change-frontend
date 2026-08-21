@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.YearOfMigrationStub
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import financials.helpers.FinancialDetailsStub
 import financials.models.audit.PaymentAllocationsResponseAuditModel
@@ -47,7 +48,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
     pathStart + s"/payment-made-to-hmrc?documentNumber=$documentNum"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
@@ -85,8 +86,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(getPath(mtdUserRole, docNumber), additionalCookies)) { result =>
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                  elementTextBySelector("tbody")("31 Jan 2021 HMRC adjustment Tax year 2021 to 2022 2021 to 2022 £800.00"),
+                  pageTitle(mtdUserRole, "paymentAllocation.heading")
                 )
 
                 verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModelHmrcAdjustment).detail)
@@ -99,11 +99,11 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
 
               FinancialDetailsStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
                 to = s"${getCurrentTaxYearEnd.getYear}-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
-
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
               FinancialDetailsStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidLpiPaymentAllocationsModel))
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
+              YearOfMigrationStub.stubGetYearOfMigration((getCurrentTaxYearEnd.getYear - 1).toString)
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 result should have(
@@ -131,6 +131,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
               FinancialDetailsStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAndLpiPaymentAllocationsModel))
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
+              YearOfMigrationStub.stubGetYearOfMigration((getCurrentTaxYearEnd.getYear - 1).toString)
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 result should have(

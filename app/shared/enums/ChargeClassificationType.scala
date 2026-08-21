@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.enums
+package shared.enums
 
 enum ChargeClassificationType(val value: String):
   case AutoCorrection extends ChargeClassificationType("AC")

@@ -72,10 +72,9 @@
             @{ messages(s"incomeSources.add.${incomeSourceType.messagesSuffix}") }
         </span>
 
-        @h1(msg = getMessage("heading"), size = "xl")
+        @h1(msg = getMessage("heading"))
 
         @p(id = Some("business-start-date-description-1")){ @getMessage("hint") }
-        @p(id = Some("business-start-date-description-2")){ @getMessage("hint2") }
 
         @govukDateInput(
             DateViewModel(

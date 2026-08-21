@@ -57,10 +57,19 @@ class NextUpdatesHelperR17Spec extends TestSupport {
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate.map{
+  ))).obligationsByDate(false).map{
     case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
   }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("Quarter", quarterlyBusinessObligation)), Seq.empty)),
+    isFinancialsEnabled = true)
+
+  lazy val obligationsModelWithUnknown: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
+    business1.copy(tradingName = None).incomeSourceId,
+    twoObligationsSuccessModel.obligations
+  ))).obligationsByDate(true).map {
+    case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+      DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+  }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("", quarterlyBusinessObligation)), Seq.empty)),
     isFinancialsEnabled = true)
 
 
@@ -186,6 +195,12 @@ class NextUpdatesHelperR17Spec extends TestSupport {
         pageDocument.getElementById("quarterly-deadline-date-upcoming-1").text() shouldBe "31 Oct 2017"
         pageDocument.getElementById("quarterly-period-upcoming-1").text() shouldBe "6 Apr 2017 to 5 Apr 2018"
         pageDocument.getElementById("quarterly-income-sources-upcoming-1").text() shouldBe "Business income"
+      }
+
+      "display the correct table content for the current year tab - with hidden unknown business name" in new Setup(isAgent = false, obligationsModelWithUnknown, Voluntary, Annual) {
+        pageDocument.getElementById("quarterly-deadline-date-missed-0").text() shouldBe "31 Jan 2025"
+        pageDocument.getElementById("quarterly-period-missed-0").text() should fullyMatch regex """1\sJul\s2017\sto\s30\s(?:Sep|Sept)\s2017"""
+        pageDocument.getElementById("quarterly-income-sources-missed-0").text() shouldBe ""
       }
 
       // Missed Deadlines

@@ -17,6 +17,7 @@
 package returns.controllers
 
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.implicits.Json.*
 import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
 import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
@@ -233,7 +234,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 )
 
                 allObligations.obligations.foreach {
-                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                 }
 
                 res should have(
@@ -284,7 +285,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 )
 
                 allObligations.obligations.foreach {
-                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                 }
 
                 res should have(
@@ -295,7 +296,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
                     None, financialDetailsDunningLockSuccess.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
-                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
+                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false)))
               }
 
               "has payments with enquiry amendment RA in the payments tab" in {
@@ -339,7 +340,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 )
 
                 allObligations.obligations.foreach {
-                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                 }
 
                 res should have(
@@ -353,7 +354,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
                     None, financialDetailsSuccessWithEnquiryAmendment.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
-                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
+                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false)))
               }
 
 
@@ -548,7 +549,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     noOffcalls = 2)
 
                   allObligations.obligations.foreach {
-                    obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                    obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                   }
 
                   res should have(
@@ -564,7 +565,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                       Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                       None, emptyPaymentsList,
                       allObligations, showForecastData = true, ctaViewModel = emptyCTAModel,
-                      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false
+                      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false
                     )))
                 }
 
@@ -644,7 +645,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   )
 
                   allObligations.obligations.foreach {
-                    obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                    obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                   }
 
                   val errMessages = liabilityCalculationModelErrorMessagesFormatted(mtdUserRole).messages.get.errorMessages
@@ -711,10 +712,10 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   messagesAPI, TaxYearSummaryViewModel(
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                     None, auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
+                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false)))
 
                 allObligations.obligations.foreach {
-                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                 }
                 result should have(
                   httpStatus(OK),

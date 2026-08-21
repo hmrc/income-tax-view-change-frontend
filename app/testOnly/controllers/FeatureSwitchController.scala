@@ -18,10 +18,9 @@ package testOnly.controllers
 
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{FeatureSwitchName, InvalidFS}
+import common.models.admin.{BusinessDetailsFrontend, FeatureSwitchName, FinancialsFrontend, InvalidFS, NewHubContextRootEnabled, ObligationsFrontend, ReturnsFrontend}
 import testOnly.services.admin.FeatureSwitchService
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
-import common.models.admin.{BusinessDetailsFrontend, FinancialsFrontend, ObligationsFrontend, ReturnsFrontend}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -81,7 +80,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
   }
 
-  lazy val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend)
+  lazy val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend, NewHubContextRootEnabled)
 
   // TODO: refactor next method
   def submit(): Action[AnyContent] = Action.async { implicit request =>

@@ -18,9 +18,9 @@ package financials.models
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import financials.enums.ChargeClassificationType
-import financials.enums.ChargeClassificationType.isRevenueAmendment
+import shared.enums.ChargeClassificationType.isRevenueAmendment
 import play.api.Logging
+import shared.enums.ChargeClassificationType
 
 trait TransactionItem extends Logging {
 

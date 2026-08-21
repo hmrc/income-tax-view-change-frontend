@@ -18,6 +18,7 @@ package financials.models.creditsandrefunds
 
 import financials.models.core.ResponseModel.{AResponseReads, SuccessModel}
 import common.models.incomeSourceDetails.TaxYear
+import shared.enums.ChargeClassificationType
 import financials.models.*
 import play.api.libs.json.*
 
@@ -50,7 +51,15 @@ case class Transaction(transactionType: CreditType,
                        taxYear: Option[TaxYear],
                        dueDate: Option[LocalDate],
                        effectiveDateOfPayment: Option[LocalDate],
-                       transactionId: String)
+                       transactionId: String,
+                       chargeClassification: Option[String] = None) {
+
+  def isRevenueAmendment: Boolean =
+    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
+      case Some(ChargeClassificationType.RevenueAmendments) => true
+      case _ => false
+    }
+}
 
 object Transaction {
   implicit val format: OFormat[Transaction] = Json.format[Transaction]

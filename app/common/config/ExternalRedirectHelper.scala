@@ -31,8 +31,10 @@ trait ExternalRedirectHelper {
 
   val servicesConfig: ServicesConfig
   val config: Configuration
+
+  val baseFullUrl: String
   
-  lazy val hubBaseUrl: String = servicesConfig.getString("base.fullUrl")
+  lazy val hubBaseUrl: String = baseFullUrl
   lazy val hubAgentBaseUrl: String = s"${hubBaseUrl}/agents"
   
   lazy val individualHomeUrl: String =
@@ -123,7 +125,7 @@ trait ExternalRedirectHelper {
 
   lazy val financialsWhatYouOweAgentUrl: Boolean => String = financialsFrontendEnabled =>
     if (financialsFrontendEnabled)
-      s"$financialsAgentBaseUrl/what-your-client-owes"
+      s"$financialsAgentBaseUrl/what-you-owe"
     else
       financialsRoutes.WhatYouOweController.showAgent().url
 
