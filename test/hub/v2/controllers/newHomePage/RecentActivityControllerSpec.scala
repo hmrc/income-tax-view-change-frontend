@@ -39,6 +39,7 @@ import scala.concurrent.Future
 
 class RecentActivityControllerSpec extends MockAuthActions with MockDateService with MockITSAStatusService {
 
+  override val newHubContextRootEnabled: Boolean = true
   lazy val mockDateServiceInjected: DateService = mMock(classOfDateService)
   lazy val mockRecentActivityService: RecentActivityService = mMock(classOf[RecentActivityService])
   lazy val mockPaymentHistoryService: PaymentHistoryService = mMock(classOf[PaymentHistoryService])

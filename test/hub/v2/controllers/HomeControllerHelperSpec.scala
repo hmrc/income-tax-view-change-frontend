@@ -57,6 +57,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
   
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
+  override val newHubContextRootEnabled: Boolean = true
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
