@@ -22,6 +22,7 @@ import common.config.FrontendAppConfig
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.implicits.ImplicitDateFormatterImpl
+import common.models.admin.FeatureSwitch
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
 import obligations.repositories.OptOutSessionDataRepository
@@ -85,10 +86,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with SessionCookieBaker {
 
+  lazy val newHubContextRootEnabled = false
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
   val basePath: String = WiremockHelper.basePath
+  val hubBasePath: String = WiremockHelper.hubBasePath(newHubContextRootEnabled)
+  val hubBaseUrl: String = WiremockHelper.hubBaseUrl(newHubContextRootEnabled)
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
   val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
@@ -127,12 +131,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     )(FakeRequest())
   }
 
-  def getAuthorisedAndEnrolledUser(mtdUserRole: MTDUserRole): AuthorisedAndEnrolledRequest[_] = {
+  def getAuthorisedAndEnrolledUser(mtdUserRole: MTDUserRole, featureSwitches: List[FeatureSwitch]): AuthorisedAndEnrolledRequest[_] = {
     AuthorisedAndEnrolledRequest(
       testMtditid,
       mtdUserRole,
       defaultAuthUserDetails(mtdUserRole),
-      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails)
+      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails),
+      featureSwitches
     )(FakeRequest())
   }
 

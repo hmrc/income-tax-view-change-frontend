@@ -16,6 +16,7 @@
 
 package financials.utils
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import financials.controllers.routes as financialsRoutes
@@ -28,22 +29,24 @@ trait FallBackBackLinks {
                                   gatewayPageOpt: Option[GatewayPage],
                                   taxYearOpt: Option[Int],
                                   origin: Option[String],
-                                  isReturnsFrontendEnabled: Boolean = false): String =
+                                  isReturnsFrontendEnabled: Boolean = false)(implicit user: MtdItUser[_]): String =
     (gatewayPageOpt, taxYearOpt) match
       case (Some(TaxYearSummaryPage), Some(taxYear)) =>
         appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"), isReturnsFrontendEnabled)
-      case (Some(TaxYearSummaryPage), None) => appConfig.homePageUrl(isAgent, origin)
+      case (Some(TaxYearSummaryPage), None) => appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled, origin)
       case (Some(WhatYouOwePage), _) => whatYouOweUrl(isAgent, origin)
       case (Some(PaymentHistoryPage), _) => paymentHistoryUrl(isAgent, origin)
-      case _ => appConfig.homePageUrl(isAgent, origin)
+      case _ => appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled, origin)
 
-  def getChargeSummaryBackUrl(isAgent: Boolean, gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isReturnsFrontendEnabled: Boolean = false): String =
+  def getChargeSummaryBackUrl(isAgent: Boolean, gatewayPageOpt: Option[GatewayPage],
+                              taxYear: Int, origin: Option[String], isReturnsFrontendEnabled: Boolean = false)
+                             (implicit user: MtdItUser[_]): String =
     gatewayPageOpt match
       case Some(TaxYearSummaryPage) =>
         appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"), isReturnsFrontendEnabled)
       case Some(WhatYouOwePage) => whatYouOweUrl(isAgent, origin)
       case Some(PaymentHistoryPage) => paymentHistoryUrl(isAgent, origin)
-      case _ => appConfig.homePageUrl(isAgent, origin)
+      case _ => appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled, origin)
 
   private def whatYouOweUrl(isAgent: Boolean, origin: Option[String]): String =
     if isAgent then financialsRoutes.WhatYouOweController.showAgent().path

@@ -80,12 +80,9 @@ class TaxYearSummaryController @Inject()(
   private def taxYearsUrl(origin: Option[String]): String = returns.controllers.routes.TaxYearsController.showTaxYears(origin).url
 
   private def whatYouOweUrl(origin: Option[String])(implicit user: MtdItUser[_]): String = appConfig.financialsWhatYouOweUrl(true, origin, financialsFrontendEnabled(user))
-
-  private def homeUrl(origin: Option[String]): String = appConfig.individualHomeUrlWithOrigin(origin)
-
+  
   // Agent back urls
   private lazy val agentTaxYearsUrl: String = returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
-  private lazy val agentHomeUrl: String = appConfig.agentHomeUrl
   private lazy val agentWhatYouOweUrl: MtdItUser[_] => String = user =>
     appConfig.financialsWhatYouOweUrl(true, financialsFrontendEnabled = financialsFrontendEnabled(user))
 
@@ -556,7 +553,7 @@ class TaxYearSummaryController @Inject()(
     referer.map(URI.create(_).getPath.equals(taxYearsUrl(origin))) match {
       case Some(true) => taxYearsUrl(origin)
       case Some(false) if referer.map(URI.create(_).getPath.equals(whatYouOweUrl(origin))).get => whatYouOweUrl(origin)
-      case _ => homeUrl(origin)
+      case _ => appConfig.individualHomeUrlWithOrigin(mtdItUser.newHubContextRootEnabled, origin)
     }
   }
 
@@ -564,7 +561,7 @@ class TaxYearSummaryController @Inject()(
     referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
       case Some(true) => agentTaxYearsUrl
       case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get => agentWhatYouOweUrl(mtdItUser)
-      case _ => agentHomeUrl
+      case _ => appConfig.agentHomeUrl(mtdItUser.newHubContextRootEnabled)
     }
   }
 

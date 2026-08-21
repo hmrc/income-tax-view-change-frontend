@@ -1,0 +1,28 @@
+# agent specific routes
+
+
+# Enter Clients UTR
+GET         /client-utr                                                    hub.v2.controllers.agent.EnterClientsUTRController.show()
+POST        /client-utr                                                    hub.v2.controllers.agent.EnterClientsUTRController.submit()
+GET         /client-utr/:utr                                               hub.v2.controllers.agent.EnterClientsUTRController.showWithUtr(utr: String)
+
+# Confirm Client
+GET         /confirm-client-details                                         hub.v2.controllers.agent.ConfirmClientUTRController.show()
+POST        /confirm-client-details                                         hub.v2.controllers.agent.ConfirmClientUTRController.submit()
+
+# UTR Error
+GET         /cannot-view-client                                            hub.v2.controllers.agent.UTRErrorController.show()
+POST        /cannot-view-client                                            hub.v2.controllers.agent.UTRErrorController.submit()
+
+#Home Controller
+GET         /remove-client-sessions                                        hub.v2.controllers.agent.RemoveClientDetailsSessionsController.show()
+
+# Client Relationship Failure
+GET         /not-authorised-to-view-client                                 hub.v2.controllers.agent.ClientRelationshipFailureController.show()
+
+GET         /no-assignment                                                 hub.v2.controllers.agent.NoAssignmentController.show()
+
+#Agent Error
+GET         /agent-error                                                   hub.v2.controllers.agent.errors.AgentErrorController.show()
+
+GET        /language/:lang                                                 hub.v2.controllers.agent.AgentLanguageController.switchToLanguage(lang: String)

@@ -71,7 +71,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
-        backUrl = appConfig.individualHomeUrlWithOrigin(origin),
+        backUrl = appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin),
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
         origin = origin
@@ -81,7 +81,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
-        backUrl = appConfig.homePageUrl(isAgent = true),
+        backUrl = appConfig.homePageUrl(isAgent = true, mtdItUser.newHubContextRootEnabled),
         itvcErrorHandler = itvcErrorHandlerAgent,
         isAgent = true
       )

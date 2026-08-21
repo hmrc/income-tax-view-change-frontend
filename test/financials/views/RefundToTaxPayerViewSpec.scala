@@ -285,8 +285,6 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
               s"has summary list values with Repayment to card method" in new RefundToTaxPayerViewSetup(testRefundViewModelRepaymentToCard) {
                 val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dd")
                 allTableData.get(0).text() shouldBe "23 July 2021"
-                println("******************")
-                println(allTableData.get(1).text())
                 allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypeRepaymentToCard
                 allTableData.get(2).text() shouldBe "£12,345.00"
               }

@@ -37,7 +37,7 @@ class ClientRelationshipFailureController @Inject()(clientRelationshipFailure: C
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def show: Action[AnyContent] = authActions.asAgent() { implicit user =>
-      Ok(clientRelationshipFailure(appConfig.enterClientsUTRUrl))
+      Ok(clientRelationshipFailure(appConfig.enterClientsUTRUrl(user.newHubContextRootEnabled)))
   }
 
 }

@@ -25,6 +25,7 @@
 @import common.views.html.layouts.unifiedLayout
 @import returns.models.liabilitycalculation.viewmodels.CalculationSummary
 @import java.time.LocalDate
+@import common.auth.MtdItUser
 
 @this(layout: unifiedLayout,
       breakdownPartial: taxYearSummaryBreakdownPartial,
@@ -36,7 +37,7 @@
 )
 
 @(overview: CalculationSummary, taxYear: Int, isAgent: Boolean = false, backUrl: String, timeStamp: String,
-        origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None, financialsFrontendEnabled: Boolean)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
+        origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None, financialsFrontendEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_], appConfig: FrontendAppConfig)
 
 @headingText = @{
     val key = s"inYear-tax-overview.${if(isAgent) "agent" else "individual"}.heading"
@@ -57,9 +58,9 @@
 
 @homeUrl = @{
     if(isAgent){
-        appConfig.agentHomeUrl
+        appConfig.agentHomeUrl(user.newHubContextRootEnabled)
     } else {
-        appConfig.individualHomeUrlWithOrigin(origin)
+        appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin)
     }
 }
     

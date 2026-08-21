@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
-import common.models.admin.ObligationsFrontend
+import common.models.admin.{NewHubContextRootEnabled, ObligationsFrontend}
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
@@ -65,7 +65,7 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
       @unused
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
       withTriggeredMigrationFS {
-        Future.successful(Redirect(appConfig.homePageUrl(isAgent)))
+        Future.successful(Redirect(appConfig.homePageUrl(isAgent, isEnabled(NewHubContextRootEnabled))))
       }
     }
 }

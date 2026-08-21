@@ -60,7 +60,7 @@ class SelfServeTimeToPayControllerSpec extends MockAuthActions {
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
-              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any()))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any(), any()))
                 .thenReturn(Future.successful(Right("/correct-url")))
 
               val result = action(fakeRequest)
@@ -73,7 +73,7 @@ class SelfServeTimeToPayControllerSpec extends MockAuthActions {
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
-              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any()))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any(), any()))
                 .thenReturn(Future.successful(Left(SelfServeTimeToPayJourneyException(500, "message"))))
 
               val result = action(fakeRequest)

@@ -266,7 +266,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(appConfig.homePageUrl(mtdUserRole.isAgent))
+                redirectURI(appConfig.homePageUrl(mtdUserRole.isAgent, newHubContextRootEnabled))
               )
             }
           }

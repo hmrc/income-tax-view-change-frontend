@@ -17,15 +17,15 @@
 package common.auth.actions
 
 import com.google.inject.Singleton
-import common.auth.{AuthUserDetails, AuthorisedUserRequest, FrontendAuthorisedFunctions}
+import common.auth.{AuthUserDetails, AuthorisedUserRequest, FrontendAuthorisedFunctions, RequestWithFeatureSwitches}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.viewUtils.InternalUrlHelper
 import play.api.Logging
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
@@ -45,16 +45,16 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
                                           mcc: MessagesControllerComponents)
   extends FeatureSwitching with Logging {
 
-  def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AuthorisedUserRequest] = new ActionRefiner[Request, AuthorisedUserRequest] {
+  def authorise(arnRequired: Boolean = true): ActionRefiner[RequestWithFeatureSwitches, AuthorisedUserRequest] = new ActionRefiner[RequestWithFeatureSwitches, AuthorisedUserRequest] {
 
     implicit val executionContext: ExecutionContext = mcc.executionContext
 
-    override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {
+    override protected def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {
 
       implicit val hc: HeaderCarrier = HeaderCarrierConverter
         .fromRequestAndSession(request, request.session)
 
-      implicit val req: Request[A] = request
+      implicit val req: RequestWithFeatureSwitches[A] = request
 
       val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
       val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
@@ -89,7 +89,7 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
 
 
   private def constructAgentUser[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
+    implicit request: RequestWithFeatureSwitches[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
       val authUserDetails = AuthUserDetails(
         enrolments = enrolments,
@@ -98,14 +98,14 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
         name = name
       )
       Future.successful(
-        Right(AuthorisedUserRequest(authUserDetails))
+        Right(AuthorisedUserRequest(authUserDetails, request.featureSwitches))
       )
   }
 
   private def redirectIfNotAgent[A]()(
-    implicit @unused request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
+    implicit @unused request: RequestWithFeatureSwitches[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
       logger.error(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(appConfig.individualHomeUrl)))
+      Future.successful(Left(Redirect(appConfig.individualHomeUrl(request.newHubContextRootEnabled))))
   }
 }

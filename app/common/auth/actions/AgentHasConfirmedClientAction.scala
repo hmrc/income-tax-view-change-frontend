@@ -32,7 +32,7 @@ class AgentHasConfirmedClientAction @Inject()(appConfig: FrontendAppConfig)(impl
     if(request.clientDetails.exists(_.confirmed)) {
       Future.successful(Right(request))
     } else {
-      Future.successful(Left(Redirect(appConfig.confirmClientUTRUrl)))
+      Future.successful(Left(Redirect(appConfig.confirmClientUTRUrl(request.newHubContextRootEnabled))))
     }
   }
 }
