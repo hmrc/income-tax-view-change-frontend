@@ -56,7 +56,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Income tax financial details service
   lazy val incomeTaxFinancialDetailsService: String = servicesConfig.baseUrl("income-tax-financial-details")
-  
+
   //Address lookup service
   lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
   lazy val addressLookupExternalHost: String = servicesConfig.getString("address-lookup.external-host")
@@ -194,7 +194,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
 
   lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
-  
+
   lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-time-machine")
   lazy val timeMachineAddYears: Int = servicesConfig.getInt("time-machine.add-years")
   lazy val timeMachineAddDays: Int = servicesConfig.getInt("time-machine.add-days")
@@ -235,7 +235,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm"
       case _ => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax"
     }
-    
+
   def circumstancesChangeLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm/os-bydd-eich-amgylchiadau-n-newid"
@@ -258,6 +258,12 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
     messages.lang.code match {
       case "cy" => "https://www.gov.uk/anawsterau-talu-cthem"
       case _ => "https://www.gov.uk/difficulties-paying-hmrc"
+    }
+
+  def findOutHowLink(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "cy" => "https://www.gov.uk/government/collections/troi-treth-yn-ddigidol-ar-gyfer-treth-incwm.cy"
+      case _ => "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
     }
 
   lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")

@@ -3651,3 +3651,12 @@ triggered-migration.checkComplete.submitUpdates.p1                              
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = creu cofnod digidol o’ch incwm o eiddo a’ch incwm o fod yn unig fasnachwr, a’r treuliau cysylltiedig
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad(au) chwarterol at CThEF
 triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich dyddiadau cau diweddaraf ar gyfer cyflwyno
+
+# Triggered migration - Complete steps page
+triggered-migration.completeSteps.heading                                                  = Mae angen i chi gwblhau rhai camau cyn i chi gyflwyno’ch Ffurflen Dreth
+triggered-migration.completeSteps.p1                                                       = Rydych wedi cael eich symud yn awtomatig i’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am eich bod yn bodloni’r gofynion i ymuno.
+triggered-migration.completeSteps.linkText                                                 = Dysgwch pam yr ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+triggered-migration.completeSteps.p2                                                       = Nid ydych wedi cwblhau pob un o’r camau gofynnol ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi wneud y canlynol:
+triggered-migration.completeSteps.ul.li1                                                   = cadarnhau eich ffynonellau incwm
+triggered-migration.completeSteps.ul.li2                                                   = cael meddalwedd sy’n cydweddu
+triggered-migration.completeSteps.ul.li3                                                   = anfon eich diweddariad chwarterol mwyaf diweddar

@@ -19,31 +19,33 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import common.auth.MtdItUser
+@import common.models.incomeSourceDetails.TaxYear
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF,
+        h1: h1,
         h2: h2,
         h3: h3,
         h3WithHtml: h3WithHtml,
         p: p,
         link: link,
         hr: hr,
-        govukInsetText: GovukInsetText,
+        govukButton: GovukButton,
         govukPanel: GovukPanel,
         bulletList: bulletPointList,
 )
 
-@(isAgent: Boolean, findOutUrl: String)(implicit user: MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, findOutUrl: String, checkHmrcRecordsUrl: String, cy: TaxYear)(implicit user: MtdItUser[_], messages: Messages)
 
-@getMessage(key: String) = @{
-    messages(s"triggered-migration.completeSteps.$key")
+@getMessage(key: String, args: String*) = @{
+    messages(s"triggered-migration.completeSteps.$key", args: _*)
 }
 
 @mainTemplate(
-    pageTitle = getMessage("greenBoxHeading.1"),
+    pageTitle = getMessage("heading"),
     backUrl = Some("#"),
     isAgent = isAgent,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
@@ -53,10 +55,10 @@
     @p(id = Some("complete-steps-p1"))(Html(getMessage("p1")))
 
     @p(id = Some("complete-steps-link")) {
-        @link(id = Some("complete-steps-link"), link = compatSoftwareLink, messageKey = getMessage("linkText"))
+        @link(id = Some("complete-steps-link"), link = findOutUrl, messageKey = getMessage("linkText"), target = Some("_blank"))
     }
 
-    @p(id = Some("complete-steps-p2))(Html(getMessage("p2")))
+    @p(id = Some("complete-steps-p2"))(Html(getMessage("p2", cy.startYear.toString, cy.endYear.toString)))
 
     @bulletList(
         id = Some("complete-steps-ul"),
@@ -69,8 +71,8 @@
     )
 
     @govukButton(Button(
-        href = Some("#"),
+        href = Some(checkHmrcRecordsUrl),
         isStartButton = true,
-        content = Text(getMessage("base.startnow")),
+        content = Text(messages("base.startnow")),
     ))
 }

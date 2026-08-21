@@ -115,7 +115,7 @@ trait MockAuthActions
     setupMockFeatureSwitches(enabledFeatures*)
   }
 
-  def mockItsaStatusRetrievalAction(
+  def  mockItsaStatusRetrievalAction(
                                      incomeSourceDetailsModel: IncomeSourceDetailsResponse = singleBusinessIncome,
                                      taxYear: TaxYear = TaxYear(2025, 2026)
                                    ): OngoingStubbing[TaxYear] = {
