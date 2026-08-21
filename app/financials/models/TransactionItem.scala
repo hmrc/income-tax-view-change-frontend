@@ -18,7 +18,7 @@ package financials.models
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import shared.enums.ChargeClassificationType.isRevenueAmendment
+import shared.enums.ChargeClassificationType.{isRevenueAmendment, isCorrection}
 import play.api.Logging
 import shared.enums.ChargeClassificationType
 
@@ -71,7 +71,10 @@ trait TransactionItem extends Logging {
       case (LateSubmissionPenalty, _)           => "lateSubmissionPenalty.text"
       case (FirstLatePaymentPenalty, _)         => "firstLatePaymentPenalty.text"
       case (SecondLatePaymentPenalty, _)        => "secondLatePaymentPenalty.text"
-      case (ITSAReturnAmendment, _)             => if (isRevenueAmendment(chargeClassification)) "enquiryAmendment.text" else "itsaReturnAmendment.text"
+      case (ITSAReturnAmendment, _) =>
+        if (isCorrection(chargeClassification)) "hmrcCorrection.text"
+        else if (isRevenueAmendment(chargeClassification)) "enquiryAmendment.text"
+        else "itsaReturnAmendment.text"
       case (ITSAReturnAmendmentCredit, _)       => "itsaReturnAmendmentCredit.text"
       case error =>
         logger.error(s"Missing or non-matching charge type: $error found")

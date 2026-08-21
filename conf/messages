@@ -549,6 +549,7 @@ tax-year-summary.payments.paymentOnAccount1.text                   = First payme
 tax-year-summary.payments.paymentOnAccount2.text                   = Second payment on account
 tax-year-summary.payments.balancingCharge.text                     = Balancing payment
 tax-year-summary.payments.enquiryAmendment.text                    = Extra amount to pay due to HMRC enquiry amendment
+tax-year-summary.payments.hmrcCorrection.text                      = Extra amount to pay due to HMRC correction
 tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late payment interest on first payment on account
 tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest on second payment on account
 tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest on balancing payment
