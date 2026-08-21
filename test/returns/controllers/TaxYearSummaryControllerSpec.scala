@@ -95,7 +95,7 @@ class TaxYearSummaryControllerSpec
     }
   }
   val homeBackLink: Boolean => String = isAgent => {
-    appConfig.homePageUrl(isAgent)
+    appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
   }
   val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
   val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
@@ -248,7 +248,7 @@ class TaxYearSummaryControllerSpec
                   showForecastData = false,
                   ctaViewModel = emptyCTAViewModel,
                   LPP2Url = "",
-                  pfaEnabled = false, financialsFrontendEnabled = true
+                  pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false
                 )
 
                 val expectedContent: String =
@@ -304,7 +304,7 @@ class TaxYearSummaryControllerSpec
                     testChargesList,
                     testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true
+                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -354,7 +354,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true
+                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -639,7 +639,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel,
                     LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true),
+                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
                   backUrl = homeBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent,
@@ -696,7 +696,7 @@ class TaxYearSummaryControllerSpec
                     charges = class2NicsChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true),
+                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -753,7 +753,7 @@ class TaxYearSummaryControllerSpec
                     charges = payeChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true),
+                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -808,7 +808,7 @@ class TaxYearSummaryControllerSpec
                     charges = charges,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true
+                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -857,7 +857,7 @@ class TaxYearSummaryControllerSpec
                       testEmptyChargesList,
                       testObligationsModel,
                       ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                      pfaEnabled = false, financialsFrontendEnabled = true),
+                      pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
                     backUrl = taxYearsBackLink(isAgent),
                     isAgent = isAgent,
                     ctaLink = ctaLink(isAgent),
@@ -908,7 +908,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true),
+                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -957,7 +957,7 @@ class TaxYearSummaryControllerSpec
                     charges = testChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true),
+                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),

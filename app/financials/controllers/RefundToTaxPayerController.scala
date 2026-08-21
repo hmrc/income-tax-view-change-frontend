@@ -85,7 +85,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           itvcErrorHandler.showInternalServerError()
       }
     } else {
-      Future.successful(Redirect(appConfig.homePageUrl(user.isAgent)))
+      Future.successful(Redirect(appConfig.homePageUrl(user.isAgent, user.newHubContextRootEnabled)))
     }
   }
 

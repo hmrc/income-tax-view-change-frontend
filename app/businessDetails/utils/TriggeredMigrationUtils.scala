@@ -18,7 +18,7 @@ package businessDetails.utils
 
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.TriggeredMigration
+import common.models.admin.{NewHubContextRootEnabled, TriggeredMigration}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait TriggeredMigrationUtils extends FeatureSwitching {
   def withTriggeredMigrationFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (!isEnabled(TriggeredMigration)) {
-      Future(Redirect(appConfig.homePageUrl(user.userType.contains(Agent))))
+      Future(Redirect(appConfig.homePageUrl(user.userType.contains(Agent), isEnabled(NewHubContextRootEnabled))))
     } else {
       comeBlock
     }

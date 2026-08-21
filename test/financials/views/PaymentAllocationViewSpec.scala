@@ -30,7 +30,6 @@ import financials.models.paymentAllocations.AllocationDetail
 import financials.testConstants.PaymentAllocationsTestConstants.*
 import financials.views.html.PaymentAllocationView
 import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import scala.jdk.CollectionConverters.*
@@ -54,23 +53,22 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     List(financialDetailNoPaymentCredit)
   )
 
-  val heading: String = messages("paymentAllocation.heading")
+  val heading: String = "Payment you made to HMRC"
   val date: String = "This payment was made on 31 January 2021"
   val headingAmount: String = "You paid: £300.00"
   val amount: String = "£300.00"
-  val paymentAllocationHeading: String = messages("paymentAllocation.tableSection.heading")
+  val paymentAllocationHeading: String = "Where your money went"
   val tableHeadings: Seq[String] = Seq(messages("paymentAllocation.tableHead.allocated-date"), messages("paymentAllocation.tableHead.description"), messages("paymentAllocation.tableHead.tax-year"), messages("paymentAllocation.tableHead.amount"))
-  val moneyOnAccount: String = messages("paymentAllocation.moneyOnAccount")
   val notApplicable: String = messages("paymentAllocation.not-applicable")
   val moneyOnAccountAmount: String = "£200.00"
   val allocationsTableHeading: String = messages("paymentAllocation.tableSection.heading")
   val allocationsTableHeadersText: String = s"$paymentAllocationHeading ${tableHeadings.mkString(" ")}"
   val paymentAllocationsPoa1IncomeTax: String = messages("paymentAllocation.paymentAllocations.poa1.incomeTax")
   val paymentAllocationsPoa2IncomeTax: String = messages("paymentAllocation.paymentAllocations.poa2.incomeTax")
-  val paymentAllocationsPoa1Nic4: String = messages("paymentAllocation.paymentAllocations.poa1.nic4")
-  val paymentAllocationsPoa2Nic4: String = messages("paymentAllocation.paymentAllocations.poa2.nic4")
+  val paymentAllocationsPoa1Nic4: String = "Class 4 National Insurance contributions for first payment on account"
+  val paymentAllocationsPoa2Nic4: String = "Class 4 National Insurance contributions for second payment on account"
   val moneyOnAccountNA: String = s"${messages("paymentAllocation.moneyOnAccount")} ${messages("paymentAllocation.noData")}"
-  val moneyOnAccountMessage: String = s"${messages("paymentAllocation.moneyOnAccount")}"
+  val moneyOnAccountMessage: String = "Remaining amount (added to available credit)"
   val dueDate = "31 Jan 2021"
   val paymentAllocationTaxYearFrom2017to2018: String = messages("paymentAllocation.taxYear", "2017", "2018")
   val paymentAllocationTaxYearFrom2018to2019: String = messages("paymentAllocation.taxYear", "2018", "2019")
@@ -81,22 +79,25 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationTaxYearFrom2019to2020Hidden: String = messages("paymentAllocation.taxYearHidden", "2019", "2020")
   val paymentAllocationTaxYearFrom2021to2022Hidden: String = messages("paymentAllocation.taxYearHidden", "2021", "2022")
   val paymentAllocationsHmrcAdjustment: String = messages("paymentAllocation.paymentAllocations.hmrcAdjustment.text")
+  val noData: String = "No data"
 
-  class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel, saUtr: Option[String] = None,
-                               creditsRefundsRepayEnabled: Boolean = true) extends Setup(
-    paymentAllocationView(viewModel, backUrl, saUtr = saUtr,
-      creditsRefundsRepayEnabled = creditsRefundsRepayEnabled)) {
-    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  class PaymentAllocationSetup(
+                                viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
+                                saUtr: Option[String] = None,
+                                creditsRefundsRepayEnabled: Boolean = true
+                              )
+    extends Setup(paymentAllocationView(viewModel, backUrl, saUtr = saUtr, creditsRefundsRepayEnabled = creditsRefundsRepayEnabled)) {
+    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate.head.allocationDetail.get.chargeType.get
   }
 
   class PaymentAllocationSetupCreditZeroOutstanding(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithCreditZeroOutstanding) extends Setup(
     paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"))) {
-    paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+    paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate.head.allocationDetail.get.chargeType.get
   }
 
   class PaymentAllocationSetupNoTaxPeriodEndDate(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithNoTaxPeriodEndDate) extends Setup(
     paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"))) {
-    paymentAllocationViewModelWithNoTaxPeriodEndDate.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+    paymentAllocationViewModelWithNoTaxPeriodEndDate.originalPaymentAllocationWithClearingDate.head.allocationDetail.get.chargeType.get
   }
 
   "Payment Allocation Page for non LPI" should {
@@ -137,7 +138,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup() {
-        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
+        document.getElementById("payment-allocation-table").getElementsByTag("caption").text() shouldBe paymentAllocationHeading
       }
 
       "check that the heading section is not present when credit is defined but outstandingAmount is 0" in
@@ -152,7 +153,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has table headers" in new PaymentAllocationSetup() {
         val allTableHeadings: Element = document.selectHead("thead")
-        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
+        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings.head
         allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
         allTableHeadings.selectNth("th", 4).text() shouldBe tableHeadings(3)
@@ -166,21 +167,20 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.selectNth("td", 4).text() shouldBe "£10.10"
       }
 
-      "has a Credit on account link row within payment details when refunds page FS enabled" in new PaymentAllocationSetup() {
-        val allTableData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-        document.select("a#money-on-account-link").size() shouldBe 1
-        allTableData.get(1).text() shouldBe moneyOnAccount
-        allTableData.get(2).text() shouldBe notApplicable
-        allTableData.get(3).text() shouldBe moneyOnAccountAmount
-      }
+      "has a Credit on account link row within payment details when refunds page FS enabled" in
+        new PaymentAllocationSetup() {
+          document.getElementById("money-on-account-date").text() shouldBe dueDate
+          document.getElementById("money-on-account-link").text() shouldBe moneyOnAccountMessage
+          document.getElementById("money-on-account-NA").text() shouldBe notApplicable
+          document.getElementById("money-on-account-amount").text() shouldBe moneyOnAccountAmount
+        }
 
       "has a Credit on account text row within payment details when refunds page FS disabled" in
         new PaymentAllocationSetup(creditsRefundsRepayEnabled = false) {
-          val allTableData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-          document.select("a#money-on-account-link").size() shouldBe 0
-          allTableData.get(1).text() shouldBe moneyOnAccount
-          allTableData.get(2).text() shouldBe notApplicable
-          allTableData.get(3).text() shouldBe moneyOnAccountAmount
+          document.getElementById("money-on-account-date").text() shouldBe dueDate
+          document.getElementById("money-on-account-p").text() shouldBe moneyOnAccountMessage
+          document.getElementById("money-on-account-NA").text() shouldBe notApplicable
+          document.getElementById("money-on-account-amount").text() shouldBe moneyOnAccountAmount
         }
 
       "should not have Credit on account row within payment details" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelNoOutstandingAmount) {
@@ -190,21 +190,22 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in
         new PaymentAllocationSetup(paymentAllocationViewModelNoPayment, saUtr = Some("1234567890")) {
           document.getElementsByTag("h1").text shouldBe messages("paymentAllocation.earlyTaxYear.heading")
+
           document.getElementById("sa-note-migrated").text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}."
-          val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-          moneyOnAccountData.get(0).text() shouldBe "31 Jan 2021"
-          moneyOnAccountData.get(1).text() shouldBe moneyOnAccount
-          moneyOnAccountData.get(2).text() shouldBe notApplicable
-          moneyOnAccountData.get(3).text() shouldBe moneyOnAccountAmount
+
+          document.getElementById("money-on-account-date").text() shouldBe dueDate
+          document.getElementById("money-on-account-link").text() shouldBe moneyOnAccountMessage
+          document.getElementById("money-on-account-NA").text() shouldBe notApplicable
+          document.getElementById("money-on-account-amount").text() shouldBe moneyOnAccountAmount
         }
 
       "has a payment within the table for HMRC Adjustments with link back to charge view" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelHmrcAdjustment) {
         val allTableData: Element = document.selectHead("tbody").selectHead("tr")
         val chargePageLink: String = document.selectHead("tbody").link.attr("href")
         val taxYear = 2022
-        val chargePageLinkTrue = financialsRoutes.ChargeSummaryController.show(taxYear, "chargeReference3").url
+        val chargePageLinkTrue: String = financialsRoutes.ChargeSummaryController.show(taxYear, "chargeReference3").url
 
-        allTableData.selectNth("td", 1).text() shouldBe "31 Jan 2021"
+        allTableData.selectNth("td", 1).text() shouldBe dueDate
         allTableData.selectNth("td", 2).text() shouldBe s"$paymentAllocationsHmrcAdjustment"
         allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.taxYearHidden", "2021", "2022")} $paymentAllocationTaxYearFrom2021to2022"
         allTableData.selectNth("td", 4).text() shouldBe amount
@@ -222,11 +223,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "Show no data when there is no TaxPeriod End date supplied" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelWithNoTaxPeriodEndDate) {
-        val allTableData: Element = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe "31 Jan 2021"
-        allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")}"
-        allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.noData")}"
-        allTableData.selectNth("td", 4).text() shouldBe "£10.10"
+        document.getElementById("payment-allocation-non-lpi-due-date").text() shouldBe dueDate
+        document.getElementById("payment-allocation-non-lpi-p").text() shouldBe paymentAllocationsPoa1Nic4
+        document.getElementById("payment-allocation-non-lpi-data").text() shouldBe noData
+        document.getElementById("payment-allocation-non-lpi-amount").text() shouldBe "£10.10"
       }
 
     }
@@ -268,12 +268,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
+        document.getElementById("payment-allocation-table").getElementsByTag("caption").text() shouldBe paymentAllocationHeading
       }
 
       "has table headers" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableHeadings: Element = document.selectHead("thead")
-        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
+        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings.head
         allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
         allTableHeadings.selectNth("th", 4).text() shouldBe tableHeadings(3)
@@ -295,8 +295,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   "Payment Allocation Page" should {
-    s"have the title: ${messages("htmlTitle", messages("paymentAllocation.heading"))}" in new PaymentAllocationSetup {
-      document.title() shouldBe messages("htmlTitle", messages("paymentAllocation.heading"))
+    s"have the title: ${messages("htmlTitle", heading)}" in new PaymentAllocationSetup {
+      document.title() shouldBe messages("htmlTitle", heading)
     }
 
     s"have the heading: $heading" in new PaymentAllocationSetup {
@@ -338,13 +338,13 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       )
 
       val poa2Allocations = Seq(allocationDetail("poa2_1", "2018-03-15", POA2, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
-      allocationDetail("poa2_2", "2018-04-05", POA2, ITSA_NI, 2345.67) -> "2019-06-28",
-      allocationDetail("poa2_3", "2018-04-06", POA2, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
-      allocationDetail("poa2_4", "2018-06-23", POA2, ITSA_WALES, 4567.89) -> "2019-06-30",
-      allocationDetail("poa2_5", "2018-12-31", POA2, NIC4_GB, 9876.54) -> "2019-08-27",
-      allocationDetail("poa2_6", "2019-01-01", POA2, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
-      allocationDetail("poa2_7", "2019-04-05", POA2, NIC4_WALES, 7654.32) -> "2019-08-29",
-      allocationDetail("poa2_8", "2019-04-06", POA2, NIC4_NI, 6543.21) -> "2019-08-30")
+        allocationDetail("poa2_2", "2018-04-05", POA2, ITSA_NI, 2345.67) -> "2019-06-28",
+        allocationDetail("poa2_3", "2018-04-06", POA2, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
+        allocationDetail("poa2_4", "2018-06-23", POA2, ITSA_WALES, 4567.89) -> "2019-06-30",
+        allocationDetail("poa2_5", "2018-12-31", POA2, NIC4_GB, 9876.54) -> "2019-08-27",
+        allocationDetail("poa2_6", "2019-01-01", POA2, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
+        allocationDetail("poa2_7", "2019-04-05", POA2, NIC4_WALES, 7654.32) -> "2019-08-29",
+        allocationDetail("poa2_8", "2019-04-06", POA2, NIC4_NI, 6543.21) -> "2019-08-30")
 
       val bcdAllocations = Seq(
         allocationDetail("bcd_1", "2018-03-15", BAL_CHARGE, ITSA_SCOTLAND, 1234.56) -> "2019-06-27",
@@ -368,7 +368,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           financialsRoutes.MoneyInYourAccountController.show().url
         )
 
-        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
+        document.getElementById("payment-allocation-table").getElementsByTag("caption").text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
@@ -400,8 +400,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           financialsRoutes.ChargeSummaryController.show(2020, "poa2_8").url,
           financialsRoutes.MoneyInYourAccountController.show().url
         )
-
-        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
+        document.getElementById("payment-allocation-table").getElementsByTag("caption").text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
@@ -431,8 +430,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           financialsRoutes.ChargeSummaryController.show(2020, "bcd_6").url,
           financialsRoutes.MoneyInYourAccountController.show().url
         )
-
-        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
+        document.getElementById("payment-allocation-table").getElementsByTag("caption").text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
@@ -451,11 +449,9 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     }
 
     "have a Credit on account row within payment details" in new PaymentAllocationSetup() {
-      val allTableData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-      allTableData.get(1).text() shouldBe moneyOnAccount
-      allTableData.get(2).text() shouldBe notApplicable
-      allTableData.get(3).text() shouldBe moneyOnAccountAmount
-
+      document.getElementById("money-on-account-link").text() shouldBe moneyOnAccountMessage
+      document.getElementById("money-on-account-NA").text() shouldBe notApplicable
+      document.getElementById("money-on-account-amount").text() shouldBe moneyOnAccountAmount
     }
 
     "not have Credit on account row within payment details" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelNoOutstandingAmount) {

@@ -16,6 +16,7 @@
 
 package financials.connectors
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import financials.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
 import play.api.Logging
@@ -36,22 +37,22 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
                                            )(implicit ec: ExecutionContext) extends Logging {
   val journeyStartUrl: String = config.setUpAPaymentPlanUrl + "/essttp-backend/sa/itsa/journey/start"
 
-  private val bodyWYO: JsValue = Json.parse(
+  private val bodyWYO: MtdItUser[_] => JsValue = user => Json.parse(
     s"""
        {
-        "returnUrl": "${config.homePageUrl(false)}",
+        "returnUrl": "${config.homePageUrl(false, user.newHubContextRootEnabled)}",
         "backUrl": "${financialsRoutes.WhatYouOweController.show().path}"
        }
       """.stripMargin
   )
 
-  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
+  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[SelfServeTimeToPayJourneyResponse] = {
 
     val body = bodyWYO
 
     http
       .post(url"$journeyStartUrl")
-      .withBody(body)
+      .withBody(body(user))
       .execute[HttpResponse]
       .map {
         case response if response.status == CREATED =>

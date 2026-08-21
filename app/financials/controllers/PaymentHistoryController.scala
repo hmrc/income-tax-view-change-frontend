@@ -105,7 +105,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
       handleRequest(
         isAgent = false,
         origin = origin,
-        backUrl = appConfig.individualHomeUrlWithOrigin(origin)
+        backUrl = appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin)
       )
   }
 
@@ -113,7 +113,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
-        backUrl = appConfig.homePageUrl(isAgent = true)
+        backUrl = appConfig.homePageUrl(isAgent = true, mtdItUser.newHubContextRootEnabled)
       )
   }
 
@@ -125,7 +125,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           case Left(ex) => logAndHandleError(s"[refundStatus] ${ex.getMessage}")
         }
       } else {
-        Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+        Future.successful(Ok(customNotFoundErrorView(user.newHubContextRootEnabled)(user, user.messages)))
       }
     }
 

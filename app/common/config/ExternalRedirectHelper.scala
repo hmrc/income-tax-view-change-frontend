@@ -20,7 +20,8 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
-import hub.controllers.agent.routes as hubAgentRoutes
+import hub.v1.controllers.agent.routes as hubV1AgentRoutes
+import hub.v2.controllers.agent.routes as hubV2AgentRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationRoutes
 import obligations.controllers.routes as obligationsRoutes
 import play.api.Configuration
@@ -33,31 +34,44 @@ trait ExternalRedirectHelper {
   val config: Configuration
 
   val baseFullUrl: String
+  val hubBaseFullUrl: String
   
-  lazy val hubBaseUrl: String = baseFullUrl
-  lazy val hubAgentBaseUrl: String = s"${hubBaseUrl}/agents"
+  def hubBaseUrl(newHubContextRootEnabled: Boolean): String =
+    if(newHubContextRootEnabled) hubBaseFullUrl else baseFullUrl
+    
+  def hubAgentBaseUrl(newHubContextRootEnabled: Boolean): String = s"${hubBaseUrl(newHubContextRootEnabled)}/agents"
   
-  lazy val individualHomeUrl: String =
-    s"$hubBaseUrl/income-tax"
+  def individualHomeUrl(newHubContextRootEnabled: Boolean): String =
+    s"${hubBaseUrl(newHubContextRootEnabled)}/income-tax"
 
-  lazy val individualHomeUrlWithOrigin: Option[String] => String = origin =>
-      origin.fold(individualHomeUrl)(o => s"$individualHomeUrl?origin=$o")
+  def individualHomeUrlWithOrigin(newHubContextRootEnabled: Boolean, origin: Option[String]): String =
+      origin.fold(individualHomeUrl(newHubContextRootEnabled))(o => s"${individualHomeUrl(newHubContextRootEnabled)}?origin=$o")
 
-  lazy val agentHomeUrl: String =
-    s"$hubAgentBaseUrl/client-income-tax"
+  def agentHomeUrl(newHubContextRootEnabled: Boolean): String =
+    s"${hubAgentBaseUrl(newHubContextRootEnabled)}/client-income-tax"
     
-  def homePageUrl(isAgent: Boolean, origin: Option[String] = None): String = if (isAgent) agentHomeUrl else individualHomeUrlWithOrigin(origin)
+  def homePageUrl(isAgent: Boolean, newHubContextRootEnabled: Boolean, origin: Option[String] = None): String =
+    if (isAgent) agentHomeUrl(newHubContextRootEnabled) else individualHomeUrlWithOrigin(newHubContextRootEnabled, origin)
 
-  lazy val individualYourTasksUrl: String =
-    s"$hubBaseUrl/your-tasks"
+  def individualYourTasksUrl(newHubContextRootEnabled: Boolean): String =
+    s"${hubBaseUrl(newHubContextRootEnabled)}/your-tasks"
     
-  lazy val agentYourTasksUrl: String =
-    s"$hubAgentBaseUrl/your-tasks"
+  def agentYourTasksUrl(newHubContextRootEnabled: Boolean): String =
+    s"${hubAgentBaseUrl(newHubContextRootEnabled)}/your-tasks"
     
-  lazy val enterClientsUTRUrl: String =
-    hubAgentRoutes.EnterClientsUTRController.show().url
-  lazy val confirmClientUTRUrl: String =
-    hubAgentRoutes.ConfirmClientUTRController.show().url
+  def enterClientsUTRUrl(newHubContextRootEnabled: Boolean): String = {
+    if(newHubContextRootEnabled)
+      hubV2AgentRoutes.EnterClientsUTRController.show().url
+    else 
+      hubV1AgentRoutes.EnterClientsUTRController.show().url
+  }
+
+  def confirmClientUTRUrl(newHubContextRootEnabled: Boolean): String = {
+    if(newHubContextRootEnabled)
+      hubV2AgentRoutes.ConfirmClientUTRController.show().url
+    else
+      hubV1AgentRoutes.ConfirmClientUTRController.show().url
+  }
 
   //Obligation routes
   

@@ -17,9 +17,9 @@
 package common.auth.actions
 
 import common.utils.AuthUtils.*
-import common.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest, MtdItUser}
+import common.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest, MtdItUser, RequestWithFeatureSwitches}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import common.models.admin.FeatureSwitch
+import common.models.admin.{FeatureSwitch, NewHubContextRootEnabled}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import common.models.sessionData.SessionCookieData
 import common.utils.sessionUtils.SessionKeys
@@ -33,6 +33,12 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 object AuthActionsTestData {
+
+  lazy val newHubContextRootEnabled = false
+  lazy val defaultFeatureSwitches = List(FeatureSwitch(NewHubContextRootEnabled, newHubContextRootEnabled))
+
+  def requestWithFeatureSwitches(implicit request: Request[_]): RequestWithFeatureSwitches[_] =
+    RequestWithFeatureSwitches(List(FeatureSwitch(NewHubContextRootEnabled, newHubContextRootEnabled)))
 
   val mtdEnrolment = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "Activated", None)
   val agentEnrolment = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", testArn)), "Activated", None)
@@ -107,17 +113,18 @@ object AuthActionsTestData {
 
   lazy val defaultAuthorisedRequest: (MTDUserRole, Request[_]) => AuthorisedUserRequest[_] = {
     (mtdUserRole, request) =>
-      AuthorisedUserRequest(defaultAuthUserDetails(mtdUserRole))(request)
+      AuthorisedUserRequest(defaultAuthUserDetails(mtdUserRole), defaultFeatureSwitches)(request)
   }
 
   lazy val defaultAuthorisedAndEnrolledRequest: (MTDUserRole, Request[_]) => AuthorisedAndEnrolledRequest[_] = {
     (mtdUserRole, request) =>
       val optClientDetails = if (mtdUserRole == MTDIndividual) None else Some(getAgentClientDetails(true))
-      AuthorisedAndEnrolledRequest(testMtditid, mtdUserRole, defaultAuthUserDetails(mtdUserRole), optClientDetails)(request)
+      AuthorisedAndEnrolledRequest(testMtditid, mtdUserRole, defaultAuthUserDetails(mtdUserRole),
+        optClientDetails, defaultFeatureSwitches)(request)
   }
 
   lazy val defaultAuthorisedWithClientDetailsRequest: Request[_] => AuthorisedAgentWithClientDetailsRequest[_] = fakeRequestWithClientDetails => {
-    AuthorisedAgentWithClientDetailsRequest(defaultAuthUserDetails(MTDPrimaryAgent), getAgentClientDetails(true))(fakeRequestWithClientDetails)
+    AuthorisedAgentWithClientDetailsRequest(defaultAuthUserDetails(MTDPrimaryAgent), getAgentClientDetails(true), defaultFeatureSwitches)(fakeRequestWithClientDetails)
   }
 
   def getMtdItUser(
@@ -152,7 +159,8 @@ object AuthActionsTestData {
                        incomeSources: IncomeSourceDetailsModel,
                        request: Request[_] = FakeRequest(),
                        isSupportingAgent: Boolean = false): MtdItUser[_] = {
-    getMtdItUser(af.getOrElse(Individual), isSupportingAgent = isSupportingAgent, incomeSources = incomeSources)(request)
+    getMtdItUser(af.getOrElse(Individual), isSupportingAgent = isSupportingAgent, incomeSources = incomeSources,
+      featureSwitches = defaultFeatureSwitches)(request)
   }
 
   def getMinimalMTDITUser(
@@ -173,18 +181,21 @@ object AuthActionsTestData {
       usersRole = mtdUserRole,
       authUserDetails = getAuthUserDetails(af, enrolments, true, false),
       clientDetails = optClientDetails,
-      incomeSources = incomeSources
+      incomeSources = incomeSources,
+      featureSwitches = defaultFeatureSwitches
     )(request)
   }
 
-  def getAuthorisedData(enrolments: Enrolments)(implicit request: Request[_]) = AuthorisedUserRequest(
-    AuthUserDetails(
-      enrolments,
-      Some(AffinityGroup.Agent),
-      Some(testCredentials),
-      None
-    )
-  )(request)
+  def getAuthorisedData(enrolments: Enrolments)(implicit request: Request[_]) = {
+    AuthorisedUserRequest(
+      AuthUserDetails(
+        enrolments,
+        Some(AffinityGroup.Agent),
+        Some(testCredentials),
+        None
+      ), defaultFeatureSwitches
+    )(request)
+  }
 
   def getSessionCookieData(confirmed: Boolean) = {
     val cookieData = SessionCookieData(

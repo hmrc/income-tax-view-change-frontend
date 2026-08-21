@@ -21,19 +21,19 @@ import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.models.admin.OverseasBusinessAddress
+import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import jakarta.inject.Singleton
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
-import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.config.featureswitch.FeatureSwitching
-import common.models.admin.OverseasBusinessAddress
-import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,8 +56,8 @@ class ChooseSoleTraderAddressController @Inject()(
     if (isAgent) itvcErrorHandlerAgent
     else itvcErrorHandler
 
-  private def backUrl(isAgent: Boolean): String =
-    appConfig.homePageUrl(isAgent)
+  private def backUrl(isAgent: Boolean)(implicit user: MtdItUser[_]): String =
+    appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled)
 
   private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty
 
@@ -171,7 +171,7 @@ class ChooseSoleTraderAddressController @Inject()(
         )
       )
     } else {
-      Future(Redirect(appConfig.homePageUrl(isAgent)))
+      Future(Redirect(appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled)))
     }
   }
 

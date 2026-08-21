@@ -84,7 +84,7 @@
         }
     }
 
-    val serviceUrl = appConfig.homePageUrl(isAgent)
+    val serviceUrl = appConfig.homePageUrl(isAgent, false)
 
     val navBar = btaAndPtaServiceNavigation match {
         case Some(nav) => nav.copy(serviceName = serviceName, serviceUrl = Some(serviceUrl)).withLanguageToggle()

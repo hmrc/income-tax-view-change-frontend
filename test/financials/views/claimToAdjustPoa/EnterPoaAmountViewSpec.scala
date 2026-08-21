@@ -38,7 +38,7 @@ class EnterPoaAmountViewSpec extends TestSupport{
   def msg(key: String) = msgs(s"claimToAdjustPoa.enterPoaAmount.$key")
   implicit val lang: Lang = Lang("GB")
 
-  val cancelUrl: String = appConfig.individualHomeUrl
+  val cancelUrl: String = appConfig.individualHomeUrl(newHubContextRootEnabled)
 
   def poAAmountViewModel(poaPreviouslyAdjusted: Option[Boolean] = Some(false), poaPartiallyPaid: Boolean = false) = PaymentOnAccountViewModel(
     poaOneTransactionId = "poaOne-Id",

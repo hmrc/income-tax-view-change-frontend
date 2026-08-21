@@ -59,7 +59,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = None,
             viewForeignProperty = None,
             viewCeasedBusinesses = List(),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -85,7 +86,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = Some(propertyDetailsViewModel),
             viewForeignProperty = None,
             viewCeasedBusinesses = List(),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -111,7 +113,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = None,
             viewForeignProperty = Some(propertyDetailsViewModel),
             viewCeasedBusinesses = List(),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -138,7 +141,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = None,
             viewForeignProperty = None,
             viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -165,7 +169,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = None,
             viewForeignProperty = None,
             viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel, ceasedBusinessDetailsViewModel),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -192,7 +197,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = Some(propertyDetailsViewModel),
             viewForeignProperty = Some(propertyDetailsViewModel),
             viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -222,7 +228,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = Some(propertyDetailsViewModel),
             viewForeignProperty = Some(propertyDetailsViewModel),
             viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel),
-            displayStartDate = false
+            displayStartDate = false,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -251,7 +258,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = None,
             viewForeignProperty = None,
             viewCeasedBusinesses = List(),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -276,7 +284,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = Some(propertyDetailsViewModel),
             viewForeignProperty = None,
             viewCeasedBusinesses = List(),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -301,7 +310,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = None,
             viewForeignProperty = Some(propertyDetailsViewModel),
             viewCeasedBusinesses = List(),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -328,7 +338,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = None,
             viewForeignProperty = None,
             viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -355,7 +366,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = None,
             viewForeignProperty = None,
             viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel, ceasedBusinessDetailsViewModel),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -382,7 +394,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = Some(propertyDetailsViewModel),
             viewForeignProperty = Some(propertyDetailsViewModel),
             viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel),
-            displayStartDate = true
+            displayStartDate = true,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -411,7 +424,8 @@ class ManageYourBusinessesViewSpec extends TestSupport {
             viewUkProperty = Some(propertyDetailsViewModel),
             viewForeignProperty = Some(propertyDetailsViewModel),
             viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel),
-            displayStartDate = false
+            displayStartDate = false,
+            hideBusinessName = false
           )
 
         val pageDocument: Document =
@@ -428,6 +442,58 @@ class ManageYourBusinessesViewSpec extends TestSupport {
         pageDocument.select("#business-date-0").isEmpty shouldBe true
         pageDocument.select("#foreign-date").isEmpty shouldBe true
         pageDocument.select("#uk-date").isEmpty shouldBe true
+        checkPropertyBusinessesText(pageDocument)
+      }
+
+      "return no business name when the hideBusinessName flag is true and the business name is unknown" in {
+        val viewIncomeSourcesViewModel: ViewIncomeSourcesViewModel =
+          ViewIncomeSourcesViewModel(
+            viewSoleTraderBusinesses = List(businessDetailsViewModel.copy(tradingName = None)),
+            viewUkProperty = Some(propertyDetailsViewModel),
+            viewForeignProperty = Some(propertyDetailsViewModel),
+            viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel),
+            displayStartDate = false,
+            hideBusinessName = true
+          )
+
+        val pageDocument: Document =
+          Jsoup.parse(
+            contentAsString(
+              view.apply(
+                sources = viewIncomeSourcesViewModel,
+                isAgent = false,
+                backUrl = ""
+              )
+            )
+          )
+
+        pageDocument.select("#business-trade-name-0").isEmpty shouldBe true
+        checkPropertyBusinessesText(pageDocument)
+      }
+
+      "return business name when the hideBusinessName flag is true but business name is known" in {
+        val viewIncomeSourcesViewModel: ViewIncomeSourcesViewModel =
+          ViewIncomeSourcesViewModel(
+            viewSoleTraderBusinesses = List(businessDetailsViewModel),
+            viewUkProperty = Some(propertyDetailsViewModel),
+            viewForeignProperty = Some(propertyDetailsViewModel),
+            viewCeasedBusinesses = List(ceasedBusinessDetailsViewModel),
+            displayStartDate = false,
+            hideBusinessName = true
+          )
+
+        val pageDocument: Document =
+          Jsoup.parse(
+            contentAsString(
+              view.apply(
+                sources = viewIncomeSourcesViewModel,
+                isAgent = false,
+                backUrl = ""
+              )
+            )
+          )
+
+        pageDocument.select("#business-trade-name-0").isEmpty shouldBe false
         checkPropertyBusinessesText(pageDocument)
       }
     }

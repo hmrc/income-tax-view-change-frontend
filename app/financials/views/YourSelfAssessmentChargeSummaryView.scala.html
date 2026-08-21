@@ -31,7 +31,7 @@
 @import financials.views.html.partials.yourSelfAssessmentCharges.ChargeDetails
 @import financials.views.html.partials.yourSelfAssessmentCharges.{WhatIsPaymentOnAccount, InterestOnChargeRARPoaSection}
 @import financials.views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
-@import financials.views.html.partials.yourSelfAssessmentCharges.PaymentAllocationTable
+@import financials.views.html.partials.yourSelfAssessmentCharges.ChargeSummaryPaymentAllocationTable
 @import financials.models.paymentAllocationCharges.PaymentAllocationViewModel
 @import _root_.shared.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
@@ -59,7 +59,7 @@
         interestOnYourChargeSection: InterestOnYourChargeSection,
         interestOnYourChargeTable: InterestOnYourChargeTable,
         paymentHistoryTable: PaymentHistoryTable,
-        paymentAllocationTable: PaymentAllocationTable,
+        chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
         chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
         whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
         interestOnChargeRARPoaSection: InterestOnChargeRARPoaSection
@@ -231,6 +231,6 @@
         @paymentHistoryTable(viewModel)
     }
     @if(viewModel.isCredit && paymentAllocations.isDefined) {
-        @paymentAllocationTable(paymentAllocations.get, viewModel.creditsRefundRepayEnabled)
+        @chargeSummaryPaymentAllocationTable(paymentAllocations.get, viewModel.creditsRefundRepayEnabled)
     }
 }

@@ -71,7 +71,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise().invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsyncBody(_ shouldBe expectedResponse))
 
             status(result) shouldBe OK
@@ -89,7 +89,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise().invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsyncBody(_ shouldBe expectedResponse))
 
             status(result) shouldBe OK
@@ -106,7 +106,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise().invokeBlock(
-            fakeRequestWithActiveSession,
+            requestWithFeatureSwitches(fakeRequestWithActiveSession),
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
@@ -124,7 +124,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise().invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsync)
 
             status(result) shouldBe SEE_OTHER
@@ -141,7 +141,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise().invokeBlock(
-            fakeRequestWithActiveSession,
+            requestWithFeatureSwitches(fakeRequestWithActiveSession),
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
@@ -157,7 +157,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise().invokeBlock(
-            fakeRequestWithActiveSession,
+            requestWithFeatureSwitches(fakeRequestWithActiveSession),
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
@@ -180,7 +180,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsyncBody(_ shouldBe expectedResponse))
 
             status(result) shouldBe OK
@@ -198,7 +198,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsyncBody(_ shouldBe expectedResponse))
 
             status(result) shouldBe OK
@@ -214,7 +214,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise(false).invokeBlock(
-            fakeRequestWithActiveSession,
+            requestWithFeatureSwitches(fakeRequestWithActiveSession),
             defaultAsync)
 
           status(result) shouldBe OK
@@ -232,7 +232,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsync)
 
             status(result) shouldBe SEE_OTHER
@@ -249,7 +249,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise(false).invokeBlock(
-            fakeRequestWithActiveSession,
+            requestWithFeatureSwitches(fakeRequestWithActiveSession),
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
@@ -265,7 +265,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise(false).invokeBlock(
-            fakeRequestWithActiveSession,
+            requestWithFeatureSwitches(fakeRequestWithActiveSession),
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
