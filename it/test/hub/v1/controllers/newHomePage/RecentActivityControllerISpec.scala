@@ -238,7 +238,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
     stubAuthorised(mtdUserRole, featureSwitches)
     GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)
     ITSAStatusDetailsStub.stubGetITSAStatusDetails(currentItsaStatus.toString, "2022-23")
-    NextUpdatesStub.stubGetFulfilledNextUpdates(nino = testNino, deadlines = obligationsModel)
+    NextUpdatesStub.stubGetFulfilledNextUpdates(nino = testNino, deadlines = obligationsModel, fromDate = "2023-01-05", toDate = "2023-04-05")
   }
 
   private val noRecentObligationsModel: ObligationsModel = ObligationsModel(Seq(

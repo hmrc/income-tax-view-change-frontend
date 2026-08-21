@@ -16,6 +16,7 @@
 
 package hub.v2.controllers.agent.errors
 
+import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import hub.v2.controllers.ControllerISpecHelper
 import common.helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status.*
@@ -28,6 +29,7 @@ class AgentErrorControllerISpec extends ControllerISpecHelper {
 
     "user is authorised" should {
       "respond with the correct page" in {
+        stubGetFeatureSwitches(List(), true)
         MTDAgentAuthStub.stubNoAgentEnrolmentRequiredSuccess()
 
         val res = buildGETMTDClient(agentErrorUri).futureValue

@@ -28,7 +28,7 @@ import common.helpers.servicemocks.FeatureSwitchStub.{featureSwitchesResponse, s
 import common.helpers.servicemocks.{AuditStub, MTDAgentAuthStub, MTDIndividualAuthStub, SessionDataStub}
 import common.models.admin.FeatureSwitchName
 import common.models.audit.AccessDeniedForSupportingAgentAuditModel
-import common.viewUtils.InternalUrlHelper
+import hub.v2.viewUtils.InternalUrlHelper
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie

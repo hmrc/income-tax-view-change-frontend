@@ -17,7 +17,7 @@
 package hub.v2.controllers.newHomePage
 
 import com.google.inject.{Inject, Singleton}
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{PaymentHistoryRefunds, RecentActivity}
@@ -27,6 +27,7 @@ import common.models.obligations.ObligationsModel
 import common.services.{DateServiceInterface, ITSAStatusService}
 import financials.models.Payment
 import financials.services.{PaymentHistoryService, WhatYouOweService}
+import hub.auth.AuthActions
 import hub.services.newHomePage.RecentActivityService
 import hub.utils.HomePageUtils
 import hub.v2.controllers.routes as homeRoutes

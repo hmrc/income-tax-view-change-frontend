@@ -36,8 +36,7 @@ class CorrectHubContextRootAction @Inject()(appConfig: FrontendAppConfig)
       Future.successful(Right(request))
     } else {
       logger.warn("Incorrect Hub Context Root.")
-      val newPath = request.path.replace(appConfig.basePath, appConfig.hubBasePath)
-      Future.successful(Left(Redirect(newPath)))
+      Future.successful(Left(Redirect(appConfig.hubBaseUrl(request.newHubContextRootEnabled))))
     }
   }
 }

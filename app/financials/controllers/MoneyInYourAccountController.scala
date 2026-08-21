@@ -58,7 +58,6 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
   def show(origin: Option[String] = None): Action[AnyContent] =
     authActions.asMTDIndividual().async {
       implicit user =>
-        println(user.featureSwitches)
         handleRequest(
           backUrl = appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin)
         ) recover logAndRedirect

@@ -24,12 +24,12 @@ import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.testConstants.BaseIntegrationTestConstants.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
-
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 
 class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
@@ -66,6 +66,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
       s"is a authenticated for a client" should {
         "render the home page" which {
           "retrieving the income sources was unsuccessful" in {
+            stubGetFeatureSwitches(List(), true)
             stubAuthorised(mtdUserRole)
 
             GetInsourceDetailsStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

@@ -18,6 +18,7 @@ package hub.v2.controllers
 
 import common.enums.MTDIndividual
 import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.testConstants.BaseIntegrationTestConstants.*
 import play.api.http.Status.*
 
@@ -28,6 +29,7 @@ class BtaPartialControllerISpec extends ControllerISpecHelper {
   s"GET $path" when {
     "the user is an authenticated individual" should {
       "display the bta partial with the correct information" in {
+        stubGetFeatureSwitches(List(), true)
         stubAuthorised(MTDIndividual)
         GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 

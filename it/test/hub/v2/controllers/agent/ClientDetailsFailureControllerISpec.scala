@@ -16,6 +16,7 @@
 
 package hub.v2.controllers.agent
 
+import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import hub.v2.controllers.agent.errors.routes as agentErrorRoutes
 import hub.v2.controllers.agent.routes as agentRoutes
 import hub.v2.helpers.ComponentSpecBase
@@ -31,6 +32,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
   s"GET ${agentRoutes.ClientRelationshipFailureController.show().url}" should {
     s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
+        stubGetFeatureSwitches(List(), true)
         MTDAgentAuthStub.stubUnauthorised()
 
         val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
@@ -43,6 +45,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
     }
     s"redirect to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
+        stubGetFeatureSwitches(List(), true)
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
 
         val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
@@ -55,6 +58,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
       }
     }
     s"return $OK with the enter client utr page" in {
+      stubGetFeatureSwitches(List(), true)
       MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
       val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
