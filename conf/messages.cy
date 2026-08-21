@@ -2687,10 +2687,10 @@ yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                    
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
 
 
-yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.1                     = Following a compliance check, HMRC made a change to your tax return known as an ‘enquiry amendment’. Your amended tax return shows that your
-yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.link-text             = {0} to {1} tax calculation
-yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.2                     = was too high, and HMRC has added a credit to your account.
-yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p2                       = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.1                     = Yn dilyn gwiriad cydymffurfio, fe wnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Mae’ch Ffurflen Dreth ddiwygiedig yn dangos bod eich cyfrifiad treth
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.link-text             = ar gyfer {0} i {1}
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.2                     = yn rhy uchel, ac mae CThEF wedi ychwanegu credyd at eich cyfrif.
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p2                       = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
 
 #######################################################################################################################
 ## Business Details
