@@ -16,7 +16,7 @@
 
 package financials.controllers.claimToAdjustPoa
 
-import common.auth.AuthActions
+import financials.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import play.api.i18n.I18nSupport

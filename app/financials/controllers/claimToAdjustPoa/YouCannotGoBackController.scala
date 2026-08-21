@@ -17,7 +17,7 @@
 package financials.controllers.claimToAdjustPoa
 
 import cats.data.EitherT
-import common.auth.AuthActions
+import financials.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.admin.ReturnsFrontend

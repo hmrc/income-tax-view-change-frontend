@@ -16,7 +16,8 @@
 
 package financials.controllers.claimToAdjustPoa
 
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
+import financials.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.{CheckMode, Mode, Nino, NormalMode}
