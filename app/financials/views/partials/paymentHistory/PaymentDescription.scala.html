@@ -26,9 +26,13 @@
 )
 
 <a class="govuk-link" href="@{payment.linkUrl}">
-    @{messages(s"paymentHistory.${payment.creditType.key}")}
-    <div><span class="govuk-visually-hidden">
-        @{payment.visuallyHiddenText}
-        @{if (yearPayments.size > 1) s" Item ${(index + 1)} " else ""}
-    </span></div>
+    @if(payment.isRevenueAmendment) {
+        @{messages("paymentHistory.revenueAmendment")}
+    } else {
+        @{messages(s"paymentHistory.${payment.creditType.key}")}
+        <div><span class="govuk-visually-hidden">
+            @{payment.visuallyHiddenText}
+            @{if (yearPayments.size > 1) s" Item ${(index + 1)} " else ""}
+        </span></div>
+    }
 </a>
