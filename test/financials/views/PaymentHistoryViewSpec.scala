@@ -322,6 +322,29 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 2).selectNth("td", 4).text() shouldBe "£300.00"
       }
     }
+
+    "logged in as either user or agent" should {
+      "display credit and corrections correctly" in {
+        Seq(true, false).foreach { isAgent => 
+          new PaymentHistorySetup(List(
+            (2026, List(
+              PaymentHistoryEntry("2026-05-03", ITSAReturnAmendmentCredit, Some(200.0), None, "someLink", "", None)(dateServiceInterface), // normal credit 
+              PaymentHistoryEntry("2026-05-02", ITSAReturnAmendmentCredit, Some(300.0), None, "someLink", "", None, Some("AC"))(dateServiceInterface), // corrections 
+              PaymentHistoryEntry("2026-05-01", ITSAReturnAmendmentCredit, Some(400.0), None, "someLink", "", None, Some("MC"))(dateServiceInterface) 
+            ))),
+            isAgent = isAgent
+          ) {
+              val table = layoutContent.select("table > tbody")
+              table.select("tr:nth-child(1)")
+                .text() shouldBe "3 May 2026 " + s"${messages("paymentHistory.IRA-credit")} Item 1" + " 2026 to 2027 " + "£200.00"
+              table.select("tr:nth-child(2)")
+                .text() shouldBe "2 May 2026 " + s"${messages("paymentHistory.correction")} Item 2" + " 2026 to 2027 " + "£300.00"
+              table.select("tr:nth-child(3)")
+                .text() shouldBe "1 May 2026 " + s"${messages("paymentHistory.correction")} Item 3" + " 2026 to 2027 " + "£400.00"
+          }
+        }
+      }
+    }
   }
 
   class PaymentHistorySetupWhenAgentView(saUtr: Option[String] = Some("1234567890")) extends Setup(

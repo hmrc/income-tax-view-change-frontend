@@ -26,7 +26,7 @@ import financials.models.audit.ClaimARefundAuditModel
 import financials.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import financials.services.{CreditService, RepaymentService}
 import financials.utils.ErrorRecovery
-import financials.views.html.{CreditAndRefundsView, MoneyInYourAccountView}
+import financials.views.html.MoneyInYourAccountView
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
                                              val creditService: CreditService,
-                                             val view: CreditAndRefundsView,
                                              val moneyInYourAccountView: MoneyInYourAccountView,
                                              val repaymentService: RepaymentService,
                                              val auditingService: AuditingService,
@@ -63,15 +62,15 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
         ) recover logAndRedirect
     }
 
-  def handleRequest(backUrl: String)
+  private def handleRequest(backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
-        Ok(customNotFoundErrorView()(user, messages))
+        Ok(customNotFoundErrorView())
       case creditsModel: CreditsModel =>
         val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel, appConfig.repaymentsUrl)
         auditClaimARefund(creditsModel)
-        Ok(moneyInYourAccountView(viewModel, backUrl)(user, user, messages))
+        Ok(moneyInYourAccountView(viewModel, backUrl))
     }
   }
 
