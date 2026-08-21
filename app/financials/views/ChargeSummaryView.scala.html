@@ -322,8 +322,8 @@
 @mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage, btaAndPtaServiceNavigation = viewModel.serviceNavigationPartial) {
 
-    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
-        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
+    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock  || viewModel.chargeHasDunningLock) {
+        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig, viewModel.chargeHistoryEnabled)
     }
 
     @h1WithCaption(
@@ -436,7 +436,7 @@
 
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
-        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus == None) {
+        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus.isEmpty) {
             @h3(
                 msg = messages("chargeSummary.chargeHistory.heading"),
                 classes = "govuk-heading-m",

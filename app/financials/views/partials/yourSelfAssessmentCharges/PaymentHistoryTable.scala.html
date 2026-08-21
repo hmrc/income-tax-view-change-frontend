@@ -41,6 +41,7 @@
 @(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
+@import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 @reviewAndReconcileCreditMessage(charge: ChargeItem) = {
     <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
@@ -115,6 +116,20 @@
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
+                )
+            ) else Nil,
+
+        if(viewModel.chargeItem.dunningLock && viewModel.chargeHistoryEnabled || viewModel.latePaymentInterestCharge && viewModel.chargeItem.dunningLock && viewModel.chargeHistoryEnabled)
+            Seq(
+                TableRow(
+                   content = HtmlContent(viewModel.dunningLockSubItemDueDate.map(_.toLongDateShort.toNonBreaking).getOrElse(Html(messages("paymentHistory.unknown"))))
+                ),
+                TableRow(
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text"))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.dunningLockSubItemValue.map(_.toCurrencyString).getOrElse(messages("paymentHistory.unknown"))),
+                    format = Some("numeric")
                 )
             ) else Nil,
 

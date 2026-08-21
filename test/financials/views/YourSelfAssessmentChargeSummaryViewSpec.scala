@@ -17,14 +17,17 @@
 package financials.views
 
 import common.config.featureswitch.FeatureSwitching
+import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.ViewSpec
+import financials.controllers.routes as financialsRoutes
+import financials.enums.*
+import financials.enums.ChargeType.ITSA_ENGLAND_AND_NI
 import financials.models.*
 import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import financials.testConstants.ChargeConstants
+import financials.testConstants.FinancialDetailsTestConstants.id1040000123
 import financials.views.html.YourSelfAssessmentChargeSummaryView
-import financials.controllers.routes as financialsRoutes
-import financials.enums.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
@@ -41,6 +44,11 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
     s"${taxYear2.toString}, resulting in an extra amount to pay towards your tax bill."
   val warningText: String = "Warning Pay this charge to stop this interest from increasing daily."
   val enquiryAmendmentDescriptionText: String = "Extra amount created when HMRC amended your tax return"
+  val firstPaymentOnAccountHeading: String = messages("chargeSummary.chargeHistory.heading")
+  val createdYourFirstPaymentOnAccountText: String = messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")
+  val createdFirstLatePaymentPenaltyStoodOverText: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text")
+  val dunningLocksBannerTitle: String = messages("chargeSummary.dunning.locks.banner.title")
+  val dunningLocksBannerHeading: String = s"${messages("chargeSummary.dunning.locks.informal.standover1.banner.note")} ${messages("chargeSummary.dunning.locks.informal.standover2.banner.note")}"
 
   def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
@@ -114,6 +122,54 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
         document.getElementById("charge-history-caption").text() shouldBe "This extra amount goes towards your 2017 to 2018 tax bill."
         document.select("#payment-history-table > tbody > tr > td:nth-child(2)").text() shouldBe enquiryAmendmentDescriptionText
+      }
+    }
+
+    "charge is suspended with dunning lock 'Stand over order'" should {
+      "display the correct content" in new TestSetup(
+        chargeItem = chargeItemModel(dunningLock = true), 
+        paymentBreakdown =
+          List(
+            FinancialDetail(
+              TaxYear.forYearEnd(2018).shortenTaxYearEnd, 
+              Some("SA POA 1 Reconciliation Debit"), 
+              Some("4920"), 
+              Some(id1040000123), 
+              Some(LocalDate.parse("2018-08-16")), 
+              Some("POA1"), 
+              Some("SA POA 1 Reconciliation Debit"), 
+              Some(1400.00), 
+              Some(1400.00), 
+              Some(1400.00), 
+              Some(0), 
+              Some(ITSA_ENGLAND_AND_NI),
+              None, 
+              Some(
+                Seq(
+                  SubItem(
+                    dueDate = Some(LocalDate.of(2019, 5, 15)),
+                    subItemId = Some("001"), 
+                    amount = Some(BigDecimal("1400.00")),
+                    dunningLock = Some("Stand over order")
+                  )
+                )
+              )
+            )
+          )
+      ) {
+            
+        document.select("#dunningLocksBanner").size() shouldBe 1
+        document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
+        document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe dunningLocksBannerHeading
+        document.getElementById("charge-history-heading").text() shouldBe firstPaymentOnAccountHeading
+        document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
+        document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe createdYourFirstPaymentOnAccountText
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(3)").text() shouldBe "£1,400.00"
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£1,400.00"
       }
     }
   }
