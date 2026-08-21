@@ -1,15 +1,3 @@
-# microservice specific routes
-->          /manage-self-assessment/hmrc-frontend                                                hmrcfrontend.Routes
-->          /report-quarterly/income-and-expenses/view/hmrc-frontend                                                hmrcfrontend.Routes
-
-# Play frontend hmrc route for Assets
-GET         /manage-self-assessment/assets/*file                                                 controllers.Assets.versioned(path = "/public", file)
-GET         /report-quarterly/income-and-expenses/view/assets/*file                                                 controllers.Assets.versioned(path = "/public", file)
-
-# Assets
-GET         /manage-self-assessment/assets/*file                                                 controllers.Assets.at(path="/public", file)
-GET         /report-quarterly/income-and-expenses/view/assets/*file                                                 controllers.Assets.at(path="/public", file)
-
 #Home Controller
 GET         /                                                             hub.v2.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   hub.v2.controllers.HomeController.show(origin: Option[String] ?= None)
@@ -27,7 +15,6 @@ GET         /agents/overview                                              hub.v2
 GET         /agents/help                                                  hub.v2.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
 
 GET        /language/:lang                                                hub.v2.controllers.LocalLanguageController.switchToLanguage(lang: String)
-GET        /agents/language/:lang                                         hub.v2.controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
 
 GET         /language/:lang                                               hub.v2.controllers.ItvcLanguageController.switchToLanguage(lang: String)
 GET         /switch-to-welsh                                              hub.v2.controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])

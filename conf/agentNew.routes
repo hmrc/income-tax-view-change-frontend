@@ -24,3 +24,5 @@ GET         /no-assignment                                                 hub.v
 
 #Agent Error
 GET         /agent-error                                                   hub.v2.controllers.agent.errors.AgentErrorController.show()
+
+GET        /language/:lang                                                 hub.v2.controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
