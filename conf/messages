@@ -2075,8 +2075,6 @@ whatYouOwe.total-row.label                                         = Total (not 
 whatYouOwe.revenueAmendment.label                                  = Extra amount to pay due to HMRC enquiry amendment
 
 whatYouOwe.suspended-charges                                       = Tax owed that is currently not being collected
-whatYouOwe.suspended-charges.informal.p1                           = This tax is suspended for review and HMRC will not collect it while it is suspended.
-whatYouOwe.suspended-charges.informal.p2                           = You can still pay what you owe as you may be charged interest if the tax is released for HMRC to collect and it has not been paid by the original due date.
 whatYouOwe.suspended-charges-informalOnly.p1                       = This tax is suspended for review and HMRC will not collect it while it is suspended.
 whatYouOwe.suspended-charges-informalOnly.p2                       = You can still pay what you owe as you may be charged interest if the tax is released for HMRC to collect and it has not been paid by the original due date.
 whatYouOwe.paying-suspended-tax.heading                            = Paying suspended tax

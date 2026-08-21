@@ -1435,11 +1435,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("suspended-charges-in-order-due").text() shouldBe messages("whatYouOwe.suspended-charges")
       }
 
-      "display the informalOnly paragraphs when only suspended charges exist" in new TestSetup(
+      "display the informalOnly paragraphs and suspended charges content when only suspended charges exist" in new TestSetup(
         charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks)
       ) {
         pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p1"))
         pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p2"))
+
+        pageDocument.getElementById("paying-suspended-tax.heading").text() shouldBe messages("whatYouOwe.paying-suspended-tax.heading")
+        pageDocument.getElementById("paying-suspended-tax.p1").text() shouldBe messages("whatYouOwe.paying-suspended-tax.p1")
+        pageDocument.getElementById("paying-suspended-tax.p2").text() shouldBe messages("whatYouOwe.paying-suspended-tax.p2")
+        pageDocument.getElementById("paying-suspended-tax.list").select("li").get(0).text() shouldBe messages("whatYouOwe.paying-suspended-tax.bullet1")
+        pageDocument.getElementById("paying-suspended-tax.list").select("li").get(1).text() shouldBe messages("whatYouOwe.paying-suspended-tax.bullet2")
+        pageDocument.getElementById("paying-suspended-tax.p3").text() shouldBe messages("whatYouOwe.paying-suspended-tax.p3")
+        pageDocument.getElementById("paying-suspended-tax.p4").text() shouldBe messages("whatYouOwe.paying-suspended-tax.p4")
       }
 
       "display the informal paragraphs when both normal and suspended charges exist" in new TestSetup(
@@ -1451,8 +1459,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           )
         )
       ) {
-        pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges.informal.p1"))
-        pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges.informal.p2"))
+        pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p1"))
+        pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p2"))
       }
     }
   }

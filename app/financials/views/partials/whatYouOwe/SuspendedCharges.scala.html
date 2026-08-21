@@ -44,13 +44,7 @@
 
 <h2 class="govuk-heading-m" id="suspended-charges-in-order-due">@getMessage("suspended-charges")</h2>
 
-@if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
-
-    <p class="govuk-body">@getMessage("suspended-charges.informal.p1")</p>
-    <p class="govuk-body">@getMessage("suspended-charges.informal.p2")</p>
-}
-
-@if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.isEmpty) {
+@if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty) {
 
     <p class="govuk-body">@getMessage("suspended-charges-informalOnly.p1")</p>
     <p class="govuk-body">@getMessage("suspended-charges-informalOnly.p2")</p>
@@ -106,14 +100,15 @@
 
 @if(viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty && viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.isEmpty) {
 
-    @h2(msg = getMessage("paying-suspended-tax.heading"))
-    <p class="govuk-body">@getMessage("paying-suspended-tax.p2")</p>
-    <ul class="govuk-list govuk-list--bullet">
+    @h2(msg = getMessage("paying-suspended-tax.heading"), optId = Some("paying-suspended-tax.heading"))
+    <p class="govuk-body" id="paying-suspended-tax.p1">@getMessage("paying-suspended-tax.p1")</p>
+    <p class="govuk-body" id="paying-suspended-tax.p2">@getMessage("paying-suspended-tax.p2")</p>
+    <ul class="govuk-list govuk-list--bullet" id="paying-suspended-tax.list">
         <li>@getMessage("paying-suspended-tax.bullet1")</li>
         <li>@getMessage("paying-suspended-tax.bullet2")</li>
     </ul>
-    <p class="govuk-body">@getMessage("paying-suspended-tax.p3")</p>
-    <p class="govuk-body">@getMessage("paying-suspended-tax.p4")</p>
+    <p class="govuk-body" id="paying-suspended-tax.p3">@getMessage("paying-suspended-tax.p3")</p>
+    <p class="govuk-body" id="paying-suspended-tax.p4">@getMessage("paying-suspended-tax.p4")</p>
 
     @paymentsMadeContent(
         origin = origin,

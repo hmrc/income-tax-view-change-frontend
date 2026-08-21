@@ -2061,8 +2061,6 @@ whatYouOwe.pre-mtd-outstanding-charges                          = Bydd unrhyw da
 whatYouOwe.revenueAmendment.label                               = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 
 whatYouOwe.suspended-charges                                    = Treth sy’n ddyledus ond nad yw’n cael ei chasglu ar hyn o bryd
-whatYouOwe.suspended-charges.informal.p1                        = Mae’r dreth hon wedi’i gohirio ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
-whatYouOwe.suspended-charges.informal.p2                        = Gallwch dalu’r hyn sy’n ddyledus gennych o hyd, oherwydd efallai y codir llog arnoch os caiff y dreth ei rhyddhau er mwyn i CThEF ei chasglu ac os nad ydych wedi ei thalu erbyn y dyddiad dyledus gwreiddiol.
 whatYouOwe.suspended-charges-informalOnly.p1                    = Mae’r dreth hon wedi’i gohirio ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
 whatYouOwe.suspended-charges-informalOnly.p2                    = Gallwch dalu’r hyn sy’n ddyledus gennych o hyd, oherwydd efallai y codir llog arnoch os caiff y dreth ei rhyddhau er mwyn i CThEF ei chasglu ac os nad ydych wedi ei thalu erbyn y dyddiad dyledus gwreiddiol.
 whatYouOwe.paying-suspended-tax.heading                         = Talu’r dreth sydd wedi’i gohirio
