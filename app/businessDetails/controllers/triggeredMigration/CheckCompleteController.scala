@@ -25,9 +25,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
-import common.models.admin.{NewHubContextRootEnabled, ObligationsFrontend}
-
-import scala.annotation.unused
+import common.models.admin.ObligationsFrontend
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -41,8 +39,7 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     withTriggeredMigrationFS {
-      val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
-
+      
       val sessionId = hc.sessionId.map(_.value) getOrElse {
         throw new Exception("Missing sessionId in HeaderCarrier")
       }
@@ -52,8 +49,6 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
       Future.successful(Ok(
         view(
           isAgent,
-          compatibleSoftwareLink,
-          appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend)),
           postAction = routes.CheckCompleteController.submit(isAgent)
         ))
       )
@@ -62,10 +57,8 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
 
   def submit(isAgent: Boolean): Action[AnyContent] =
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-      @unused
-      val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
       withTriggeredMigrationFS {
-        Future.successful(Redirect(appConfig.homePageUrl(isAgent, isEnabled(NewHubContextRootEnabled))))
+        Future.successful(Redirect(appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend))))
       }
     }
 }
