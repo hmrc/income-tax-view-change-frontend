@@ -71,8 +71,13 @@ trait TransactionItem extends Logging {
       case (LateSubmissionPenalty, _)           => "lateSubmissionPenalty.text"
       case (FirstLatePaymentPenalty, _)         => "firstLatePaymentPenalty.text"
       case (SecondLatePaymentPenalty, _)        => "secondLatePaymentPenalty.text"
-      case (ITSAReturnAmendment, _)             => if (isRevenueAmendment(chargeClassification)) "enquiryAmendment.text" else "itsaReturnAmendment.text"
-      case (ITSAReturnAmendmentCredit, _)       => if (isRevenueAmendment(chargeClassification)) "enquiryAmendmentCredit.text" else "itsaReturnAmendmentCredit.text"
+      case (ITSAReturnAmendment, _) =>
+        if (isCorrection(chargeClassification)) "hmrcCorrection.text"
+        else if (isRevenueAmendment(chargeClassification)) "enquiryAmendment.text"
+        else "itsaReturnAmendment.text"
+      case (ITSAReturnAmendmentCredit, _) =>
+        if (isRevenueAmendment(chargeClassification)) "enquiryAmendmentCredit.text"
+        else "itsaReturnAmendmentCredit.text"
       case error =>
         logger.error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"
