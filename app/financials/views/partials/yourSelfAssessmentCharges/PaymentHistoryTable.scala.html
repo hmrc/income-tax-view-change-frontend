@@ -128,7 +128,9 @@
                     content = Text(messages(s"chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text"))
                 ),
                 TableRow(
-                    content = HtmlContent(viewModel.dunningLockSubItemValue.map(_.toCurrencyString).getOrElse(messages("paymentHistory.unknown"))),
+                   content = if (viewModel.latePaymentInterestCharge && viewModel.chargeItem.dunningLock) {
+                       HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.map(_.toCurrencyString).getOrElse(messages("paymentHistory.unknown")))
+                    } else HtmlContent(viewModel.chargeItem.originalAmount.toCurrencyString),
                     format = Some("numeric")
                 )
             ) else Nil,
