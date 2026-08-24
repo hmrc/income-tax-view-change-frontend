@@ -221,7 +221,8 @@ class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionVa
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
           transitionProfitRow = TransitionProfitRow(Some(BigDecimal(700.00)), Some(BigDecimal(3000.00))),
-          finalDeclarationOrTaxReturnIsSubmitted = true
+          finalDeclarationOrTaxReturnIsSubmitted = true,
+          totalIncomeTaxAndNicsAndCgt = Some(BigDecimal(taxDue))
         )
 
         val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
