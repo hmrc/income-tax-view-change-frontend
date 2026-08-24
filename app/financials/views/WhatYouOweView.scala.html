@@ -82,8 +82,9 @@
     }
 
 
-    <div id="table-sync-container">
-        @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero) {
+
+    @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero) {
+        <div id="table-sync-container">
             @govukTable(Table(
                 head = Some(Seq(
                     Some(HeadCell(content = Text(getMessage("tableHead.due-date")))),
@@ -94,8 +95,8 @@
                         classes = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) "govuk-!-text-align-right" else "govuk-!-text-align-left"),
                     ),
                     Some(HeadCell(content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking),
-    format = Some("numeric")))
-                ).flatten),
+                        format = Some("numeric")))
+                    ).flatten),
                 rows = Seq(
                     Option.when(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero)(
                         Seq[IterableOnce[TableRow]](
