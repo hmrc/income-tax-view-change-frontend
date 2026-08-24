@@ -62,6 +62,7 @@ class FeedbackControllerSpec extends MockAuthActions
     val action = testController.show()
     "the user is an enrolled authenticated individual" should {
       "render the feedback page" in {
+        setupMockFeatureSwitches()
         setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(testAuthSuccessResponse())
         setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
         val result: Future[Result] = action(fakeRequestWithActiveSession)
@@ -78,6 +79,7 @@ class FeedbackControllerSpec extends MockAuthActions
     val fakeRequest = fakeRequestWithActiveSession
     "the user is an agent" should {
       "render the feedback page" in {
+        setupMockFeatureSwitches()
         setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
         val result: Future[Result] = action(fakeRequest)
         status(result) shouldBe Status.OK
@@ -95,6 +97,7 @@ class FeedbackControllerSpec extends MockAuthActions
     "the user is an enrolled authenticated individual" should {
       "submit the form and redirect to the thank you page" when {
         "the form has no errors" in {
+          setupMockFeatureSwitches()
           setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(testAuthSuccessResponse())
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
@@ -105,6 +108,7 @@ class FeedbackControllerSpec extends MockAuthActions
       }
       "return a BadRequest" when {
         "the form is incorrectly filled" in {
+          setupMockFeatureSwitches()
           setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(testAuthSuccessResponse())
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           val result: Future[Result] = action(fakeRequest)
@@ -114,6 +118,7 @@ class FeedbackControllerSpec extends MockAuthActions
 
       "render the error page" when {
         "the submit feedback call fails" in {
+          setupMockFeatureSwitches()
           setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(testAuthSuccessResponse())
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Left(500)))
@@ -132,6 +137,7 @@ class FeedbackControllerSpec extends MockAuthActions
       val fakeRequest = fakePostRequestWithActiveSession
       "submit the form and redirect to the thank you page" when {
         "the form has no errors" in {
+          setupMockFeatureSwitches()
           setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
           val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
@@ -141,6 +147,7 @@ class FeedbackControllerSpec extends MockAuthActions
       }
       "return a BadRequest" when {
         "the form is incorrectly filled" in {
+          setupMockFeatureSwitches()
           setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           val result: Future[Result] = action(fakeRequest)
@@ -150,6 +157,7 @@ class FeedbackControllerSpec extends MockAuthActions
 
       "render the error page" when {
         "the submit feedback call fails" in {
+          setupMockFeatureSwitches()
           setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Left(500)))
@@ -165,6 +173,7 @@ class FeedbackControllerSpec extends MockAuthActions
     val action = testController.thankYou
     "the user is an enrolled authenticated individual" should {
       "render the thank you page" in {
+        setupMockFeatureSwitches()
         setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(testAuthSuccessResponse())
         setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
         val result: Future[Result] = action(fakeRequestWithActiveSession)
@@ -181,6 +190,7 @@ class FeedbackControllerSpec extends MockAuthActions
     val fakeRequest = fakeRequestWithActiveSession
     "the user is an agent" should {
       "render the thank you page" in {
+        setupMockFeatureSwitches()
         setupMockAuthorisedUserNoCheckAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
         val result: Future[Result] = action(fakeRequest)
         status(result) shouldBe Status.OK
@@ -194,6 +204,7 @@ class FeedbackControllerSpec extends MockAuthActions
   private def testAuthFailures(action: Action[AnyContent])(fakeRequest: FakeRequest[AnyContentAsEmpty.type]) = {
     "redirect to sign in" when {
       "the user is not authenticated" in {
+        setupMockFeatureSwitches()
         setupMockUserAuthNoCheckException(mockFAF)(new InvalidBearerToken)
 
         val result: Future[Result] = action(fakeRequest)
@@ -205,6 +216,7 @@ class FeedbackControllerSpec extends MockAuthActions
 
     "redirect to the session timeout page" when {
       "the user has timed out" in {
+        setupMockFeatureSwitches()
         val result: Future[Result] = action(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER

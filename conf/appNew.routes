@@ -1,0 +1,56 @@
+#Home Controller
+GET         /                                                             hub.v2.controllers.HomeController.show(origin: Option[String] ?= None)
+GET         /income-tax                                                   hub.v2.controllers.HomeController.show(origin: Option[String] ?= None)
+GET         /agents/client-income-tax                                     hub.v2.controllers.HomeController.showAgent()
+GET         /agents                                                       hub.v2.controllers.HomeController.showAgent()
+GET         /your-tasks                                                   hub.v2.controllers.newHomePage.HandleYourTasksController.show()
+GET         /agents/your-tasks                                            hub.v2.controllers.newHomePage.HandleYourTasksController.showAgent()
+
+GET         /recent-activity                                              hub.v2.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
+GET         /agents/recent-activity                                       hub.v2.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
+
+GET         /overview                                                     hub.v2.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = false)
+GET         /help                                                         hub.v2.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)
+GET         /agents/overview                                              hub.v2.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
+GET         /agents/help                                                  hub.v2.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
+
+GET        /language/:lang                                                hub.v2.controllers.LocalLanguageController.switchToLanguage(lang: String)
+
+GET         /language/:lang                                               hub.v2.controllers.ItvcLanguageController.switchToLanguage(lang: String)
+GET         /switch-to-welsh                                              hub.v2.controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
+GET         /switch-to-english                                            hub.v2.controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
+
+# No Income Sources Error page
+GET         /no-income-sources                                              hub.v2.controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
+GET         /agents/no-income-sources                                       hub.v2.controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
+
+#Feedback Routes
+GET         /feedback                                                     hub.v2.controllers.feedback.FeedbackController.show()
+GET         /agents/feedback                                              hub.v2.controllers.feedback.FeedbackController.showAgent()
+POST        /feedback                                                     hub.v2.controllers.feedback.FeedbackController.submit()
+POST        /agents/feedback                                              hub.v2.controllers.feedback.FeedbackController.submitAgent()
+GET         /thankyou                                                     hub.v2.controllers.feedback.FeedbackController.thankYou()
+GET         /agents/thankyou                                              hub.v2.controllers.feedback.FeedbackController.thankYouAgent()
+
+#Timeout Routes
+GET         /session-timeout                                              hub.v2.controllers.timeout.SessionTimeoutController.timeout()
+GET         /keep-alive                                                   hub.v2.controllers.timeout.SessionTimeoutController.keepAlive()
+
+#Sign Out Routes
+GET         /sign-out                                                     hub.v2.controllers.SignOutController.signOut()
+
+#Sign In Routes
+GET         /sign-in                                                      hub.v2.controllers.SignInController.signIn()
+
+#Not Enrolled
+GET         /cannot-access-service                                        hub.v2.controllers.errors.NotEnrolledController.show()
+
+#Uplift Failed
+GET         /cannot-view-page                                             hub.v2.controllers.errors.UpliftFailedController.show()
+
+#Uplift Success
+GET         /uplift-success                                               hub.v2.controllers.UpliftSuccessController.success()
+
+#BTA Partial
+GET         /partial                                                      hub.v2.controllers.bta.BTAPartialController.setupPartial()
+

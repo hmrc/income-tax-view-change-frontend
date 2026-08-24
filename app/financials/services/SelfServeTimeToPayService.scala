@@ -16,6 +16,7 @@
 
 package financials.services
 
+import common.auth.MtdItUser
 import common.exceptions.SelfServeTimeToPayJourneyException
 import financials.connectors.SelfServeTimeToPayConnector
 import financials.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
@@ -30,7 +31,7 @@ class SelfServeTimeToPayService @Inject()(
                                            selfServeTimeToPayConnector: SelfServeTimeToPayConnector
                                          )(implicit ec: ExecutionContext) extends Logging {
 
-  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier): Future[Either[Throwable, String]] = {
+  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, String]] = {
     selfServeTimeToPayConnector.startSelfServeTimeToPayJourney
       .map {
         case SelfServeTimeToPayJourneyResponseModel(_, nextUrl) =>

@@ -34,6 +34,7 @@ import businessDetails.views.html.manageBusinesses.manage.CheckYourAnswersView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.exceptions.MissingSessionKey
+import common.models.admin.NewHubContextRootEnabled
 import common.models.incomeSourceDetails.TaxYear
 import common.services.AuditingService
 import shared.enums.BeforeSubmissionPage
@@ -68,7 +69,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
           isAgent,
           incomeSourceType,
           incomeSourceIdOpt,
-          backUrl = appConfig.homePageUrl(isAgent)
+          backUrl = appConfig.homePageUrl(isAgent, isEnabled(NewHubContextRootEnabled))
         )
       }
   }

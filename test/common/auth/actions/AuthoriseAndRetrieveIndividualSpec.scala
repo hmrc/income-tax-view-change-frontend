@@ -71,7 +71,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsyncBody{res =>
                 res.authUserDetails.affinityGroup shouldBe Some(affinityGroup)
                 res.authUserDetails.optNino shouldBe Some(testNino)
@@ -93,7 +93,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsyncBody{res =>
                 res.authUserDetails.affinityGroup shouldBe Some(affinityGroup)
                 res.authUserDetails.optNino shouldBe None
@@ -117,7 +117,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
               )
 
               val result = authAction.invokeBlock(
-                fakeRequestWithActiveSession,
+                requestWithFeatureSwitches(fakeRequestWithActiveSession),
                 defaultAsync)
 
               status(result) shouldBe SEE_OTHER
@@ -134,7 +134,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
               )
 
               val result = authAction.invokeBlock(
-                fakeRequestWithActiveSession,
+                requestWithFeatureSwitches(fakeRequestWithActiveSession),
                 defaultAsync)
 
               status(result) shouldBe SEE_OTHER
@@ -152,7 +152,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.invokeBlock(
-              fakeRequestWithActiveSession,
+              requestWithFeatureSwitches(fakeRequestWithActiveSession),
               defaultAsync)
 
             status(result) shouldBe SEE_OTHER
@@ -171,7 +171,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
+          requestWithFeatureSwitches(fakeRequestWithActiveSession),
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER
@@ -187,7 +187,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
+          requestWithFeatureSwitches(fakeRequestWithActiveSession),
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER
@@ -203,7 +203,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
+          requestWithFeatureSwitches(fakeRequestWithActiveSession),
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER

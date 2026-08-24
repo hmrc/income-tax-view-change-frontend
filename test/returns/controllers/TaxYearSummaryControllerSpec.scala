@@ -95,7 +95,7 @@ class TaxYearSummaryControllerSpec
     }
   }
   val homeBackLink: Boolean => String = isAgent => {
-    appConfig.homePageUrl(isAgent)
+    appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
   }
   val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
   val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))

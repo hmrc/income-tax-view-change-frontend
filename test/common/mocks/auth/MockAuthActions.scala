@@ -68,7 +68,7 @@ trait MockAuthActions
     with MockITSAStatusService
     with MockIncomeTaxCalculationConnector
     with MockIncomeSourceConnector {
-
+  
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuthService)
@@ -99,6 +99,7 @@ trait MockAuthActions
   }
 
   def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false, enabledFeatures: List[FeatureSwitchName] = List()): Unit = {
+    setupMockFeatureSwitches(enabledFeatures*)
     if (withNrs) {
       mtdUserRole match {
         case MTDIndividual => setupMockUserAuthWithNrs
@@ -112,7 +113,6 @@ trait MockAuthActions
         case _ => setupMockAgentWithClientAuth(true)
       }
     }
-    setupMockFeatureSwitches(enabledFeatures*)
   }
 
   def mockItsaStatusRetrievalAction(
@@ -205,6 +205,7 @@ trait MockAuthActions
   }
 
   def setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent: Boolean): Unit = {
+    setupMockFeatureSwitches()
     setupMockGetSessionDataSuccess()
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)
@@ -214,10 +215,12 @@ trait MockAuthActions
   }
 
   final def setupMockUserAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
+    setupMockFeatureSwitches()
     setupMockUserAuthException(mockFAF)(exception)
   }
 
   def setupMockAgentWithoutMTDEnrolmentForClient(): Unit = {
+    setupMockFeatureSwitches()
     setupMockGetSessionDataSuccess()
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)
@@ -226,6 +229,7 @@ trait MockAuthActions
   }
 
   def setupMockAgentWithoutMTDEnrolmentForClientWithNrs(): Unit = {
+    setupMockFeatureSwitches()
     setupMockGetSessionDataSuccess()
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)
@@ -242,6 +246,7 @@ trait MockAuthActions
   }
 
   def setupMockAgentWithClientAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
+    setupMockFeatureSwitches()
     setupMockGetSessionDataSuccess()
     setupMockGetClientDetailsSuccess()
     setupMockAgentAuthException(mockFAF)(exception)
@@ -270,7 +275,7 @@ trait MockAuthActions
     s"the $userRole is not authenticated" should {
 
       "redirect to signin" in {
-
+        setupMockFeatureSwitches()
         setupMockUserAuthorisationException()
         mockItsaStatusRetrievalAction()
 
@@ -285,6 +290,7 @@ trait MockAuthActions
 
       "redirect to timeout controller" in {
 
+        setupMockFeatureSwitches()
         setupMockUserAuthorisationException(new BearerTokenExpired)
         mockItsaStatusRetrievalAction()
 
@@ -299,6 +305,7 @@ trait MockAuthActions
 
       "redirect to NotEnrolledController controller" in {
 
+        setupMockFeatureSwitches()
         setupMockUserAuthorisationException(InsufficientEnrolments("missing HMRC-MTD-IT enrolment"))
         mockItsaStatusRetrievalAction()
 
@@ -349,6 +356,7 @@ trait MockAuthActions
 
       s"the agent is not authenticated" should {
         "redirect to signin" in {
+          setupMockFeatureSwitches()
           setupMockGetSessionDataSuccess()
           mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
@@ -363,6 +371,7 @@ trait MockAuthActions
 
       s"the agent has a session that has timed out" should {
         "redirect to timeout controller" in {
+          setupMockFeatureSwitches()
           setupMockGetSessionDataSuccess()
           mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
@@ -377,6 +386,7 @@ trait MockAuthActions
 
       s"the agent does not have an arn enrolment" should {
         "redirect to AgentError controller" in {
+          setupMockFeatureSwitches()
           setupMockGetSessionDataSuccess()
           mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
@@ -391,6 +401,7 @@ trait MockAuthActions
     } else {
       s"the agent does not have a valid delegated MTD enrolment" should {
         "redirect to ClientRelationshipFailureController controller" in {
+          setupMockFeatureSwitches()
           setupMockGetSessionDataSuccess()
           mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
@@ -438,6 +449,7 @@ trait MockAuthActions
 
     "render the supporting agent unauthorised page" in {
 
+      setupMockFeatureSwitches()
       setupMockSuccess(MTDSupportingAgent, withNrsRetrievals)
       mockItsaStatusRetrievalAction()
       val result = action(fakeRequest)

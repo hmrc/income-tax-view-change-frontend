@@ -35,5 +35,5 @@ class LocalLanguageController @Inject()(
       "cymraeg" -> Lang("cy")
     )
 
-  override def fallbackURL: String = appConfig.individualHomeUrl
+  override def fallbackURL: String = appConfig.individualHomeUrl(false)
 }

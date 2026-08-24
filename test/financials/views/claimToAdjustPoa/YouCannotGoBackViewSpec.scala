@@ -40,7 +40,7 @@ class YouCannotGoBackViewSpec extends TestSupport {
       )
   }
 
-  def getHomeControllerLink(isAgent: Boolean): String = appConfig.homePageUrl(isAgent)
+  def getHomeControllerLink(isAgent: Boolean): String = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
 
   def getWhatYouOweControllerLink(isAgent: Boolean): String = {
     if (isAgent) financialsRoutes.WhatYouOweController.showAgent().url

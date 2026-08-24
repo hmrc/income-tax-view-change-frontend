@@ -49,6 +49,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
   val createdFirstLatePaymentPenaltyStoodOverText: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text")
   val dunningLocksBannerTitle: String = messages("chargeSummary.dunning.locks.banner.title")
   val dunningLocksBannerHeading: String = s"${messages("chargeSummary.dunning.locks.informal.standover1.banner.note")} ${messages("chargeSummary.dunning.locks.informal.standover2.banner.note")}"
+  val itsaEnquiryAmendmentCreditHeading: String = "Credit from HMRC enquiry amendment"
 
   def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
@@ -124,31 +125,38 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         document.select("#payment-history-table > tbody > tr > td:nth-child(2)").text() shouldBe enquiryAmendmentDescriptionText
       }
     }
+    "charge is an ITSAReturnAmendmentCredit type and has a charge classification of 'RA'" should {
+      "display the correct content" in new TestSetup(chargeItem = chargeItemModel(transactionType = ITSAReturnAmendmentCredit, chargeClassification = Some("RA"))){
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe itsaEnquiryAmendmentCreditHeading
+        Option(document.getElementById("itsa-enquiry-amendment-credit-p1")).isDefined shouldBe true
+        Option(document.getElementById("itsa-enquiry-amendment-credit-p2")).isDefined shouldBe true
+      }
+    }
 
     "charge is suspended with dunning lock 'Stand over order'" should {
       "display the correct content" in new TestSetup(
-        chargeItem = chargeItemModel(dunningLock = true), 
+        chargeItem = chargeItemModel(dunningLock = true),
         paymentBreakdown =
           List(
             FinancialDetail(
-              TaxYear.forYearEnd(2018).shortenTaxYearEnd, 
-              Some("SA POA 1 Reconciliation Debit"), 
-              Some("4920"), 
-              Some(id1040000123), 
-              Some(LocalDate.parse("2018-08-16")), 
-              Some("POA1"), 
-              Some("SA POA 1 Reconciliation Debit"), 
-              Some(1400.00), 
-              Some(1400.00), 
-              Some(1400.00), 
-              Some(0), 
+              TaxYear.forYearEnd(2018).shortenTaxYearEnd,
+              Some("SA POA 1 Reconciliation Debit"),
+              Some("4920"),
+              Some(id1040000123),
+              Some(LocalDate.parse("2018-08-16")),
+              Some("POA1"),
+              Some("SA POA 1 Reconciliation Debit"),
+              Some(1400.00),
+              Some(1400.00),
+              Some(1400.00),
+              Some(0),
               Some(ITSA_ENGLAND_AND_NI),
-              None, 
+              None,
               Some(
                 Seq(
                   SubItem(
                     dueDate = Some(LocalDate.of(2019, 5, 15)),
-                    subItemId = Some("001"), 
+                    subItemId = Some("001"),
                     amount = Some(BigDecimal("1400.00")),
                     dunningLock = Some("Stand over order")
                   )
@@ -157,7 +165,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
             )
           )
       ) {
-            
+
         document.select("#dunningLocksBanner").size() shouldBe 1
         document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
         document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe dunningLocksBannerHeading

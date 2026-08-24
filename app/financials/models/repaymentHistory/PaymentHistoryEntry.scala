@@ -28,7 +28,8 @@ case class PaymentHistoryEntry(date: LocalDate,
                                transactionId: Option[String] = None,
                                linkUrl: String,
                                visuallyHiddenText: String,
-                               private val taxYear: Option[Int])(implicit val dateService: DateServiceInterface) {
+                               private val taxYear: Option[Int],
+                               isRevenueAmendment: Boolean = false)(implicit val dateService: DateServiceInterface) {
 
   def getTaxYear: TaxYear = {
     taxYear match {

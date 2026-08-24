@@ -1,0 +1,148 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package hub.auth.actions
+
+import com.google.inject.Singleton
+import common.auth.*
+import common.config.FrontendAppConfig
+import common.enums.MTDIndividual
+import common.models.audit.IvUpliftRequiredAuditModel
+import common.services.AuditingService
+import common.utils.AuthUtils.{ORIGIN, mtdEnrolmentName}
+import hub.v2.viewUtils.InternalUrlHelper
+import play.api.Logging
+import play.api.mvc.*
+import play.api.mvc.Results.Redirect
+import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
+import java.net.URLEncoder
+import javax.inject.Inject
+import scala.annotation.{nowarn, unused}
+import scala.concurrent.{ExecutionContext, Future}
+
+// Added @nowarn annotation to suppress compiler warning on line 73. As the filed name from Retrieval had been deprecated since 2024-02-26. But we are still using it (https://jira.tools.tax.service.gov.uk/browse/MISUV-11315)
+// https://github.com/hmrc/auth-client/blob/4ab64507528f7e5e4200eca6d01f6ddc6aa3b269/src-common/main/scala/uk/gov/hmrc/auth/core/retrieve/v2/Retrievals.scala#L54-L56
+@nowarn("cat=deprecation")
+@Singleton
+class AuthoriseAndRetrieveIndividualForNrs @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                     val appConfig: FrontendAppConfig,
+                                                     mcc: MessagesControllerComponents,
+                                                     val auditingService: AuditingService)
+  extends AuthoriseHelper with ActionRefiner[RequestWithFeatureSwitches, AuthorisedAndEnrolledRequest] with Logging {
+
+  implicit val executionContext: ExecutionContext = mcc.executionContext
+  lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
+
+  override protected def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter
+      .fromRequestAndSession(request, request.session)
+
+    implicit val req: RequestWithFeatureSwitches[A] = request
+
+    // authorise on HMRC-MTD-IT enrolment and Individual / Organisation affinity group
+    val predicate: Predicate =
+      Enrolment(mtdEnrolmentName) and
+        (AffinityGroup.Organisation or AffinityGroup.Individual)
+
+    authorisedFunctions.authorised(AffinityGroup.Agent or predicate)
+      .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel
+      and internalId and externalId and nino and dateOfBirth and email and groupIdentifier and credentialRole
+      and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes) {
+        redirectIfAgentNrs() orElse
+          redirectIfInsufficientConfidenceNrs() orElse constructAuthorisedAndEnrolledUserForNrs()
+      }(hc, executionContext) recoverWith logAndRedirect()
+  }
+
+  // this URL is incorrect in live - the completion and failure URLs must be URL encoded
+  def ivUpliftRedirectUrl[A](implicit request: RequestWithFeatureSwitches[A]):String = {
+    val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.baseUrl
+    @unused val origin = request.getQueryString(ORIGIN)
+    val completionUrl: String = s"$host${InternalUrlHelper.upliftSuccessUrl}"
+    val failureUrl: String = s"$host${InternalUrlHelper.upliftFailedUrl}"
+    s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
+  }
+
+  private def redirectIfAgentNrs[A]()(
+    implicit @unused request: RequestWithFeatureSwitches[A]): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+    case _ ~ _ ~ _ ~ Some(Agent) ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ =>
+      logger.error(s"Agent on endpoint for individuals")
+      Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl(request.newHubContextRootEnabled))))
+  }
+
+  private def redirectIfInsufficientConfidenceNrs[A]()(
+    implicit request: RequestWithFeatureSwitches[A],
+    hc: HeaderCarrier): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+
+    case _ ~ _ ~ _ ~ ag ~ confidenceLevel ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _
+      if confidenceLevel.level < requiredConfidenceLevel =>
+      auditingService.audit(IvUpliftRequiredAuditModel(ag.fold("")(_.toString), confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
+      Future.successful(Left(Redirect(ivUpliftRedirectUrl)))
+  }
+
+  private def constructAuthorisedAndEnrolledUserForNrs[A]()(
+    implicit request: RequestWithFeatureSwitches[A]): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+    case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel ~ internalId ~ externalId ~ nino ~
+    dateOfBirth ~ email ~ groupIdentifier ~ credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~
+    credentialStrength ~ loginTimes =>
+      lazy val optMtdId: Option[String] =
+        enrolments.getEnrolment(Constants.mtdEnrolmentName)
+          .flatMap(_.getIdentifier(Constants.mtdEnrolmentIdentifierKey))
+          .map(_.value)
+
+      optMtdId.fold(throw InsufficientEnrolments("Missing MTDId Individual")) {
+        mtdItId =>
+          val authUserDetails = AuthUserDetails(
+            enrolments,
+            affinityGroup,
+            credentials,
+            userName,
+            internalId = internalId,
+            externalId = externalId,
+            nino = nino,
+            dateOfBirth = dateOfBirth,
+            email = email,
+            groupIdentifier = groupIdentifier,
+            credentialRole = credentialRole,
+            mdtpInformation = mdtpInformation,
+            itmpName = itmpName,
+            itmpDateOfBirth = itmpDateOfBirth,
+            itmpAddress = itmpAddress,
+            credentialStrength = credentialStrength,
+            loginTimes = Some(loginTimes),
+            confidenceLevel = Some(confidenceLevel)
+          )
+          Future.successful(
+            Right(
+              AuthorisedAndEnrolledRequest(
+                mtditId = mtdItId,
+                MTDIndividual,
+                authUserDetails = authUserDetails,
+                clientDetails = None,
+                featureSwitches = request.featureSwitches
+              )
+            )
+          )
+      }
+  }
+}

@@ -29,7 +29,7 @@ import businessDetails.views.html.manageBusinesses.add.IsTheNewAddressInTheUKVie
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.OverseasBusinessAddress
+import common.models.admin.{NewHubContextRootEnabled, OverseasBusinessAddress}
 import common.models.core.{Mode, NormalMode}
 import shared.enums.BeforeSubmissionPage
 import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -56,7 +56,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       if isEnabled(OverseasBusinessAddress) then
         handleRequest(isAgent, mode, isTriggeredMigration)
       else
-        Future.successful(Redirect(appConfig.individualHomeUrl))
+        Future.successful(Redirect(appConfig.individualHomeUrl(isEnabled(NewHubContextRootEnabled))))
   }
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
