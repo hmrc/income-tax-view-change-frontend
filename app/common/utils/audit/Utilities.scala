@@ -25,13 +25,19 @@ object Utilities {
 
   private def getBaseDetails(user: MtdItUser[_]): JsObject =
     Json.obj( "mtditid" -> user.mtditid) ++
-    Json.obj("agentReferenceNumber"->user.arn) ++
+    arnToJson(user.agentReferenceNumber) ++
     Json.obj("saUtr"-> user.saUtr) ++
     Json.obj("credId"-> user.credId) ++
     userType(user.userType, user.isSupportingAgent)
 
   def userAuditDetails(user: MtdItUser[_]): JsObject =
     Json.obj("nino" -> user.nino) ++ getBaseDetails(user)
+
+  def arnToJson(arn: Option[String]): JsObject =
+    arn match {
+      case Some(value) => Json.obj("agentReferenceNumber" -> value)
+      case None => Json.obj()
+    }
 
   def userType(userType: Option[AffinityGroup], isSupportingAgent: Boolean = false): JsObject =
     userType match {

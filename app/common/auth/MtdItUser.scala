@@ -38,7 +38,9 @@ case class MtdItUser[A](mtditid: String,
   else authUserDetails.saUtr
   val credId: Option[String] = authUserDetails.credId
   val userType: Option[AffinityGroup] = authUserDetails.affinityGroup
-  val arn: Option[String] = authUserDetails.agentReferenceNumber
+  val agentReferenceNumber: Option[String] = authUserDetails.agentReferenceNumber
+
+  val arn: Option[String] = agentReferenceNumber
 
   def isAgent: Boolean = usersRole != MTDIndividual
 

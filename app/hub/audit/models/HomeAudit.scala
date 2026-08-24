@@ -50,7 +50,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
   ) ++ userType(mtdItUser.userType, mtdItUser.isSupportingAgent) ++ paymentsInformation ++ updatesInformation ++
     Json.obj("saUtr"-> mtdItUser.saUtr) ++
     Json.obj("credId"-> mtdItUser.credId) ++
-    Json.obj("agentReferenceNumber"-> mtdItUser.arn)
+    arnToJson(mtdItUser.agentReferenceNumber)
 
   override val auditType: String = ItsaHomePage
 

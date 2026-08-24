@@ -36,7 +36,7 @@ case class IncomeSourceDetailsResponseAuditModel(
     Json.obj("mtditid" -> mtdItUser.mtditId,
       "selfEmploymentIncomeSourceIds" -> selfEmploymentIds,
       "propertyIncomeSourceIds" -> propertyIncomeIds) ++
-      Json.obj("agentReferenceNumber"-> mtdItUser.authUserDetails.agentReferenceNumber) ++
+      arnToJson(mtdItUser.authUserDetails.agentReferenceNumber) ++
       Json.obj("saUtr"-> mtdItUser.saUtr) ++
       userType(mtdItUser.authUserDetails.affinityGroup, mtdItUser.mtdUserRole == MTDSupportingAgent) ++
       Json.obj("credId"-> mtdItUser.authUserDetails.credId) ++

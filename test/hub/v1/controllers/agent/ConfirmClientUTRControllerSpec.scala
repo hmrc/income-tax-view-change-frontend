@@ -228,7 +228,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
 
             val expectedAudit = ConfirmClientDetailsAuditModel(
               clientName = "Test User", nino = testNino, mtditid = testMtditid,
-              arn = testArn, saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(testCredId)
+              arn = Some(testArn), saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(testCredId)
             )
 
             status(result) shouldBe SEE_OTHER

@@ -144,7 +144,7 @@ class ReportingObligationsAuditService @Inject()(
       buildCards(summaryCardSuffixes).map(_.auditModelToString())
 
     ReportingObligationsAuditModel(
-      agentReferenceNumber = mtdItUser.arn,
+      agentReferenceNumber = mtdItUser.agentReferenceNumber,
       credId = mtdItUser.credId,
       mtditid = mtdItUser.mtditid,
       nino = mtdItUser.nino,

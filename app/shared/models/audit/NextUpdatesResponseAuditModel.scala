@@ -19,6 +19,7 @@ package shared.models.audit
 import common.auth.MtdItUser
 import common.models.obligations.SingleObligationModel
 import common.models.audit.AuditEvent
+import common.utils.audit.Utilities.arnToJson
 import uk.gov.hmrc.auth.core.AffinityGroup
 
 import play.api.libs.json.*
@@ -52,10 +53,15 @@ object NextUpdatesResponseAuditModel:
       user.saUtr,
       user.credId,
       user.userType,
-      user.arn
+      user.agentReferenceNumber
     )
 
-  given Writes[NextUpdatesResponseAuditModel] = Json.writes[NextUpdatesResponseAuditModel]
+  private val defaultWrites: OWrites[NextUpdatesResponseAuditModel] = Json.writes[NextUpdatesResponseAuditModel]
+
+  given Writes[NextUpdatesResponseAuditModel] = Writes { model =>
+    defaultWrites.writes(model) - "agentReferenceNumber" ++
+      arnToJson(model.agentReferenceNumber)
+  }
   given specificWrites: Writes[SingleObligationModel] = (
       (__ \ "startDate").write[LocalDate] and
       (__ \ "endDate").write[LocalDate] and 
