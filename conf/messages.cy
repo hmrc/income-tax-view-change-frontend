@@ -2244,6 +2244,7 @@ chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = Gwnaet
 chargeSummary.chargeHistory.created.enquiryAmendment.text               = Cafodd y swm ychwanegol ei greu pan wnaeth CThEF diwygio’ch Ffurflen Dreth
 chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = Creodd CThEF eich swm ychwanegol taliad mantoli o ganlyniad i Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEF wedi’i greu
+chargeSummary.chargeHistory.created.hmrcCorrection.text                 = Cafodd y swm ychwanegol ei greu pan wnaeth CThEF gywiro’ch Ffurflen Dreth
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = 	Yr ail daliad ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
@@ -2653,6 +2654,7 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credyd o’ch Ffurfln Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.enquiryAmendmentCredit.text.heading                 = Credyd o ddiwygiad yn sgil ymholiad gan CThEF
+yourSelfAssessmentChargeSummary.hmrcCorrection.text.heading                         = Diwygiad CThEF: swm ychwanegol i’w dalu o ganlyniad i gywiro Ffurflen Dreth
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Anhysbys
 yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 

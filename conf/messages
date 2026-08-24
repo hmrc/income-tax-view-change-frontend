@@ -2260,6 +2260,7 @@ chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC c
 chargeSummary.chargeHistory.created.enquiryAmendment.text               = Extra amount created when HMRC amended your tax return
 chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment extra amount due to amended return
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
+chargeSummary.chargeHistory.created.hmrcCorrection.text                 = Extra amount created when HMRC corrected your return
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Second payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
@@ -2632,6 +2633,7 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credit from your amended tax return
 yourSelfAssessmentChargeSummary.enquiryAmendmentCredit.text.heading                 = Credit from HMRC enquiry amendment
+yourSelfAssessmentChargeSummary.hmrcCorrection.text.heading                         = HMRC amendment: extra amount to pay due to corrected tax return
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Extra amount to pay due to HMRC enquiry amendment
 
