@@ -44,8 +44,8 @@
 @saNoteParagraphContent(utr: String, isOverdueCharge: Boolean) = {
 
    @if(isOverdueCharge){
-    @h2(msg = getMessage("sa-note-1-heading"))
     @if(isSelfServeTimeToPayEnabled){
+        @h2(msg = getMessage("sa-note-1-heading"))
         @if(user.isAgent){
             @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
                     link(link = financials.controllers.routes.SelfServeTimeToPayController.agentFetchUrl().url,
