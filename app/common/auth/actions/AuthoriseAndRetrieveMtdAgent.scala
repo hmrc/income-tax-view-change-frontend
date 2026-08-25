@@ -37,9 +37,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunctions,
-                                             val appConfig: FrontendAppConfig,
                                              mcc: MessagesControllerComponents,
-                                             errorHandler: AgentItvcErrorHandler) extends FeatureSwitching with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] with Logging {
+                                             errorHandler: AgentItvcErrorHandler)
+                                            (implicit val appConfig: FrontendAppConfig) extends FeatureSwitching with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] with Logging {
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
 

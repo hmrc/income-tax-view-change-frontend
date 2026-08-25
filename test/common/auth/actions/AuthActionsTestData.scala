@@ -34,7 +34,7 @@ import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 object AuthActionsTestData {
 
-  lazy val newHubContextRootEnabled = false
+  lazy val newHubContextRootEnabled = true
   lazy val defaultFeatureSwitches = List(FeatureSwitch(NewHubContextRootEnabled, newHubContextRootEnabled))
 
   def requestWithFeatureSwitches(implicit request: Request[_]): RequestWithFeatureSwitches[_] =

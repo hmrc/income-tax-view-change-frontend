@@ -17,6 +17,7 @@
 package common.auth.actions
 
 import common.auth.RequestWithFeatureSwitches
+import common.config.FrontendAppConfig
 import common.viewUtils.InternalUrlHelper
 import play.api.Logging
 import play.api.mvc.Results.Redirect
@@ -27,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionTimeoutAction @Inject()()(implicit val executionContext: ExecutionContext)
+class SessionTimeoutAction @Inject()()(implicit val executionContext: ExecutionContext, val appConfig: FrontendAppConfig)
   extends ActionRefiner[RequestWithFeatureSwitches, RequestWithFeatureSwitches] with Logging {
 
   override def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, RequestWithFeatureSwitches[A]]] = {

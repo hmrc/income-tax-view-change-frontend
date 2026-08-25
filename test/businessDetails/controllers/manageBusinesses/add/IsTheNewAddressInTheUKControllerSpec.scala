@@ -93,9 +93,10 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
-                val result = action(fakeRequest)
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
+
+                val result = action(fakeRequest)
 
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheNewAddressInTheUKHeading))
@@ -160,7 +161,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
 
                 status(result) shouldBe SEE_OTHER
-                redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+                redirectLocation(result).get should include(appConfig.individualHomeUrl(newHubContextRootEnabled))
             }
           }
         }

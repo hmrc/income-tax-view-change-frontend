@@ -43,6 +43,8 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
   lazy val mockRecentActivityService: RecentActivityService = mMock(classOf[RecentActivityService])
   lazy val mockPaymentHistoryService: PaymentHistoryService = mMock(classOf[PaymentHistoryService])
 
+  override val newHubContextRootEnabled: Boolean = false
+  
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[RecentActivityService].toInstance(mockRecentActivityService),

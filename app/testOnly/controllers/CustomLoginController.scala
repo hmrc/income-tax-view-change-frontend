@@ -16,6 +16,7 @@
 
 package testOnly.controllers
 
+import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.controllers.BaseController
@@ -37,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
+                                      featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
                                       val testOnlyAppConfig: TestOnlyAppConfig,
                                       val mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext,
@@ -65,7 +67,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     )
   }
 
-  val postLogin: Action[AnyContent] = Action.async { implicit request =>
+  val postLogin: Action[AnyContent] = featureSwitchRetrievalAction.async { implicit request =>
     PostedUser.form.bindFromRequest().fold(
       formWithErrors =>
         Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
@@ -76,12 +78,12 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
               case (authExchange, _) =>
                 val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
                 val redirectURL = if (postedUser.isAgent)
-                  s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
+                  s"${appConfig.baseFullUrl}/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
                 else {
                   val origin = if (postedUser.usePTANavBar) "PTA" else "BTA"
-                  s"report-quarterly/income-and-expenses/view?origin=$origin"
+                  appConfig.individualHomeUrlWithOrigin(request.newHubContextRootEnabled, Some(origin))
                 }
-                val homePage = s"${appConfig.baseUrl}/$redirectURL"
+                val homePage = s"$redirectURL"
 
                 updateEffectiveDateOfPayment().failed.foreach(ex => {
                   logger.error("Failed to update effectiveDateOfPayment", ex)
