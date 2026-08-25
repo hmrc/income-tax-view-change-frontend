@@ -50,6 +50,10 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
   val dunningLocksBannerTitle: String = messages("chargeSummary.dunning.locks.banner.title")
   val dunningLocksBannerHeading: String = s"${messages("chargeSummary.dunning.locks.informal.standover1.banner.note")} ${messages("chargeSummary.dunning.locks.informal.standover2.banner.note")}"
   val itsaEnquiryAmendmentCreditHeading: String = "Credit from HMRC enquiry amendment"
+  val chargeAmountHeading: String = messages("yourSelfAssessmentChargeSummary.stoodOverFullCharge")
+  val firstLatePaymentPenaltyText: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text")
+  val firstPaymentOnAccount1Text: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text")
+  val paymentHistoryUnknownText: String = messages("paymentHistory.unknown")
 
   def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
@@ -169,6 +173,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         document.select("#dunningLocksBanner").size() shouldBe 1
         document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
         document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe dunningLocksBannerHeading
+        document.getElementById("charge-amount-heading").text().split("£").head.trim shouldBe chargeAmountHeading
         document.getElementById("charge-history-heading").text() shouldBe firstPaymentOnAccountHeading
         document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
         document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
@@ -178,6 +183,24 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
         document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
         document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£1,400.00"
+      }
+
+      "display the correct content when first lpp with dunningLock" in new TestSetup(
+        chargeItem = financialDetailsLatePaymentPenalties.head.copy(dunningLock = true)
+      ) {
+        document.select("#dunningLocksBanner").size() shouldBe 1
+        document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
+        document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe dunningLocksBannerHeading
+        document.getElementById("charge-amount-heading").text().split("£").head.trim shouldBe chargeAmountHeading
+        document.getElementById("charge-history-heading").text() shouldBe firstPaymentOnAccountHeading
+        document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
+        document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2022 to 2023 tax bill."
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe firstLatePaymentPenaltyText
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(3)").text() shouldBe "£1,400.00"
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe paymentHistoryUnknownText
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£43.21"
       }
     }
   }
