@@ -15,6 +15,7 @@ base.submit                                                     = Submit
 base.error_heading                                              = There’s a problem
 base.backToHome                                                 = Back to Income Tax home
 base.continue                                                   = Continue
+base.startnow                                                   = Start now
 base.error_summary.heading                                      = There is a problem
 base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
@@ -3681,3 +3682,12 @@ triggered-migration.checkComplete.whatNext.heading                              
 triggered-migration.checkComplete.whatNext.p1                                           = We will use the information you have provided to update our records.
 triggered-migration.checkComplete.whatNext.p2                                           = Any updates, deadlines or actions relating to periods when your income sources were active will be shown in your HMRC online account.
 triggered-migration.checkComplete.whatNext.p3                                           = You can check whether there are any updates, deadlines or actions that apply to you.
+
+# Triggered migration - Complete steps page
+triggered-migration.completeSteps.heading                                                  = You need to complete some steps before you can submit your tax return
+triggered-migration.completeSteps.p1                                                       = You were automatically moved to Making Tax Digital for Income Tax because you met the requirements to join.
+triggered-migration.completeSteps.linkText                                                 = Find out why you are using Making Tax Digital for Income Tax
+triggered-migration.completeSteps.p2                                                       = You did not complete all the required steps for the {0} to {1} tax year. You must:
+triggered-migration.completeSteps.ul.li1                                                   = confirm your income sources
+triggered-migration.completeSteps.ul.li2                                                   = get compatible software
+triggered-migration.completeSteps.ul.li3                                                   = send your most recent quarterly update

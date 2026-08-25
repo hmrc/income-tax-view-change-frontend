@@ -74,7 +74,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                           Future.successful(Right(req))
                         } else {
                           Future.successful(
-                            Left(Redirect(appConfig.triggeredMigrationCheckHMRCRecordsUrl(req.isAgent, isEnabled(BusinessDetailsFrontend))))
+                            Left(Redirect(appConfig.triggeredMigrationCompleteStepsUrl(req.isAgent, isEnabled(BusinessDetailsFrontend))))
                           )
                         }
                       case Left(errorResult) =>
@@ -124,6 +124,10 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
       itsaStatusList =>
+        println(Console.CYAN + s"Retrieved ITSA status list: $itsaStatusList")
+        println(Console.CYAN + s"Current tax year: ${dateService.getCurrentTaxYear.shortenTaxYearEnd}")
+        println(Console.CYAN + s"Next tax year: ${dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd}")
+
         itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
           case Some(status) if status.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)) => Future(Right(true))
           case Some(status) if status.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
@@ -136,7 +140,6 @@ class TriggeredMigrationRetrievalAction @Inject()(
   }
 
   private def showErrorPageBasedOnContext(request: MtdItUser[_], context: String): Result = {
-
     logger.error(context)
 
     (request.authUserDetails.affinityGroup, context) match {
