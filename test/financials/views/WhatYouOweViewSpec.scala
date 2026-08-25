@@ -971,14 +971,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("payment-button").text shouldBe payNow
           pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(400).url
         }
-        "have payments data with button for penalties when balance details have no amount due" in new TestSetup(
-          charges = whatYouOweAllPenalties.copy(
-            balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None)
-          ),
+        "have payments data with button for penalties" in new TestSetup(
+          charges = whatYouOweDataWithMixedData4PenaltiesUnfiltered,
           LPP2Url = appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRefLPP2")
         ) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
-          pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(25000).url
+          pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(200).url
           findElementById("overdue-inset-migrated-1") shouldBe None
           findElementById("overdue-inset-migrated-2") shouldBe None
         }
