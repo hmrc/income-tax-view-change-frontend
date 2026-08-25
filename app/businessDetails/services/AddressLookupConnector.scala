@@ -35,9 +35,8 @@ import javax.inject.Inject
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
-                                       http: HttpClientV2,
-                                       val messagesApi: MessagesApi)(implicit ec: ExecutionContext)
+class AddressLookupConnector @Inject()(http: HttpClientV2,
+                                       val messagesApi: MessagesApi)(implicit ec: ExecutionContext, val appConfig: FrontendAppConfig)
   extends FeatureSwitching with Logging {
 
   val baseUrl: String = appConfig.addressLookupService

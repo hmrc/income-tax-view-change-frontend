@@ -16,25 +16,91 @@
 
 package common.viewUtils
 
+import common.config.FrontendAppConfig
 import common.controllers.routes as appRoutes
 import common.controllers.timeout.routes as timeoutRoutes
 import common.controllers.feedback.routes as feedbackRoutes
 import common.controllers.agent.errors.routes as agentErrorRoutes
-
+import hub.v2.controllers.routes as hubAppRoutes
+import hub.v2.controllers.timeout.routes as hubTimeoutRoutes
+import hub.v2.controllers.feedback.routes as hubFeedbackRoutes
+import hub.v2.controllers.agent.errors.routes as hubAgentErrorRoutes
 object InternalUrlHelper {
+
+  def signinCall(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubAppRoutes.SignInController.signIn()
+    else
+      appRoutes.SignInController.signIn()
+  }
+  def signinUrl(implicit appConfig: FrontendAppConfig) = signinCall.url
   
-  val signinUrl = appRoutes.SignInController.signIn().url
-  val signinCall = appRoutes.SignInController.signIn()
-  val signoutUrl = appRoutes.SignOutController.signOut().url
-  val switchLocaleToWelshUrl = appRoutes.LocalLanguageController.switchToLanguage("cymraeg").url
-  val switchLocaleToEnglishUrl = appRoutes.LocalLanguageController.switchToLanguage("english").url
-  val switchItvcLangToEnglishCall = appRoutes.ItvcLanguageController.switchToEnglish(None)
-  val switchItvcLangToWelshCall = appRoutes.ItvcLanguageController.switchToWelsh(None)
-  val keepAliveUrl = timeoutRoutes.SessionTimeoutController.keepAlive().url
-  val timeoutUrl = timeoutRoutes.SessionTimeoutController.timeout().url
-  val timeoutCall = timeoutRoutes.SessionTimeoutController.timeout()
-  val feedbackUrl = feedbackRoutes.FeedbackController.show().url
-  val agentFeedbackUrl = feedbackRoutes.FeedbackController.showAgent().url
-  val agentErrorCall = agentErrorRoutes.AgentErrorController.show()
+  def signoutUrl(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubAppRoutes.SignOutController.signOut().url
+    else
+      appRoutes.SignOutController.signOut().url
+  }
+
+  def switchItvcLangToEnglishCall(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubAppRoutes.ItvcLanguageController.switchToEnglish(None)
+    else
+      appRoutes.ItvcLanguageController.switchToEnglish(None)
+  }
+  
+  def switchItvcLangToWelshCall(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubAppRoutes.ItvcLanguageController.switchToWelsh(None)
+    else
+      appRoutes.ItvcLanguageController.switchToWelsh(None)
+  }
+  
+  def switchLocaleToWelshUrl(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubAppRoutes.LocalLanguageController.switchToLanguage("cymraeg").url
+    else
+      appRoutes.LocalLanguageController.switchToLanguage("cymraeg").url
+  }
+  def switchLocaleToEnglishUrl(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubAppRoutes.LocalLanguageController.switchToLanguage("english").url
+    else
+      appRoutes.LocalLanguageController.switchToLanguage("english").url
+  }
+  def keepAliveUrl(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubTimeoutRoutes.SessionTimeoutController.keepAlive().url
+    else
+      timeoutRoutes.SessionTimeoutController.keepAlive().url
+  }
+
+  def timeoutCall(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubTimeoutRoutes.SessionTimeoutController.timeout()
+    else
+      timeoutRoutes.SessionTimeoutController.timeout()
+  }
+
+  def timeoutUrl(implicit appConfig: FrontendAppConfig) = timeoutCall.url
+  
+  def feedbackUrl(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubFeedbackRoutes.FeedbackController.show().url
+    else
+      feedbackRoutes.FeedbackController.show().url
+  }
+  def agentFeedbackUrl(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubFeedbackRoutes.FeedbackController.showAgent().url
+    else
+      feedbackRoutes.FeedbackController.showAgent().url
+  }
+  def agentErrorCall(implicit appConfig: FrontendAppConfig) = {
+    if (appConfig.hubContextRootEnabledConfig)
+      hubAgentErrorRoutes.AgentErrorController.show()
+    else
+      agentErrorRoutes.AgentErrorController.show()
+  }
 
 }

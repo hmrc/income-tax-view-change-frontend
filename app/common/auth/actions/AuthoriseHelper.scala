@@ -17,6 +17,7 @@
 package common.auth.actions
 
 import common.auth.{AuthorisedAndEnrolledRequest, RequestWithFeatureSwitches}
+import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.viewUtils.InternalUrlHelper
 import common.controllers.errors.routes as errorRoutes
@@ -31,6 +32,8 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 trait AuthoriseHelper extends FeatureSwitching with Logging {
+  
+  implicit val appConfig: FrontendAppConfig
 
   type AuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
   type NrsIndividualAuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel ~
