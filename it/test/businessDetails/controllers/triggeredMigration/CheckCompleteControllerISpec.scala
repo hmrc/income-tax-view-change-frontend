@@ -64,6 +64,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
     val homePageUrl: String = appConfig.homePageUrl(mtdRole.isAgent, newHubContextRootEnabled)
+    val submissionsDeadlinesUrl: String = appConfig.obligationsNextUpdatesUrl(mtdRole.isAgent, false)
 
     s"GET $path" when {
       s"user is $mtdRole" should {
@@ -106,7 +107,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
 
     s"POST $path" when {
       s"user is $mtdRole" should {
-        "redirect to home page when form is valid and 'Continue' is selected" in {
+        "redirect to submissions deadlines page when form is valid and 'Continue' is selected" in {
           stubAuthorised(mtdRole, List(TriggeredMigration))
           GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
@@ -122,7 +123,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
           val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(homePageUrl)
+            redirectURI(submissionsDeadlinesUrl)
           )
         }
 
