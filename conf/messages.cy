@@ -2706,6 +2706,9 @@ yourSelfAssessmentChargeSummary.enquiryAmendment.p1                             
 yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = cyfrifiad treth ar gyfer {0} i {1}
 yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , gan arwain at swm ychwanegol i’w dalu tuag at eich bil treth.
 
+yourSelfAssessmentChargeSummary.hmrcCorrection.p1                                   = Fe wnaeth CThEF gywiro eich Ffurflen Dreth ac fe arweiniodd hyn at swm ychwanegol i’w dalu tuag at eich bil treth {0} i {1}.
+yourSelfAssessmentChargeSummary.chargeHistory.hmrcCorrection.caption.text           = Mae’r swm ychwanegol hwn yn cyfrannu at eich bil treth {0} i {1}.
+
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
 

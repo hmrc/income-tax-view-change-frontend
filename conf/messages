@@ -2721,7 +2721,8 @@ yourSelfAssessmentChargeSummary.enquiryAmendment.p1                             
 yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = tax calculation for {0} to {1}
 yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , resulting in an extra amount to pay towards your tax bill.
 
-
+yourSelfAssessmentChargeSummary.hmrcCorrection.p1                                   = HMRC corrected your tax return and this resulted in an extra amount to pay towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.hmrcCorrection.caption.text           = This extra amount goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
