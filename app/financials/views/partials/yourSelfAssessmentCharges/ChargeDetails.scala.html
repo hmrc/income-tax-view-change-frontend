@@ -35,6 +35,7 @@
 @import financials.views.html.partials.yourSelfAssessmentCharges.ITSAAmendmentChargeLPIContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentRAContent
+@import financials.views.html.partials.yourSelfAssessmentCharges.ItsaEnquiryAmendmentCreditContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentCreditContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.MFADebitContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.POALPIExplanationContent
@@ -62,6 +63,7 @@
     cancelledPAYEExplanationContent: CancelledPAYEExplanationContent,
     classTwoNICSContent: ClassTwoNICSContent,
     itsaReturnAmendmentContent: ItsaReturnAmendmentContent,
+    itsaEnquiryAmendmentCreditContent: ItsaEnquiryAmendmentCreditContent,
     itsaReturnAmendmentCreditContent: ItsaReturnAmendmentCreditContent,
     itsaReturnAmendmentRAContent: ItsaReturnAmendmentRAContent,
     whatIsPaymentOnAccountReconciliationPoaDebits: WhatIsPaymentOnAccountReconciliationPoaDebits,
@@ -99,6 +101,7 @@
     case (ITSAReturnAmendment, _, _, true)                        => itsaReturnAmendmentRAContent(viewModel)
     case (ITSAReturnAmendment, _, true, false)                    => itsaAmendmentChargeLPIContent()
     case (ITSAReturnAmendment, _, _, false)                       => itsaReturnAmendmentContent()
+    case (ITSAReturnAmendmentCredit, _, _, true)              => itsaEnquiryAmendmentCreditContent(viewModel)
     case (ITSAReturnAmendmentCredit, _, _, _)                 => itsaReturnAmendmentCreditContent(viewModel.chargeItem.taxYear)
     case (MfaDebitCharge, _, _, _)                            => mfaDebitContent()
     case _                              =>

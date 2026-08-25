@@ -2341,6 +2341,7 @@ paymentHistory.POA1RR-credit                                    = Taliad cyntaf 
 paymentHistory.POA2RR-credit                                    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.IRA-credit                                       = Credyd o’ch Ffurfln Dreth ddiwygiedig
 paymentHistory.activity                                         = Gweithgarwch {0}
+paymentHistory.revenueAmendment                                 = Credyd o ddiwygiad yn sgil ymholiad gan CThEF
 
 paymentHistory.POA1                                             = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy’ch cod treth TWE
 paymentHistory.POA2                                             = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
@@ -2661,6 +2662,7 @@ yourSelfAssessmentChargeSummary.itsaReturnAmendment.text.heading                
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Yswiriant Gwladol Dosbarth 2
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credyd o’ch Ffurfln Dreth ddiwygiedig
+yourSelfAssessmentChargeSummary.enquiryAmendmentCredit.text.heading                 = Credyd o ddiwygiad yn sgil ymholiad gan CThEF
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Anhysbys
 yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 
@@ -2695,6 +2697,12 @@ yourSelfAssessmentChargeSummary.enquiryAmendment.p2                             
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
+
+
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.1                     = Yn dilyn gwiriad cydymffurfio, fe wnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Mae’ch Ffurflen Dreth ddiwygiedig yn dangos bod eich cyfrifiad treth
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.link-text             = ar gyfer {0} i {1}
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.2                     = yn rhy uchel, ac mae CThEF wedi ychwanegu credyd at eich cyfrif.
+yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p2                       = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
 
 #######################################################################################################################
 ## Business Details

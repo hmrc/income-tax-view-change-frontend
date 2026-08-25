@@ -175,7 +175,8 @@ object RepaymentHistoryUtils extends Logging {
         else
           getCreditsLinkUrl(dueDate, isAgent),
         visuallyHiddenText = transactionId,
-        taxYear = Some(payment.taxYear)
+        taxYear = Some(payment.taxYear),
+        isRevenueAmendment = payment.isRevenueAmendment
       )
     }
   }
