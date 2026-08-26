@@ -1053,6 +1053,12 @@ trait ChargeConstants {
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
+  val whatYouOweWithCorrections: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+    chargesList = List(chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = Some("AC"), lpiWithDunningLock = None)),
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
   val financialDetailsWithMixedData1Ci: List[ChargeItem] = testFinancialDetailsChargeItems(
     dueDate = List(Some(fixedDate.plusDays(35)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(25.0, 50.0),

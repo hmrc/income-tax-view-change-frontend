@@ -38,3 +38,9 @@ object ChargeClassificationType:
       case Some(AutoCorrection) | Some(ManualCorrection) => true
       case _ => false
     }
+    
+  def isCustomerRejection(chargeClassification: Option[String]): Boolean =
+    chargeClassification.flatMap(ChargeClassificationType.fromString) match {
+      case Some(RejectedCorrection) => true
+      case _ => false
+    }

@@ -551,6 +551,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           lpp2Row.select("td").last().text() shouldBe "£98.00"
         }
 
+        "should have corrections in the table" in new TestSetup(charges = whatYouOweWithCorrections) {
+          val correctionRow: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
+
+          correctionRow.select("td").first().text() shouldBe LocalDate.of(2019, 5, 15).toLongDateShort
+          correctionRow.getElementById("due-0-late-link").text() shouldBe "Extra amount to pay due to HMRC correction 1"
+          correctionRow.select("td").get(2).text() shouldBe taxYearSummaryText("2017", "2018")
+          correctionRow.select("td").last().text() shouldBe "£1,400.00"
+        }
+
         "should have payment made paragraph when payment due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days(codedOutDetails = Some(balancingCodedOut))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
