@@ -71,11 +71,14 @@ trait ExternalRedirectHelper {
   def agentYourTasksUrl(newHubContextRootEnabled: Boolean): String =
     s"${hubAgentBaseUrl(newHubContextRootEnabled)}/your-tasks"
     
-  def enterClientsUTRUrl(newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig): String = {
-    if(newHubContextRootEnabled)
-      hubV2AgentRoutes.EnterClientsUTRController.show().url
-    else 
-      hubV1AgentRoutes.EnterClientsUTRController.show().url
+  def enterClientsUTRUrl(newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig, utr: Option[String] = None): String = {
+    if(newHubContextRootEnabled) {
+      utr.fold(hubV2AgentRoutes.EnterClientsUTRController.show().url)(
+        utrValue => hubV2AgentRoutes.EnterClientsUTRController.showWithUtr(utrValue).url)
+    } else { 
+        utr.fold(hubV1AgentRoutes.EnterClientsUTRController.show().url)(
+          utrValue => hubV1AgentRoutes.EnterClientsUTRController.showWithUtr(utrValue).url)
+    }
   }
 
   def confirmClientUTRUrl(newHubContextRootEnabled: Boolean): String = {

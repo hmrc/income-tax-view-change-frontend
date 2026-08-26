@@ -16,12 +16,17 @@
 
 package common.viewUtils
 
+import common.auth.{AuthorisedAgentWithClientDetailsRequest, MtdItUser, RequestWithFeatureSwitches}
 import common.config.FrontendAppConfig
 import common.controllers.routes as appRoutes
+import common.controllers.agent.routes as agentRoutes
+import common.controllers.errors.routes as errorRoutes
 import common.controllers.timeout.routes as timeoutRoutes
 import common.controllers.feedback.routes as feedbackRoutes
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import hub.v2.controllers.routes as hubAppRoutes
+import hub.v2.controllers.agent.routes as hubAgentRoutes
+import hub.v2.controllers.errors.routes as hubErrorRoutes
 import hub.v2.controllers.timeout.routes as hubTimeoutRoutes
 import hub.v2.controllers.feedback.routes as hubFeedbackRoutes
 import hub.v2.controllers.agent.errors.routes as hubAgentErrorRoutes
@@ -101,6 +106,48 @@ object InternalUrlHelper {
       hubAgentErrorRoutes.AgentErrorController.show()
     else
       agentErrorRoutes.AgentErrorController.show()
+  }
+  
+  def noIncomeSourceUrl(isAgent: Boolean)(implicit user: MtdItUser[_]) = {
+    if (user.newHubContextRootEnabled)
+      hubAppRoutes.NoIncomeSourcesController.show(isAgent)
+    else
+      appRoutes.NoIncomeSourcesController.show(isAgent)
+  }
+
+  def upliftSuccessUrl(implicit user: RequestWithFeatureSwitches[_]) = {
+    if (user.newHubContextRootEnabled)
+      hubAppRoutes.UpliftSuccessController.success().url
+    else
+      appRoutes.UpliftSuccessController.success().url
+  }
+
+  def upliftFailureUrl(implicit user: RequestWithFeatureSwitches[_]) = {
+    if (user.newHubContextRootEnabled)
+      hubErrorRoutes.UpliftFailedController.show().url
+    else
+      errorRoutes.UpliftFailedController.show().url
+  }
+
+  def clientRelationshipFailureCall(implicit user: AuthorisedAgentWithClientDetailsRequest[_]) = {
+    if (user.newHubContextRootEnabled)
+      hubAgentRoutes.ClientRelationshipFailureController.show()
+    else
+      agentRoutes.ClientRelationshipFailureController.show()
+  }
+
+  def noAssignmentCall(implicit user: AuthorisedAgentWithClientDetailsRequest[_]) = {
+    if (user.newHubContextRootEnabled)
+      hubAgentRoutes.NoAssignmentController.show().url
+    else
+      agentRoutes.NoAssignmentController.show().url
+  }
+
+  def notEnrolledCall(implicit user: RequestWithFeatureSwitches[_]) = {
+    if (user.newHubContextRootEnabled)
+      hubErrorRoutes.NotEnrolledController.show()
+    else
+      errorRoutes.NotEnrolledController.show()
   }
 
 }

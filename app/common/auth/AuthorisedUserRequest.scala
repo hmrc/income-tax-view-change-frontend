@@ -30,7 +30,7 @@ case class RequestWithFeatureSwitches[A](featureSwitches: List[FeatureSwitch])
 case class AuthorisedUserRequest[A](authUserDetails: AuthUserDetails,
                                     featureSwitches: List[FeatureSwitch])
                                    (implicit request: Request[A]) extends WrappedRequest[A](request) {
-  
+
   val newHubContextRootEnabled = featureSwitches.exists(x => x.name.name == NewHubContextRootEnabled.name && x.isEnabled)
 
 }

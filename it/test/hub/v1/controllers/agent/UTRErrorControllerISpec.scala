@@ -16,7 +16,6 @@
 
 package hub.v1.controllers.agent
 
-import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.helpers.ComponentSpecBase
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.MTDAgentAuthStub
@@ -49,7 +48,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
         Then(s"Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+          redirectURI(s"$hubBasePath/agents/agent-error")
         )
       }
     }
@@ -92,7 +91,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+          redirectURI(s"$hubBasePath/agents/agent-error")
         )
       }
     }
