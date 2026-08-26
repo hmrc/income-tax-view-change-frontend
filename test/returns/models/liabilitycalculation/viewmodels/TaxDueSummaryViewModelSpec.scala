@@ -268,6 +268,26 @@ class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionVa
       }
     }
 
+    "getSATaxAmount" should{
+    "return totalTaxAndNicsDue with Some value when taxRefundedOrSetOff is present regardless of totalIncomeTaxAndNicsAndCgt" in {
+      val model = TaxDueSummaryViewModel(taxRefundedOrSetOff = Some(BigDecimal(150)),
+        totalIncomeTaxAndNicsAndCgt = Some(BigDecimal(150)), totalTaxAndNicsDue = Some(BigDecimal(1000)))
+
+      model.getSATaxAmount shouldBe Some(BigDecimal(1000))
+    }
+    "return totalIncomeTaxAndNicsAndCgt when taxRefundedOrSetOff is not present but totalIncomeTaxAndNicsAndCgt is present" in {
+      val model = TaxDueSummaryViewModel(totalIncomeTaxAndNicsAndCgt = Some(BigDecimal(150)), totalTaxAndNicsDue = Some(BigDecimal(1000)))
+
+      model.getSATaxAmount shouldBe Some(BigDecimal(150))
+    }
+
+      "return totalIncomeTaxAndNicsDue when taxRefundedOrSetOff and totalIncomeTaxAndNicsAndCgt are not present" in {
+        val model = TaxDueSummaryViewModel(totalIncomeTaxAndNicsDue = Some(BigDecimal(100)))
+
+        model.getSATaxAmount shouldBe Some(BigDecimal(100))
+      }
+  }
+
     "lossesAppliedToGeneralIncomeActual" should{
       "return value when value is present" in{
 
