@@ -59,6 +59,8 @@
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>
             @Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
                 <th scope="col" class="govuk-table__header @if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) {govuk-!-text-align-right} else {govuk-!-text-align-left}">
+                    @getMessage("tableHead.interest")
+                </th>
             }
             <th scope="col" class="govuk-table__header govuk-table__cell--numeric">@getMessage("tableHead.amount-due").toNonBreaking</th>
         </tr>
