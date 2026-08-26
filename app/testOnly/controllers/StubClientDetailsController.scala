@@ -56,7 +56,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
 
   def submitWithParams(nino: String, utr: String): Action[AnyContent] = featureSwitchRetrievalAction.async { implicit request =>
     matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)).map { _ =>
-      Redirect(appConfig.enterClientsUTRUrl(request.newHubContextRootEnabled))
+      Redirect(appConfig.enterClientsUTRUrl(request.newHubContextRootEnabled, Some(utr)))
     }
   }
 

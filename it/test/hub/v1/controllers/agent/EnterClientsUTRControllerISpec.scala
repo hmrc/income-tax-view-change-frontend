@@ -17,7 +17,6 @@
 package hub.v1.controllers.agent
 
 import common.controllers.ControllerISpecHelper
-import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.enums.MTDPrimaryAgent
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.{AuditStub, BusinessDetailsStub, CitizenDetailsStub, MTDAgentAuthStub}
@@ -47,7 +46,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
     }
-    s"redirect ($SEE_OTHER) to ${agentErrorRoutes.AgentErrorController.show().url}" when {
+    s"redirect ($SEE_OTHER) to /agents/agent-error" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubGetFeatureSwitches(List(), newHubContextRootEnabled)
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
@@ -55,7 +54,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+          redirectURI(s"$hubBasePath/agents/agent-error")
         )
       }
     }
@@ -72,7 +71,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   }
 
   s"POST ${hub.v1.controllers.agent.routes.EnterClientsUTRController.submit().url}" should {
-    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
+    s"redirect ($SEE_OTHER) to /sign-in" when {
       "the user is not authenticated" in {
         stubGetFeatureSwitches(List(), newHubContextRootEnabled)
         MTDAgentAuthStub.stubUnauthorised()
@@ -95,7 +94,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+          redirectURI(s"$hubBasePath/agents/agent-error")
         )
       }
     }

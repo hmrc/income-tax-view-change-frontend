@@ -20,7 +20,6 @@ import common.auth.{AuthorisedAndEnrolledRequest, RequestWithFeatureSwitches}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.viewUtils.InternalUrlHelper
-import common.controllers.errors.routes as errorRoutes
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.Result
@@ -44,13 +43,13 @@ trait AuthoriseHelper extends FeatureSwitching with Logging {
     Option[String] ~ Option[CredentialRole] ~ Option[MdtpInformation] ~ Option[ItmpName] ~ Option[LocalDate] ~
     Option[ItmpAddress] ~ Option[String] ~ LoginTimes
 
-  def logAndRedirect[A](): PartialFunction[Throwable, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+  def logAndRedirect[A](implicit request: RequestWithFeatureSwitches[_]): PartialFunction[Throwable, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _: BearerTokenExpired =>
       logger.warn("Bearer Token Timed Out.")
       Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
     case insufficientEnrolments: InsufficientEnrolments =>
       logger.warn(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
-      Future.successful(Left(Redirect(errorRoutes.NotEnrolledController.show())))
+      Future.successful(Left(Redirect(InternalUrlHelper.notEnrolledCall)))
     case authorisationException: AuthorisationException =>
       logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
       Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))

@@ -16,8 +16,9 @@
 
 package common.testUtils
 
-import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData
 import common.auth.actions.AuthActionsTestData.*
+import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}

@@ -19,12 +19,11 @@ package common.auth.actions
 import com.google.inject.Singleton
 import common.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest, Constants, FrontendAuthorisedFunctions, RequestWithFeatureSwitches}
 import common.config.FrontendAppConfig
-import common.controllers.errors.routes as errorRoutes
-import common.controllers.routes as appRoutes
 import common.enums.MTDIndividual
 import common.models.audit.IvUpliftRequiredAuditModel
 import common.services.AuditingService
 import common.utils.AuthUtils.{ORIGIN, mtdEnrolmentName}
+import common.viewUtils.InternalUrlHelper
 import play.api.mvc.*
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.*
@@ -75,8 +74,8 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   def ivUpliftRedirectUrl[A](implicit request: RequestWithFeatureSwitches[A]):String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.baseUrl
     @unused val origin = request.getQueryString(ORIGIN)
-    val completionUrl: String = s"$host${appRoutes.UpliftSuccessController.success().url}"
-    val failureUrl: String = s"$host${errorRoutes.UpliftFailedController.show().url}"
+    val completionUrl: String = s"$host${InternalUrlHelper.upliftSuccessUrl}"
+    val failureUrl: String = s"$host${InternalUrlHelper.upliftFailureUrl}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
   }
 

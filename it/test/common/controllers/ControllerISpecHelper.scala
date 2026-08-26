@@ -16,10 +16,6 @@
 
 package common.controllers
 
-import common.config.FrontendAppConfig
-import common.controllers.agent.errors.routes as agentErrorRoutes
-import common.controllers.agent.routes as agentRoutes
-import common.controllers.errors.routes as errorRoutes
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.helpers.ComponentSpecBase
 import common.helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
@@ -36,9 +32,7 @@ import common.testConstants.BaseIntegrationTestConstants.getAgentClientDetailsFo
 trait ControllerISpecHelper extends ComponentSpecBase {
 
   val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
-
-  override val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
+  
   def homeUrl(mtdUserRole: MTDUserRole): String = appConfig.homePageUrl(mtdUserRole.isAgent, newHubContextRootEnabled)
 
   def stubAuthorised(mtdRole: MTDUserRole, featureSwitches: List[FeatureSwitchName] = List()): Unit = {
@@ -153,14 +147,14 @@ trait ControllerISpecHelper extends ComponentSpecBase {
                                  optBody: Option[Map[String, Seq[String]]],
                                  featureSwitches: List[FeatureSwitchName] = List()): Unit = {
     "does not have HMRC-MTD-IT enrolment" should {
-      s"redirect ($SEE_OTHER) to ${errorRoutes.NotEnrolledController.show().url}" in {
+      s"redirect ($SEE_OTHER) to /cannot-access-service" in {
         stubGetFeatureSwitches(featureSwitches, newHubContextRootEnabled)
         MTDIndividualAuthStub.stubInsufficientEnrolments()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(errorRoutes.NotEnrolledController.show().url)
+          redirectURI(s"$hubBasePath/cannot-access-service")
         )
       }
     }
@@ -199,7 +193,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
                             featureSwitches: List[FeatureSwitchName] = List()): Unit = {
     if (mtdUserRole == MTDPrimaryAgent) {
       "does not have arn enrolment" should {
-        s"redirect ($SEE_OTHER) to ${agentErrorRoutes.AgentErrorController.show().url}" in {
+        s"redirect ($SEE_OTHER) to /agents/agent-error" in {
           stubGetFeatureSwitches(featureSwitches, newHubContextRootEnabled)
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
@@ -210,7 +204,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+            redirectURI(s"$hubBasePath/agents/agent-error")
           )
         }
       }
@@ -236,7 +230,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
       }
     } else {
       "does not have a valid delegated MTD enrolment" should {
-        s"redirect ($SEE_OTHER) to ${agentRoutes.ClientRelationshipFailureController.show().url}" in {
+        s"redirect ($SEE_OTHER) to /agents/not-authorised-to-view-client" in {
           stubGetFeatureSwitches(featureSwitches, newHubContextRootEnabled)
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
@@ -246,7 +240,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(agentRoutes.ClientRelationshipFailureController.show().url)
+            redirectURI(s"$hubBasePath/agents/not-authorised-to-view-client")
           )
         }
       }
