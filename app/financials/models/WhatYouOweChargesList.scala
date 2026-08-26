@@ -24,7 +24,8 @@ import financials.models.outstandingCharges.OutstandingChargesModel
 import java.time.LocalDate
 
 case class WhatYouOweChargesList(
-                                  balanceDetails: BalanceDetails, chargesList: List[ChargeItem] = List(),
+                                  balanceDetails: BalanceDetails,
+                                  chargesList: List[ChargeItem] = List(),
                                   outstandingChargesModel: Option[OutstandingChargesModel] = None,
                                   codedOutDetails: Option[CodingOutDetails] = None
                                 )(implicit val dateService: DateServiceInterface) {
@@ -70,14 +71,12 @@ case class WhatYouOweChargesList(
   }
 
   def getDefaultPaymentAmount: Option[BigDecimal] = {
-    if (balanceDetails.overDueAmount != 0) Some(balanceDetails.overDueAmount)
-    else if (balanceDetails.balanceDueWithin30Days != 0) Some(balanceDetails.balanceDueWithin30Days)
-    else if (balanceDetails.balanceNotDuein30Days != 0) Some(balanceDetails.balanceNotDuein30Days)
-    else {
-      val payableChargesAmount = chargesList.map(_.remainingToPayOnCharge).filter(_ > 0).sum
-      Option.when(payableChargesAmount > 0)(payableChargesAmount)
-    }
+    if (balanceDetails.overDueAmount > 0) Some(balanceDetails.overDueAmount)
+    else if (balanceDetails.balanceDueWithin30Days > 0) Some(balanceDetails.balanceDueWithin30Days)
+    else if (balanceDetails.balanceNotDuein30Days > 0) Some(balanceDetails.balanceNotDuein30Days)
+    else None
   }
+
   def hasChargeWithAccruingInterest: Boolean = chargesList.exists(_.isAccruingInterest)
   def hasInterestAccruingAndNotApplicableFields: Boolean = chargesList.count(_.isAccruingInterest) < chargesList.size
 }
