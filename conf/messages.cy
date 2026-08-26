@@ -2083,6 +2083,11 @@ making-payment.money-in-account.heading                         = Arian yn eich 
 making-payment.money-in-account.p1.before                       = Mae gennych
 making-payment.money-in-account.p1.link                         = arian yn eich cyfrif
 making-payment.money-in-account.p1.after                        = ; eich balans cyfredol yw {0}. Gallwch adael yr arian yno i dalu’ch bil nesaf neu hawlio ad-daliad.
+making-payment.suspended-tax.heading                            = Talu’r dreth sydd wedi’i gohirio
+making-payment.suspended-tax.p1                                 = Os nad oes gennych dreth sy’n ddyledus neu sy’n hwyr, caiff eich taliad ei ddefnyddio i dalu’r dreth sydd wedi’i gohirio pan na fydd wedi’i gohirio mwyach.
+making-payment.suspended-tax.p2                                 = Tra bydd y dreth wedi’i gohirio:
+making-payment.suspended-tax.bullet1                            = gall eich taliad ymddangos fel credyd
+making-payment.suspended-tax.bullet2                            = mewn rhai achosion, efallai y byddwn yn cadw’r taliad ar wahân fel na chaiff ei ddefnyddio ar gyfer treth arall
 making-payment.continue                                         = Parhau i wneud taliad
 
 ## Charge Summary ##
