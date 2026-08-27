@@ -2063,9 +2063,9 @@ whatYouOwe.revenueAmendment.label                               = Swm ychwanegol
 
 making-payment.heading                                          = Gwneud taliad
 making-payment.what-payment-goes-towards.heading                = Tuag at beth fydd eich taliad yn mynd
-making-payment.what-payment-goes-towards.p1                     = Pan fyddwch chi’n gwneud taliad, bydd yn mynd tuag at y canlynol:
-making-payment.what-payment-goes-towards.bullet1                = unrhyw dreth orddyledus neu dreth gyda llog yn gyntaf, gan ddechrau gyda’r hynaf
-making-payment.what-payment-goes-towards.bullet2                = yna unrhyw dreth sy’n weddill yn nhrefn y dyddiadau dyledus
+making-payment.what-payment-goes-towards.p1                     = Pan fyddwch chi’n gwneud taliad, byddwn yn ei ddefnyddio i dalu’r hyn sy’n ddyledus gennych yn y drefn ganlynol:
+making-payment.what-payment-goes-towards.bullet1                = unrhyw dreth sy’n hwyr neu dreth sy’n denu llog, yn gyntaf, gan ddechrau gyda’r hynaf
+making-payment.what-payment-goes-towards.bullet2                = ac yna unrhyw dreth sy’n weddill yn y drefn y mae’n ddyledus
 making-payment.what-payment-goes-towards.p2                     = Os nad oes gennych unrhyw beth sy’n orddyledus neu gyda llog, gallwch ddewis talu’ch treth sy’n weddill yn gynnar.
 making-payment.what-payment-goes-towards.p3                     = Gallwch ddewis faint hoffech dalu.
 making-payment.accruing-interest.heading                        = Talu treth sy’n cronni llog
@@ -2084,6 +2084,19 @@ making-payment.money-in-account.p1.before                       = Mae gennych
 making-payment.money-in-account.p1.link                         = arian yn eich cyfrif
 making-payment.money-in-account.p1.after                        = ; eich balans cyfredol yw {0}. Gallwch adael yr arian yno i dalu’ch bil nesaf neu hawlio ad-daliad.
 making-payment.continue                                         = Parhau i wneud taliad
+making-payment.you-have-overdue.heading                         = Mae {0} gennych sy’n hwyr
+making-payment.you-have-overdue.p1                              = Pan fyddwch chi’n gwneud taliad, dyma’r swm y byddwn yn awgrymu i chi ei dalu. Nid yw hyn yn cynnwys llog sy’n dal i gronni.
+making-payment.you-have-overdue.p2                              = Talwch y swm sy’n hwyr er mwyn atal llog rhag cynyddu. Gallwch hefyd ddewis talu swm gwahanol.
+making-payment.charge-due-within-30-days.heading                = Mae {0} yn ddyledus gennych cyn pen 30 diwrnod
+making-payment.charge-due-within-30-days.p1                     = Pan fyddwch chi’n gwneud taliad, dyma’r swm y byddwn yn awgrymu i chi ei dalu.
+making-payment.charge-due-within-30-days.p2                     = Gallwch ddewis y swm hwn neu nodi swm gwahanol.
+making-payment.not-overdue-but-accruing-interest.heading        = Mae {0} yn ddyledus gennych
+making-payment.not-overdue-but-accruing-interest.p1             = Pan fyddwch chi’n gwneud taliad, dyma’r swm y byddwn yn awgrymu i chi ei dalu. Nid yw hyn yn cynnwys llog sy’n dal i gronni.
+making-payment.not-overdue-but-accruing-interest.p2             = Gallwch ddewis y swm hwn neu nodi swm gwahanol.
+making-payment.not-overdue-and-no-accruing-interest.heading     = Mae {0} yn ddyledus gennych
+making-payment.not-overdue-and-no-accruing-interest.p1          = Pan fyddwch chi’n gwneud taliad, dyma’r swm y byddwn yn awgrymu i chi ei dalu.
+making-payment.not-overdue-and-no-accruing-interest.p2          = Gallwch ddewis y swm hwn neu nodi swm gwahanol.
+
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif

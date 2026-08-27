@@ -393,6 +393,46 @@ class MakingPaymentServiceSpec extends TestSupport {
       result.map(_.hasAdditionalSections) shouldBe Some(true)
     }
 
+    "set hasOverdueCharge to true when there is overdue charge" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(nonPenaltyTransactionId)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4920"), Some(nonPenaltyTransactionId)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasOverdueCharge) shouldBe Some(true)
+    }
+
+    "set hasOverdueCharge to false when there is no overdue charge" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(nonPenaltyTransactionId, documentDueDate = Some(dateService.getCurrentDate.plusDays(1)))
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4920"), Some(nonPenaltyTransactionId)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasOverdueCharge) shouldBe Some(false)
+    }
+
     "return None when any financial details response is an error" in {
       when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
         .thenReturn(Future.successful(List(2025 -> FinancialDetailsErrorModel(500, "error"))))

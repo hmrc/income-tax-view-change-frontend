@@ -35,7 +35,9 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
                 hasOverdue: Boolean = false,
                 hasAllPenaltiesOverdue: Boolean = false,
                 hasOverdueNonPenaltyCharges: Boolean = false,
-                hasNotOverdueLPP: Boolean = false): MakingPaymentViewModel =
+                hasNotOverdueLPP: Boolean = false,
+                hasOverdueCharge: Boolean = false,
+                hasBalanceDueWithin30Days: Boolean = false): MakingPaymentViewModel =
     MakingPaymentViewModel(
       backUrl = "/what-you-owe",
       paymentHandoffUrl = "/payment?amountInPence=10000",
@@ -47,7 +49,9 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       unallocatedCredit = unallocatedCredit,
       hasAllPenaltiesOverdue = hasAllPenaltiesOverdue,
       hasOverdueNonPenaltyCharges = hasOverdueNonPenaltyCharges,
-      hasNotOverdueLPP = hasNotOverdueLPP
+      hasNotOverdueLPP = hasNotOverdueLPP,
+      hasOverdueCharge = hasOverdueCharge,
+      hasBalanceDueWithin30Days = hasBalanceDueWithin30Days
     )
 
   def render(model: MakingPaymentViewModel = viewModel()): Document =
@@ -137,5 +141,66 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
       document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
     }
+
+    "render the overdue content when there are overdue charges" in {
+      val document = render(viewModel(hasOverdueCharge = true))
+      val headings = document.select("#main-content h2")
+
+      document.select("h1").text shouldBe messages("making-payment.heading")
+      //      TODO do not forget to implement the value
+      headings.get(0).text shouldBe messages("making-payment.you-have-overdue.heading", "£1,200.00")
+      document.select("#you-have-overdue").get(0).text() shouldBe messages("making-payment.you-have-overdue.p1")
+      document.select("#you-have-overdue").get(1).text() shouldBe messages("making-payment.you-have-overdue.p2")
+      document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
+      document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
+      document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
+      document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
+    }
+
+    "render the correct content when there is charge due within 30 days" in {
+      val document = render(viewModel(hasBalanceDueWithin30Days = true))
+      val headings = document.select("#main-content h2")
+
+      document.select("h1").text shouldBe messages("making-payment.heading")
+      //      TODO do not forget to implement the value
+      headings.get(0).text shouldBe messages("making-payment.charge-due-within-30-days.heading", "£1,000.00")
+      document.select("#charge-due-within-30-days").get(0).text() shouldBe messages("making-payment.charge-due-within-30-days.p1")
+      document.select("#charge-due-within-30-days").get(1).text() shouldBe messages("making-payment.charge-due-within-30-days.p2")
+      document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
+      document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
+      document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
+      document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
+    }
+    // !viewModel.hasOverdueCharge && viewModel.hasInterest
+    "render the correct content when charges are not overdue due but accruing interest is present" in {
+      val document = render(viewModel(hasInterest = true))
+      val headings = document.select("#main-content h2")
+
+      document.select("h1").text shouldBe messages("making-payment.heading")
+      //      TODO do not forget to implement the value
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-but-accruing-interest.heading", "£1,000.00")
+      document.select("#not-overdue-but-accruing-interest").get(0).text() shouldBe messages("making-payment.not-overdue-but-accruing-interest.p1")
+      document.select("#not-overdue-but-accruing-interest").get(1).text() shouldBe messages("making-payment.not-overdue-but-accruing-interest.p2")
+      document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
+      document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
+      document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
+      document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
+    }
+
+    "render the correct content when charges are not overdue due and no accruing interest present" in {
+      val document = render(viewModel())
+      val headings = document.select("#main-content h2")
+
+      document.select("h1").text shouldBe messages("making-payment.heading")
+      //      TODO do not forget to implement the value
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,000.00")
+      document.select("#not-overdue-and-no-accruing-interest").get(0).text() shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.p1")
+      document.select("#not-overdue-and-no-accruing-interest").get(1).text() shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.p2")
+      document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
+      document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
+      document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
+      document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
+    }
+
   }
 }

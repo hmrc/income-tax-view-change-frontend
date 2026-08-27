@@ -2079,9 +2079,9 @@ whatYouOwe.revenueAmendment.label                                  = Extra amoun
 
 making-payment.heading                                             = Making a payment
 making-payment.what-payment-goes-towards.heading                   = What your payment will go towards
-making-payment.what-payment-goes-towards.p1                        = When you make a payment it will go towards:
-making-payment.what-payment-goes-towards.bullet1                   = any overdue tax or tax with interest first, starting with the oldest
-making-payment.what-payment-goes-towards.bullet2                   = then any remaining tax in the order it is due
+making-payment.what-payment-goes-towards.p1                        = When you make a payment, we'll use it to pay what you owe in the following order:
+making-payment.what-payment-goes-towards.bullet1                   = any tax overdue or with interest, starting with the oldest
+making-payment.what-payment-goes-towards.bullet2                   = then other tax in the order it is due
 making-payment.what-payment-goes-towards.p2                        = If you have nothing overdue or with interest, you can choose to pay your remaining tax early.
 making-payment.what-payment-goes-towards.p3                        = You can choose your payment amount.
 making-payment.accruing-interest.heading                           = Paying tax that is accruing interest
@@ -2100,6 +2100,19 @@ making-payment.money-in-account.p1.before                          = You have
 making-payment.money-in-account.p1.link                            = money in your account
 making-payment.money-in-account.p1.after                           = ; your current balance is {0}. You can leave the money there to pay your next bill or claim a refund.
 making-payment.continue                                            = Continue to make a payment
+making-payment.you-have-overdue.heading                            = You have {0} overdue
+making-payment.you-have-overdue.p1                                 = When you make a payment, this is the amount we’ll suggest you pay. This does not include interest still accruing.
+making-payment.you-have-overdue.p2                                 = Pay what is overdue to stop interest increasing. You can also choose to pay different amount.
+making-payment.charge-due-within-30-days.heading                   = You have {0} due within the next 30 days
+making-payment.charge-due-within-30-days.p1                        = When you make a payment, this is the amount we'll suggest you pay.
+making-payment.charge-due-within-30-days.p2                        = You can choose this amount or enter a different amount.
+making-payment.not-overdue-but-accruing-interest.heading           = You owe {0}
+making-payment.not-overdue-but-accruing-interest.p1                = When you make a payment, this is the amount we’ll suggest you pay. This does not include interest still accruing.
+making-payment.not-overdue-but-accruing-interest.p2                = You can choose this amount or enter a different amount.
+making-payment.not-overdue-and-no-accruing-interest.heading        = You owe {0}
+making-payment.not-overdue-and-no-accruing-interest.p1             = When you make a payment, this is the amount we’ll suggest you pay.
+making-payment.not-overdue-and-no-accruing-interest.p2             = You can choose this amount or enter a different amount.
+
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
