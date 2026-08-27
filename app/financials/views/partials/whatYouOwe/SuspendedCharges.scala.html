@@ -57,11 +57,6 @@
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.charge-type")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>
-            @Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
-                <th scope="col" class="govuk-table__header @if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) {govuk-!-text-align-right} else {govuk-!-text-align-left}">
-                    @getMessage("tableHead.interest")
-                </th>
-            }
             <th scope="col" class="govuk-table__header govuk-table__cell--numeric">@getMessage("tableHead.amount-due").toNonBreaking</th>
         </tr>
     </thead>
@@ -77,19 +72,6 @@
         <td class="govuk-table__cell" id="suspended-due-charge-tax-year-@{
             index
         }">@taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl, suspendedCharge = true)</td>
-        @if(charge.isAccruingInterest) {
-            <td class="govuk-table__cell" id="suspended-accrued-interest-amount-due-@{
-                index
-            }">
-            @charge.accruingInterestAmount.get.toCurrency
-            </td>
-        } else if(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
-        <td class="govuk-table__cell" id="fallback-@{
-            index
-        }">
-        @getMessage("tableRow.na")
-        </td>
-        }
         <td class="govuk-table__cell govuk-table__cell--numeric" id="susupended-due-charge-amount-due-@{
             index
         }">
