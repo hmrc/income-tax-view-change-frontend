@@ -61,7 +61,7 @@ trait ExternalRedirectHelper {
   def agentHomeUrl(newHubContextRootEnabled: Boolean): String =
     s"${hubAgentBaseUrl(newHubContextRootEnabled)}/client-income-tax"
     
-  def homePageUrl(isAgent: Boolean, newHubContextRootEnabled: Boolean, origin: Option[String] = None): String = {
+  def homePageUrl(isAgent: Boolean, newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig, origin: Option[String] = None): String = {
     if (isAgent) agentHomeUrl(newHubContextRootEnabled) else individualHomeUrlWithOrigin(newHubContextRootEnabled, origin)
   }
 
