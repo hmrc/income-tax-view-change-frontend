@@ -17,6 +17,7 @@ base.error_summary.heading                                      = Mae problem we
 base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
+base.startnow                                                   = Dechrau nawr
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 base.confirm-and-save                                           = Cadarnhau a chadw
