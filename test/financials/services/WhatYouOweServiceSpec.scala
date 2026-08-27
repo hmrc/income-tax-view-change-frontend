@@ -309,7 +309,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
       "return list including penalties" in {
         testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweLatePaymentPenalties)
-        testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsWithMixedData4Penalties, expectedResult = whatYouOweDataWithMixedDate4PenaltiesUnfilered)
+        testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsWithMixedData4Penalties, expectedResult = whatYouOweDataWithMixedData4PenaltiesUnfiltered)
       }
       "return list excluding penalties" in {
         testGetWhatYouOweChargesList(penaltiesEnabled = false, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweEmpty)

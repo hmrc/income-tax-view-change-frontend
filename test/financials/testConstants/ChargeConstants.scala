@@ -1011,7 +1011,7 @@ trait ChargeConstants {
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
-  val whatYouOweDataWithMixedDate4PenaltiesUnfilered: WhatYouOweChargesList = WhatYouOweChargesList(
+  val whatYouOweDataWithMixedData4PenaltiesUnfiltered: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsWithMixedData4PenaltiesCi.reverse,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))

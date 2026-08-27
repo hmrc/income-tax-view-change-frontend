@@ -20,24 +20,17 @@
 @import common.views.html.layouts.unifiedLayout
 @import common.auth.MtdItUser
 
-
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF,
         h2: h2,
-        h3: h3,
-        h3WithHtml: h3WithHtml,
         p: p,
-        link: link,
-        hr: hr,
-        govukInsetText: GovukInsetText,
         govukPanel: GovukPanel,
-        bulletList: bulletPointList,
 )
 
-@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, postAction: Call)(implicit user: MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, postAction: Call)(implicit user: MtdItUser[_], messages: Messages)
 
 
 @getMessage(key: String) = @{
@@ -58,39 +51,7 @@
     @h2(classes = "govuk-heading-l",optId = Some("what-next-heading"), msg = getMessage("whatNext.heading"))
     @p(id = Some("what-next-p1"))(Html(getMessage("whatNext.p1")))
     @p(id = Some("what-next-p2"))(Html(getMessage("whatNext.p2")))
-    @bulletList(
-        id = Some("what-next-ul"),
-        itemMsgKeys = Seq(
-            getMessage("whatNext.ul.li1"),
-            getMessage("whatNext.ul.li2"),
-        ),
-        bulletId = Some("what-next-bullets")
-    )
-}
-
-@gettingSoftwareSection = {
-    @h3(classes = "govuk-heading-m", msg = getMessage("gettingSoftware.heading"), optId = Some("getting-software-heading"))
-    @p(id = Some("getting-software-p1"))(Html(getMessage("gettingSoftware.p1")))
-    @p(id = Some("getting-software-link-p")) {
-        @link(id = Some("getting-software-link"), target = Some("_blank"), link = compatSoftwareLink, messageKey = getMessage("gettingSoftware.linkText"))
-    }
-}
-
-@submittingYourUpdatesSection = {
-    @h3(classes = "govuk-heading-m", msg = getMessage("submitUpdates.heading"), optId = Some("submitting-your-update-heading"))
-    @p(id = Some("submitting-your-update-p1"))(Html(getMessage("submitUpdates.p1")))
-    @bulletList(
-        id = Some("submitting-your-update-ul"),
-        itemMsgKeys = Seq(
-            getMessage("submitUpdates.ul.li1"),
-            getMessage("submitUpdates.ul.li2"),
-        ),
-        bulletId = Some("submitting-your-update-bullets")
-    )
-    @p(id = Some("submitting-your-updates-link-p")) {
-        @link(id = Some("submitting-your-updates-link"), link = nextUpdatesLink, messageKey = getMessage("submitUpdates.linkText"))
-}
-
+    @p(id = Some("what-next-p3"))(Html(getMessage("whatNext.p3")))
 }
 
 @mainTemplate(
@@ -101,8 +62,6 @@
 ) {
     @headingBanner
     @whatNextSection
-    @gettingSoftwareSection
-    @submittingYourUpdatesSection
     @formWithCSRF(postAction) {
         @continueButton()
     }
