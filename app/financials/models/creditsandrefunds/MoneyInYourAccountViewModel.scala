@@ -45,6 +45,19 @@ object CreditRow {
             )))
       case Repayment =>
         Some(RefundRow(amount = transaction.amount, date = LocalDate.now())) // Set date to current date to enable correct ordering of rows in WhereMoneyCameFromTable.scala.html
+      case MfaCreditType =>
+        transaction.taxYear.flatMap(year =>
+          transaction.documentDate.map(documentDate =>
+            CreditViewRow(
+              transactionId = transaction.transactionId,
+              amount = transaction.amount,
+              creditType = MfaCreditType,
+              taxYear = year,
+              date = documentDate,
+              isRevenueAmendment = transaction.isRevenueAmendment
+            )
+          )
+        )
       case creditType =>
         transaction.taxYear.flatMap(year =>
           transaction.dueDate.map(date =>

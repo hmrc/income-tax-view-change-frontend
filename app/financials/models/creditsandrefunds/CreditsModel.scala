@@ -50,6 +50,7 @@ case class Transaction(transactionType: CreditType,
                        amount: BigDecimal,
                        taxYear: Option[TaxYear],
                        dueDate: Option[LocalDate],
+                       documentDate: Option[LocalDate],
                        effectiveDateOfPayment: Option[LocalDate],
                        transactionId: String,
                        chargeClassification: Option[String] = None) {

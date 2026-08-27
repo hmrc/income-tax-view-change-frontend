@@ -32,7 +32,7 @@
         @{messages(s"paymentHistory.${payment.creditType.key}")}
         <div><span class="govuk-visually-hidden">
             @{payment.visuallyHiddenText}
-            @{if (yearPayments.size > 1) s" Item ${(index + 1)} " else ""}
+            @{if (yearPayments.size > 1) s" Item ${(index + 1)}" else ""}
         </span></div>
     }
 </a>
