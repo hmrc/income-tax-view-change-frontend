@@ -2696,7 +2696,7 @@ yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                    
 
 yourSelfAssessmentChargeSummary.correction.p1.1                                     = Mae CThEF wedi cywiro’ch Ffurflen Dreth. Mae hyn wedi newid eich
 yourSelfAssessmentChargeSummary.correction.p1.link-text                             = cyfrifiad treth ar gyfer {0} i {1}
-yourSelfAssessmentChargeSummary.correction.p1.2                                     = , gan arwain at ychwnaegu credyd at eich cyfrif.
+yourSelfAssessmentChargeSummary.correction.p1.2                                     = gan arwain at ychwnaegu credyd at eich cyfrif.
 
 yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.1                     = Yn dilyn gwiriad cydymffurfio, fe wnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Mae’ch Ffurflen Dreth ddiwygiedig yn dangos bod eich cyfrifiad treth
 yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.link-text             = ar gyfer {0} i {1}

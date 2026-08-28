@@ -2713,7 +2713,7 @@ yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                    
 
 yourSelfAssessmentChargeSummary.correction.p1.1                                     = HMRC corrected your tax return. This changed your 
 yourSelfAssessmentChargeSummary.correction.p1.link-text                             = tax calculation for {0} to {1}
-yourSelfAssessmentChargeSummary.correction.p1.2                                     = , resulting in a credit being added to your account.
+yourSelfAssessmentChargeSummary.correction.p1.2                                     = resulting in a credit being added to your account.
 
 yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.1                     = Following a compliance check, HMRC made a change to your tax return known as an ‘enquiry amendment’. Your amended tax return shows that your
 yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.link-text             = {0} to {1} tax calculation

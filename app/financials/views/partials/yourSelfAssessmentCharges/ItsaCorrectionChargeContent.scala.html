@@ -38,12 +38,14 @@
 }
 
 @p(id = Some("itsa-return-correction-credit-p1")) {
-    @getMessage("correction.p1.1", taxYear.startYear.toString, taxYear.endYear.toString)
-    @link(
-        link = summaryUrl(taxYear.startYear), 
+    @getMessage("correction.p1.1")
+    @Html(
+      link(
+        link = summaryUrl(taxYear.endYear), 
         messageKey = getMessage("correction.p1.link-text", taxYear.startYear.toString, taxYear.endYear.toString)
-        )
-    @getMessage("correction.p1.2")
+        ).body.trim + ","
+    )
+    @getMessage("correction.p1.2").trim
 }
 
 @p(id = Some("itsa-return-correction-credit-p2")) {
