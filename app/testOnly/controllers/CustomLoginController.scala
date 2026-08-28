@@ -16,7 +16,6 @@
 
 package testOnly.controllers
 
-import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.controllers.BaseController
@@ -40,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       authActions: AuthActions,
-                                      featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
                                       val testOnlyAppConfig: TestOnlyAppConfig,
                                       val mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext,
@@ -63,11 +61,12 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   private final val recentActivityUser = "HP000000A"
   private final val customTaxCalculationUser = "PP000003A"
 
-  def showLogin(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(isNewContextRoot), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser, customTaxCalculationUser))
-    )
-  }
+  def showLogin(isNewContextRoot: Boolean): Action[AnyContent] =
+    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq().async { implicit request =>
+      userRepository.findAll().map(userRecords =>
+        Ok(loginPage(routes.CustomLoginController.postLogin(isNewContextRoot), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser, customTaxCalculationUser))
+      )
+    }
 
   def postLogin(isNewContextRoot: Boolean): Action[AnyContent] =
     authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq(false).async { implicit request =>

@@ -16,18 +16,20 @@
 
 package testOnly.controllers
 
+import hub.auth.AuthActions
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 
-class SessionAlterationController @Inject()
+class SessionAlterationController @Inject()(authActions: AuthActions)
     (implicit mcc: MessagesControllerComponents)
   extends FrontendController(mcc) {
 
   lazy val calculationId: String = "calculationId"
 
-  def addCalcId(value: String, isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit request =>
+  def addCalcId(value: String, isNewContextRoot: Boolean): Action[AnyContent] =
+    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq() { implicit request =>
     Ok(value)
       .addingToSession(calculationId -> value)
   }

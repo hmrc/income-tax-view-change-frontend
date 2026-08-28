@@ -18,6 +18,7 @@ package testOnly.controllers
 
 import common.config.FrontendAppConfig
 import common.controllers.BaseController
+import hub.auth.AuthActions
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -32,16 +33,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StubDataController @Inject()(stubDataView: StubDataView)
+class StubDataController @Inject()(authActions: AuthActions,
+                                   stubDataView: StubDataView)
                                   (implicit val appConfig: FrontendAppConfig,
                                    val mcc: MessagesControllerComponents,
                                    val executionContext: ExecutionContext,
                                    val dynamicStubConnector: DynamicStubConnector
-                                  ) extends BaseController with I18nSupport with Logging{
+                                  ) extends BaseController with I18nSupport with Logging {
 
-  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(view(StubDataForm.stubDataForm, isNewContextRoot)))
-  }
+  def show(isNewContextRoot: Boolean): Action[AnyContent] =
+    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq().async { implicit request =>
+      Future.successful(Ok(view(StubDataForm.stubDataForm, isNewContextRoot)))
+    }
 
   def submit(isNewContextRoot: Boolean): Action[AnyContent] = Action.async {
     implicit request =>

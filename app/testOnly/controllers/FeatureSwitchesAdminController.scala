@@ -17,6 +17,7 @@
 package testOnly.controllers
 
 import common.models.admin.{FeatureSwitch, FeatureSwitchName}
+import hub.auth.AuthActions
 import testOnly.services.admin.FeatureSwitchService
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
@@ -26,21 +27,21 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureSwitchesAdminController @Inject() (
-                                                 featureSwitchService: FeatureSwitchService,
-                                                 cc: ControllerComponents
-                                               )(implicit ec: ExecutionContext)
+class FeatureSwitchesAdminController @Inject()(authActions: AuthActions,
+                                               featureSwitchService: FeatureSwitchService,
+                                               cc: ControllerComponents
+                                              )(implicit ec: ExecutionContext)
   extends AbstractController(cc) {
 
-  def get(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { request =>
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequest(request)
-    featureSwitchService.getAll()
-      .map(switches => Ok(Json.toJson(switches)))
-  }
+  def get(isNewContextRoot: Boolean): Action[AnyContent] =
+    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq().async { request =>
+      implicit val hc: HeaderCarrier =
+        HeaderCarrierConverter.fromRequest(request)
+      featureSwitchService.getAll()
+        .map(switches => Ok(Json.toJson(switches)))
+    }
 
   def put(featureSwitchName: FeatureSwitchName, isNewContextRoot: Boolean): Action[AnyContent] = Action.async { request =>
-
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequest(request)
 
@@ -49,16 +50,15 @@ class FeatureSwitchesAdminController @Inject() (
         featureSwitchService
           .set(featureSwitchName, enabled)
           .map(_ => NoContent)
-      case _                        =>
+      case _ =>
         Future.successful(BadRequest)
     }
   }
 
   def putAll(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { request =>
-
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequest(request)
-    
+
     val switches = request.body.asJson
       .map(_.as[Seq[FeatureSwitch]])
       .getOrElse(Seq.empty)

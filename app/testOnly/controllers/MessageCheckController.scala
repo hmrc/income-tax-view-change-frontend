@@ -21,25 +21,29 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.MessageCheckView
 import uk.gov.hmrc.play.language.LanguageUtils
 import common.config.FrontendAppConfig
+import hub.auth.AuthActions
 
 import javax.inject.Inject
 
 
-class MessageCheckController @Inject()(messageCheckView: MessageCheckView,
+class MessageCheckController @Inject()(authActions: AuthActions,
+                                       messageCheckView: MessageCheckView,
                                        mcc: MessagesControllerComponents,
                                        languageUtils: LanguageUtils,
                                        appConfig: FrontendAppConfig) extends ItvcLanguageController(mcc, languageUtils, appConfig) {
 
 
-  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit req =>
-    val keys = readMessageFileKeys("default")
-    Ok(messageCheckView(keys))
-  }
+  def show(isNewContextRoot: Boolean): Action[AnyContent] =
+    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq() { implicit req =>
+      val keys = readMessageFileKeys("default")
+      Ok(messageCheckView(keys))
+    }
 
-  def showWelsh(isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit req =>
-    val keys = readMessageFileKeys("cy")
-    Ok(messageCheckView(keys))
-  }
+  def showWelsh(isNewContextRoot: Boolean): Action[AnyContent] =
+    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq() { implicit req =>
+      val keys = readMessageFileKeys("cy")
+      Ok(messageCheckView(keys))
+    }
 
   private def readMessageFileKeys(language: String): List[String] = {
     mcc.messagesApi.messages.filter(_._1 == language).flatMap(_._2).keys.toList

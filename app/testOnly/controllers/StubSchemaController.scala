@@ -18,10 +18,11 @@ package testOnly.controllers
 
 import common.config.FrontendAppConfig
 import common.controllers.BaseController
+import hub.auth.AuthActions
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubSchemaForm
 import testOnly.models.SchemaModel
@@ -31,16 +32,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
+class StubSchemaController @Inject()(authActions: AuthActions,
+                                     stubSchemaView: StubSchemaView)
                                     (implicit val appConfig: FrontendAppConfig,
                                      val mcc: MessagesControllerComponents,
                                      val executionContext: ExecutionContext,
                                      val dynamicStubConnector: DynamicStubConnector
                                     ) extends BaseController with I18nSupport {
 
-  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(view(StubSchemaForm.stubSchemaForm, isNewContextRoot)))
-  }
+  def show(isNewContextRoot: Boolean): Action[AnyContent] =
+    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq().async { implicit request =>
+      Future.successful(Ok(view(StubSchemaForm.stubSchemaForm, isNewContextRoot)))
+    }
 
   def submit(isNewContextRoot: Boolean): Action[AnyContent] = Action.async {
     implicit request =>

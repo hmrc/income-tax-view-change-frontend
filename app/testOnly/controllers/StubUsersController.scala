@@ -28,7 +28,7 @@ import testOnly.utils.UserRepository
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
+class StubUsersController @Inject()()(implicit val appConfig: FrontendAppConfig,
                                     val mcc: MessagesControllerComponents,
                                     val executionContext: ExecutionContext,
                                     userRepository: UserRepository
