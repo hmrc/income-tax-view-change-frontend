@@ -39,27 +39,27 @@ class StubDataController @Inject()(stubDataView: StubDataView)
                                    val dynamicStubConnector: DynamicStubConnector
                                   ) extends BaseController with I18nSupport with Logging{
 
-  val show: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(view(StubDataForm.stubDataForm)))
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(view(StubDataForm.stubDataForm, isNewContextRoot)))
   }
 
-  val submit: Action[AnyContent] = Action.async {
+  def submit(isNewContextRoot: Boolean): Action[AnyContent] = Action.async {
     implicit request =>
       StubDataForm.stubDataForm.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, isNewContextRoot))),
         schema => {
           dynamicStubConnector.addData(schema)
             .map(
               response => response.status match {
-                case OK => Ok(view(StubDataForm.stubDataForm, showSuccess = true))
-                case _ => InternalServerError(view(StubDataForm.stubDataForm.fill(schema), errorResponse = Some(response.body)))
+                case OK => Ok(view(StubDataForm.stubDataForm, isNewContextRoot, showSuccess = true))
+                case _ => InternalServerError(view(StubDataForm.stubDataForm.fill(schema), isNewContextRoot, errorResponse = Some(response.body)))
               }
             )
         }
       )
   }
 
-  val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def stubProxy(isNewContextRoot: Boolean): Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[DataModel](
       json => {
         dynamicStubConnector.addData(json).map(
@@ -74,7 +74,7 @@ class StubDataController @Inject()(stubDataView: StubDataView)
     )
   }
 
-  val deleteAllProxy: Action[AnyContent] = Action.async { implicit request =>
+  def deleteAllProxy(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
     dynamicStubConnector.deleteAllData().map(
       response => response.status match {
         case OK => Ok("Delete All Data from the Stub...")
@@ -84,12 +84,13 @@ class StubDataController @Inject()(stubDataView: StubDataView)
   }
 
   private def view(form: Form[DataModel],
+                   isNewContextRoot: Boolean,
                    showSuccess: Boolean = false,
                    errorResponse: Option[String] = None
                   )(implicit request: Request[AnyContent]) =
     stubDataView(
       form,
-      testOnly.controllers.routes.StubDataController.submit(),
+      testOnly.controllers.routes.StubDataController.submit(isNewContextRoot),
       showSuccess,
       errorResponse
     )

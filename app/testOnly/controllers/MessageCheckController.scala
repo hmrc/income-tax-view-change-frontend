@@ -31,12 +31,12 @@ class MessageCheckController @Inject()(messageCheckView: MessageCheckView,
                                        appConfig: FrontendAppConfig) extends ItvcLanguageController(mcc, languageUtils, appConfig) {
 
 
-  def show(): Action[AnyContent] = Action { implicit req =>
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit req =>
     val keys = readMessageFileKeys("default")
     Ok(messageCheckView(keys))
   }
 
-  def showWelsh(): Action[AnyContent] = Action { implicit req =>
+  def showWelsh(isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit req =>
     val keys = readMessageFileKeys("cy")
     Ok(messageCheckView(keys))
   }
