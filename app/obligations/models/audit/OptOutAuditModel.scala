@@ -22,7 +22,6 @@ import common.enums.AuditType.OptOutQuarterlyReportingRequest
 import common.models.audit.ExtendedAuditModel
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
-import common.utils.audit.Utilities.arnToJson
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import play.api.libs.json.*
@@ -62,9 +61,7 @@ case class OptOutAuditModel(
 
   override val auditType: String = OptOutQuarterlyReportingRequest
 
-  override val detail: JsValue =
-    Json.toJson(this).as[JsObject] - "agentReferenceNumber" ++
-      arnToJson(agentReferenceNumber)
+  override val detail: JsValue = Json.toJson(this)
 }
 
 case class OptOutCompleteAuditModel(
@@ -90,9 +87,7 @@ case class OptOutCompleteAuditModel(
 
   override val auditType: String = AuditType.OptOutQuarterlyReportingRequest
 
-  override val detail: JsValue =
-    Json.toJson(this).as[JsObject] - "agentReferenceNumber" ++
-      arnToJson(agentReferenceNumber)
+  override val detail: JsValue = Json.toJson(this)
 }
 
 object OptOutCompleteAuditModel {

@@ -42,9 +42,7 @@ case class ReportingObligationsAuditModel(
       "itsaStatusTable" -> Json.toJson(itsaStatusTable),
       "links" -> links
     ) ++
-      agentReferenceNumber.fold(Json.obj()) { value =>
-        Json.obj("agentReferenceNumber" -> value)
-      } ++
+      agentReferenceNumber.fold(Json.obj())(value => Json.obj("agentReferenceNumber" -> value)) ++
       credId.fold(Json.obj())(value => Json.obj("credId" -> value)) ++
       saUtr.fold(Json.obj())(value => Json.obj("saUtr" -> value))
   }
