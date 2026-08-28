@@ -19,9 +19,6 @@ package common.mocks.auth
 import common.auth.actions.AuthActionsTestData.*
 import common.auth.FrontendAuthorisedFunctions
 import common.connectors.{ITSAStatusConnector, IncomeSourceConnector}
-import common.controllers.agent.routes as agentRoutes
-import common.controllers.agent.errors.routes as agentErrorRoutes
-import common.controllers.errors.routes as errorRoutes
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
 import common.mocks.services.{MockAuditingService, MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
@@ -95,7 +92,8 @@ trait MockAuthActions
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
         api.inject.bind[FeatureSwitchService].toInstance(mockFeatureSwitchService)
       )
-      .configure(Map("feature-switches.read-from-mongo" -> true))
+      .configure(Map("feature-switches.read-from-mongo" -> true,
+        "feature-switch.enable-new-hub-context-root" -> newHubContextRootEnabled))
   }
 
   def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false, enabledFeatures: List[FeatureSwitchName] = List()): Unit = {
@@ -312,7 +310,7 @@ trait MockAuthActions
         val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(errorRoutes.NotEnrolledController.show().url)
+        redirectLocation(result).get should include("/cannot-access-service")
       }
     }
 
@@ -395,7 +393,7 @@ trait MockAuthActions
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
+          redirectLocation(result).get should include("/agents/agent-error")
         }
       }
     } else {
@@ -413,7 +411,7 @@ trait MockAuthActions
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(agentRoutes.ClientRelationshipFailureController.show().url)
+          redirectLocation(result).get should include("/agents/not-authorised-to-view-client")
         }
       }
     }

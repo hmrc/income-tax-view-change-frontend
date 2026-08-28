@@ -27,6 +27,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import common.viewUtils.InternalUrlHelper
 import financials.helpers.FinancialDetailsStub
 import financials.models.audit.ClaimARefundAuditModel
 import financials.models.core.ErrorModel
@@ -207,7 +208,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                   httpStatus(INTERNAL_SERVER_ERROR),
                   pageTitle(mtdUserRole, "standardError.heading", isErrorPage = true),
                   elementAttributeBySelector(".govuk-phase-banner__text a", "href")
-                  (s"$basePath${if(mtdUserRole == MTDIndividual) "" else "/agents"}/feedback")
+                  (if(mtdUserRole == MTDIndividual) InternalUrlHelper.feedbackUrl else InternalUrlHelper.agentFeedbackUrl)
                 )
               }
 

@@ -30,7 +30,6 @@
 
 
 @this(
-    appConfig: FrontendAppConfig,
     govukBackLink: GovukBackLink,
     govukLayout: GovukLayout,
     hmrcHeader:  HmrcHeader,
@@ -43,7 +42,7 @@
     mainContentLayout: mainContentLayout,
     scripts: Scripts,
     a: link
-)
+)(implicit val appConfig: FrontendAppConfig)
 
 @(pageTitle: String,
     scriptsBlock: Option[Html] = None,
@@ -84,7 +83,7 @@
         }
     }
 
-    val serviceUrl = appConfig.homePageUrl(isAgent, false)
+    val serviceUrl = appConfig.homePageUrl(isAgent)
 
     val navBar = btaAndPtaServiceNavigation match {
         case Some(nav) => nav.copy(serviceName = serviceName, serviceUrl = Some(serviceUrl)).withLanguageToggle()

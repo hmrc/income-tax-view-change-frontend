@@ -21,11 +21,10 @@
 
 @this(
     mainTemplate: unifiedLayout,
-    appConfig: FrontendAppConfig,
     h1: h1,
     p: p,
     link: link
-)
+)(implicit val appConfig: FrontendAppConfig)
 
 @()(implicit request : Request[_], messages: Messages)
 

@@ -80,7 +80,10 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
   }
 
-  lazy val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend, NewHubContextRootEnabled)
+  lazy val newServices: Set[FeatureSwitchName] = {
+    val newFrontends = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend)
+    if(appConfig.hubContextRootEnabledConfig) newFrontends else newFrontends + NewHubContextRootEnabled
+  }
 
   // TODO: refactor next method
   def submit(): Action[AnyContent] = Action.async { implicit request =>
