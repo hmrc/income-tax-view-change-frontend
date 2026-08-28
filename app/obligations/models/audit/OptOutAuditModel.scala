@@ -122,7 +122,7 @@ object OptOutAuditModel {
       saUtr = user.saUtr,
       credId = user.credId,
       userType = user.userType,
-      agentReferenceNumber = user.agentReferenceNumber,
+      agentReferenceNumber = user.arn,
       mtditid = user.mtditid,
       nino = user.nino,
       optOutRequestedFromTaxYear = intentTaxYear.formatAsShortYearRange,

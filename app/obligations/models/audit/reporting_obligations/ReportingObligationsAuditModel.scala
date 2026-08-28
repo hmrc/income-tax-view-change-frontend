@@ -17,7 +17,6 @@
 package obligations.models.audit.reporting_obligations
 
 import common.enums.MTDUserRole
-import common.utils.audit.Utilities.arnToJson
 import play.api.libs.json.{JsObject, Json, OFormat}
 
 case class ReportingObligationsAuditModel(
@@ -43,7 +42,9 @@ case class ReportingObligationsAuditModel(
       "itsaStatusTable" -> Json.toJson(itsaStatusTable),
       "links" -> links
     ) ++
-      arnToJson(agentReferenceNumber) ++
+      agentReferenceNumber.fold(Json.obj()) { value =>
+        Json.obj("agentReferenceNumber" -> value)
+      } ++
       credId.fold(Json.obj())(value => Json.obj("credId" -> value)) ++
       saUtr.fold(Json.obj())(value => Json.obj("saUtr" -> value))
   }

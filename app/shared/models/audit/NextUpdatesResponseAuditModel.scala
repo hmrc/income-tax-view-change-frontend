@@ -53,7 +53,7 @@ object NextUpdatesResponseAuditModel:
       user.saUtr,
       user.credId,
       user.userType,
-      user.agentReferenceNumber
+      user.arn
     )
 
   private val defaultWrites: OWrites[NextUpdatesResponseAuditModel] = Json.writes[NextUpdatesResponseAuditModel]

@@ -79,7 +79,7 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
           clientName = clientName,
           nino = user.nino,
           mtditid = user.mtditid,
-          arn = user.agentReferenceNumber,
+          arn = user.arn,
           saUtr = user.saUtr.getOrElse(""),
           isSupportingAgent = user.isSupportingAgent,
           credId = user.credId

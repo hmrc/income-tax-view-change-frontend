@@ -33,25 +33,25 @@ class UtilitiesSpec extends TestSupport {
     "omit the field for an individual" in {
       val individual = defaultMTDITUser(Some(Individual), incomeSources).copy(usersRole = MTDIndividual)
 
-      arnToJson(individual.agentReferenceNumber) shouldBe Json.obj()
+      arnToJson(individual.arn) shouldBe Json.obj()
     }
 
     "include the ARN for a primary agent" in {
       val agent = defaultMTDITUser(Some(Agent), incomeSources).copy(usersRole = MTDPrimaryAgent)
 
-      arnToJson(agent.agentReferenceNumber) shouldBe Json.obj("agentReferenceNumber" -> testArn)
+      arnToJson(agent.arn) shouldBe Json.obj("agentReferenceNumber" -> testArn)
     }
 
     "include the ARN for a supporting agent" in {
       val supportingAgent = defaultMTDITUser(Some(Agent), incomeSources).copy(usersRole = MTDSupportingAgent)
 
-      arnToJson(supportingAgent.agentReferenceNumber) shouldBe Json.obj("agentReferenceNumber" -> testArn)
+      arnToJson(supportingAgent.arn) shouldBe Json.obj("agentReferenceNumber" -> testArn)
     }
 
     "omit the field when an agent has no ARN" in {
       val agentWithoutArn = defaultMTDITUser(Some(Individual), incomeSources).copy(usersRole = MTDPrimaryAgent)
 
-      arnToJson(agentWithoutArn.agentReferenceNumber) shouldBe Json.obj()
+      arnToJson(agentWithoutArn.arn) shouldBe Json.obj()
     }
   }
 }

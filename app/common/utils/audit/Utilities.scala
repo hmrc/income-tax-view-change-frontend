@@ -25,7 +25,7 @@ object Utilities {
 
   private def getBaseDetails(user: MtdItUser[_]): JsObject =
     Json.obj( "mtditid" -> user.mtditid) ++
-    arnToJson(user.agentReferenceNumber) ++
+    arnToJson(user.arn) ++
     Json.obj("saUtr"-> user.saUtr) ++
     Json.obj("credId"-> user.credId) ++
     userType(user.userType, user.isSupportingAgent)
