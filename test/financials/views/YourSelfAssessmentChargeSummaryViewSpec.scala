@@ -124,5 +124,25 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         Option(document.getElementById("itsa-enquiry-amendment-credit-p2")).isDefined shouldBe true
       }
     }
+
+    val correctionCreditHeading: String = "Credit from HMRC correction to your tax return"
+    "charge is an ITSAReturnAmendmentCredit type and has a charge classification of 'MC'" should {
+      "display the correct content" in new TestSetup(chargeItem = chargeItemModel(transactionType = ITSAReturnAmendmentCredit, chargeClassification = Some("MC"))){
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe correctionCreditHeading
+        Option(document.getElementById("itsa-return-correction-credit-p1")).isDefined shouldBe true
+        Option(document.getElementById("itsa-return-correction-credit-p2")).isDefined shouldBe true
+      }
+    }
+
+    "charge is an ITSAReturnAmendmentCredit type and has a charge classification of 'AC'" should {
+      "display the correct content" in new TestSetup(chargeItem = chargeItemModel(transactionType = ITSAReturnAmendmentCredit, chargeClassification = Some("AC"))){
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe correctionCreditHeading
+        val p1 = document.getElementById("itsa-return-correction-credit-p1").text()
+        p1 should include ("HMRC corrected your tax return. This changed your tax calculation for") 
+        p1 should include (", resulting in a credit being added to your account.")
+
+        document.getElementById("itsa-return-correction-credit-p2").text() shouldBe "This credit may be used automatically by HMRC to cover your future tax bills when they become due."
+      }
+    }
   }
 }

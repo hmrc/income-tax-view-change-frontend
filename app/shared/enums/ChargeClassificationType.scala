@@ -30,7 +30,7 @@ object ChargeClassificationType:
   def isRevenueAmendment(chargeClassification: Option[String]): Boolean =
     chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
       case Some(ChargeClassificationType.RevenueAmendments) => true
-      case _ => false
+      case _                                                => false
     }
 
   def isCorrection(chargeClassification: Option[String]): Boolean =

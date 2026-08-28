@@ -19,7 +19,6 @@ package financials.views.partials.paymentAllocations.creditAndRefunds
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.TestSupport
 import financials.models.creditsandrefunds.*
-import financials.models.{CutOverCreditType, MfaCreditType}
 import financials.views.html.partials.creditAndRefunds.WhereMoneyCameFromTable
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -29,6 +28,7 @@ import shared.implicits.ImplicitCurrencyFormatter
 import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 import java.time.LocalDate
+import financials.testConstants.TestTransactions
 
 
 class WhereMoneyCameFromTableSpec extends TestSupport {
@@ -62,8 +62,7 @@ class WhereMoneyCameFromTableSpec extends TestSupport {
 
     "given a payment row" should {
       val paymentRow = PaymentCreditRow(
-        transactionId = "payment-transaction-id",
-        amount = BigDecimal(100.00),
+        TestTransactions.payment(100, None),
         date = LocalDate.of(2024, 1, 31),
         effectiveDate = LocalDate.of(2024, 1, 29)
       )
@@ -86,9 +85,7 @@ class WhereMoneyCameFromTableSpec extends TestSupport {
 
     "given an ordinary credit row" should {
       val creditRow = CreditViewRow(
-        transactionId = "credit-transaction-id",
-        amount = BigDecimal(50.00),
-        creditType = MfaCreditType,
+        TestTransactions.mfaCredit(LocalDate.of(2024, 2, 15), BigDecimal(50.00)),
         taxYear = taxYear,
         date = LocalDate.of(2024, 2, 15),
         isRevenueAmendment = false
@@ -108,9 +105,7 @@ class WhereMoneyCameFromTableSpec extends TestSupport {
 
     "given a revenue amendment credit row" should {
       val revenueAmendmentCreditRow = CreditViewRow(
-        transactionId = "ra-credit-transaction-id",
-        amount = BigDecimal(75.00),
-        creditType = CutOverCreditType,
+        TestTransactions.cutOverCredit(LocalDate.of(2024, 3, 10), BigDecimal(75.00)),
         taxYear = taxYear,
         date = LocalDate.of(2024, 3, 10),
         isRevenueAmendment = true
@@ -130,7 +125,7 @@ class WhereMoneyCameFromTableSpec extends TestSupport {
 
     "given a refund row" should {
       val refundRow = RefundRow(
-        amount = BigDecimal(25.00),
+        TestTransactions.refund(25.0, 1),
         date = LocalDate.of(2024, 4, 1)
       )
 

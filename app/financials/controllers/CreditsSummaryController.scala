@@ -85,17 +85,17 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
                     hc: HeaderCarrier): Future[Result] = {
     creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
       case Right(credits) =>
-        val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
+        val sortedCredits: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay) 
         val maybeAvailableCredit: Option[BigDecimal] =
           credits.flatMap(_.availableCredit.filter(_ > 0.00)).headOption
-        auditCreditSummary(maybeAvailableCredit, charges)
+        auditCreditSummary(maybeAvailableCredit, sortedCredits)
         val backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear)
         Future.successful(Ok(creditsView(
           calendarYear = calendarYear,
           backUrl = backUrl,
           utr = user.saUtr,
           serviceNavigationPartial = user.serviceNavigationPartial,
-          charges = charges,
+          charges = sortedCredits,
           maybeAvailableCredit = maybeAvailableCredit,
           origin = origin)))
       case Left(_) =>

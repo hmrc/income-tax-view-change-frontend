@@ -20,13 +20,19 @@ import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec
 import financials.controllers.routes as financialsRoutes
 import financials.models.*
-import financials.testConstants.ANewCreditAndRefundModel
+import financials.testConstants.{ANewCreditAndRefundModel, TestTransactions}
 
 import java.time.LocalDate
 
 class MoneyInYourAccountViewModelSpec extends UnitSpec {
 
   val testUrl = "testUrl"
+  val refund10 = TestTransactions.refund(10.0, 1)
+  val refund20 = TestTransactions.refund(20.0, 2)
+  
+  val payment10 = TestTransactions.payment(10.0, None)
+  val payment20 = TestTransactions.payment(20.0, None)
+  val payment30 = TestTransactions.payment(30.0, None)
 
   "sorted credit rows" should {
 
@@ -41,10 +47,10 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
       val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
 
       rows shouldBe List(
-        CreditViewRow("balancing", 2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024), dateInYear(2024), false),
-        CreditViewRow("cutover", 1.0, CutOverCreditType, TaxYear.forYearEnd(2023), dateInYear(2023), false),
-        CreditViewRow("repayment", 4.0, RepaymentInterest, TaxYear.forYearEnd(2022), dateInYear(2022), false),
-        CreditViewRow("mfa", 3.0, MfaCreditType, TaxYear.forYearEnd(2021), dateInYear(2021), false)
+        CreditViewRow(TestTransactions.balancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0), TaxYear.forYearEnd(2024), dateInYear(2024), false),
+        CreditViewRow(TestTransactions.cutOverCredit(dueDate = dateInYear(2023), outstandingAmount = 1.0), TaxYear.forYearEnd(2023), dateInYear(2023), false),
+        CreditViewRow(TestTransactions.repaymentInterestCredit(dueDate = dateInYear(2022), outstandingAmount = 4.0), TaxYear.forYearEnd(2022), dateInYear(2022), false),
+        CreditViewRow(TestTransactions.mfaCredit(dueDate = dateInYear(2021), outstandingAmount = 3.0), TaxYear.forYearEnd(2021), dateInYear(2021), false)
       )
     }
 
@@ -57,8 +63,8 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
 
       val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
       rows shouldBe List(
-        RefundRow(20.0, LocalDate.now()),
-        RefundRow(10.0, LocalDate.now())
+        RefundRow(refund20, LocalDate.now()),
+        RefundRow(refund10, LocalDate.now())
       )
     }
 
@@ -72,9 +78,9 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
       val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
 
       rows shouldBe List(
-        PaymentCreditRow("payment", 20.0, dateInYear(2024), dateInYear(2024)),
-        PaymentCreditRow("payment", 10.0, dateInYear(2023), dateInYear(2023)),
-        PaymentCreditRow("payment", 30.0, dateInYear(2022), dateInYear(2022)),
+        PaymentCreditRow(TestTransactions.payment(dateInYear(2024), 20.0), dateInYear(2024), dateInYear(2024)),
+        PaymentCreditRow(TestTransactions.payment(dateInYear(2023), 10.0), dateInYear(2023), dateInYear(2023)),
+        PaymentCreditRow(TestTransactions.payment(dateInYear(2022), 30.0), dateInYear(2022), dateInYear(2022)),
       )
     }
 
@@ -88,10 +94,10 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
       val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
 
       rows shouldBe List(
-        CreditViewRow("balancing", 2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024), dateInYear(2024), false),
-        CreditViewRow("cutover", 1.0, CutOverCreditType, TaxYear.forYearEnd(2023), dateInYear(2023), false),
-        RefundRow(20.0, LocalDate.now()),
-        RefundRow(10.0, LocalDate.now())
+        CreditViewRow(TestTransactions.balancingChargeCredit(dateInYear(2024), 2.0), TaxYear.forYearEnd(2024), dateInYear(2024), false),
+        CreditViewRow(TestTransactions.cutOverCredit(dateInYear(2023), 1.0), TaxYear.forYearEnd(2023), dateInYear(2023), false),
+        RefundRow(refund20, LocalDate.now()),
+        RefundRow(refund10, LocalDate.now())
       )
     }
 
@@ -105,67 +111,76 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
       val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
 
       rows shouldBe List(
-        CreditViewRow("balancing", 2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024), dateInYear(2024), false),
-        RefundRow(20.0, LocalDate.now()),
-        RefundRow(10.0, LocalDate.now())
+        CreditViewRow(TestTransactions.balancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0), TaxYear.forYearEnd(2024), dateInYear(2024), false),
+        RefundRow(refund20, LocalDate.now()),
+        RefundRow(refund10, LocalDate.now())
       )
     }
   }
 
   "CreditViewRow" should {
+
+    
+    val creditAmount = 10.0
+    val creditTaxYear = 2024
+    val creditId = "credit"
+
+    val chargeSummaryCredits: Seq[Transaction] = Seq(
+      TestTransactions.poaOneReconciliationCredit(dateInYear(creditTaxYear), creditAmount, creditId),
+      TestTransactions.poaTwoReconciliationCredit(dateInYear(creditTaxYear), creditAmount, creditId),
+      TestTransactions.itsaReturnAmendmentCredit(dateInYear(creditTaxYear), creditAmount, creditId)
+    )
+  
+    val creditSummaryCredits: Seq[Transaction] = Seq(
+      TestTransactions.cutOverCredit(dateInYear(creditTaxYear), creditAmount),
+      TestTransactions.balancingChargeCredit(dateInYear(creditTaxYear), creditAmount),
+      TestTransactions.mfaCredit(dateInYear(creditTaxYear), creditAmount),
+      TestTransactions.repaymentInterestCredit(dateInYear(creditTaxYear), creditAmount)
+    )
+
     s"have the correct description link url" in {
-      val creditId = "credit"
-      val creditAmount = 10.0
-      val creditTaxYear = 2024
+      val convertToNonRevenueAmendmentRow: Transaction => CreditViewRow = 
+        transaction => 
+          CreditViewRow(
+            transaction, 
+            TaxYear.forYearEnd(creditTaxYear), 
+            dateInYear(creditTaxYear), 
+            false
+          )
+      val chargeSummaryCreditRows = chargeSummaryCredits.map(convertToNonRevenueAmendmentRow)
 
-      val chargeSummaryCredits = Seq(
-        PoaOneReconciliationCredit,
-        PoaTwoReconciliationCredit,
-        ITSAReturnAmendmentCredit
-      ).map { creditType => CreditViewRow(creditId, creditAmount, creditType, TaxYear.forYearEnd(creditTaxYear), dateInYear(creditTaxYear), false) }
-
-      val creditSummaryCredits = Seq(
-        CutOverCreditType,
-        BalancingChargeCreditType,
-        MfaCreditType,
-        RepaymentInterest
-      ).map { creditType => CreditViewRow(creditId, creditAmount, creditType, TaxYear.forYearEnd(creditTaxYear), dateInYear(creditTaxYear), false) }
-
-      chargeSummaryCredits.foreach { creditRow =>
+      val creditSummaryCreditRows = creditSummaryCredits.map(convertToNonRevenueAmendmentRow)
+        
+      chargeSummaryCreditRows.foreach { creditRow =>
         creditRow.descriptionLink(false) shouldBe financialsRoutes.ChargeSummaryController.show(creditTaxYear, creditId).url
         creditRow.descriptionLink(true) shouldBe financialsRoutes.ChargeSummaryController.showAgent(creditTaxYear, creditId).url
       }
 
-      creditSummaryCredits.foreach { creditRow =>
+      creditSummaryCreditRows.foreach { creditRow =>
         creditRow.descriptionLink(false) shouldBe financialsRoutes.CreditsSummaryController.showCreditsSummary(creditTaxYear).url
         creditRow.descriptionLink(true) shouldBe financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(creditTaxYear).url
       }
     }
     s"have the correct description link url for revenue amendment credits" in {
-      val creditId = "credit"
-      val creditAmount = 10.0
-      val creditTaxYear = 2024
-      val isRevenueAmendment = true
+      val convertToRevenueAmendmentRow: Transaction => CreditViewRow = 
+        transaction => 
+          CreditViewRow(
+            transaction, 
+            TaxYear.forYearEnd(creditTaxYear), 
+            dateInYear(creditTaxYear), 
+            isRevenueAmendment = true 
+          )
 
-      val chargeSummaryCredits = Seq(
-        PoaOneReconciliationCredit,
-        PoaTwoReconciliationCredit,
-        ITSAReturnAmendmentCredit
-      ).map { creditType => CreditViewRow(creditId, creditAmount, creditType, TaxYear.forYearEnd(creditTaxYear), dateInYear(creditTaxYear), isRevenueAmendment) }
+      val chargeSummaryCreditsRows = chargeSummaryCredits.map(convertToRevenueAmendmentRow)
 
-      val creditSummaryCredits = Seq(
-        CutOverCreditType,
-        BalancingChargeCreditType,
-        MfaCreditType,
-        RepaymentInterest
-      ).map { creditType => CreditViewRow(creditId, creditAmount, creditType, TaxYear.forYearEnd(creditTaxYear), dateInYear(creditTaxYear), isRevenueAmendment) }
+      val creditSummaryCreditsRows = creditSummaryCredits.map(convertToRevenueAmendmentRow)
 
-      chargeSummaryCredits.foreach { creditRow =>
+      chargeSummaryCreditsRows.foreach { creditRow =>
         creditRow.descriptionLink(false) shouldBe financialsRoutes.ChargeSummaryController.show(creditTaxYear, creditId).url
         creditRow.descriptionLink(true) shouldBe financialsRoutes.ChargeSummaryController.showAgent(creditTaxYear, creditId).url
       }
 
-      creditSummaryCredits.foreach { creditRow =>
+      creditSummaryCreditsRows.foreach { creditRow =>
         creditRow.descriptionLink(false) shouldBe financialsRoutes.CreditsSummaryController.showCreditsSummary(creditTaxYear).url
         creditRow.descriptionLink(true) shouldBe financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(creditTaxYear).url
       }
@@ -174,18 +189,19 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
 
   "PaymentCreditRow" should {
     "have the correct tax year" in {
-      val paymentRow = PaymentCreditRow("payment", 20.0, dateInYear(2024), dateInYear(2024))
+      val paymentRow = PaymentCreditRow(payment20, dateInYear(2024), dateInYear(2024))
       paymentRow.taxYear shouldBe TaxYear.forYearEnd(2024)
     }
     "have the correct description link url" in {
-      val paymentRow = PaymentCreditRow("payment", 20.0, dateInYear(2024), dateInYear(2024))
+      val payment = TestTransactions.payment(20.0, None)
+      val paymentRow = PaymentCreditRow(payment, dateInYear(2024), dateInYear(2024))
       paymentRow.descriptionLink(false) shouldBe financialsRoutes.PaymentAllocationsController.viewPaymentAllocation("payment").url
       paymentRow.descriptionLink(true) shouldBe financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent("payment").url
     }
   }
   "RefundRow" should {
     "have the correct description link url" in {
-      val refundRow = RefundRow(30.0, dateInYear(2024))
+      val refundRow = RefundRow(refund20, dateInYear(2024))
       refundRow.descriptionLink shouldBe financialsRoutes.PaymentHistoryController.refundStatus().url
     }
   }

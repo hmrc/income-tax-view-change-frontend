@@ -24,45 +24,48 @@ import java.time.LocalDate
 
 
 sealed trait CreditRow {
-  val amount: BigDecimal
-  val creditType: CreditType
+  val transaction: Transaction
   val date: LocalDate
+  
+  val amount: BigDecimal = transaction.amount
+  val transactionId: String = transaction.transactionId
+  val creditType: CreditType = transaction.transactionType
+  val taxYear: TaxYear = TaxYear.getTaxYear(date)
 }
 
 object CreditRow {
 
   def fromTransaction(transaction: Transaction): Option[CreditRow] = {
 
-    transaction.transactionType match {
-      case PaymentType =>
-        transaction.dueDate.flatMap(dueDate =>
-          transaction.effectiveDateOfPayment.map(effectiveDate =>
-            PaymentCreditRow(
-              transactionId = transaction.transactionId,
-              amount = transaction.amount,
-              date = dueDate,
-              effectiveDate = effectiveDate
-            )))
-      case Repayment =>
-        Some(RefundRow(amount = transaction.amount, date = LocalDate.now())) // Set date to current date to enable correct ordering of rows in WhereMoneyCameFromTable.scala.html
-      case creditType =>
-        transaction.taxYear.flatMap(year =>
-          transaction.dueDate.map(date =>
-            CreditViewRow(
-              transactionId = transaction.transactionId,
-              amount = transaction.amount,
-              creditType = creditType,
-              taxYear = year,
-              date = date,
-              isRevenueAmendment = transaction.isRevenueAmendment
-            )
-          )
+    (transaction.transactionType, transaction.chargeClassification) match {
+      case (PaymentType, _) =>
+        for 
+          dueDate <- transaction.dueDate
+          effectiveDate <- transaction.effectiveDateOfPayment
+        yield PaymentCreditRow(
+          transaction = transaction,
+          date = dueDate,
+          effectiveDate = effectiveDate
         )
+      case (Repayment, _) =>
+        Some(RefundRow(transaction, date = LocalDate.now())) // Set date to current date to enable correct ordering of rows in WhereMoneyCameFromTable.scala.html
+      case (ITSAReturnAmendmentCredit, Some("AC" | "MC")) => 
+        transaction.dueDate.map(CorrectionRow(transaction, _))
+      case creditType =>
+        for 
+          taxYear <- transaction.taxYear
+          dueDate <- transaction.dueDate
+        yield CreditViewRow(
+            transaction = transaction, 
+            taxYear = taxYear,
+            date = dueDate,
+            isRevenueAmendment = transaction.isRevenueAmendment
+          )
     }
   }
 }
 
-case class CreditViewRow(transactionId: String, amount: BigDecimal, creditType: CreditType, taxYear: TaxYear, date: LocalDate, isRevenueAmendment: Boolean) extends CreditRow {
+case class CreditViewRow(transaction: Transaction, override val taxYear: TaxYear, date: LocalDate, isRevenueAmendment: Boolean) extends CreditRow {
   def descriptionLink(isAgent: Boolean): String = creditType match {
     case PoaOneReconciliationCredit | PoaTwoReconciliationCredit | ITSAReturnAmendmentCredit =>
       if (isAgent) routes.ChargeSummaryController.showAgent(taxYear = taxYear.endYear, id = transactionId).url else routes.ChargeSummaryController.show(taxYear = taxYear.endYear, id = transactionId).url
@@ -71,22 +74,19 @@ case class CreditViewRow(transactionId: String, amount: BigDecimal, creditType: 
   }
 }
 
-case class PaymentCreditRow(transactionId: String, amount: BigDecimal, date: LocalDate, effectiveDate: LocalDate) extends CreditRow {
-
-  override val creditType: CreditType = PaymentType
-
-  val taxYear: TaxYear = TaxYear.getTaxYear(date)
-
+case class PaymentCreditRow(transaction: Transaction, date: LocalDate, effectiveDate: LocalDate) extends CreditRow {
   def descriptionLink(isAgent: Boolean): String =
     if (isAgent) routes.PaymentAllocationsController.viewPaymentAllocationAgent(transactionId).url else routes.PaymentAllocationsController.viewPaymentAllocation(transactionId).url
 }
 
-case class RefundRow(amount: BigDecimal, date: LocalDate) extends CreditRow {
-
-  val taxYear: TaxYear = TaxYear.getTaxYear(date)
-  override val creditType: CreditType = Repayment
-
+case class RefundRow(transaction: Transaction, date: LocalDate) extends CreditRow {
   def descriptionLink: String = routes.PaymentHistoryController.refundStatus().url
+}
+
+case class CorrectionRow(transaction: Transaction, date: LocalDate) extends CreditRow {
+  def descriptionLink(isAgent: Boolean): String = if isAgent 
+    then routes.ChargeSummaryController.showAgent(date.getYear, transactionId).url
+    else routes.ChargeSummaryController.show(date.getYear, transactionId).url
 }
 
 case class MoneyInYourAccountViewModel(availableCredit: BigDecimal,

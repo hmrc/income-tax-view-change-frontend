@@ -2344,6 +2344,7 @@ paymentHistory.payment                                          = Payment you ma
 paymentHistory.paymentToHmrc                                    = Payment you made to HMRC
 paymentHistory.cutOver                                          = Credit from an earlier tax year
 paymentHistory.mfa                                              = Credit from HMRC adjustment
+paymentHistory.correction                                       = Credit from HMRC correction to your tax return
 paymentHistory.balancingCharge                                  = Credit from overpaid tax
 paymentHistory.repaymentInterest                                = Credit from repayment interest
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return
@@ -2499,6 +2500,7 @@ money-in-your-account.where-from.table-row.tax-year                     = {0} to
 money-in-your-account.where-from.table-row.tax-year.hidden              = Tax year {0} to {1}
 money-in-your-account.where-from.payment-row.description                = Payment you made to HMRC on {0}
 money-in-your-account.where-from.credit-row.description                 = Credit from an earlier tax year
+money-in-your-account.where-from.correction-row.description             = Credit from HMRC correction to your tax return
 money-in-your-account.where-from.refund-row.description                 = Refund in progress
 money-in-your-account.where-from.ra-credit-row.description              = Credit from HMRC enquiry amendment
 money-in-your-account.claim-refund.button-text                          = Claim a refund
@@ -2523,6 +2525,8 @@ yourSelfAssessmentChargeSummary.creditAmount                        = Total cred
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
 yourSelfAssessmentChargeSummary.creditCreated                       = This credit was created on {0}
+
+yourSelfAssessmentChargeSummary.correctionCredit.text.heading       = Credit from HMRC correction to your tax return
 
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a balancing payment?
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
@@ -2706,6 +2710,10 @@ yourSelfAssessmentChargeSummary.enquiryAmendment.p2                             
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
+
+yourSelfAssessmentChargeSummary.correction.p1.1                                     = HMRC corrected your tax return. This changed your 
+yourSelfAssessmentChargeSummary.correction.p1.link-text                             = tax calculation for {0} to {1}
+yourSelfAssessmentChargeSummary.correction.p1.2                                     = resulting in a credit being added to your account.
 
 yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.1                     = Following a compliance check, HMRC made a change to your tax return known as an ‘enquiry amendment’. Your amended tax return shows that your
 yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.link-text             = {0} to {1} tax calculation
