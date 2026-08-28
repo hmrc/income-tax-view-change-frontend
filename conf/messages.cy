@@ -1996,6 +1996,7 @@ whatYouOwe.reviewAndReconcilePoa2.text                          = Ail daliad ar 
 whatYouOwe.lpi.reviewAndReconcilePoa1.text                      = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
 whatYouOwe.lpi.reviewAndReconcilePoa2.text                      = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
+whatYouOwe.hmrcCorrection.text                                  = Swm ychwanegol i’w dalu o ganlyniad i gywiriad gan CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.enquiryAmendment.text                                = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 whatYouOwe.lateSubmissionPenalty.text                              = Cosb am gyflwyno’n hwyr

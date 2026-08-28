@@ -2009,6 +2009,7 @@ whatYouOwe.lpi.reviewAndReconcilePoa1.text                         = Late paymen
 whatYouOwe.lpi.reviewAndReconcilePoa2.text                         = Late payment interest for second payment on account: extra amount
 whatYouOwe.lpi.itsaReturnAmendment.text                            = Late payment interest on balancing payment: extra amount due to amended return
 whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
+whatYouOwe.hmrcCorrection.text                                     = Extra amount to pay due to HMRC correction
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on first payment on account
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on balancing payment
