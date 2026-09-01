@@ -16,8 +16,8 @@
 
 package testOnly.controllers
 
+import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.FrontendAppConfig
-import hub.auth.AuthActions
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubClientDetailsController @Inject()(authActions: AuthActions,
+class StubClientDetailsController @Inject()(featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
                                             stubClientDetails: StubClientDetails,
                                             matchingStubConnector: MatchingStubConnector)
                                            (implicit mcc: MessagesControllerComponents,
@@ -55,7 +55,7 @@ class StubClientDetailsController @Inject()(authActions: AuthActions,
   }
 
   def submitWithParams(nino: String, utr: String, isNewContextRoot: Boolean): Action[AnyContent] =
-    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq(false).async { implicit request =>
+    featureSwitchRetrievalAction.async { implicit request =>
       matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)).map { _ =>
         val redirectUrl = if (request.newHubContextRootEnabled)
           hub.v2.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr)
@@ -66,7 +66,7 @@ class StubClientDetailsController @Inject()(authActions: AuthActions,
     }
 
   def submit(isNewContextRoot: Boolean): Action[AnyContent] =
-    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq(false).async { implicit request =>
+    featureSwitchRetrievalAction.async { implicit request =>
       StubClientDetailsForm.clientDetailsForm.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(stubClientDetails(
           clientDetailsForm = hasErrors,

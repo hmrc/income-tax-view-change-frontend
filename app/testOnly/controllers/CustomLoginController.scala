@@ -16,12 +16,12 @@
 
 package testOnly.controllers
 
+import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.controllers.BaseController
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateServiceInterface, ITSAStatusService}
-import hub.auth.AuthActions
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                      authActions: AuthActions,
+                                      featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
                                       val testOnlyAppConfig: TestOnlyAppConfig,
                                       val mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext,
@@ -68,7 +68,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   }
 
   def postLogin(isNewContextRoot: Boolean): Action[AnyContent] =
-    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq(false).async { implicit request =>
+    featureSwitchRetrievalAction.async { implicit request =>
       PostedUser.form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
