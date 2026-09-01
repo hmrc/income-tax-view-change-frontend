@@ -28,7 +28,7 @@ class TestBTAPartialController @Inject()(testBTAPartial: TestBTAPartial)
                                         (implicit mcc: MessagesControllerComponents,
                                          val executionContext: ExecutionContext) extends BaseController {
 
-  def viewBTAPartial: Action[AnyContent] = Action { implicit request =>
+  def viewBTAPartial(isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit request =>
     Ok(testBTAPartial())
   }
 }

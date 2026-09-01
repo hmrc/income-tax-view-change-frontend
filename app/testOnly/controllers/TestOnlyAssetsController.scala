@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class TestOnlyAssetsController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with Logging {
 
-  def at(filePath: String): Action[AnyContent] = Action {
+  def at(filePath: String, isNewContextRoot: Boolean): Action[AnyContent] = Action {
     getFileFromPath(s"/testOnly/$filePath") match {
       case Right(content) =>
         logger.info(s"can read content")

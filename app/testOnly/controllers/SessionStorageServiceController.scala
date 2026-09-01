@@ -16,10 +16,11 @@
 
 package testOnly.controllers
 
-import common.auth.{AuthActions, FrontendAuthorisedFunctions}
+import common.auth.FrontendAuthorisedFunctions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.services.SessionDataService
 import common.models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
+import common.auth.AuthActions
 import play.api.Logging
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,12 +38,12 @@ class SessionStorageServiceController @Inject()(val authActions: AuthActions,
                                                  val mcc: MessagesControllerComponents)
   extends FrontendController(mcc) with Logging{
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShow(isAgent = false)
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def showAgent(isNewContextRoot: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleShow(isAgent = true)
   }
