@@ -61,12 +61,11 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   private final val recentActivityUser = "HP000000A"
   private final val customTaxCalculationUser = "PP000003A"
 
-  def showLogin(isNewContextRoot: Boolean): Action[AnyContent] =
-    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq().async { implicit request =>
-      userRepository.findAll().map(userRecords =>
-        Ok(loginPage(routes.CustomLoginController.postLogin(isNewContextRoot), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser, customTaxCalculationUser))
-      )
-    }
+  def showLogin(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
+    userRepository.findAll().map(userRecords =>
+      Ok(loginPage(routes.CustomLoginController.postLogin(isNewContextRoot), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser, customTaxCalculationUser))
+    )
+  }
 
   def postLogin(isNewContextRoot: Boolean): Action[AnyContent] =
     authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq(false).async { implicit request =>
@@ -89,7 +88,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     val origin = if (postedUser.usePTANavBar) "PTA" else "BTA"
                     appConfig.individualHomeUrlWithOrigin(request.newHubContextRootEnabled, Some(origin))
                   }
-                  val homePage = s"${appConfig.baseUrl}/$redirectURL"
+                  val homePage = s"$redirectURL"
 
                   updateEffectiveDateOfPayment().failed.foreach(ex => {
                     logger.error("Failed to update effectiveDateOfPayment", ex)

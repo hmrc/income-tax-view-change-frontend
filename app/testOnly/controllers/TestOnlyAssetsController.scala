@@ -16,25 +16,22 @@
 
 package testOnly.controllers
 
-import hub.auth.AuthActions
 import play.api.Logging
 import play.api.mvc.*
 import testOnly.utils.FileUtil.getFileFromPath
 
 import javax.inject.Inject
 
-class TestOnlyAssetsController @Inject()(authActions: AuthActions,
-                                         cc: ControllerComponents) extends AbstractController(cc) with Logging {
+class TestOnlyAssetsController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with Logging {
 
-  def at(filePath: String, isNewContextRoot: Boolean): Action[AnyContent] =
-    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq() {
-      getFileFromPath(s"/testOnly/$filePath") match {
-        case Right(content) =>
-          logger.info(s"can read content")
-          Ok(content).as("text/javascript")
-        case Left(ex) =>
-          logger.error(s"$filePath - $ex")
-          NotFound
-      }
+  def at(filePath: String, isNewContextRoot: Boolean): Action[AnyContent] = Action {
+    getFileFromPath(s"/testOnly/$filePath") match {
+      case Right(content) =>
+        logger.info(s"can read content")
+        Ok(content).as("text/javascript")
+      case Left(ex) =>
+        logger.error(s"$filePath - $ex")
+        NotFound
     }
+  }
 }

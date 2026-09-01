@@ -17,7 +17,6 @@
 package testOnly.controllers
 
 import common.config.FrontendAppConfig
-import hub.auth.AuthActions
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -25,40 +24,38 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class SessionStorageController @Inject()(authActions: AuthActions)
-                                        (implicit mcc: MessagesControllerComponents,
-                                         val appConfig: FrontendAppConfig)
+class SessionStorageController @Inject()
+(implicit mcc: MessagesControllerComponents,
+ val appConfig: FrontendAppConfig)
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show(isNewContextRoot: Boolean): Action[AnyContent] =
-    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq().async { implicit request =>
-      // we really don't need to show these
-      val filterOutKeys = Seq("sessionId", "authToken", "csrfToken", "origin")
-      val sessionDataStr: String = request.session
-        .data
-        .filter(kv => !filterOutKeys.contains(kv._1))
-        .mkString("\n")
-      Future.successful(Ok(sessionDataStr))
-    }
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
+    // we really don't need to show these
+    val filterOutKeys = Seq("sessionId", "authToken", "csrfToken", "origin")
+    val sessionDataStr: String = request.session
+      .data
+      .filter(kv => !filterOutKeys.contains(kv._1))
+      .mkString("\n")
+    Future.successful(Ok(sessionDataStr))
+  }
 
-  def upsert(keyOpt: Option[String], valueOpt: Option[String], isNewContextRoot: Boolean): Action[AnyContent] =
-    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq(false).async {
-      implicit request =>
-        val res = for {
-          key <- keyOpt
-          value <- valueOpt
-        } yield (key, value)
-        res match {
-          case Some((k, v)) =>
-            Future.successful(
-              Redirect(routes.SessionStorageController.show(isNewContextRoot))
-                .withSession(request.session + (k -> v))
-            )
-          case None =>
-            Future.successful(Ok("Unable to add data to session storage"))
-        }
+  def upsert(keyOpt: Option[String], valueOpt: Option[String], isNewContextRoot: Boolean): Action[AnyContent] = Action.async {
+    implicit request =>
+      val res = for {
+        key <- keyOpt
+        value <- valueOpt
+      } yield (key, value)
+      res match {
+        case Some((k, v)) =>
+          Future.successful(
+            Redirect(routes.SessionStorageController.show(isNewContextRoot))
+              .withSession(request.session + (k -> v))
+          )
+        case None =>
+          Future.successful(Ok("Unable to add data to session storage"))
+      }
 
-    }
+  }
 
 }

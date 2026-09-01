@@ -47,13 +47,12 @@ class StubClientDetailsController @Inject()(authActions: AuthActions,
     )
   )
 
-  def show(isNewContextRoot: Boolean): Action[AnyContent] =
-    authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq() { implicit req =>
-      Ok(stubClientDetails(
-        clientDetailsForm = form,
-        postAction = testOnly.controllers.routes.StubClientDetailsController.submit(isNewContextRoot)
-      ))
-    }
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit req =>
+    Ok(stubClientDetails(
+      clientDetailsForm = form,
+      postAction = testOnly.controllers.routes.StubClientDetailsController.submit(isNewContextRoot)
+    ))
+  }
 
   def submitWithParams(nino: String, utr: String, isNewContextRoot: Boolean): Action[AnyContent] =
     authActions.retrieveFeatureSwitchesAndCheckContextRootIfReq(false).async { implicit request =>
