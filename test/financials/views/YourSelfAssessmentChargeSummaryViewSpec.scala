@@ -53,7 +53,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
   val chargeAmountHeading: String = messages("yourSelfAssessmentChargeSummary.stoodOverFullCharge")
   val firstLatePaymentPenaltyText: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text")
   val firstPaymentOnAccount1Text: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text")
-  val paymentHistoryUnknownText: String = messages("paymentHistory.unknown")
+  val chargeSummaryNoDataText: String = messages("chargeSummary.noData")
 
   def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
@@ -198,7 +198,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
         document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe firstLatePaymentPenaltyText
         document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(3)").text() shouldBe "£1,400.00"
-        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe paymentHistoryUnknownText
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe chargeSummaryNoDataText
         document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
         document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£43.21"
       }

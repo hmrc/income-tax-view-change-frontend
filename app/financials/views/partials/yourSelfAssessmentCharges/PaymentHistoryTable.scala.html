@@ -122,14 +122,14 @@
         if(viewModel.chargeItem.dunningLock && viewModel.chargeHistoryEnabled || viewModel.latePaymentInterestCharge && viewModel.chargeItem.dunningLock && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                   content = HtmlContent(viewModel.dunningLockSubItemDueDate.map(_.toLongDateShort.toNonBreaking).getOrElse(Html(messages("paymentHistory.unknown"))))
+                   content = HtmlContent(viewModel.dunningLockSubItemDueDate.map(_.toLongDateShort.toNonBreaking).getOrElse(Html(messages("chargeSummary.noData"))))
                 ),
                 TableRow(
                     content = Text(messages(s"chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text"))
                 ),
                 TableRow(
                    content = if (viewModel.latePaymentInterestCharge && viewModel.chargeItem.dunningLock) {
-                       HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.map(_.toCurrencyString).getOrElse(messages("paymentHistory.unknown")))
+                       HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.map(_.toCurrencyString).getOrElse(messages("chargeSummary.noData")))
                     } else HtmlContent(viewModel.chargeItem.originalAmount.toCurrencyString),
                     format = Some("numeric")
                 )
