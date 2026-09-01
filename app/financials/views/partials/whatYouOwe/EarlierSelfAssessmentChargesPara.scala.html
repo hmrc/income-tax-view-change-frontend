@@ -83,5 +83,6 @@
     @saNoteParagraph(utr = viewModel.utr,
         budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL,
         isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0,
-        isSelfServeTimeToPayEnabled)
+        isSelfServeTimeToPayEnabled,
+        viewModel = viewModel)
 }
