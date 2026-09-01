@@ -104,7 +104,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
             httpStatus(SEE_OTHER),
             redirectURI(hub.v1.controllers.routes.HomeController.showAgent().url)
           )
-          AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn,
+          AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = Some(testArn),
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))
 
         }
@@ -159,7 +159,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
             httpStatus(SEE_OTHER),
             redirectURI(hub.v1.controllers.routes.HomeController.showAgent().url)
           )
-          AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn,
+          AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = Some(testArn),
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))
 
         }
