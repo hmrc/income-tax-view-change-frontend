@@ -153,21 +153,48 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         document.selectById("claim-a-refund-button").attribute("href").toString shouldBe s"href=\"${financialsRoutes.MoneyInYourAccountController.startRefund().url}\""
       }
     }
-
-    "displaying agent credit and refund page" should {
-      "display the page" when {
-        "correct data is provided" in new TestSetup(
-          isAgent = true,
-          creditAndRefundModel = ANewCreditAndRefundModel()
-            .withTotalCredit(500.0)
-            .withAvailableCredit(400.0)
-            .get()
+  }
+  "displaying agent credit and refund page" should {
+    "display the page" when {
+      "correct data is provided" in new TestSetup(
+        isAgent = true,
+        creditAndRefundModel = ANewCreditAndRefundModel()
+          .withTotalCredit(500.0)
+          .withAvailableCredit(400.0)
+          .get()
+      ) {
+        document.title() shouldBe agentTitle
+        document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
+        document.selectById("claim-a-refund-button").attribute("href").toString shouldBe s"href=\"${financialsRoutes.MoneyInYourAccountController.startRefundAgents().url}\""
+        layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
+      }
+    }
+  }
+  "both the individual and agent page" should {
+    "display credit and correction rows correctly" in {
+    
+      val testModel = ANewCreditAndRefundModel()
+        .withAvailableCredit(5.0)
+        .withTotalCredit(5.0)
+        .withITSAReturnAmendmentCredit(LocalDate.parse("2022-08-15"), 20.0)
+        .withHmrcManualCorrection(LocalDate.parse("2022-08-16"), 30.0)
+        .withHmrcAutoCorrection(LocalDate.parse("2022-08-17"), 40.0)
+        .get()
+        
+      Seq(true, false).foreach { isAgent => 
+        new TestSetup(
+          isAgent = isAgent, 
+          creditAndRefundModel = testModel
         ) {
-          document.title() shouldBe agentTitle
-          document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
-          document.selectById("claim-a-refund-button").attribute("href").toString shouldBe s"href=\"${financialsRoutes.MoneyInYourAccountController.startRefundAgents().url}\""
-          layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
+          val table = document.select("#main-content").select("#where-the-money-came-from-table tbody")
+          table.select("tr:nth-child(1)")
+            .text() shouldBe s"15 Aug 2022 " + messages("money-in-your-account.where-from.credit-row.description") + s" 2022 to 2023 " + "£20.00"
+          table.select("tr:nth-child(2)")
+            .text() shouldBe s"16 Aug 2022 " + messages("money-in-your-account.where-from.correction-row.description") + s" 2022 to 2023 " + "£30.00"
+          table.select("tr:nth-child(3)")
+            .text() shouldBe s"17 Aug 2022 " + messages("money-in-your-account.where-from.correction-row.description") + s" 2022 to 2023 " + "£40.00"
         }
+
       }
     }
   }

@@ -217,7 +217,7 @@ class AuthoriseAndRetrieveIndividualForNrsSpec extends AuthActionsSpecHelper {
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/client-utr")
+        redirectLocation(result).get should include(appConfig.enterClientsUTRUrl(newHubContextRootEnabled))
       }
     }
 

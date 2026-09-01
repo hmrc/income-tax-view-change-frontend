@@ -28,13 +28,13 @@ import testOnly.utils.UserRepository
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
+class StubUsersController @Inject()()(implicit val appConfig: FrontendAppConfig,
                                     val mcc: MessagesControllerComponents,
                                     val executionContext: ExecutionContext,
                                     userRepository: UserRepository
                                    ) extends BaseController with I18nSupport with Logging {
 
-  def stubUsers: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def stubUsers(isNewContextRoot: Boolean): Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[UserRecord](
       userRecord => {
         logger.info("userRecord:" + userRecord)
@@ -49,7 +49,7 @@ class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
     )
   }
 
-  val deleteUsers: Action[AnyContent] = Action.async {
+  def deleteUsers(isNewContextRoot: Boolean): Action[AnyContent] = Action.async {
     userRepository.removeAll().flatMap(_ =>
       Future.successful(Ok("\nDeleted all mongo data from FE user collection"))
     )

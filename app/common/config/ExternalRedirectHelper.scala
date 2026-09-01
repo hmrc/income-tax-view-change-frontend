@@ -33,16 +33,27 @@ trait ExternalRedirectHelper {
   val servicesConfig: ServicesConfig
   val config: Configuration
 
-  val baseFullUrl: String
-  val hubBaseFullUrl: String
+  lazy val basePath: String = servicesConfig.getString("base.context-root")
+  lazy val agentBasePath: String = s"$basePath/agents"
+  lazy val baseUrl: String = servicesConfig.getString("base.url")
+  lazy val baseFullUrl: String = s"$baseUrl$basePath"
+  lazy val agentBaseFullUrl: String = s"$baseUrl$agentBasePath"
+  lazy val hubContextRootEnabledConfig: Boolean = servicesConfig.getBoolean("feature-switch.enable-new-hub-context-root")
   
-  def hubBaseUrl(newHubContextRootEnabled: Boolean): String =
-    if(newHubContextRootEnabled) hubBaseFullUrl else baseFullUrl
+  def hubBasePath(newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig): String =
+    if(newHubContextRootEnabled) servicesConfig.getString("base.context-root-hub") else basePath
+    
+  def agentHubBasePath(newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig): String =
+    s"${hubBasePath(newHubContextRootEnabled)}/agents"
+
+  def hubBaseUrl(newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig): String =
+    s"$baseUrl${hubBasePath(newHubContextRootEnabled)}"
     
   def hubAgentBaseUrl(newHubContextRootEnabled: Boolean): String = s"${hubBaseUrl(newHubContextRootEnabled)}/agents"
   
-  def individualHomeUrl(newHubContextRootEnabled: Boolean): String =
+  def individualHomeUrl(newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig): String = {
     s"${hubBaseUrl(newHubContextRootEnabled)}/income-tax"
+  }
 
   def individualHomeUrlWithOrigin(newHubContextRootEnabled: Boolean, origin: Option[String]): String =
       origin.fold(individualHomeUrl(newHubContextRootEnabled))(o => s"${individualHomeUrl(newHubContextRootEnabled)}?origin=$o")
@@ -50,8 +61,9 @@ trait ExternalRedirectHelper {
   def agentHomeUrl(newHubContextRootEnabled: Boolean): String =
     s"${hubAgentBaseUrl(newHubContextRootEnabled)}/client-income-tax"
     
-  def homePageUrl(isAgent: Boolean, newHubContextRootEnabled: Boolean, origin: Option[String] = None): String =
+  def homePageUrl(isAgent: Boolean, newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig, origin: Option[String] = None): String = {
     if (isAgent) agentHomeUrl(newHubContextRootEnabled) else individualHomeUrlWithOrigin(newHubContextRootEnabled, origin)
+  }
 
   def individualYourTasksUrl(newHubContextRootEnabled: Boolean): String =
     s"${hubBaseUrl(newHubContextRootEnabled)}/your-tasks"
@@ -59,11 +71,14 @@ trait ExternalRedirectHelper {
   def agentYourTasksUrl(newHubContextRootEnabled: Boolean): String =
     s"${hubAgentBaseUrl(newHubContextRootEnabled)}/your-tasks"
     
-  def enterClientsUTRUrl(newHubContextRootEnabled: Boolean): String = {
-    if(newHubContextRootEnabled)
-      hubV2AgentRoutes.EnterClientsUTRController.show().url
-    else 
-      hubV1AgentRoutes.EnterClientsUTRController.show().url
+  def enterClientsUTRUrl(newHubContextRootEnabled: Boolean = hubContextRootEnabledConfig, utr: Option[String] = None): String = {
+    if(newHubContextRootEnabled) {
+      utr.fold(hubV2AgentRoutes.EnterClientsUTRController.show().url)(
+        utrValue => hubV2AgentRoutes.EnterClientsUTRController.showWithUtr(utrValue).url)
+    } else { 
+        utr.fold(hubV1AgentRoutes.EnterClientsUTRController.show().url)(
+          utrValue => hubV1AgentRoutes.EnterClientsUTRController.showWithUtr(utrValue).url)
+    }
   }
 
   def confirmClientUTRUrl(newHubContextRootEnabled: Boolean): String = {

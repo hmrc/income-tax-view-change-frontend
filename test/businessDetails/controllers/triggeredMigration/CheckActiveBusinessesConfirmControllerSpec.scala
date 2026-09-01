@@ -85,7 +85,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions with Mo
 
           val result = action(fakeRequest)
           status(result) shouldBe 303
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+          redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
         }
       }
 
@@ -166,7 +166,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions with Mo
           )
 
           status(result) shouldBe 303
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+          redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
         }
       }
 

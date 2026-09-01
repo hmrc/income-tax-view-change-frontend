@@ -46,6 +46,8 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
   
   lazy val mockPostSessionDataConnector = mock(classOf[PostSessionDataConnector])
 
+  override val newHubContextRootEnabled: Boolean = false
+
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ConfirmClientUTRView].toInstance(mockConfirmClient),

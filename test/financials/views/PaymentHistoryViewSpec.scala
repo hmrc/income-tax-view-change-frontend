@@ -23,6 +23,7 @@ import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.testUtils.ViewSpec
 import shared.implicits.ImplicitCurrencyFormatter.*
+import shared.enums.ChargeClassificationType.*
 import financials.models.*
 import financials.models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import financials.models.repaymentHistory.PaymentHistoryEntry
@@ -148,7 +149,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     linkUrl = "link1", visuallyHiddenText = "hidden-text1", None, isRevenueAmendment = false)(dateServiceInterface)
 
   val revenueAmendmentEntry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = ITSAReturnAmendmentCredit, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None, isRevenueAmendment = true)(dateServiceInterface)
+    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None, isRevenueAmendment = true, Some(RevenueAmendments))(dateServiceInterface)
 
   def getContent(row: Int)(implicit layoutContent: Element): String = {
     val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
@@ -327,6 +328,29 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 2).selectNth("td", 4).text() shouldBe "£300.00"
+      }
+    }
+
+    "logged in as either user or agent" should {
+      "display credit and corrections correctly" in {
+        Seq(true, false).foreach { isAgent => 
+          new PaymentHistorySetup(List(
+            (2026, List(
+              PaymentHistoryEntry("2026-05-03", ITSAReturnAmendmentCredit, Some(200.0), None, "someLink", "", None)(dateServiceInterface), // normal credit 
+              PaymentHistoryEntry("2026-05-02", ITSAReturnAmendmentCredit, Some(300.0), None, "someLink", "", None, false, Some(AutoCorrection))(dateServiceInterface), // corrections 
+              PaymentHistoryEntry("2026-05-01", ITSAReturnAmendmentCredit, Some(400.0), None, "someLink", "", None, false, Some(ManualCorrection))(dateServiceInterface) 
+            ))),
+            isAgent = isAgent
+          ) {
+              val table = layoutContent.select("table > tbody")
+              table.select("tr:nth-child(1)")
+                .text() shouldBe "3 May 2026 " + s"${messages("paymentHistory.IRA-credit")} Item 1" + " 2026 to 2027 " + "£200.00"
+              table.select("tr:nth-child(2)")
+                .text() shouldBe "2 May 2026 " + s"${messages("paymentHistory.correction")} Item 2" + " 2026 to 2027 " + "£300.00"
+              table.select("tr:nth-child(3)")
+                .text() shouldBe "1 May 2026 " + s"${messages("paymentHistory.correction")} Item 3" + " 2026 to 2027 " + "£400.00"
+          }
+        }
       }
     }
   }

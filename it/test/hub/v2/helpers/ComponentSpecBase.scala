@@ -179,7 +179,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.set-up-a-payment-plan.port" -> mockPort,
     "feature-switches.read-from-mongo" -> "true",
     "feature-switch.enable-time-machine" -> "false",
-    "feature-switch.newHubContextRootEnabled" -> "true",
+    "feature-switch.enable-new-hub-context-root" -> "true",
     "time-machine.add-years" -> "0",
     "time-machine.add-days" -> "0"
   )

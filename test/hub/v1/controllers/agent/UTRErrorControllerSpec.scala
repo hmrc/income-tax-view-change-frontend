@@ -32,6 +32,8 @@ import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 class UTRErrorControllerSpec extends MockAuthActions
   with MockUTRError {
 
+  override val newHubContextRootEnabled: Boolean = false
+  
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[UTRErrorView].toInstance(utrError),

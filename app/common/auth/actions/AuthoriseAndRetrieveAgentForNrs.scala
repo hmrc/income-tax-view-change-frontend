@@ -41,8 +41,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @nowarn("cat=deprecation")
 @Singleton
 class AuthoriseAndRetrieveAgentForNrs @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                val appConfig: FrontendAppConfig,
                                                 mcc: MessagesControllerComponents)
+                                               (implicit val appConfig: FrontendAppConfig)
   extends FeatureSwitching with AuthoriseHelper with Logging {
 
   def authorise(arnRequired: Boolean = true): ActionRefiner[RequestWithFeatureSwitches, AuthorisedUserRequest] = new ActionRefiner[RequestWithFeatureSwitches, AuthorisedUserRequest] {

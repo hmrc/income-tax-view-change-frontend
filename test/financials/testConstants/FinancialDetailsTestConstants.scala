@@ -2489,8 +2489,7 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
   }
 
   def withCutoverCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(CutOverCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "cutover")))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.cutOverCredit(dueDate, outstandingAmount)))
   }
 
   def withFirstRefund(amount: BigDecimal) = {
@@ -2502,43 +2501,81 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
     ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
       Transaction(Repayment, amount, taxYear = None, None, None, "refund2")))
   }
-
+  
   def withBalancingChargeCredit(dueDate: LocalDate, outstandingAmount: BigDecimal, id: String = "balancing") = {
-    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(BalancingChargeCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, id)))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.balancingChargeCredit(dueDate, outstandingAmount, id)))
   }
 
   def withRepaymentInterest(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(RepaymentInterest, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "repayment")))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.repaymentInterestCredit(dueDate, outstandingAmount)))
   }
 
   def withMfaCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(MfaCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "mfa")))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.mfaCredit(dueDate, outstandingAmount)))
   }
 
   def withPayment(dueDate: LocalDate, outstandingAmount: BigDecimal, effectiveDateOfPayment: Option[LocalDate] = None) = {
-    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(PaymentType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), Some(effectiveDateOfPayment.getOrElse(dueDate)), "payment")))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.payment(dueDate,  outstandingAmount, effectiveDateOfPayment)))
   }
 
   def withPoaOneReconciliationCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(PoaOneReconciliationCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None,"POA1RR-credit")))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.poaOneReconciliationCredit(dueDate: LocalDate, outstandingAmount: BigDecimal)))
   }
 
   def withPoaTwoReconciliationCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(PoaTwoReconciliationCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "POA2RR-credit")))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.poaTwoReconciliationCredit(dueDate: LocalDate, outstandingAmount: BigDecimal)))
   }
 
   def withITSAReturnAmendmentCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(ITSAReturnAmendmentCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "IRA-credit")))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.itsaReturnAmendmentCredit(dueDate: LocalDate, outstandingAmount: BigDecimal)))
   }
+  
+  def withHmrcAutoCorrection(dueDate: LocalDate, outstandingAmount: BigDecimal) =
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.hmrcAutoCorrection(dueDate, outstandingAmount)))
+  
+  def withHmrcManualCorrection(dueDate: LocalDate, outstandingAmount: BigDecimal) =
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+ TestTransactions.hmrcManualCorrection(dueDate, outstandingAmount)))
+  
   def get(): CreditsModel = model
 }
+
+object TestTransactions: 
+
+  def itsaReturnAmendmentCredit(dueDate: LocalDate, outstandingAmount: BigDecimal, id: String = "IRA-credit"): Transaction =
+    Transaction(ITSAReturnAmendmentCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, id)
+
+  def poaOneReconciliationCredit(dueDate: LocalDate, outstandingAmount: BigDecimal, id: String = "POA1RR-credit"): Transaction = 
+    Transaction(PoaOneReconciliationCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, id)
+
+  def poaTwoReconciliationCredit(dueDate: LocalDate, outstandingAmount: BigDecimal, id: String = "POA2RR-credit"): Transaction = 
+    Transaction(PoaTwoReconciliationCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, id)
+
+  def balancingChargeCredit(dueDate: LocalDate, outstandingAmount: BigDecimal, id: String = "balancing"): Transaction = 
+    Transaction(BalancingChargeCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, id)
+
+  def cutOverCredit(dueDate: LocalDate, outstandingAmount: BigDecimal): Transaction = 
+    Transaction(CutOverCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "cutover")
+
+  def hmrcAutoCorrection(dueDate: LocalDate, outstandingAmount: BigDecimal): Transaction = 
+    Transaction(ITSAReturnAmendmentCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "IRA-credit", Some("AC"))
+
+  def hmrcManualCorrection(dueDate: LocalDate, outstandingAmount: BigDecimal): Transaction = 
+    Transaction(ITSAReturnAmendmentCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "IRA-credit", Some("AC"))
+
+  def mfaCredit(dueDate: LocalDate, outstandingAmount: BigDecimal): Transaction = 
+    Transaction(MfaCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "mfa")
+
+  def repaymentInterestCredit(dueDate: LocalDate, outstandingAmount: BigDecimal): Transaction = 
+    Transaction(RepaymentInterest, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), None, "repayment")
+
+  def refund(amount: Double, number: Int): Transaction = 
+    Transaction(Repayment, BigDecimal(amount), taxYear = None, None, None, s"refund$number")
+    
+  def payment(amount: Double, number: Option[Int]): Transaction = 
+    Transaction(PaymentType, BigDecimal(amount), taxYear = None, None, None, s"payment${number.getOrElse("")}")
+
+  def payment(dueDate: LocalDate, outstandingAmount: BigDecimal, effectiveDateOfPayment: Option[LocalDate] = None): Transaction = 
+    Transaction(PaymentType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), Some(effectiveDateOfPayment.getOrElse(dueDate)), "payment")
 
 object CreditAndRefundConstants {
   def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),

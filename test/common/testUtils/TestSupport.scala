@@ -16,8 +16,9 @@
 
 package common.testUtils
 
-import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData
 import common.auth.actions.AuthActionsTestData.*
+import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
@@ -55,7 +56,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
   
   implicit val actorSystem: ActorSystem = app.actorSystem
-  val newHubContextRootEnabled = false
+  val newHubContextRootEnabled = true
 
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {
