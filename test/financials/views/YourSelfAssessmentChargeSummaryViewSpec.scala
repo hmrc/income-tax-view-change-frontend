@@ -28,8 +28,6 @@ import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAl
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.id1040000123
 import financials.views.html.YourSelfAssessmentChargeSummaryView
-import financials.controllers.routes as financialsRoutes
-import financials.enums.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
@@ -132,7 +130,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
       }
     }
     "charge is an ITSAReturnAmendmentCredit type and has a charge classification of 'RA'" should {
-      "display the correct content" in new TestSetup(chargeItem = chargeItemModel(transactionType = ITSAReturnAmendmentCredit, chargeClassification = Some("RA"))){
+      "display the correct content" in new TestSetup(chargeItem = chargeItemModel(transactionType = ITSAReturnAmendmentCredit, chargeClassification = Some("RA"))) {
         document.getElementsByClass("govuk-heading-xl").first().text() shouldBe itsaEnquiryAmendmentCreditHeading
         Option(document.getElementById("itsa-enquiry-amendment-credit-p1")).isDefined shouldBe true
         Option(document.getElementById("itsa-enquiry-amendment-credit-p2")).isDefined shouldBe true
