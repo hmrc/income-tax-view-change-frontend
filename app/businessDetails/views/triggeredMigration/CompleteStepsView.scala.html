@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
@@ -23,18 +22,10 @@
 
 @this(
         mainTemplate: unifiedLayout,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        continueButton: ContinueButton,
-        formWithCSRF: FormWithCSRF,
         h1: h1,
-        h2: h2,
-        h3: h3,
-        h3WithHtml: h3WithHtml,
         p: p,
         link: link,
-        hr: hr,
         govukButton: GovukButton,
-        govukPanel: GovukPanel,
         bulletList: bulletPointList,
 )
 

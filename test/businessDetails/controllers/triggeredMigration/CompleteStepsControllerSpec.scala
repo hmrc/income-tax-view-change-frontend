@@ -147,7 +147,7 @@ class CompleteStepsControllerSpec extends MockAuthActions with MockTriggeredMigr
             val result = action(fakeRequest)
 
             status(result) shouldBe 303
-            redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+            redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
           }
         }
       }

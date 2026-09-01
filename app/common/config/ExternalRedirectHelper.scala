@@ -131,15 +131,6 @@ trait ExternalRedirectHelper {
       businessDetailsManageBusinessesAgentUrl(businessDetailsFrontendEnabled)
     else
       businessDetailsManageBusinessesIndividualUrl(businessDetailsFrontendEnabled)
-      
-  def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String = {
-    if(businessDetailsFrontendEnabled) {
-      val baseUri = if(isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
-      s"$baseUri/check-your-active-businesses/hmrc-record"
-    } else {
-        triggeredMigrationRoutes.CheckHmrcRecordsController.show(isAgent).url
-    }
-  }
 
   def triggeredMigrationCompleteStepsUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String = {
     if (businessDetailsFrontendEnabled) {
