@@ -29,7 +29,8 @@ import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{ClearITSAStatusCacheConnector, CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.*
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
-import testOnly.utils.{AuthExchange, SessionBuilder, UserRepository}
+import testOnly.utils.CustomUserHelper.*
+import testOnly.utils.{AuthExchange, CustomUserHelper, SessionBuilder, UserRepository}
 import testOnly.views.html.LoginPage
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -55,15 +56,9 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       dateService: DateServiceInterface
                                      ) extends BaseController with I18nSupport with FeatureSwitching with Logging {
 
-  private final val customIncomeSourceUsers = Seq("TR000001A", "AS000000A", "AS000001A")
-  private final val customReportingObligationsUsers = Seq("OP000001A", "OP000002A", "OP000003A", "OP000005A", "OP000006A", "NE000000A", "NE000001A", "NE000002A", "HP000000A")
-  private final val latentBusinessUser = "AS000002A"
-  private final val recentActivityUser = "HP000000A"
-  private final val customTaxCalculationUser = "PP000003A"
-
   def showLogin(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(isNewContextRoot), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser, customTaxCalculationUser))
+      Ok(loginPage(routes.CustomLoginController.postLogin(isNewContextRoot), userRecords))
     )
   }
 
@@ -104,6 +99,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     case "Misc" if user.nino == recentActivityUser => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
                     case _ if customReportingObligationsUsers.contains(user.nino) => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
                     case _ if customTaxCalculationUser.contains(user.nino) => overwriteDataForCalculations(postedUser, bearer, auth, homePage)
+                    case _ if user.nino == revenueAmendmentAndCorrectionsUser => overwriteDataForFinancials(postedUser, bearer, auth, homePage)
                     case _ => Future.successful(successRedirect(bearer, auth, homePage))
                   }
               }
@@ -180,6 +176,19 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     }
   }
 
+  private def overwriteDataForFinancials(postedUser: PostedUser, bearer: String, auth: String, homePage: String)(implicit headerCarrier: HeaderCarrier, request: Request[_]) = {
+    val financialsUser = FinancialsUser(postedUser.chargeClassification.getOrElse("RA"))
+
+    updateTestDataForFinancials(postedUser.nino, financialsUser).map {
+      _ => successRedirect(bearer, auth, homePage)
+    }.recover {
+      case ex =>
+        val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        logger.error(s"[overwriteDataForFinancials] Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
+        errorHandler.showInternalServerError()
+    }
+  }
+
   private def successRedirect(bearer: String, auth: String, homePage: String): Result = {
     Redirect(homePage)
       .withSession(
@@ -205,6 +214,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   private def updateTestDataForTaxCalculationUser(nino: String, taxCalculationUser: TaxCalculationUser)(implicit headerCarrier: HeaderCarrier) = {
     dynamicStubService.overwriteTaxCalculationData(nino, taxCalculationUser)
+  }
+
+  private def updateTestDataForFinancials(nino: String, financialsUser: FinancialsUser)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteFinancialsData(nino, financialsUser)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

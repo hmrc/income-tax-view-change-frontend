@@ -2014,6 +2014,7 @@ whatYouOwe.lpi.paymentOnAccount2.text                              = Late paymen
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on balancing payment
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.enquiryAmendment.text                                   = Extra amount to pay due to HMRC enquiry amendment
+whatYouOwe.hmrcCorrection.text                                     = Extra amount to pay due to HMRC correction
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
 whatYouOwe.lateSubmissionPenalty.text                              = Late submission penalty
