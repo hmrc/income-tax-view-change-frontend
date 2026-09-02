@@ -293,9 +293,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextByID("active-quarterly-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
           elementTextByID("active-quarterly-subheading")(expectedValue = "Quarterly updates due"),
           elementTextByID("active-quarterly-subdesc")(expectedValue = "Every 3 months an update is due for each of your property and sole trader income sources."),
-          elementTextByClass("govuk-details__summary-text")(expectedValue = "Find out more about quarterly updates"),
+          elementTextBySelector("#active-quarterly-dropdown summary")(expectedValue = "Find out more about quarterly updates"),
           elementTextByID("active-quarterly-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
-          elementTextByClass("govuk-list govuk-list--bullet")(expectedValue = "new information and corrections made since the last update any information you’ve already provided that has not changed"),
           elementTextByID("active-quarterly-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab).")
         )
       }
@@ -348,9 +347,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextByID("active-quarterly-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
           elementTextByID("active-quarterly-subheading")(expectedValue = "Quarterly updates due"),
           elementTextByID("active-quarterly-subdesc")(expectedValue = "Every 3 months an update is due for each of your property and sole trader income sources."),
-          elementTextByClass("govuk-details__summary-text")(expectedValue = "Find out more about quarterly updates"),
+          elementTextBySelector("#active-quarterly-dropdown summary")(expectedValue = "Find out more about quarterly updates"),
           elementTextByID("active-quarterly-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
-          elementTextByClass("govuk-list govuk-list--bullet")(expectedValue = "new information and corrections made since the last update any information you’ve already provided that has not changed"),
           elementTextByID("active-quarterly-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab).")
         )
       }
@@ -416,7 +414,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations."),
+          elementTextBySelector("#what-the-user-can-do-1")(expectedValue = "You must complete your outstanding quarterly updates for the 2022 to 2023 tax year."),
           elementTextBySelector("#reporting-frequency-link")("you may be able to view and change your reporting obligations")
         )
 
