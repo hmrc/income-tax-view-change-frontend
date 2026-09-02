@@ -17,6 +17,7 @@ base.error_summary.heading                                      = Mae problem we
 base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
+base.startnow                                                   = Dechrau nawr
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 base.confirm-and-save                                           = Cadarnhau a chadw
@@ -3671,3 +3672,12 @@ triggered-migration.checkComplete.whatNext.heading                              
 triggered-migration.checkComplete.whatNext.p1                                           = Byddwn yn defnyddio’r wybodaeth rydych wedi ei darparu er mwyn diweddaru ein cofnodion.
 triggered-migration.checkComplete.whatNext.p2                                           = Bydd unrhyw ddiweddariadau, dyddiadau cau, neu gamau gweithredu sydd mewn perthynas â chyfnodau pan oedd eich ffynonellau incwm yn weithredol yn cael eu dangos yn eich cyfrif ar-lein CThEF.
 triggered-migration.checkComplete.whatNext.p3                                           = Gallwch wirio a oes unrhyw ddiweddariadau, dyddiadau cau, neu gamau gweithredu sy’n berthnasol i chi.
+
+# Triggered migration - Complete steps page
+triggered-migration.completeSteps.heading                                                  = Mae angen i chi gwblhau rhai camau cyn i chi gyflwyno’ch Ffurflen Dreth
+triggered-migration.completeSteps.p1                                                       = Rydych wedi cael eich symud yn awtomatig i’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am eich bod yn bodloni’r gofynion i ymuno.
+triggered-migration.completeSteps.linkText                                                 = Dysgwch pam yr ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+triggered-migration.completeSteps.p2                                                       = Nid ydych wedi cwblhau pob un o’r camau gofynnol ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi wneud y canlynol:
+triggered-migration.completeSteps.ul.li1                                                   = cadarnhau eich ffynonellau incwm
+triggered-migration.completeSteps.ul.li2                                                   = cael meddalwedd sy’n cydweddu
+triggered-migration.completeSteps.ul.li3                                                   = anfon eich diweddariad chwarterol mwyaf diweddar

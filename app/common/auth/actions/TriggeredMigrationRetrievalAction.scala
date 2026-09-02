@@ -74,7 +74,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                           Future.successful(Right(req))
                         } else {
                           Future.successful(
-                            Left(Redirect(appConfig.triggeredMigrationCheckHMRCRecordsUrl(req.isAgent, isEnabled(BusinessDetailsFrontend))))
+                            Left(Redirect(appConfig.triggeredMigrationCompleteStepsUrl(req.isAgent, isEnabled(BusinessDetailsFrontend))))
                           )
                         }
                       case Left(errorResult) =>
@@ -136,7 +136,6 @@ class TriggeredMigrationRetrievalAction @Inject()(
   }
 
   private def showErrorPageBasedOnContext(request: MtdItUser[_], context: String): Result = {
-
     logger.error(context)
 
     (request.authUserDetails.affinityGroup, context) match {
