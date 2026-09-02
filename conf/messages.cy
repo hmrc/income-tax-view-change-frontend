@@ -1008,6 +1008,9 @@ taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Treth sy�
 taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy’n ddyledus ar freindaliadau
 taxCal_breakdown.table.giftAidTaxReductionWhereBasicRateDiffers     = Gostyngiad treth ar y gwahaniaeth yn y gyfradd sylfaenol
 taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers        = Tâl treth ar y gwahaniaeth yn y gyfradd sylfaenol
+taxCal_breakdown.table.taxRefundedOrSetOff                          = Treth a ad-dalwyd eisoes yn ystod y flwyddyn
+taxCal_breakdown.table.taxRefundedOrSetOff.header                   = Math o addasiad
+taxCal_breakdown.table.taxRefundedOrSetOff.caption                  = Addasiad i’r dreth a oedd yn ddyledus
 
 taxCal_breakdown.table.highIncomeChildBenefitCharge                      = Tâl treth Budd-dal Plant Incwm Uchel
 

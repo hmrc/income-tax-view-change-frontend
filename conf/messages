@@ -1006,6 +1006,9 @@ taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax             = S
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                          = Void ISAs
 taxCal_breakdown.table.taxDeductedAtSource.total					         = Total tax deducted
 taxCal_breakdown.table.amount                                                = Amount
+taxCal_breakdown.table.taxRefundedOrSetOff                                   = Tax already refunded in year
+taxCal_breakdown.table.taxRefundedOrSetOff.header                            = Adjustment type
+taxCal_breakdown.table.taxRefundedOrSetOff.caption                           = Adjustment to tax due
 
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Student loan repayments (Plan {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Postgraduate loan repayments

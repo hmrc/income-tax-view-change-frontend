@@ -129,13 +129,18 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
               errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
             )),
-            calculationRevisionType = None
+            calculationRevisionType = None,
+            taxRefundedOrSetOff = Some(100),
+            totalTaxAndNicsDue = Some(150),
+            totalIncomeTaxAndNicsAndCgt = Some(taxDue)
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
             calculation = Some(liabilityCalculationModelSuccessful.calculation.get.copy(
               taxCalculation = Some(liabilityCalculationModelSuccessful.calculation.get.taxCalculation.get.copy(
-                totalIncomeTaxAndNicsAndCgt = Some(taxDue))))))
+                totalIncomeTaxAndNicsAndCgt = Some(taxDue),
+                taxRefundedOrSetOff = Some(100),
+                totalTaxAndNicsDue = Some(150))))))
 
           CalculationSummary(liabilityCalculationModel) shouldBe expectedCalculationSummary
         }

@@ -36,11 +36,22 @@ case class CalculationSummary(
                                periodFrom: Option[LocalDate] = None,
                                periodTo: Option[LocalDate] = None,
                                messages: Option[Messages] = None,
-                               calculationRevisionType: Option[CalculationRevisionType]
+                               calculationRevisionType: Option[CalculationRevisionType],
+                               taxRefundedOrSetOff: Option[BigDecimal] = None,
+                               totalTaxAndNicsDue: Option[BigDecimal] = None,
+                               totalIncomeTaxAndNicsAndCgt:Option[BigDecimal] = None
                              ) {
 
   def errorPresent(): Boolean = {
     messages.exists(_.errorMessages.nonEmpty)
+  }
+
+  def getSATaxAmount: Option[BigDecimal] = {
+    (taxRefundedOrSetOff, totalIncomeTaxAndNicsAndCgt) match {
+      case (Some(_), _) => totalTaxAndNicsDue
+      case (None, Some(_)) => totalIncomeTaxAndNicsAndCgt
+      case (None, None) => Some(taxDue)
+    }
   }
 
 }
@@ -83,7 +94,10 @@ object CalculationSummary extends ImplicitDateParser {
       periodFrom = calc.metadata.periodFrom,
       periodTo = calc.metadata.periodTo,
       messages = calc.messages,
-      calculationRevisionType = calc.metadata.calculationRevisionType
+      calculationRevisionType = calc.metadata.calculationRevisionType,
+      taxRefundedOrSetOff = calc.calculation.flatMap(record => record.taxCalculation.flatMap(_.taxRefundedOrSetOff)),
+      totalTaxAndNicsDue = calc.calculation.flatMap(record => record.taxCalculation.flatMap(_.totalTaxAndNicsDue)),
+      totalIncomeTaxAndNicsAndCgt = calc.calculation.flatMap(record => record.taxCalculation.flatMap(_.totalIncomeTaxAndNicsAndCgt))
     )
   }
 }

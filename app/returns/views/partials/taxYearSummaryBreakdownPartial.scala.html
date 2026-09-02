@@ -313,7 +313,7 @@
                 Option.when(!isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due"), classes = "govuk-!-font-weight-bold govuk-link govuk-body"))),
-                        TableRow(content = Text(overview.taxDue.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
+                        TableRow(content = Text(overview.getSATaxAmount.get.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
             ).flatten
