@@ -26,7 +26,6 @@ import java.time.LocalDate
 sealed trait CreditRow {
   val transaction: Transaction
   val date: LocalDate
-  
   val amount: BigDecimal = transaction.amount
   val transactionId: String = transaction.transactionId
   val creditType: CreditType = transaction.transactionType
@@ -39,7 +38,7 @@ object CreditRow {
 
     (transaction.transactionType, transaction.chargeClassification) match {
       case (PaymentType, _) =>
-        for 
+        for
           dueDate <- transaction.dueDate
           effectiveDate <- transaction.effectiveDateOfPayment
         yield PaymentCreditRow(
@@ -49,18 +48,18 @@ object CreditRow {
         )
       case (Repayment, _) =>
         Some(RefundRow(transaction, date = LocalDate.now())) // Set date to current date to enable correct ordering of rows in WhereMoneyCameFromTable.scala.html
-      case (ITSAReturnAmendmentCredit, Some("AC" | "MC")) => 
-        transaction.dueDate.map(CorrectionRow(transaction, _))
+      case (ITSAReturnAmendmentCredit, Some("AC" | "MC")) =>
+        transaction.documentDate.map(CorrectionRow(transaction, _))
       case creditType =>
-        for 
+        for
           taxYear <- transaction.taxYear
-          dueDate <- transaction.dueDate
+          docDate <- transaction.documentDate
         yield CreditViewRow(
-            transaction = transaction, 
-            taxYear = taxYear,
-            date = dueDate,
-            isRevenueAmendment = transaction.isRevenueAmendment
-          )
+          transaction = transaction,
+          taxYear = taxYear,
+          date = docDate,
+          isRevenueAmendment = transaction.isRevenueAmendment
+        )
     }
   }
 }
@@ -84,9 +83,9 @@ case class RefundRow(transaction: Transaction, date: LocalDate) extends CreditRo
 }
 
 case class CorrectionRow(transaction: Transaction, date: LocalDate) extends CreditRow {
-  def descriptionLink(isAgent: Boolean): String = if isAgent 
-    then routes.ChargeSummaryController.showAgent(date.getYear, transactionId).url
-    else routes.ChargeSummaryController.show(date.getYear, transactionId).url
+  def descriptionLink(isAgent: Boolean): String = if isAgent
+  then routes.ChargeSummaryController.showAgent(date.getYear, transactionId).url
+  else routes.ChargeSummaryController.show(date.getYear, transactionId).url
 }
 
 case class MoneyInYourAccountViewModel(availableCredit: BigDecimal,
