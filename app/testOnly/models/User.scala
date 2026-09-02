@@ -61,7 +61,8 @@ case class PostedUser(nino: String,
                       latentBusinessYear1: Option[String],
                       latentBusinessYear2: Option[String],
                       latestCalculationReason: Option[String],
-                      previousCalculationReason: Option[String]
+                      previousCalculationReason: Option[String],
+                      chargeClassification: Option[String]
                      ) {
 
   def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
@@ -93,7 +94,8 @@ object PostedUser {
       "latentBusinessYear1" -> optional(text),
       "latentBusinessYear2" -> optional(text),
       "latestCalculationReason" -> optional(text),
-      "previousCalculationReason" -> optional(text)
+      "previousCalculationReason" -> optional(text),
+      "chargeClassification" -> optional(text)
     )(
       (nino,
       agentType,
@@ -109,7 +111,8 @@ object PostedUser {
       latentBusinessYear1,
       latentBusinessYear2,
       latestCalculationReason,
-      previousCalculationReason) => PostedUser(
+      previousCalculationReason,
+      chargeClassification) => PostedUser(
         nino,
         agentType,
         usePTANavBar,
@@ -124,7 +127,8 @@ object PostedUser {
         latentBusinessYear1,
         latentBusinessYear2,
         latestCalculationReason,
-        previousCalculationReason)
+        previousCalculationReason,
+        chargeClassification)
     )(form => Some(
       form.nino,
       form.agentType,
@@ -140,7 +144,8 @@ object PostedUser {
       form.latentBusinessYear1,
       form.latentBusinessYear2,
       form.latestCalculationReason,
-      form.previousCalculationReason
+      form.previousCalculationReason,
+      form.chargeClassification
     ))
   )
 

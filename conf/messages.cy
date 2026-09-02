@@ -17,6 +17,7 @@ base.error_summary.heading                                      = Mae problem we
 base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
+base.startnow                                                   = Dechrau nawr
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 base.confirm-and-save                                           = Cadarnhau a chadw
@@ -1009,6 +1010,9 @@ taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Treth sy�
 taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy’n ddyledus ar freindaliadau
 taxCal_breakdown.table.giftAidTaxReductionWhereBasicRateDiffers     = Gostyngiad treth ar y gwahaniaeth yn y gyfradd sylfaenol
 taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers        = Tâl treth ar y gwahaniaeth yn y gyfradd sylfaenol
+taxCal_breakdown.table.taxRefundedOrSetOff                          = Treth a ad-dalwyd eisoes yn ystod y flwyddyn
+taxCal_breakdown.table.taxRefundedOrSetOff.header                   = Math o addasiad
+taxCal_breakdown.table.taxRefundedOrSetOff.caption                  = Addasiad i’r dreth a oedd yn ddyledus
 
 taxCal_breakdown.table.highIncomeChildBenefitCharge                      = Tâl treth Budd-dal Plant Incwm Uchel
 
@@ -1996,14 +2000,15 @@ whatYouOwe.lpi.reviewAndReconcilePoa2.text                      = Llog ar yr ail
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.enquiryAmendment.text                                = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
-whatYouOwe.lateSubmissionPenalty.text                              = Cosb am gyflwyno’n hwyr
-whatYouOwe.firstLatePaymentPenalty.text                            = Cosb gyntaf am dalu’n hwyr
-whatYouOwe.secondLatePaymentPenalty.text                           = Ail gosb am dalu’n hwyr
-whatYouOwe.lpi.firstLatePaymentPenalty.text                        = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
-whatYouOwe.lpi.secondLatePaymentPenalty.text                       = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
-whatYouOwe.lpi.lateSubmissionPenalty.text                          = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
-whatYouOwe.itsaReturnAmendment.text                                = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
-whatYouOwe.lpi.itsaReturnAmendment.text                            = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
+whatYouOwe.hmrcCorrection.text                                  = Swm ychwanegol i’w dalu o ganlyniad i gywiriad gan CThEF
+whatYouOwe.lateSubmissionPenalty.text                           = Cosb am gyflwyno’n hwyr
+whatYouOwe.firstLatePaymentPenalty.text                         = Cosb gyntaf am dalu’n hwyr
+whatYouOwe.secondLatePaymentPenalty.text                        = Ail gosb am dalu’n hwyr
+whatYouOwe.lpi.firstLatePaymentPenalty.text                     = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
+whatYouOwe.lpi.secondLatePaymentPenalty.text                    = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
+whatYouOwe.lpi.lateSubmissionPenalty.text                       = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
+whatYouOwe.itsaReturnAmendment.text                             = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
+whatYouOwe.lpi.itsaReturnAmendment.text                         = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 
 whatYouOwe.payments-due                                         = Y dreth sydd arnoch yn nhrefn y dyddiadau dyledus
 whatYouOwe.tax-owed-due-order-heading                           = Y dreth sydd arnoch yn nhrefn y dyddiadau dyledus
@@ -2062,6 +2067,17 @@ whatYouOwe.pre-mtd.body                                         = I wirio a oes 
 whatYouOwe.pre-mtd-link                                         = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.pre-mtd-outstanding-charges                          = Bydd unrhyw daliad a wneir yn cael ei ddefnyddio ar gyfer treth sydd heb eu talu ar gyfer blynyddoedd treth Hunanasesiad blaenorol yn gyntaf, ac ni fydd yn cael ei arddangos yma.
 whatYouOwe.revenueAmendment.label                               = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
+
+whatYouOwe.suspended-charges                                    = Treth sy’n ddyledus ond nad yw’n cael ei chasglu ar hyn o bryd
+whatYouOwe.suspended-charges-informalOnly.p1                    = Mae’r dreth hon wedi’i gohirio ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
+whatYouOwe.suspended-charges-informalOnly.p2                    = Gallwch dalu’r hyn sy’n ddyledus gennych o hyd, oherwydd efallai y codir llog arnoch os caiff y dreth ei rhyddhau er mwyn i CThEF ei chasglu ac os nad ydych wedi ei thalu erbyn y dyddiad dyledus gwreiddiol.
+whatYouOwe.paying-suspended-tax.heading                         = Talu’r dreth sydd wedi’i gohirio
+whatYouOwe.paying-suspended-tax.p1                              = Os nad oes gennych dreth sy’n ddyledus neu sy’n hwyr, caiff eich taliad ei ddefnyddio i dalu’r dreth sydd wedi’i gohirio pan na fydd wedi’i gohirio mwyach.
+whatYouOwe.paying-suspended-tax.p2                              = Tra bydd y dreth wedi’i gohirio:
+whatYouOwe.paying-suspended-tax.bullet1                         = gall eich taliad ymddangos fel credyd
+whatYouOwe.paying-suspended-tax.bullet2                         = mewn rhai achosion, efallai y byddwn yn cadw’r taliad ar wahân fel na chaiff ei ddefnyddio ar gyfer treth arall
+whatYouOwe.paying-suspended-tax.p3                              = Os byddwch chi’n gwneud taliad, byddwn yn awgrymu eich bod yn talu cyfanswm y dreth sydd wedi’i gohirio.
+whatYouOwe.paying-suspended-tax.p4                              = Gallwch dalu’r swm hwn neu nodi swm gwahanol.
 
 making-payment.heading                                          = Gwneud taliad
 making-payment.what-payment-goes-towards.heading                = Tuag at beth fydd eich taliad yn mynd
@@ -3662,3 +3678,12 @@ triggered-migration.checkComplete.whatNext.heading                              
 triggered-migration.checkComplete.whatNext.p1                                           = Byddwn yn defnyddio’r wybodaeth rydych wedi ei darparu er mwyn diweddaru ein cofnodion.
 triggered-migration.checkComplete.whatNext.p2                                           = Bydd unrhyw ddiweddariadau, dyddiadau cau, neu gamau gweithredu sydd mewn perthynas â chyfnodau pan oedd eich ffynonellau incwm yn weithredol yn cael eu dangos yn eich cyfrif ar-lein CThEF.
 triggered-migration.checkComplete.whatNext.p3                                           = Gallwch wirio a oes unrhyw ddiweddariadau, dyddiadau cau, neu gamau gweithredu sy’n berthnasol i chi.
+
+# Triggered migration - Complete steps page
+triggered-migration.completeSteps.heading                                                  = Mae angen i chi gwblhau rhai camau cyn i chi gyflwyno’ch Ffurflen Dreth
+triggered-migration.completeSteps.p1                                                       = Rydych wedi cael eich symud yn awtomatig i’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am eich bod yn bodloni’r gofynion i ymuno.
+triggered-migration.completeSteps.linkText                                                 = Dysgwch pam yr ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+triggered-migration.completeSteps.p2                                                       = Nid ydych wedi cwblhau pob un o’r camau gofynnol ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi wneud y canlynol:
+triggered-migration.completeSteps.ul.li1                                                   = cadarnhau eich ffynonellau incwm
+triggered-migration.completeSteps.ul.li2                                                   = cael meddalwedd sy’n cydweddu
+triggered-migration.completeSteps.ul.li3                                                   = anfon eich diweddariad chwarterol mwyaf diweddar

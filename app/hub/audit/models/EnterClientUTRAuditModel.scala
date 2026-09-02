@@ -19,6 +19,7 @@ package hub.audit.models
 import common.enums.AuditType.EnterClientUTR
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities.arnToJson
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class EnterClientUTRAuditModel(isSuccessful: Boolean,
@@ -58,7 +59,7 @@ case class EnterClientUTRAuditModel(isSuccessful: Boolean,
     "saUtr" -> saUtr) ++
     userType ++
     Json.obj("credId"-> credId) ++
-    Json.obj("agentReferenceNumber"-> arn)
+    arnToJson(arn)
 
   override val detail: JsValue = userDetailsJson ++ outcome
 

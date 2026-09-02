@@ -33,10 +33,12 @@ case class IncomeSourceDetailsResponseAuditModel(
   override val auditType: String = IncomeSourceDetailsResponse
 
   override val detail: JsValue = {
+    import mtdItUser.authUserDetails.agentReferenceNumber as arn
+
     Json.obj("mtditid" -> mtdItUser.mtditId,
       "selfEmploymentIncomeSourceIds" -> selfEmploymentIds,
       "propertyIncomeSourceIds" -> propertyIncomeIds) ++
-      Json.obj("agentReferenceNumber"-> mtdItUser.authUserDetails.agentReferenceNumber) ++
+      arnToJson(arn) ++
       Json.obj("saUtr"-> mtdItUser.saUtr) ++
       userType(mtdItUser.authUserDetails.affinityGroup, mtdItUser.mtdUserRole == MTDSupportingAgent) ++
       Json.obj("credId"-> mtdItUser.authUserDetails.credId) ++
