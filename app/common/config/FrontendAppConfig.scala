@@ -29,13 +29,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val hasEnabledTestOnlyRoutes: Boolean = config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
 
   //App
-  lazy val basePath: String = servicesConfig.getString("base.context-root")
-  lazy val hubBasePath: String = servicesConfig.getString("base.context-root-hub")
-  lazy val agentBasePath: String = s"$basePath/agents"
-  lazy val agentHubBasePath: String = s"$hubBasePath/agents"
-  lazy val baseUrl: String = servicesConfig.getString("base.url")
-  override val baseFullUrl: String = s"$baseUrl$basePath"
-  override val hubBaseFullUrl: String = s"$baseUrl$hubBasePath"
   lazy val appName: String = servicesConfig.getString("appName")
 
   //Feedback Config
@@ -44,8 +37,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val contactFormServiceIdentifier: String = "ITVC"
   lazy val contactFrontendBaseUrl: String = s"$contactFrontendService"
   lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrl = s"$basePath/feedback"
-  lazy val agentBetaFeedbackUrl = s"$agentBasePath/feedback"
+  lazy val betaFeedbackUrl = s"${hubBasePath()}/feedback"
+  lazy val agentBetaFeedbackUrl = s"${agentHubBasePath()}/feedback"
   lazy val noIncomeSourcesContactUrl: String = s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier"
 
   //Income tax obligations service
@@ -59,7 +52,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Income tax financial details service
   lazy val incomeTaxFinancialDetailsService: String = servicesConfig.baseUrl("income-tax-financial-details")
-  
+
   //Address lookup service
   lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
   lazy val addressLookupExternalHost: String = servicesConfig.getString("address-lookup.external-host")
@@ -69,12 +62,12 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
   //individual sa302
-  def sa302:String = s"$baseUrl$basePath/mortgage-evidence/proof-of-income"
+  def sa302:String = s"$baseFullUrl/mortgage-evidence/proof-of-income"
   //agent sa302
-  def sa302Agent:String = s"$baseUrl$agentBasePath/mortgage-evidence/proof-of-income"
+  def sa302Agent:String = s"$agentBaseFullUrl/mortgage-evidence/proof-of-income"
 
   //GG Sign In via BAS Gateway
-  lazy val signInUrl: String = s"$baseFullUrl/sign-in"
+  lazy val signInUrl: String = s"${hubBaseUrl()}/sign-in"
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
 
   //Exit Survey
@@ -119,9 +112,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val hipRepaymentsUrl: String = servicesConfig.baseUrl("hip-repayment-api")
 
   //Payment Redirect route
-  lazy val paymentRedirectUrl: String = s"$baseUrl$basePath/what-you-owe"
+  lazy val paymentRedirectUrl: String = s"$baseFullUrl/what-you-owe"
   //Payment Redirect route
-  lazy val agentPaymentRedirectUrl: String = s"$baseUrl$agentBasePath/payments-owed"
+  lazy val agentPaymentRedirectUrl: String = s"$agentBaseFullUrl/payments-owed"
 
 
   // Submission service
@@ -197,7 +190,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
 
   lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
-  
+
   lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-time-machine")
   lazy val timeMachineAddYears: Int = servicesConfig.getInt("time-machine.add-years")
   lazy val timeMachineAddDays: Int = servicesConfig.getInt("time-machine.add-days")
@@ -238,7 +231,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm"
       case _ => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax"
     }
-    
+
   def circumstancesChangeLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm/os-bydd-eich-amgylchiadau-n-newid"
@@ -261,6 +254,12 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
     messages.lang.code match {
       case "cy" => "https://www.gov.uk/anawsterau-talu-cthem"
       case _ => "https://www.gov.uk/difficulties-paying-hmrc"
+    }
+
+  def findOutHowLink(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "cy" => "https://www.gov.uk/government/collections/troi-treth-yn-ddigidol-ar-gyfer-treth-incwm.cy"
+      case _ => "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
     }
 
   lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")

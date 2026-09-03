@@ -31,6 +31,7 @@ import financials.models.outstandingCharges.{OutstandingChargesErrorModel, Outst
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import play.api.Logging
 import play.api.http.Status.NOT_FOUND
+import shared.enums.ChargeClassificationType.isCustomerRejection
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -143,6 +144,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .filter(isAKnownTypeOfCharge)
       .filterNot(_.codedOutStatus.contains(Accepted))
       .filterNot(_.isPenalty && !isPenaltiesEnabled)
+      .filterNot(charge => isCustomerRejection(charge.chargeClassification))
       .collect(remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
       .sortBy(_.dueDate.get)
   }

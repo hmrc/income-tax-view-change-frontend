@@ -334,7 +334,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                 }
               }
 
-              "has a dunningLocks against a charge" in {
+              "has a dunningLocks against a charge which are displayed in the suspended charges table" in {
                 stubAuthorised(mtdUserRole)
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
@@ -370,13 +370,13 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                   result should have(
                     httpStatus(OK),
                     pageTitle(MTDIndividual, "whatYouOwe.heading"),
-                    isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
+                    isElementVisibleById("suspended-charges-table")(expectedValue = true),
                     isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }
               }
 
-              "has multiple dunningLocks" in {
+              "has multiple dunningLocks against multiple charges which are displayed in the suspended charges table" in {
                 stubAuthorised(mtdUserRole)
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                 val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = twoDunningLocks)
@@ -409,7 +409,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                   result should have(
                     httpStatus(OK),
                     pageTitle(MTDIndividual, "whatYouOwe.heading"),
-                    isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
+                    isElementVisibleById("suspended-charges-table")(expectedValue = true),
                     isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }

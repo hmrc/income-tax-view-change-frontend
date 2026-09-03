@@ -19,8 +19,8 @@ package common.auth.actions
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.controllers.routes as appRoutes
 import common.models.admin.NoIncomeSourcesRedirect
+import common.viewUtils.InternalUrlHelper
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
@@ -29,12 +29,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RedirectIfNoIncomeSourcesAction @Inject()(frontendAppConfig: FrontendAppConfig)
+class RedirectIfNoIncomeSourcesAction @Inject()(val appConfig: FrontendAppConfig)
                                      (implicit val executionContext: ExecutionContext)
   extends ActionRefiner[MtdItUser, MtdItUser] with FeatureSwitching with Logging {
-
-  override val appConfig: FrontendAppConfig = frontendAppConfig
-
+  
   override protected def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
     implicit val req: MtdItUser[A] = request
 
@@ -43,7 +41,7 @@ class RedirectIfNoIncomeSourcesAction @Inject()(frontendAppConfig: FrontendAppCo
         Future.successful(Right(req))
       } else {
         logger.info(s"User has no income sources. Redirecting to no income sources page. isAgent=${req.isAgent}")
-        Future.successful(Left(Redirect(appRoutes.NoIncomeSourcesController.show(req.isAgent))))
+        Future.successful(Left(Redirect(InternalUrlHelper.noIncomeSourceUrl(req.isAgent))))
       }
     } else {
       Future.successful(Right(req))

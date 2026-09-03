@@ -52,32 +52,34 @@ case class ChargeSummaryViewModel(
                                    taxYearSummaryUrl: Int => String
                                  )(implicit messages: Messages) {
 
-  val dueDate = chargeItem.dueDate
-  val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
-  val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
+  val dueDate: Option[LocalDate] = chargeItem.dueDate
+  val hasDunningLocks: Boolean = paymentBreakdown.exists(_.dunningLockExists)
+  val hasInterestLocks: Boolean = paymentBreakdown.exists(_.interestLockExists)
   val isAccruingInterest: Boolean = paymentBreakdown.exists(_.isAccruingInterest)
+  val chargeHasDunningLock: Boolean = chargeItem.dunningLock
+  val dunningLockSubItemDueDate: Option[LocalDate] = paymentBreakdown.flatMap(_.dunningLocks).headOption.flatMap(_.dueDate)
 
-  val isCredit = chargeItem.originalAmount < 0
+  val isCredit: Boolean = chargeItem.originalAmount < 0
 
-  val currentTaxYearEnd = {
+  val currentTaxYearEnd: Int = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
   }
 
-  val hasPaymentBreakdown = {
+  val hasPaymentBreakdown: Boolean = {
     chargeItem.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
   }
 
-  val taxYearFrom = chargeItem.taxYear.startYear
-  val taxYearTo = chargeItem.taxYear.endYear
+  val taxYearFrom: Int = chargeItem.taxYear.startYear
+  val taxYearTo: Int = chargeItem.taxYear.endYear
 
-  val taxYearFromBCD = chargeItem.taxYear.previousYear.startYear
-  val taxYearToBCD = chargeItem.taxYear.previousYear.endYear
+  val taxYearFromBCD: Int = chargeItem.taxYear.previousYear.startYear
+  val taxYearToBCD: Int = chargeItem.taxYear.previousYear.endYear
 
-  val taxYearFromCodingOut = s"${chargeItem.taxYear.addYears(2).startYear}"
-  val taxYearToCodingOut = s"${chargeItem.taxYear.addYears(2).endYear}"
+  val taxYearFromCodingOut: String = s"${chargeItem.taxYear.addYears(2).startYear}"
+  val taxYearToCodingOut: String = s"${chargeItem.taxYear.addYears(2).endYear}"
 
-  val messagePrefix = if (latePaymentInterestCharge) "lpi."
+  val messagePrefix: String = if (latePaymentInterestCharge) "lpi."
   else ""
   val pageTitle: String =
     s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}"

@@ -21,13 +21,12 @@ import common.auth.AuthExceptions.NoAssignment
 import common.auth.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
-import common.controllers.agent.routes as agentRoutes
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.utils.AuthUtils.*
 import common.viewUtils.InternalUrlHelper
 import play.api.Logging
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -37,9 +36,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunctions,
-                                             val appConfig: FrontendAppConfig,
                                              mcc: MessagesControllerComponents,
-                                             errorHandler: AgentItvcErrorHandler) extends FeatureSwitching with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] with Logging {
+                                             errorHandler: AgentItvcErrorHandler)
+                                            (implicit val appConfig: FrontendAppConfig) extends FeatureSwitching with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] with Logging {
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
@@ -97,17 +96,17 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
     )
   }
 
-  def handleAuthFailure[A](throwable: Throwable)(implicit request: Request[_]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+  def handleAuthFailure[A](throwable: Throwable)(implicit request: AuthorisedAgentWithClientDetailsRequest[_]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
     throwable match {
       case _: BearerTokenExpired =>
         logger.warn("Bearer Token Timed Out.")
         Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
       case _: InsufficientEnrolments =>
         logger.error(s"missing delegated enrolment. Redirect to agent error page.")
-        Future.successful(Left(Redirect(agentRoutes.ClientRelationshipFailureController.show())))
+        Future.successful(Left(Redirect(InternalUrlHelper.clientRelationshipFailureCall)))
       case _: NoAssignment =>
         logger.error(s"Agent User is not in an access group associated with the Client.")
-        Future.successful(Left(Redirect(agentRoutes.NoAssignmentController.show())))
+        Future.successful(Left(Redirect(InternalUrlHelper.noAssignmentCall)))
       case authorisationException: AuthorisationException =>
         logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
         Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))

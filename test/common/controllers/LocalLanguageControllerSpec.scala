@@ -51,7 +51,7 @@ class LocalLanguageControllerSpec extends PlaySpec with GuiceOneAppPerSuite   {
 
   "LocalLanguageController.fallbackURL" should {
     "return the home controller URL" in {
-      controller.fallbackURL mustBe appConfig.individualHomeUrl(false)
+      controller.fallbackURL mustBe appConfig.individualHomeUrl()
     }
   }
 

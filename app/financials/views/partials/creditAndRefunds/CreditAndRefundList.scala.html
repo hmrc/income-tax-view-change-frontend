@@ -36,14 +36,14 @@
 
 @renderCreditRow(creditRow: CreditRow) = {
     @creditRow match {
-        case PaymentCreditRow(_, amount, date, _) => {
-            @paymentViewRow(amount, date)
+        case pr: PaymentCreditRow => {
+            @paymentViewRow(pr.amount, pr.date)
         }
-        case CreditViewRow(_, amount, creditType, taxYear, _, _) => {
-            @creditViewRow(amount, creditType, taxYear)
+        case cvr: CreditViewRow => {
+            @creditViewRow(cvr.amount, cvr.creditType, cvr.taxYear)
         }
-        case RefundRow(amount, _) => {
-            @refundViewRow(amount)
+        case rr: RefundRow => {
+            @refundViewRow(rr.amount)
         }
     }
 }

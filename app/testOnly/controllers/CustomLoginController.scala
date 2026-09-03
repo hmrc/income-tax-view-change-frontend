@@ -16,6 +16,7 @@
 
 package testOnly.controllers
 
+import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.controllers.BaseController
@@ -28,7 +29,8 @@ import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{ClearITSAStatusCacheConnector, CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.*
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
-import testOnly.utils.{AuthExchange, SessionBuilder, UserRepository}
+import testOnly.utils.CustomUserHelper.*
+import testOnly.utils.{AuthExchange, CustomUserHelper, SessionBuilder, UserRepository}
 import testOnly.views.html.LoginPage
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -37,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
+                                      featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
                                       val testOnlyAppConfig: TestOnlyAppConfig,
                                       val mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext,
@@ -53,57 +56,57 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       dateService: DateServiceInterface
                                      ) extends BaseController with I18nSupport with FeatureSwitching with Logging {
 
-  private final val customIncomeSourceUsers         = Seq("TR000001A", "AS000000A", "AS000001A")
-  private final val customReportingObligationsUsers = Seq("OP000001A", "OP000002A", "OP000003A", "OP000005A", "OP000006A", "NE000000A", "NE000001A", "NE000002A", "HP000000A")
-  private final val latentBusinessUser              = "AS000002A"
-  private final val recentActivityUser              = "HP000000A"
-  private final val customTaxCalculationUser        = "PP000003A"
-
-  val showLogin: Action[AnyContent] = Action.async { implicit request =>
+  def showLogin(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser, customTaxCalculationUser))
+      Ok(loginPage(routes.CustomLoginController.postLogin(isNewContextRoot), userRecords))
     )
   }
 
-  val postLogin: Action[AnyContent] = Action.async { implicit request =>
-    PostedUser.form.bindFromRequest().fold(
-      formWithErrors =>
-        Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
-      (postedUser: PostedUser) => {
-        userRepository.findUser(postedUser.nino).flatMap(
-          user =>
-            customAuthConnector.login(user.nino, postedUser.isAgent, postedUser.isSupporting).flatMap {
-              case (authExchange, _) =>
-                val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
-                val redirectURL = if (postedUser.isAgent)
-                  s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
-                else {
-                  val origin = if (postedUser.usePTANavBar) "PTA" else "BTA"
-                  s"report-quarterly/income-and-expenses/view?origin=$origin"
-                }
-                val homePage = s"${appConfig.baseUrl}/$redirectURL"
+  def postLogin(isNewContextRoot: Boolean): Action[AnyContent] =
+    featureSwitchRetrievalAction.async { implicit request =>
+      PostedUser.form.bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
+        (postedUser: PostedUser) => {
+          userRepository.findUser(postedUser.nino).flatMap(
+            user =>
+              customAuthConnector.login(user.nino, postedUser.isAgent, postedUser.isSupporting).flatMap {
+                case (authExchange, _) =>
+                  val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
+                  val redirectURL = if (postedUser.isAgent) {
+                    routes.StubClientDetailsController.submitWithParams(
+                      nino = user.nino,
+                      utr = user.utr,
+                      isNewContextRoot = request.newHubContextRootEnabled
+                    ).url
+                  } else {
+                    val origin = if (postedUser.usePTANavBar) "PTA" else "BTA"
+                    appConfig.individualHomeUrlWithOrigin(request.newHubContextRootEnabled, Some(origin))
+                  }
+                  val homePage = s"$redirectURL"
 
-                updateEffectiveDateOfPayment().failed.foreach(ex => {
-                  logger.error("Failed to update effectiveDateOfPayment", ex)
-                })
+                  updateEffectiveDateOfPayment().failed.foreach(ex => {
+                    logger.error("Failed to update effectiveDateOfPayment", ex)
+                  })
 
-                updateEstimatedRepaymentDate().failed.foreach(ex => {
-                  logger.error("Failed to update estimatedRepaymentDate", ex)
-                })
+                  updateEstimatedRepaymentDate().failed.foreach(ex => {
+                    logger.error("Failed to update estimatedRepaymentDate", ex)
+                  })
 
-                user.category match {
-                  case "Income Sources" if customIncomeSourceUsers.contains(user.nino) => overwriteDataForIncomeSources(user, postedUser, bearer, auth, homePage)
-                  case "Income Sources" if user.nino == latentBusinessUser => overwriteDataforLatentBusinesses(user, postedUser, bearer, auth, homePage)
-                  case "Misc" if user.nino == recentActivityUser => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
-                  case _ if customReportingObligationsUsers.contains(user.nino) => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
-                  case _ if customTaxCalculationUser.contains(user.nino) => overwriteDataForCalculations(postedUser, bearer, auth, homePage)
-                  case _ => Future.successful(successRedirect(bearer, auth, homePage))
-                }
-            }
-        )
-      }
-    )
-  }
+                  user.category match {
+                    case "Income Sources" if customIncomeSourceUsers.contains(user.nino) => overwriteDataForIncomeSources(user, postedUser, bearer, auth, homePage)
+                    case "Income Sources" if user.nino == latentBusinessUser => overwriteDataforLatentBusinesses(user, postedUser, bearer, auth, homePage)
+                    case "Misc" if user.nino == recentActivityUser => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
+                    case _ if customReportingObligationsUsers.contains(user.nino) => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
+                    case _ if customTaxCalculationUser.contains(user.nino) => overwriteDataForCalculations(postedUser, bearer, auth, homePage)
+                    case _ if user.nino == revenueAmendmentAndCorrectionsUser => overwriteDataForFinancials(postedUser, bearer, auth, homePage)
+                    case _ => Future.successful(successRedirect(bearer, auth, homePage))
+                  }
+              }
+          )
+        }
+      )
+    }
 
   private def overwriteDataForIncomeSources(user: UserRecord, postedUser: PostedUser, bearer: String, auth: String, homePage: String)(implicit headerCarrier: HeaderCarrier, request: Request[_]) = {
     val incomeSourcesUser = IncomeSourcesUser(
@@ -143,7 +146,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
         errorHandler.showInternalServerError()
     }
   }
-  
+
   private def overwriteDataforLatentBusinesses(user: UserRecord, postedUser: PostedUser, bearer: String, auth: String, homePage: String)(implicit headerCarrier: HeaderCarrier, request: Request[_]) = {
     val latentBusinessUser = LatentBusinessUser(
       latencyIndicator1 = postedUser.latentBusinessYear1.getOrElse("Annual"),
@@ -161,7 +164,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   }
 
   private def overwriteDataForCalculations(postedUser: PostedUser, bearer: String, auth: String, homePage: String)(implicit headerCarrier: HeaderCarrier, request: Request[_]) = {
-   val taxCalculationUser = TaxCalculationUser(postedUser.latestCalculationReason.getOrElse("Amendment"), postedUser.previousCalculationReason.getOrElse("Amendment"))
+    val taxCalculationUser = TaxCalculationUser(postedUser.latestCalculationReason.getOrElse("Amendment"), postedUser.previousCalculationReason.getOrElse("Amendment"))
 
     updateTestDataForTaxCalculationUser(postedUser.nino, taxCalculationUser).map {
       _ => successRedirect(bearer, auth, homePage)
@@ -169,6 +172,19 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       case ex =>
         val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         logger.error(s"[overwriteDataForCalculations] Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
+        errorHandler.showInternalServerError()
+    }
+  }
+
+  private def overwriteDataForFinancials(postedUser: PostedUser, bearer: String, auth: String, homePage: String)(implicit headerCarrier: HeaderCarrier, request: Request[_]) = {
+    val financialsUser = FinancialsUser(postedUser.chargeClassification.getOrElse("RA"))
+
+    updateTestDataForFinancials(postedUser.nino, financialsUser).map {
+      _ => successRedirect(bearer, auth, homePage)
+    }.recover {
+      case ex =>
+        val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        logger.error(s"[overwriteDataForFinancials] Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -195,9 +211,13 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   private def updateTestDataForLatentBusinessUser(mtdid: String, latentBusinessUser: LatentBusinessUser)(implicit headerCarrier: HeaderCarrier) = {
     dynamicStubService.overwriteLatentBusinessData(mtdid, latentBusinessUser)
   }
-  
+
   private def updateTestDataForTaxCalculationUser(nino: String, taxCalculationUser: TaxCalculationUser)(implicit headerCarrier: HeaderCarrier) = {
     dynamicStubService.overwriteTaxCalculationData(nino, taxCalculationUser)
+  }
+
+  private def updateTestDataForFinancials(nino: String, financialsUser: FinancialsUser)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteFinancialsData(nino, financialsUser)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

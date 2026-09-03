@@ -19,10 +19,10 @@ package common.testConstants
 object MicroserviceSpecificConstants {
 
   val basePath = "/report-quarterly/income-and-expenses/view"
-  val hubBasePath: Boolean => String = newHubContextRootEnabled =>
+  def hubBasePath(newHubContextRootEnabled: Boolean): String =
     if(newHubContextRootEnabled) "/manage-self-assessment" else basePath
   val baseUrl = s"http://localhost:9081$basePath"
-  val hubBaseUrl: Boolean => String = newHubContextRootEnabled =>
+  def hubBaseUrl(newHubContextRootEnabled: Boolean): String =
     s"http://localhost:9081${hubBasePath(newHubContextRootEnabled)}"
   val auditSource = "income-tax-view-change-frontend"
 

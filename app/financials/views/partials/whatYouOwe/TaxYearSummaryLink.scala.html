@@ -25,12 +25,13 @@
 @(
     year: Int,
     index:Int,
-    returnHref: Int => String
+    returnHref: Int => String,
+    suspendedCharge: Boolean = false
 )(
     implicit messages: Messages
 )
 
-<a class="govuk-link" id="taxYearSummary-link-@index"
+<a class="govuk-link" id="@{if(suspendedCharge) "suspendedCharge-" else ""}taxYearSummary-link-@index"
 href="@returnHref(year)">
     @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNonBreaking
     <span class="govuk-visually-hidden">@getMessage("taxYear")</span>

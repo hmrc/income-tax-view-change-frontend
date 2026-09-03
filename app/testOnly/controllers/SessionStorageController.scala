@@ -30,7 +30,7 @@ class SessionStorageController @Inject()
   extends FrontendController(mcc) with I18nSupport {
 
 
-  val show: Action[AnyContent] = Action.async { implicit request =>
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
     // we really don't need to show these
     val filterOutKeys = Seq("sessionId", "authToken", "csrfToken", "origin")
     val sessionDataStr: String = request.session
@@ -40,7 +40,7 @@ class SessionStorageController @Inject()
     Future.successful(Ok(sessionDataStr))
   }
 
-  def upsert(keyOpt: Option[String], valueOpt: Option[String]): Action[AnyContent] = Action.async {
+  def upsert(keyOpt: Option[String], valueOpt: Option[String], isNewContextRoot: Boolean): Action[AnyContent] = Action.async {
     implicit request =>
       val res = for {
         key <- keyOpt
@@ -49,7 +49,7 @@ class SessionStorageController @Inject()
       res match {
         case Some((k, v)) =>
           Future.successful(
-            Redirect("/report-quarterly/income-and-expenses/view/test-only/showSession")
+            Redirect(routes.SessionStorageController.show(isNewContextRoot))
               .withSession(request.session + (k -> v))
           )
         case None =>

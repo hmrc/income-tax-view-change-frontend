@@ -15,6 +15,7 @@ base.submit                                                     = Submit
 base.error_heading                                              = There’s a problem
 base.backToHome                                                 = Back to Income Tax home
 base.continue                                                   = Continue
+base.startnow                                                   = Start now
 base.error_summary.heading                                      = There is a problem
 base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
@@ -1005,6 +1006,9 @@ taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax             = S
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                          = Void ISAs
 taxCal_breakdown.table.taxDeductedAtSource.total					         = Total tax deducted
 taxCal_breakdown.table.amount                                                = Amount
+taxCal_breakdown.table.taxRefundedOrSetOff                                   = Tax already refunded in year
+taxCal_breakdown.table.taxRefundedOrSetOff.header                            = Adjustment type
+taxCal_breakdown.table.taxRefundedOrSetOff.caption                           = Adjustment to tax due
 
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Student loan repayments (Plan {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Postgraduate loan repayments
@@ -2010,6 +2014,7 @@ whatYouOwe.lpi.paymentOnAccount2.text                              = Late paymen
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on balancing payment
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.enquiryAmendment.text                                   = Extra amount to pay due to HMRC enquiry amendment
+whatYouOwe.hmrcCorrection.text                                     = Extra amount to pay due to HMRC correction
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
 whatYouOwe.lateSubmissionPenalty.text                              = Late submission penalty
@@ -2074,6 +2079,17 @@ whatYouOwe.pre-mtd-outstanding-charges                             = Any payment
 whatYouOwe.tableRow.na                                             = Not applicable
 whatYouOwe.total-row.label                                         = Total (not including accruing interest):
 whatYouOwe.revenueAmendment.label                                  = Extra amount to pay due to HMRC enquiry amendment
+
+whatYouOwe.suspended-charges                                       = Tax owed that is currently not being collected
+whatYouOwe.suspended-charges-informalOnly.p1                       = This tax is suspended for review and HMRC will not collect it while it is suspended.
+whatYouOwe.suspended-charges-informalOnly.p2                       = You can still pay what you owe as you may be charged interest if the tax is released for HMRC to collect and it has not been paid by the original due date.
+whatYouOwe.paying-suspended-tax.heading                            = Paying suspended tax
+whatYouOwe.paying-suspended-tax.p1                                 = If you do not have tax due or overdue, your payment will be used to pay the suspended tax when it is no longer suspended.
+whatYouOwe.paying-suspended-tax.p2                                 = While the tax is suspended:
+whatYouOwe.paying-suspended-tax.bullet1                            = your payment may show as a credit
+whatYouOwe.paying-suspended-tax.bullet2                            = in some cases, we may hold the payment separately so it is not used for other tax
+whatYouOwe.paying-suspended-tax.p3                                 = If you make a payment, we’ll suggest you pay the total amount of suspended tax.
+whatYouOwe.paying-suspended-tax.p4                                 = You can pay this amount or enter a different amount.
 
 
 
@@ -2154,6 +2170,8 @@ chargeSummary.taxYear.text                                         = Tax year
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
+chargeSummary.dunning.locks.informal.standover1.banner.note		   = This tax is temporarily suspended for review and HMRC will not collect it while it is suspended.
+chargeSummary.dunning.locks.informal.standover2.banner.note		   = You can still pay the total amount owed as you may be charged interest if not paid by the original due date.
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
@@ -2270,6 +2288,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC c
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
+chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text   = Amount suspended while it is under review
 chargeSummary.chargeHistory.created.enquiryAmendment.text               = Extra amount created when HMRC amended your tax return
 chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment extra amount due to amended return
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
@@ -2357,6 +2376,7 @@ paymentHistory.payment                                          = Payment you ma
 paymentHistory.paymentToHmrc                                    = Payment you made to HMRC
 paymentHistory.cutOver                                          = Credit from an earlier tax year
 paymentHistory.mfa                                              = Credit from HMRC adjustment
+paymentHistory.correction                                       = Credit from HMRC correction to your tax return
 paymentHistory.balancingCharge                                  = Credit from overpaid tax
 paymentHistory.repaymentInterest                                = Credit from repayment interest
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return
@@ -2512,6 +2532,7 @@ money-in-your-account.where-from.table-row.tax-year                     = {0} to
 money-in-your-account.where-from.table-row.tax-year.hidden              = Tax year {0} to {1}
 money-in-your-account.where-from.payment-row.description                = Payment you made to HMRC on {0}
 money-in-your-account.where-from.credit-row.description                 = Credit from an earlier tax year
+money-in-your-account.where-from.correction-row.description             = Credit from HMRC correction to your tax return
 money-in-your-account.where-from.refund-row.description                 = Refund in progress
 money-in-your-account.where-from.ra-credit-row.description              = Credit from HMRC enquiry amendment
 money-in-your-account.claim-refund.button-text                          = Claim a refund
@@ -2528,6 +2549,7 @@ credit.description.repaymentInterest                                  = Credit f
 # Your Self Assessment Charge Summary
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
+yourSelfAssessmentChargeSummary.stoodOverFullCharge                 = Amount suspended:
 yourSelfAssessmentChargeSummary.youOwe                              = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
@@ -2536,6 +2558,8 @@ yourSelfAssessmentChargeSummary.creditAmount                        = Total cred
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
 yourSelfAssessmentChargeSummary.creditCreated                       = This credit was created on {0}
+
+yourSelfAssessmentChargeSummary.correctionCredit.text.heading       = Credit from HMRC correction to your tax return
 
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a balancing payment?
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
@@ -2719,6 +2743,10 @@ yourSelfAssessmentChargeSummary.enquiryAmendment.p2                             
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
+
+yourSelfAssessmentChargeSummary.correction.p1.1                                     = HMRC corrected your tax return. This changed your 
+yourSelfAssessmentChargeSummary.correction.p1.link-text                             = tax calculation for {0} to {1}
+yourSelfAssessmentChargeSummary.correction.p1.2                                     = resulting in a credit being added to your account.
 
 yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.1                     = Following a compliance check, HMRC made a change to your tax return known as an ‘enquiry amendment’. Your amended tax return shows that your
 yourSelfAssessmentChargeSummary.itsaEnquiryAmendmentCredit.p1.link-text             = {0} to {1} tax calculation
@@ -3686,3 +3714,12 @@ triggered-migration.checkComplete.whatNext.heading                              
 triggered-migration.checkComplete.whatNext.p1                                           = We will use the information you have provided to update our records.
 triggered-migration.checkComplete.whatNext.p2                                           = Any updates, deadlines or actions relating to periods when your income sources were active will be shown in your HMRC online account.
 triggered-migration.checkComplete.whatNext.p3                                           = You can check whether there are any updates, deadlines or actions that apply to you.
+
+# Triggered migration - Complete steps page
+triggered-migration.completeSteps.heading                                                  = You need to complete some steps before you can submit your tax return
+triggered-migration.completeSteps.p1                                                       = You were automatically moved to Making Tax Digital for Income Tax because you met the requirements to join.
+triggered-migration.completeSteps.linkText                                                 = Find out why you are using Making Tax Digital for Income Tax
+triggered-migration.completeSteps.p2                                                       = You did not complete all the required steps for the {0} to {1} tax year. You must:
+triggered-migration.completeSteps.ul.li1                                                   = confirm your income sources
+triggered-migration.completeSteps.ul.li2                                                   = get compatible software
+triggered-migration.completeSteps.ul.li3                                                   = send your most recent quarterly update

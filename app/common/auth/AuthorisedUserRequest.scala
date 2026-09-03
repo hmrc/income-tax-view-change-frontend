@@ -30,7 +30,7 @@ case class RequestWithFeatureSwitches[A](featureSwitches: List[FeatureSwitch])
 case class AuthorisedUserRequest[A](authUserDetails: AuthUserDetails,
                                     featureSwitches: List[FeatureSwitch])
                                    (implicit request: Request[A]) extends WrappedRequest[A](request) {
-  
+
   val newHubContextRootEnabled = featureSwitches.exists(x => x.name.name == NewHubContextRootEnabled.name && x.isEnabled)
 
 }
@@ -53,6 +53,8 @@ case class AuthorisedAndEnrolledRequest[A](mtditId: String,
                                            featureSwitches: List[FeatureSwitch])
                                            (implicit request: Request[A]) extends WrappedRequest[A](request) {
   val saUtr: Option[String] = if(clientDetails.isDefined) clientDetails.map(_.utr) else authUserDetails.saUtr
+  val maybeArn: Option[String] = authUserDetails.agentReferenceNumber
+  
   def optClientNameAsString: Option[String] = {
     val optClientName = clientDetails.fold[Option[Name]](None)(_.clientName)
     val firstName = optClientName.fold[Option[String]](None)(_.name)

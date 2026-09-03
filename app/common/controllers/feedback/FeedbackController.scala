@@ -104,7 +104,7 @@ class FeedbackController @Inject()(val authActions: AuthActions,
 
   def thankYouAgent: Action[AnyContent] = authActions.asAuthorisedUser.async {
     implicit request =>
-      val referer = request.session.get(REFERER).getOrElse(config.agentBasePath)
+      val referer = request.session.get(REFERER).getOrElse(config.basePath)
       Future.successful(Ok(feedbackThankYouView(referer, isAgent = true)).withSession(request.session - REFERER))
   }
 
