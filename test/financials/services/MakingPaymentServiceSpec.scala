@@ -42,10 +42,11 @@ class MakingPaymentServiceSpec extends TestSupport {
                                     unallocatedCredit: Option[BigDecimal] = None,
                                     totalCreditAvailableForRepayment: Option[BigDecimal] = None,
                                     documentDetails: List[DocumentDetail] = List.empty,
-                                    financialDetails: List[FinancialDetail] = List.empty): FinancialDetailsModel =
+                                    financialDetails: List[FinancialDetail] = List.empty,
+                                    balanceDueWithin30Days: BigDecimal = 0): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(
-        balanceDueWithin30Days = 0,
+        balanceDueWithin30Days = balanceDueWithin30Days,
         overDueAmount = overDueAmount,
         balanceNotDuein30Days = 0,
         totalBalance = overDueAmount,
@@ -66,6 +67,9 @@ class MakingPaymentServiceSpec extends TestSupport {
   val penaltyTransactionIdThird = "penalty-transaction-3"
   val nonPenaltyTransactionId = "non-penalty-transaction"
   val balancingChargeMainTransaction = "4910"
+
+  val overDueAmount: BigDecimal = BigDecimal("1350.00")
+  val balanceDueWithin30Days: BigDecimal = BigDecimal("2500.00")
 
   private def getDocumentDetail(transactionId: String, documentDueDate: Option[LocalDate] = Some(dateService.getCurrentDate.minusDays(1))): DocumentDetail = DocumentDetail(
     taxYear = 2025,
@@ -431,6 +435,90 @@ class MakingPaymentServiceSpec extends TestSupport {
         .futureValue
 
       result.map(_.hasOverdueCharge) shouldBe Some(false)
+    }
+
+    "set overDueAmount to a correct value when there is overdue charge" in {
+
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            overDueAmount = overDueAmount,
+            documentDetails = List(
+              getDocumentDetail(nonPenaltyTransactionId)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4920"), Some(nonPenaltyTransactionId)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.flatMap(_.overDueAmount) shouldBe Some(overDueAmount)
+    }
+
+    "set overDueAmount to None when there is no overdue charge" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(nonPenaltyTransactionId, documentDueDate = Some(dateService.getCurrentDate.plusDays(1)))
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4920"), Some(nonPenaltyTransactionId)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.flatMap(_.overDueAmount) shouldBe None
+    }
+
+    "set balanceDueWithin30daysValue to a correct value when there is balanceDueWithin30days charge" in {
+
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            balanceDueWithin30Days = balanceDueWithin30Days,
+            documentDetails = List(
+              getDocumentDetail(nonPenaltyTransactionId)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4920"), Some(nonPenaltyTransactionId)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.flatMap(_.balanceDueWithin30daysValue) shouldBe Some(balanceDueWithin30Days)
+    }
+
+    "set balanceDueWithin30daysValue to None when there is no balanceDueWithin30days charge" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(nonPenaltyTransactionId, documentDueDate = Some(dateService.getCurrentDate.plusDays(1)))
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4920"), Some(nonPenaltyTransactionId)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.flatMap(_.balanceDueWithin30daysValue) shouldBe None
     }
 
     "return None when any financial details response is an error" in {

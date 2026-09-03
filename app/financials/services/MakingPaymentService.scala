@@ -57,7 +57,9 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
           hasOverdueNonPenaltyCharges = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => !charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0).exists(_.isOverdue()),
           hasNotOverdueLPP = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => charge.isLPP && charge.remainingToPayByChargeOrInterest > 0).exists(!_.isOverdue()),
           hasOverdueCharge = financialDetailsModels.flatMap(_.toChargeItem).exists(_.isOverdue()),
-          hasBalanceDueWithin30Days = financialDetailsModels.exists(_.balanceDetails.balanceDueWithin30Days != 0)
+          hasBalanceDueWithin30Days = financialDetailsModels.exists(_.balanceDetails.balanceDueWithin30Days != 0),
+          overDueAmount = balanceDetails.collectFirst{ case bd if bd.overDueAmount != 0 => bd.overDueAmount },
+          balanceDueWithin30daysValue = balanceDetails.collectFirst{ case bd if bd.balanceDueWithin30Days != 0 => bd.balanceDueWithin30Days }
         ))
       }
     }
