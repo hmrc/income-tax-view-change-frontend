@@ -28,7 +28,8 @@
     chargeItem: financials.models.ChargeItem,
     dueDate: Option[LocalDate],
     latePaymentInterestCharge: Boolean,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    chargeHistoryEnabled: Boolean
 )(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
@@ -40,26 +41,35 @@
     <div class="govuk-notification-banner__content">
     @p(){
         <b>
-        @if(latePaymentInterestCharge){
-            @link(
-                classes="govuk-notification-banner__link govuk-notification-banner__heading",
-                link=appConfig.taxAppealsUrl,
-                rel=Some("noreferrer noopener"),
-                target = Some("_blank"),
-                messageKey = "chargeSummary.dunning.locks.banner.linkText"
-
-            )
-        } else {
-            @link(
-                classes="govuk-notification-banner__link",
-                link=appConfig.taxAppealsUrl,
-                rel=Some("noreferrer noopener"),
-                target = Some("_blank"),
-                messageKey = "chargeSummary.dunning.locks.banner.linkText",
-                additionalOpenTabMessage = Some(".")
-
-            )
-            @messages("chargeSummary.dunning.locks.banner.note", chargeItem.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
+        @(latePaymentInterestCharge, chargeItem.dunningLock) match {
+            case (true, false) => {
+                @link(
+                    classes="govuk-notification-banner__link govuk-notification-banner__heading",
+                    link=appConfig.taxAppealsUrl,
+                    rel=Some("noreferrer noopener"),
+                    target = Some("_blank"),
+                    messageKey = "chargeSummary.dunning.locks.banner.linkText"
+                )
+            }
+            case (true , true) if chargeHistoryEnabled => {
+                @messages("chargeSummary.dunning.locks.informal.standover1.banner.note")
+            }
+            case (false , true) if chargeHistoryEnabled => {
+                @messages("chargeSummary.dunning.locks.informal.standover1.banner.note")
+                <br></br>
+                @messages("chargeSummary.dunning.locks.informal.standover2.banner.note")
+            }
+            case _ => {
+                @link(
+                    classes="govuk-notification-banner__link",
+                    link=appConfig.taxAppealsUrl,
+                    rel=Some("noreferrer noopener"),
+                    target = Some("_blank"),
+                    messageKey = "chargeSummary.dunning.locks.banner.linkText",
+                    additionalOpenTabMessage = Some(".")
+                )
+                @messages("chargeSummary.dunning.locks.banner.note", chargeItem.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
+            }
         }
         </b>
     }

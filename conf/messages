@@ -2157,6 +2157,8 @@ chargeSummary.taxYear.text                                         = Tax year
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
+chargeSummary.dunning.locks.informal.standover1.banner.note		   = This tax is temporarily suspended for review and HMRC will not collect it while it is suspended.
+chargeSummary.dunning.locks.informal.standover2.banner.note		   = You can still pay the total amount owed as you may be charged interest if not paid by the original due date.
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
@@ -2273,6 +2275,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC c
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
+chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text   = Amount suspended while it is under review
 chargeSummary.chargeHistory.created.enquiryAmendment.text               = Extra amount created when HMRC amended your tax return
 chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment extra amount due to amended return
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
@@ -2533,6 +2536,7 @@ credit.description.repaymentInterest                                  = Credit f
 # Your Self Assessment Charge Summary
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
+yourSelfAssessmentChargeSummary.stoodOverFullCharge                 = Amount suspended:
 yourSelfAssessmentChargeSummary.youOwe                              = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:

@@ -2141,6 +2141,9 @@ chargeSummary.description                                          = Disgrifiad
 chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
+chargeSummary.dunning.locks.informal.standover1.banner.note		   = Mae’r dreth hon wedi’i gohirio dros dro ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
+chargeSummary.dunning.locks.informal.standover2.banner.note		   = Gallwch dalu’r cyfanswm sy’n ddyledus o hyd, oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn y dyddiad dyledus gwreiddiol.
+
 
 chargeSummary.nic2TaxYear                                          = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 
@@ -2257,6 +2260,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = Gwnaeth CThEF greu eich cosb am gyflwyno’n hwyr
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = Gwnaeth CThEF greu eich cosb am dalu’n hwyr
+chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text   = Y swm sydd wedi’i ohirio tra ei fod yn cael ei adolygu
 chargeSummary.chargeHistory.created.enquiryAmendment.text               = Cafodd y swm ychwanegol ei greu pan wnaeth CThEF diwygio’ch Ffurflen Dreth
 chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = Creodd CThEF eich swm ychwanegol taliad mantoli o ganlyniad i Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEF wedi’i greu
@@ -2518,6 +2522,7 @@ credit.description.repaymentInterest                                    = Credyd
 # Your Self Assessment Charge Summary
 yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth
 yourSelfAssessmentChargeSummary.overDueCharge                       = Mae arnoch:
+yourSelfAssessmentChargeSummary.stoodOverFullCharge                 = Swm wedi’i ohirio:
 yourSelfAssessmentChargeSummary.youOwe                              = Mae arnoch:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Swm dyledus i’w gasglu:
