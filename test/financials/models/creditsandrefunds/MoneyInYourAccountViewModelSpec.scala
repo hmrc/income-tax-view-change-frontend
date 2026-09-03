@@ -34,6 +34,8 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
   val payment20 = TestTransactions.payment(20.0, None)
   val payment30 = TestTransactions.payment(30.0, None)
 
+  def dateInYear(year: Int): LocalDate = LocalDate.of(year, 1, 1)
+
   "sorted credit rows" should {
 
     "return credits in reverse date order" in {
@@ -118,6 +120,58 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
     }
   }
 
+  "CreditRow" should {
+    "create the correct PaymentCreditRow" in {
+
+      val dueDate = dateInYear(2021)
+      val effectiveDateOfPayment = dateInYear(2022)
+
+      val paymentTransaction: Transaction =
+        Transaction(
+          transactionType = PaymentType,
+          amount = 5,
+          taxYear = Some(TaxYear.forYearEnd(2021)),
+          dueDate = Some(dueDate),
+          documentDate = None,
+          effectiveDateOfPayment = Some(effectiveDateOfPayment),
+          transactionId = "PAYMENT01"
+        )
+      val paymentRow = CreditRow.fromTransaction(paymentTransaction)
+      paymentRow shouldBe Some(PaymentCreditRow(paymentTransaction, dueDate, effectiveDateOfPayment))
+    }
+    "create the correct RefundRow" in {
+      val refundTransaction: Transaction =
+        Transaction(
+          transactionType = Repayment,
+          amount = 5,
+          taxYear = None,
+          dueDate = None,
+          documentDate = None,
+          effectiveDateOfPayment = None,
+          transactionId = "REFUND01"
+        )
+      val refundRow = CreditRow.fromTransaction(refundTransaction)
+      refundRow shouldBe Some(RefundRow(refundTransaction, LocalDate.now()))
+    }
+    "create the correct CreditViewRow" in {
+      val documentDate = dateInYear(2022)
+      val taxYear = TaxYear.forYearEnd(2021)
+
+      val creditTransaction: Transaction =
+        Transaction(
+          transactionType = MfaCreditType,
+          amount = 3,
+          taxYear = Some(taxYear),
+          dueDate = None,
+          documentDate = Some(documentDate),
+          effectiveDateOfPayment = None,
+          transactionId = "MFA01"
+        )
+      val creditRow = CreditRow.fromTransaction(creditTransaction)
+      creditRow shouldBe Some(CreditViewRow(creditTransaction, taxYear, documentDate, false))
+    }
+  }
+
   "CreditViewRow" should {
 
     
@@ -199,13 +253,12 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
       paymentRow.descriptionLink(true) shouldBe financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent("payment").url
     }
   }
+
   "RefundRow" should {
     "have the correct description link url" in {
       val refundRow = RefundRow(refund20, dateInYear(2024))
       refundRow.descriptionLink shouldBe financialsRoutes.PaymentHistoryController.refundStatus().url
     }
   }
-
-  def dateInYear(year: Int): LocalDate = LocalDate.of(year, 1, 1)
 
 }
