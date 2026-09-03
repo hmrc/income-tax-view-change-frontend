@@ -26,9 +26,13 @@
 @import common.config.FrontendAppConfig
 @import common.models.itsaStatus.ITSAStatus.ITSAStatus
 @import common.models.itsaStatus.ITSAStatus
+@import common.models.itsaStatus.ITSAStatus.Mandated
 @import obligations.services.reportingObligations.optOut.OptOutProposition
 @import _root_.shared.implicits.HtmlFormatter.NbspString
 @import common.auth.MtdItUser
+@import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+@import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+@import common.enums.TriggeredMigration.Channel
 
 @this(
         govukTabs: GovukTabs,
@@ -43,8 +47,7 @@
         implicitDateFormatter: ImplicitDateFormatterImpl,
         appConfig: FrontendAppConfig
 )
-
-@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
+@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled: Boolean, penaltyAndAppealEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
     
@@ -57,11 +60,12 @@
 @nextTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.nextYear.endYear.toString }
 @nextYearTaxReturnYear = @{ nextTaxYearEnd.toInt + 1 }
 @isCurrentYearQuarterly = @{ optOutProposition.isCurrentYearQuarterly }
+@isCurrentYearMandated = @{ optOutProposition.currentTaxYear.status == Mandated }
 @isNextYearQuarterly = @{ optOutProposition.isNextYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
 
 @currentYearLabel = @{ if(!isCurrentYearQuarterly) getMessage("annual.label", currentTaxYearStart, currentTaxYearEnd) else getMessage("quarterly.label", currentTaxYearStart, currentTaxYearEnd) }
 @nextYearLabel = @{ if(!isNextYearQuarterly) getMessage("annual.ny.label", currentTaxYearEnd, nextTaxYearEnd) else getMessage("quarterly.ny.label", currentTaxYearEnd, nextTaxYearEnd) }
-@currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual else quarterlyTabCYOrNY(currentTaxYearStart, currentTaxYearEnd, nextTaxYearEnd, true) }
+@currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual else quarterlyTabCYOrNY(currentTaxYearStart, currentTaxYearEnd, nextTaxYearEnd, isCY = true) }
 @nextYearTab = @{ if(!isNextYearQuarterly) nextYearTabContentAnnual else nextYearTabContentQuarterly }
 
 @currentTaxYearStatus = @{ taxYearStatusesCyNy._1 }
@@ -100,10 +104,23 @@
         @p(id = Some("active-quarterly-desc")) { @getMessage("quarterly.text") }
     }
 
-    @h3(getMessage("quarterly.subheading"), optId = Some("active-quarterly-subheading"))
+    @h2(getMessage("gettingSoftware.h2"), optId = Some("getting-software-subheading"))
+    @p(id = Some("getting-software-text")){ @getMessage("gettingSoftware.text") }
+    @link(
+        link = appConfig.compatibleSoftwareLink,
+        messageKey = getMessage("gettingSoftware.link.text"),
+        id = Some("getting-software-link"),
+        target = Some("_blank")
+    )
+
+    @h2(getMessage("quarterly.subheading"), optId = Some("active-quarterly-subheading"))
     @p(id = Some("active-quarterly-subdesc")){ @getMessage("quarterly.text2") }
 
-    @detailsDropdown(getMessage("quarterly.dropdown.heading"), quarterlyDropdownContent)
+    @detailsDropdown(
+        id = Some("active-quarterly-dropdown"),
+        summary = getMessage("quarterly.dropdown.heading"),
+        content = quarterlyDropdownContent
+    )
 
     @if(isCY) {
         @missedDeadlinesTable
@@ -114,34 +131,66 @@
     @if(!isSupportingAgent) {
         @p(id = Some("active-quarterly-tax-year-summary-desc")) {
             @getMessage("quarterly.link.text1")
-        @if(messages.lang.code == "cy") {
-            @link(
-                link = taxYearSummaryLink,
-                messageKey = getMessage("quarterly.link.text2"),
-                id = Some("tax-year-summary-link"),
-                outerMessage = getMessage("quarterly.link.text3")
-            )
-        } else {
-            @link(
-                link = taxYearSummaryLink,
-                messageKey = getMessage("quarterly.link.text2"),
-                id = Some("tax-year-summary-link")
-            )@getMessage("quarterly.link.text3")
         }
     }
-}
 
-    @h3(getMessage("quarterly.subheading2"), optId = Some("active-quarterly-return-due-heading"))
-    @p(id = Some("active-quarterly-return-due-desc")) {
-        @getMessage("quarterly.text3")
-        @link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("quarterly.text4"), id = Some("quarterly-compatible-software-link"), outerMessage = ".")
-    }
+    @findOutWhyBusinessNotShown
+
+    @h2(getMessage("quarterly.subheading2"), optId = Some("active-quarterly-return-due-heading"))
 
     @p(id = Some("active-quarterly-return-due-date")) {
-        @getMessage("quarterly.text5", taxYearStart, taxYearEnd)
-        <strong class="govuk-!-font-weight-bold">@getMessage("quarterly.text6", taxReturnYear)</strong>
+        @getMessage("quarterly.text3", taxYearStart, taxYearEnd)
+        <strong class="govuk-!-font-weight-bold">@getMessage("quarterly.text4", taxReturnYear)</strong>
     }
 
+}
+
+@findOutWhyBusinessNotShown = {
+    @detailsDropdown(
+        id = Some("business-may-not-be-shown-dropdown"),
+        summary = getMessage("businessMayNotBeShown.detail.heading"),
+        content = HtmlFormat.fill(
+            Seq(
+                p(id = Some("business-may-not-be-shown-detail-p1")){Html(getMessage("businessMayNotBeShown.detail.text1"))},
+                bulletList(
+                    id = Some("business-may-not-be-shown-detail-ul1"),
+                    itemMsgKeys = Seq(
+                        getMessage("businessMayNotBeShown.detail.ul1.text1"),
+                        getMessage("businessMayNotBeShown.detail.ul1.text2")
+                    )
+                ),
+                p(id = Some("business-may-not-be-shown-detail-p2")){Html(getMessage("businessMayNotBeShown.detail.text2"))},
+                bulletList(
+                    id = Some("business-may-not-be-shown-detail-ul2"),
+                    itemMsgKeys = Seq(
+                        getMessage("businessMayNotBeShown.detail.ul2.text1"),
+                        getMessage("businessMayNotBeShown.detail.ul2.text2"),
+                        getMessage("businessMayNotBeShown.detail.ul2.text3")
+                    )
+                ),
+                h3(
+                    optId = Some("business-may-not-be-shown-detail-sub-heading"),
+                    msg = getMessage("businessMayNotBeShown.detail.subHeading"),
+                ),
+                p(id = Some("business-may-not-be-shown-detail-link")) {
+                    HtmlFormat.fill(
+                        Seq(
+                            Html(getMessage("businessMayNotBeShown.detail.link.prefix")),
+                            link(
+                                link =
+                                    if(user.incomeSources.channel != Channel.CustomerLed.getValue) triggeredMigrationRoutes.CheckHmrcRecordsController.show(user.isAgent).url
+                                    else manageBusinessesRoutes.ManageYourBusinessesController.show().url,
+                                messageKey = getMessage("businessMayNotBeShown.detail.link.text"),
+                                id = Some("business-may-not-be-shown-detail-link-text")
+                            ),
+                            Html(getMessage("businessMayNotBeShown.detail.link.suffix"))
+                        )
+                    )
+
+                }
+            )
+        )
+    )
 }
 
 @fileLink(itsaStatus: ITSAStatus) = @{
@@ -186,7 +235,7 @@
             p(id = Some("next-year-desc2")){ Html(getMessage("quarterly.ny.text3")) }
         ))
     } else {
-        quarterlyTabCYOrNY(currentTaxYearEnd, nextTaxYearEnd, nextYearTaxReturnYear.toString, false)
+        quarterlyTabCYOrNY(currentTaxYearEnd, nextTaxYearEnd, nextYearTaxReturnYear.toString, isCY = false)
     }
 }
 
@@ -208,10 +257,12 @@
 @quarterlyDropdownContent = {
     @p(id = Some("active-quarterly-dropdown-desc")){@getMessage("quarterly.dropdown.text1")}
     @bulletList(
-        Seq(
+        id = Some("active-quarterly-dropdown-ul"),
+        itemMsgKeys = Seq(
             getMessage("quarterly.dropdown.text2"),
             getMessage("quarterly.dropdown.text3")
-        )
+        ),
+        bulletId = Some("active-quarterly-dropdown-li")
     )
     @p(id = Some("active-quarterly-dropdown-desc2")) {
         @getMessage("quarterly.dropdown.text4")
@@ -244,6 +295,20 @@
     }
 }
 
+@viewLateSubmissionPenaltyLink = @{
+    if(penaltyAndAppealEnabled && isCurrentYearMandated){
+        p(classes = "govuk-body govuk-!-margin-bottom-7"){
+            link(
+                link = appConfig.incomeTaxPenaltiesFrontend,
+                messageKey = getMessage("lateSubPen.link.text"),
+                id = Some("late-sub-pen-link")
+            )
+        }
+    }else{
+        HtmlFormat.empty
+    }
+}
+
 @missedDeadlinesTable = @{
     viewModel.missedDeadlines match {
         case Nil => HtmlFormat.empty
@@ -251,7 +316,8 @@
             HtmlFormat.fill(Seq(
                 govukWarningText(WarningText(content = Text(getMessage("quarterly.missed.deadlines.warning")), attributes = Map("id" -> "missed-deadlines-warning"))),
                 missedDeadlinesText,
-                h3(getMessage("quarterly.missed.deadlines.table.heading"), optId = Some("missed-deadlines-table-heading")),
+                viewLateSubmissionPenaltyLink,
+                h2(getMessage("quarterly.missed.deadlines.table.heading"), optId = Some("missed-deadlines-table-heading")),
                 govukTable(Table(
                     head = Some(List(
                         HeadCell(
