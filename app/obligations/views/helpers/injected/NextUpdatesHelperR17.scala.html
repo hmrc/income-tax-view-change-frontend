@@ -179,7 +179,13 @@
                             link(
                                 link =
                                     if(user.incomeSources.channel != Channel.CustomerLed.getValue) triggeredMigrationRoutes.CheckHmrcRecordsController.show(user.isAgent).url
-                                    else manageBusinessesRoutes.ManageYourBusinessesController.show().url,
+                                    else {
+                                        if(user.isAgent){
+                                            manageBusinessesRoutes.ManageYourBusinessesController.showAgent().url
+                                        }else{
+                                            manageBusinessesRoutes.ManageYourBusinessesController.show().url
+                                        }
+                                    },
                                 messageKey = getMessage("businessMayNotBeShown.detail.link.text"),
                                 id = Some("business-may-not-be-shown-detail-link-text")
                             ),
