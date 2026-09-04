@@ -40,7 +40,8 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
                 hasOverdueCharge: Boolean = false,
                 hasBalanceDueWithin30Days: Boolean = false,
                 overDueAmount: Option[BigDecimal] = None,
-                balanceDueWithin30daysValue: Option[BigDecimal] = None): MakingPaymentViewModel =
+                balanceDueWithin30daysValue: Option[BigDecimal] = None,
+                balanceNotDuein30daysValue: Option[BigDecimal] = None): MakingPaymentViewModel =
     MakingPaymentViewModel(
       backUrl = "/what-you-owe",
       paymentHandoffUrl = "/payment?amountInPence=10000",
@@ -57,14 +58,15 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       hasOverdueCharge = hasOverdueCharge,
       hasBalanceDueWithin30Days = hasBalanceDueWithin30Days,
       overDueAmount = overDueAmount,
-      balanceDueWithin30daysValue = balanceDueWithin30daysValue
+      balanceDueWithin30daysValue = balanceDueWithin30daysValue,
+      balanceNotDuein30daysValue = balanceNotDuein30daysValue
     )
 
   def render(model: MakingPaymentViewModel = viewModel()): Document =
     Jsoup.parse(makingPaymentView(model)(FakeRequest(), individualUser, messages).body)
 
   "MakingPaymentView" should {
-// TODO check what should we render in this scenario
+    // TODO check what should we render in this scenario
     "render the static content without the first section heading when there are no extra sections" in {
       val document = render()
 
@@ -173,14 +175,13 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
       document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
     }
-    // !viewModel.hasOverdueCharge && viewModel.hasInterest
+    
     "render the correct content when charges are not overdue due but accruing interest is present" in {
-      val document = render(viewModel(hasInterest = true))
+      val document = render(viewModel(hasInterest = true, balanceNotDuein30daysValue = Some(BigDecimal("3200.00"))))
       val headings = document.select("#main-content h2")
 
       document.select("h1").text shouldBe messages("making-payment.heading")
-      //      TODO do not forget to implement the value
-      headings.get(0).text shouldBe messages("making-payment.not-overdue-but-accruing-interest.heading", "£1,000.00")
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-but-accruing-interest.heading", "£3,200.00")
       document.select("#not-overdue-but-accruing-interest").get(0).text() shouldBe messages("making-payment.not-overdue-but-accruing-interest.p1")
       document.select("#not-overdue-but-accruing-interest").get(1).text() shouldBe messages("making-payment.not-overdue-but-accruing-interest.p2")
       document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
@@ -194,7 +195,6 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       val headings = document.select("#main-content h2")
 
       document.select("h1").text shouldBe messages("making-payment.heading")
-      //      TODO do not forget to implement the value
       headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,000.00")
       document.select("#not-overdue-and-no-accruing-interest").get(0).text() shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.p1")
       document.select("#not-overdue-and-no-accruing-interest").get(1).text() shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.p2")

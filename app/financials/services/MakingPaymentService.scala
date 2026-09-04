@@ -60,7 +60,8 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
           hasOverdueCharge = financialDetailsModels.flatMap(_.toChargeItem).exists(_.isOverdue()),
           hasBalanceDueWithin30Days = financialDetailsModels.exists(_.balanceDetails.balanceDueWithin30Days != 0),
           overDueAmount = balanceDetails.collectFirst{ case bd if bd.overDueAmount != 0 => bd.overDueAmount },
-          balanceDueWithin30daysValue = balanceDetails.collectFirst{ case bd if bd.balanceDueWithin30Days != 0 => bd.balanceDueWithin30Days }
+          balanceDueWithin30daysValue = balanceDetails.collectFirst{ case bd if bd.balanceDueWithin30Days != 0 => bd.balanceDueWithin30Days },
+          balanceNotDuein30daysValue = balanceDetails.collectFirst{ case bd if bd.balanceNotDuein30Days != 0 => bd.balanceNotDuein30Days }
         ))
       }
     }

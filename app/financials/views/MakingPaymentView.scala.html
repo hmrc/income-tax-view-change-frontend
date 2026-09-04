@@ -47,43 +47,55 @@
 ) {
     @h1(msg = messages("making-payment.heading"), id = Some("page-heading"))
 
-    @if(viewModel.hasOverdueCharge) {
-        @h2(msg = messages("making-payment.you-have-overdue.heading", viewModel.overDueAmount.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
-        @p(id = Some("you-have-overdue")) {
-            @messages("making-payment.you-have-overdue.p1")
+    @(viewModel.hasOverdueCharge, viewModel.hasBalanceDueWithin30Days, viewModel.hasInterest) match {
+        case (true, _, _) => {
+            @h2(msg = messages("making-payment.you-have-overdue.heading", viewModel.overDueAmount.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("you-have-overdue")) {
+                @messages("making-payment.you-have-overdue.p1")
+            }
+            @p(id = Some("you-have-overdue")) {
+                @messages("making-payment.you-have-overdue.p2")
+            }
         }
-        @p(id = Some("you-have-overdue")) {
-            @messages("making-payment.you-have-overdue.p2")
+
+        case (_, true, _) => {
+            @h2(msg = messages("making-payment.charge-due-within-30-days.heading", viewModel.balanceDueWithin30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("charge-due-within-30-days")) {
+                @messages("making-payment.charge-due-within-30-days.p1")
+            }
+            @p(id = Some("charge-due-within-30-days")) {
+                @messages("making-payment.charge-due-within-30-days.p2")
+            }
         }
-    }
-    @*TODO implement the value with balanceDetails.balanceDueWithin30days *@
-    @if(viewModel.hasBalanceDueWithin30Days) {
-        @h2(msg = messages("making-payment.charge-due-within-30-days.heading", viewModel.balanceDueWithin30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
-        @p(id = Some("charge-due-within-30-days")) {
-            @messages("making-payment.charge-due-within-30-days.p1")
+
+        case (false, _, true) => {
+            @h2(msg = messages("making-payment.not-overdue-but-accruing-interest.heading", viewModel.balanceNotDuein30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("not-overdue-but-accruing-interest")) {
+                @messages("making-payment.not-overdue-but-accruing-interest.p1")
+            }
+            @p(id = Some("not-overdue-but-accruing-interest")) {
+                @messages("making-payment.not-overdue-but-accruing-interest.p2")
+            }
         }
-        @p(id = Some("charge-due-within-30-days")) {
-            @messages("making-payment.charge-due-within-30-days.p2")
+
+        case (false, _, false) => {
+            @h2(msg = messages("making-payment.not-overdue-and-no-accruing-interest.heading", viewModel.balanceNotDuein30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("not-overdue-and-no-accruing-interest")) {
+                @messages("making-payment.not-overdue-and-no-accruing-interest.p1")
+            }
+            @p(id = Some("not-overdue-and-no-accruing-interest")) {
+                @messages("making-payment.not-overdue-and-no-accruing-interest.p2")
+            }
         }
-    }
-    @*TODO implement the value what value should be here ??? *@
-    @if(!viewModel.hasOverdueCharge && viewModel.hasInterest) {
-        @h2(msg = messages("making-payment.not-overdue-but-accruing-interest.heading", BigDecimal("1000.00").abs.toCurrencyString))
-        @p(id = Some("not-overdue-but-accruing-interest")) {
-            @messages("making-payment.not-overdue-but-accruing-interest.p1")
-        }
-        @p(id = Some("not-overdue-but-accruing-interest")) {
-            @messages("making-payment.not-overdue-but-accruing-interest.p2")
-        }
-    }
-    @*TODO implement the value what value should be here ??? *@
-    @if(!viewModel.hasOverdueCharge && !viewModel.hasInterest) {
-        @h2(msg = messages("making-payment.not-overdue-and-no-accruing-interest.heading", BigDecimal("1000.00").abs.toCurrencyString))
-        @p(id = Some("not-overdue-and-no-accruing-interest")) {
-            @messages("making-payment.not-overdue-and-no-accruing-interest.p1")
-        }
-        @p(id = Some("not-overdue-and-no-accruing-interest")) {
-            @messages("making-payment.not-overdue-and-no-accruing-interest.p2")
+        @* TODO check what should be here ??? *@
+        case _ => {
+            @h2(msg = messages("making-payment.not-overdue-and-no-accruing-interest.heading", viewModel.balanceNotDuein30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("not-overdue-and-no-accruing-interest")) {
+                @messages("making-payment.not-overdue-and-no-accruing-interest.p1")
+            }
+            @p(id = Some("not-overdue-and-no-accruing-interest")) {
+                @messages("making-payment.not-overdue-and-no-accruing-interest.p2")
+            }
         }
     }
 
