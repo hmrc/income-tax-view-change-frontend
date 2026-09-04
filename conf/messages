@@ -1180,7 +1180,9 @@ nextUpdates.optOutOneYear.p.link                                   = opt out of 
 nextUpdates.optOutMultiYear.p.message                              = You are currently reporting quarterly on a voluntary basis. You can choose to
 nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
 
-nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
+nextUpdates.reporting.obligations.p.text1                          = You must complete your outstanding quarterly updates for the {0} to {1} tax year.
+nextUpdates.reporting.obligations.p.text2                          = Quarterly updates are cumulative. This means your latest outstanding update may include information from earlier missed periods.
+nextUpdates.reporting.obligations.p.text3                          = Depending on your circumstances,
 nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations
 
 ## Next updates Page - R17 Content Changes ##
@@ -1195,14 +1197,12 @@ nextUpdates.r17.tab.quarterly.dropdown.text2                       = new informa
 nextUpdates.r17.tab.quarterly.dropdown.text3                       = any information you’ve already provided that has not changed
 nextUpdates.r17.tab.quarterly.dropdown.text4                       = This is done using
 nextUpdates.r17.tab.quarterly.dropdown.link.text                   = software compatible with Making Tax Digital for Income Tax
-nextUpdates.r17.tab.quarterly.link.text1                           = To view previously submitted updates visit the
+nextUpdates.r17.tab.quarterly.link.text1                           = If a business is not shown, there may be no quarterly updates due for that business for this tax year.
 nextUpdates.r17.tab.quarterly.link.text2                           = tax year summary
 nextUpdates.r17.tab.quarterly.link.text3                           = page.
 nextUpdates.r17.tab.quarterly.subheading2                          = Tax return due
-nextUpdates.r17.tab.quarterly.text3                                = If you have submitted quarterly updates for the tax year, in your tax return you will also provide any other taxable income. You will then need to file your return using
-nextUpdates.r17.tab.quarterly.text4                                = software compatible with Making Tax Digital for Income Tax
-nextUpdates.r17.tab.quarterly.text5                                = Your return for the {0} to {1} tax year is due by
-nextUpdates.r17.tab.quarterly.text6                                = 31 January {0}.
+nextUpdates.r17.tab.quarterly.text3                                = Your return for the {0} to {1} tax year is due by
+nextUpdates.r17.tab.quarterly.text4                                = 31 January {0}.
 nextUpdates.r17.tab.quarterly.table.heading                        = Upcoming deadlines
 nextUpdates.r17.tab.quarterly.table.heading.row1                   = Deadline
 nextUpdates.r17.tab.quarterly.table.heading.row2                   = Period
@@ -1232,6 +1232,26 @@ nextUpdates.r17.tab.annual.text4                                   = 31 January 
 nextUpdates.r17.tab.annual.ny.label                                = {0} to {1} tax year
 nextUpdates.r17.tab.annual.ny.heading                              = {0} to {1} tax year
 nextUpdates.r17.tab.annual.ny.text1                                = Deadlines will not be visible until it becomes the current tax year.
+
+nextUpdates.r17.tab.gettingSoftware.h2                             = Getting software
+nextUpdates.r17.tab.gettingSoftware.text                           = To submit quarterly updates, you or your agent must have software compatible with Making Tax Digital for Income Tax. There are both paid and free options to choose from.
+nextUpdates.r17.tab.gettingSoftware.link.text                      = Find out about compatible software
+
+nextUpdates.r17.tab.lateSubPen.link.text                           = View your late submission penalty points on the Self Assessments penalties and appeals page.
+
+nextUpdates.r17.tab.businessMayNotBeShown.detail.heading           = Find out why a business may not be shown
+nextUpdates.r17.tab.businessMayNotBeShown.detail.text1             = For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul1.text1         = started less than 2 years ago
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul1.text2         = that you start in the future
+nextUpdates.r17.tab.businessMayNotBeShown.detail.text2             = This option is available to your new businesses:
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text1         = for up to 2 tax years
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text2         = only when you use Making Tax Digital for Income Tax for your other businesses
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text3         = even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold
+nextUpdates.r17.tab.businessMayNotBeShown.detail.subHeading        = How to change your reporting obligations for a new income source
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.prefix       = You can do this at any time in the
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.text         = your businesses
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.suffix       = section.
+
 
 nextUpdates.updates.software.heading    					       = Submitting updates in software
 nextUpdates.updates.software.dec1       					       = Use your
@@ -3119,7 +3139,6 @@ income.source.added.obligation.list.text                                        
 income.source.added.scenario.one.account.updated.p.a                                        = Even if they are not displayed right away on the
 income.source.added.scenario.one.account.updated.p.link                                     = submission deadlines
 income.source.added.scenario.one.account.updated.p.b                                        = page, your account has been updated.
-
 income.source.added.scenario.one.view.reporting.obligations.p.a                             = Depending on your circumstances, you may be able to
 income.source.added.scenario.one.view.reporting.obligations.link                            = view and change your reporting obligations
 income.source.added.scenario.one.view.reporting.obligations.p.b                             = for all your businesses.
@@ -3146,7 +3165,8 @@ income.source.added.few.minutes.overdue.updates                                 
 income.source.added.scenario.three.account.updated.p.a                                      = Even if they are not displayed right away on the
 income.source.added.scenario.three.account.updated.p.link                                   = submission deadlines
 income.source.added.scenario.three.account.updated.p.b                                      = page, your account has been updated.
-
+TODO = once Ayo has clarified change these:
+income.source.added.scenario.three.view.reporting.obligations.prefix                        = Quarterly updates are now cumulative. This means your latest outstanding update may include information from earlier missed periods.
 income.source.added.scenario.three.view.reporting.obligations.p.a                           = Depending on your circumstances, you may be able to
 income.source.added.scenario.three.view.reporting.obligations.link                          = view and change your reporting obligations
 income.source.added.scenario.three.view.reporting.obligations.p.b                           = for all your businesses.

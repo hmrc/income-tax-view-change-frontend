@@ -25,6 +25,8 @@
 @import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 @import obligations.services.reportingObligations.optOut.OptOutProposition
 @import common.auth.MtdItUser
+@import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
+@import play.twirl.api.HtmlFormat
 
 @this(
     mainTemplate: unifiedLayout,
@@ -46,9 +48,9 @@
     backUrl: String,
     isSupportingAgent: Boolean = false,
     origin: Option[String] = None,
-    whatTheUserCanDo: Html,
     taxYearStatusesCyNy: (ITSAStatus, ITSAStatus),
-    isReturnsEnabled: Boolean
+    isReturnsEnabled: Boolean,
+    penaltyAndAppealEnabled: Boolean
 )(implicit messages: Messages, user: MtdItUser[_])
 
 @mainTemplate(
@@ -60,21 +62,30 @@
 
     @h1(msg = messages("nextUpdates.heading"))
 
-    @p(id = Some("what-the-user-can-do")) { @whatTheUserCanDo }
+    @whatTheUserCanDo
 
-    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled)
+    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled, penaltyAndAppealEnabled)
 }
 
-@detailsContent = {
-    <div id="details-content-0" class="govuk-!-margin-bottom-4">
-        @h2(msg = "obligations.quarterlyUpdates", optId = Some("quarterlyReturns-heading"))
-        @p(id = Some("quarterly-dropdown-line1"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text")))
-        @p(id = Some("quarterly-dropdown-line2"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")))
-        @p(id = Some("quarterly-dropdown-line3"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin3")))
-        @link(link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl , target = Some("_blank"), messageKey = "nextUpdates.dropdown.quarterlyReturn.link.text")
-    </div>
-    <div id="details-content-2">
-        @h2(msg = "obligations.finalDeclarationUpdate", optId = Some("finalDeclaration-heading"))
-        @p(id = Some("final-declaration-line1"))(Html(messages("nextUpdates.dropdown.finalDeclaration.text")))
-    </div>
+@whatTheUserCanDo = {
+    @if(viewModel.missedDeadlines.nonEmpty) {
+        @p(id = Some("what-the-user-can-do-1")) {
+            @(messages("nextUpdates.reporting.obligations.p.text1", optOutProposition.currentTaxYear.taxYear._1.toString, optOutProposition.currentTaxYear.taxYear._2.toString))
+        }
+    }
+    @p(id = Some("what-the-user-can-do-2")) {@(messages("nextUpdates.reporting.obligations.p.text2"))}
+    @p(id = Some("what-the-user-can-do-3")) {
+        @HtmlFormat.fill(
+            Seq(
+                Html(messages("nextUpdates.reporting.obligations.p.text3")),
+                link(
+                    link = reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent).url,
+                    messageKey = "nextUpdates.reporting.obligations.p.link",
+                    id = Some("reporting-frequency-link"),
+                    outerMessage = messages("base.fullstop")
+                )
+            )
+        )
+
+    }
 }

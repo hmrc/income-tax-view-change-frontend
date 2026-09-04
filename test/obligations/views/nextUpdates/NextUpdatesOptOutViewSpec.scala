@@ -20,23 +20,22 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.Annual
-import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
+import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testUtils.TestSupport
 import common.models.admin.ReturnsFrontend
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import shared.testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
-import obligations.viewUtils.NextUpdatesViewUtils
 import obligations.views.html.nextUpdates.NextUpdatesOptOutView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import play.twirl.api.Html
 import obligations.testConstants.BusinessDetailsTestConstants.business1
 import common.views.html.components.link
 import shared.testConstants.NextUpdatesTestConstants
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 
 import java.time.LocalDate
 
@@ -49,7 +48,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
   val linkComponent: link = app.injector.instanceOf[link]
 
   class Setup(quarterlyUpdateContentShow: Boolean = true,
-              isSupportingAgent: Boolean = false) {
+              isSupportingAgent: Boolean = false, includeMissedDeadlines: Boolean = false) {
 
     val currentYear: TaxYear = TaxYear(2025, 2026)
 
@@ -76,9 +75,18 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       nextYearItsaStatus = Annual
     )
 
-    def nextUpdatesViewUtils: NextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
-
-    def whatTheUserCanDoContentMulti: Html = nextUpdatesViewUtils.whatTheUserCanDo(isSupportingAgent)(user, implicitly)
+    val missedDeadlinesTestYear: LocalDate = LocalDate.of(2025, 10, 23)
+    lazy val obligationsModelMissedDeadlines: NextUpdatesViewModel =
+      NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
+        business1.incomeSourceId,
+        twoObligationsSuccessModel.obligations
+      ))).obligationsByDate(false)(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+      },missedDeadlines = Seq(DeadlineViewModel(QuarterlyObligation,
+        standardAndCalendar = false,
+        missedDeadlinesTestYear,
+        Seq(ObligationWithIncomeType("uk-property", SingleObligationModel(start = missedDeadlinesTestYear, end = missedDeadlinesTestYear, due = missedDeadlinesTestYear, obligationType = "Quarterly", dateReceived = None, periodKey = StatusFulfilled.toString, status = StatusFulfilled))),
+        Seq.empty)), isFinancialsEnabled = true)
 
     lazy val obligationsModel: NextUpdatesViewModel =
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
@@ -91,19 +99,37 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     def nextUpdatesDocument: Document =
       Jsoup.parse(contentAsString(
         nextUpdatesView(
-          obligationsModel,
+          viewModel = if(includeMissedDeadlines) obligationsModelMissedDeadlines else obligationsModel,
           checks,
           optOutProposition = optOutProposition,
           "testBackURL",
           isSupportingAgent = isSupportingAgent,
-          whatTheUserCanDo = whatTheUserCanDoContentMulti,
           taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status),
           isReturnsEnabled = isEnabled(ReturnsFrontend),
+          penaltyAndAppealEnabled = true
         )(implicitly, user)
       ))
   }
 
     "NextUpdatesOptOut view" when {
+
+      "The user has missed deadlines" should {
+        "have full 'whatTheUserCanDo' section" in new Setup(includeMissedDeadlines = true) {
+          nextUpdatesDocument.getElementById("what-the-user-can-do-1").text() shouldBe "You must complete your outstanding quarterly updates for the 2025 to 2026 tax year."
+          nextUpdatesDocument.getElementById("what-the-user-can-do-2").text() shouldBe "Quarterly updates are cumulative. This means your latest outstanding update may include information from earlier missed periods."
+          nextUpdatesDocument.getElementById("what-the-user-can-do-3").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations."
+          nextUpdatesDocument.getElementById("reporting-frequency-link").attr("href") shouldBe reportingObligationsRoutes.ReportingFrequencyPageController.show(false).url
+        }
+      }
+      "The user does NOT have missed deadlines" should {
+        "have full 'whatTheUserCanDo' section" in new Setup() {
+          nextUpdatesDocument.select("what-the-user-can-do-2").size() shouldBe 0
+          nextUpdatesDocument.getElementById("what-the-user-can-do-2").text() shouldBe "Quarterly updates are cumulative. This means your latest outstanding update may include information from earlier missed periods."
+          nextUpdatesDocument.getElementById("what-the-user-can-do-3").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations."
+          nextUpdatesDocument.getElementById("reporting-frequency-link").attr("href") shouldBe reportingObligationsRoutes.ReportingFrequencyPageController.show(false).url
+        }
+      }
+
       "The reporting frequency FS is turned ON" should {
         "have the correct title" in new Setup() {
           nextUpdatesDocument.title() shouldBe NextUpdatesTestConstants.title
