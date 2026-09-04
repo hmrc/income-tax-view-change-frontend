@@ -550,6 +550,8 @@ tax-year-summary.payments.hmrcCorrection.text                  = Swm ychwanegol 
 tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
+tax-year-summary.payments.lpi.hmrcCorrection.text              = Llog am dalu’n hwyr ar y swm ychwanegol o ganlyniad i gywiriadau CThEF
+tax-year-summary.payments.lpi.enquiryAmendment.text            = Llog am dalu’n hwyr ar y swm ychwanegol o ganlyniad i ddiwygiad yn sgil ymholiad CThEF
 tax-year-summary.payments.firstLatePaymentPenalty.text         = Cosb gyntaf am dalu’n hwyr
 tax-year-summary.payments.secondLatePaymentPenalty.text        = Ail gosb am dalu’n hwyr
 tax-year-summary.payments.lateSubmissionPenalty.text           = Cosb am gyflwyno’n hwyr
@@ -1998,6 +2000,7 @@ whatYouOwe.reviewAndReconcilePoa2.text                          = Ail daliad ar 
 whatYouOwe.lpi.reviewAndReconcilePoa1.text                      = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
 whatYouOwe.lpi.reviewAndReconcilePoa2.text                      = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
+whatYouOwe.hmrcCorrection.text                                  = Swm ychwanegol i’w dalu o ganlyniad i gywiriad gan CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.enquiryAmendment.text                                = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 whatYouOwe.hmrcCorrection.text                                  = Swm ychwanegol i’w dalu o ganlyniad i gywiriad gan CThEF
@@ -2298,6 +2301,8 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog a
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text     = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol taliad cyntaf ar gyfrif
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text     = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol ail daliad ar gyfrif
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
+chargeSummary.lpi.chargeHistory.created.hmrcCorrection.text             = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol o ganlyniad i gywiriadau CThEF
+chargeSummary.lpi.chargeHistory.created.enquiryAmendment.text           = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol o ganlyniad i ddiwygiad yn sgil ymholiad CThEF
 chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text        = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol taliad mantoli
 
 chargeSummary.lpi.balancingCharge.p1                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
@@ -2586,6 +2591,8 @@ yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Talwch
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					    = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading				        = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading	    		        = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+yourSelfAssessmentChargeSummary.lpi.hmrcCorrection.text.heading                         = Llog am dalu’n hwyr ar y swm ychwanegol o ganlyniad i gywiriadau CThEF
+yourSelfAssessmentChargeSummary.lpi.enquiryAmendment.text.heading                       = Llog am dalu’n hwyr ar y swm ychwanegol o ganlyniad i ddiwygiad yn sgil ymholiad CThEF
 yourSelfAssessmentChargeSummary.lpi.interestPeriod								        = Cyfnod llog:
 yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates							    = {0} i {1}
 
@@ -2718,6 +2725,9 @@ yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                     
 yourSelfAssessmentChargeSummary.enquiryAmendment.p1                                 = Yn dilyn gwiriad cydymffurfio, gwnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Newidiodd hyn eich
 yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = cyfrifiad treth ar gyfer {0} i {1}
 yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , gan arwain at swm ychwanegol i’w dalu tuag at eich bil treth.
+
+yourSelfAssessmentChargeSummary.hmrcCorrection.p1                                   = Fe wnaeth CThEF gywiro eich Ffurflen Dreth ac fe arweiniodd hyn at swm ychwanegol i’w dalu tuag at eich bil treth {0} i {1}.
+yourSelfAssessmentChargeSummary.chargeHistory.hmrcCorrection.caption.text           = Mae’r swm ychwanegol hwn yn cyfrannu at eich bil treth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.

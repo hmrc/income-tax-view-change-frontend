@@ -43,6 +43,8 @@
 @import financials.views.html.partials.yourSelfAssessmentCharges.POAReconciliationLPIExplanationContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyLPIContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.FirstLatePaymentPenaltyLPIContent
+@import financials.views.html.partials.yourSelfAssessmentCharges.ItsaHmrcCorrectionContent
+@import shared.enums.ChargeClassificationType.isCorrection
 @import financials.models.Nics2
 @import financials.views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
 @import financials.models.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit,MfaDebitCharge}
@@ -76,6 +78,7 @@
     firstLatePaymentPenaltyLPIContent: FirstLatePaymentPenaltyLPIContent,
     itsaAmendmentChargeLPIContent: ITSAAmendmentChargeLPIContent,
     itsaCorrectionChargeContent: ItsaCorrectionChargeContent,
+    itsaHmrcCorrectionContent: ItsaHmrcCorrectionContent,
     govukDetails: GovukDetails
 )
 
@@ -100,7 +103,8 @@
     case (LateSubmissionPenalty, _, _, _)                     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
     case (FirstLatePaymentPenalty, _, true, _)                => firstLatePaymentPenaltyLPIContent()
     case (FirstLatePaymentPenalty, _, _, _)                   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
-    case (ITSAReturnAmendment, _, _, Some(RevenueAmendments))                        => itsaReturnAmendmentRAContent(viewModel)
+    case (ITSAReturnAmendment, _, _, Some(RevenueAmendments)) if isCorrection(viewModel.chargeItem.chargeClassification) => itsaHmrcCorrectionContent(viewModel)
+    case (ITSAReturnAmendment, _, _, Some(RevenueAmendments)) => itsaReturnAmendmentRAContent(viewModel)
     case (ITSAReturnAmendment, _, true, _)                    => itsaAmendmentChargeLPIContent()
     case (ITSAReturnAmendment, _, _, _)                       => itsaReturnAmendmentContent()
     case (ITSAReturnAmendmentCredit, _, _, Some(RevenueAmendments))              => itsaEnquiryAmendmentCreditContent(viewModel)

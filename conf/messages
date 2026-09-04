@@ -554,6 +554,8 @@ tax-year-summary.payments.hmrcCorrection.text                      = Extra amoun
 tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late payment interest on first payment on account
 tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest on second payment on account
 tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest on balancing payment
+tax-year-summary.payments.lpi.hmrcCorrection.text                  = Late payment interest on the extra amount due to HMRC correction
+tax-year-summary.payments.lpi.enquiryAmendment.text                = Late payment interest on the extra amount due to HMRC enquiry amendment
 tax-year-summary.payments.firstLatePaymentPenalty.text             = First late payment penalty
 tax-year-summary.payments.secondLatePaymentPenalty.text            = Second late payment penalty
 tax-year-summary.payments.lateSubmissionPenalty.text               = Late submission penalty
@@ -2011,6 +2013,7 @@ whatYouOwe.lpi.reviewAndReconcilePoa1.text                         = Late paymen
 whatYouOwe.lpi.reviewAndReconcilePoa2.text                         = Late payment interest for second payment on account: extra amount
 whatYouOwe.lpi.itsaReturnAmendment.text                            = Late payment interest on balancing payment: extra amount due to amended return
 whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
+whatYouOwe.hmrcCorrection.text                                     = Extra amount to pay due to HMRC correction
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on first payment on account
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on balancing payment
@@ -2312,6 +2315,8 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	    = Late paymen
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text = Late payment interest created for first payment on account extra amount
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text = Late payment interest created for second payment on account extra amount
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	    = Late payment interest on balancing payment created
+chargeSummary.lpi.chargeHistory.created.hmrcCorrection.text         = Late payment interest created for extra amount due to HMRC correction
+chargeSummary.lpi.chargeHistory.created.enquiryAmendment.text       = Late payment interest created for extra amount due to HMRC enquiry amendment
 chargeSummary.lpi.chargeHistory.created.firstLatePaymentPenalty.text = HMRC created your late payment interest on first late payment penalty
 chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text  = HMRC created your late payment interest on late submission penalty
 chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text    = Late payment interest created on balancing payment extra amount
@@ -2671,6 +2676,8 @@ yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                   
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					= Late payment interest on first payment on account
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading					= Late payment interest on second payment on account
 yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading					= Late payment interest on balancing payment
+yourSelfAssessmentChargeSummary.lpi.hmrcCorrection.text.heading                     = Late payment interest on the extra amount due to HMRC correction
+yourSelfAssessmentChargeSummary.lpi.enquiryAmendment.text.heading                   = Late payment interest on the extra amount due to HMRC enquiry amendment
 yourSelfAssessmentChargeSummary.lpi.interestPeriod								    = Interest period:
 yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates						    = {0} to {1}
 
@@ -2733,7 +2740,8 @@ yourSelfAssessmentChargeSummary.enquiryAmendment.p1                             
 yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = tax calculation for {0} to {1}
 yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , resulting in an extra amount to pay towards your tax bill.
 
-
+yourSelfAssessmentChargeSummary.hmrcCorrection.p1                                   = HMRC corrected your tax return and this resulted in an extra amount to pay towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.hmrcCorrection.caption.text           = This extra amount goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
