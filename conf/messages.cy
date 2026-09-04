@@ -952,6 +952,7 @@ taxCal_breakdown.table.head.cgt_type                            = Math o Dreth E
 taxCal_breakdown.table.head.national_insurance_type             = Math o Yswiriant Gwladol
 taxCal_breakdown.table.head.rates.uk                            = Cyfradd y DU ar gyfer Lloegr a Gogledd Iwerddon
 taxCal_breakdown.table.head.rates.scotland                      = Cyfradd ar gyfer yr Alban
+taxCal_breakdown.table.head.deducted                            = Treth a ddidynnwyd o incwm arall
 
 taxCal_breakdown.table.cgt.taxable_capital_gains                    = Enillion Cyfalaf trethadwy
 taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Enillion Rhyddhad Gwaredu Ased Busnes neu Ryddhad Buddsoddwyr (neu’r ddau) ({0} at {1}%)
@@ -1001,6 +1002,7 @@ taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax             = T
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                          = ISAs di-rym
 taxCal_breakdown.table.taxDeductedAtSource.total					         = Cyfanswm y dreth a ddidynnwyd
 taxCal_breakdown.table.amount                                                = Swm
+taxCal_breakdown.table.taxDeductedAtSource.taxTakenOffOtherIncome            = Treth a ddidynnwyd o incwm arall
 
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau benthyciad myfyriwr (Cynllun {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
