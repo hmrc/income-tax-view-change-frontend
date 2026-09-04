@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
 import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
-import common.models.admin.{PenaltiesAndAppeals, ReturnsFrontend}
+import common.models.admin.ReturnsFrontend
 import common.testUtils.TestSupport
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
@@ -33,15 +33,21 @@ import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import obligations.testConstants.BusinessDetailsTestConstants.business1
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import java.time.LocalDate
 
 class NextUpdatesHelperR17Spec extends TestSupport {
 
-  class Setup(isAgent: Boolean, currentObligations: NextUpdatesViewModel, currentYearStatus: ITSAStatus, nextYearStatus: ITSAStatus) {
-    val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelperR17]
-    implicit val testUser: MtdItUser[?] = if (isAgent) getAgentUser(FakeRequest()) else getIndividualUser(FakeRequest())
+  class Setup(isAgent: Boolean, currentObligations: NextUpdatesViewModel, currentYearStatus: ITSAStatus, nextYearStatus: ITSAStatus, useTrigMigUser: Boolean = false) {
+    val nextUpdatesHelper: NextUpdatesHelperR17 = app.injector.instanceOf[NextUpdatesHelperR17]
+    implicit val testUser: MtdItUser[?] = (isAgent, useTrigMigUser) match {
+      case (false, false) => getIndividualUser(FakeRequest())
+      case (true, false) => getAgentUser(FakeRequest())
+      case (false, true) => getIndividualUserTrigMig(FakeRequest())
+      case (true, true) => getAgentUserTrigMig(FakeRequest())
+    }
 
-    val optOutProposition = OptOutProposition.createOptOutProposition(
+    val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
       currentYear = TaxYear(2025, 2026),
       previousYearCrystallised = true,
       previousYearItsaStatus = Annual,
@@ -49,7 +55,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       nextYearItsaStatus = nextYearStatus
     )
 
-    val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus), isReturnsEnabled = isEnabled(ReturnsFrontend), penaltyAndAppealEnabled = isEnabled(PenaltiesAndAppeals))
+    val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus), isReturnsEnabled = isEnabled(ReturnsFrontend), penaltyAndAppealEnabled = true)
 
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
@@ -219,6 +225,11 @@ class NextUpdatesHelperR17Spec extends TestSupport {
         pageDocument.getElementById("quarterly-income-sources-missed-0").text() shouldBe "Quarter"
       }
 
+      "display the late submission penalty link for mandated user" in new Setup(isAgent = false, obligationsModel, Mandated, Annual) {
+        pageDocument.getElementById("late-sub-pen-link").text() shouldBe "View your late submission penalty points on the Self Assessments penalties and appeals page."
+        pageDocument.getElementById("late-sub-pen-link").attr("href") shouldBe appConfig.incomeTaxPenaltiesFrontend
+      }
+
       "display the correct heading for the next year" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("next-year-heading").text() shouldBe "2026 to 2027 tax year"
       }
@@ -353,6 +364,10 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       "display the 'find out why business may not be shown' dropdown your businesses link" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
         pageDocument.getElementById("business-may-not-be-shown-detail-link").text() shouldBe "You can do this at any time in the your businesses section."
         pageDocument.getElementById("business-may-not-be-shown-detail-link-text").attr("href") shouldBe manageBusinessesRoutes.ManageYourBusinessesController.show().url
+      }
+      "display the 'find out why business may not be shown' dropdown your businesses link - trig mig user" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary, useTrigMigUser = true) {
+        pageDocument.getElementById("business-may-not-be-shown-detail-link").text() shouldBe "You can do this at any time in the your businesses section."
+        pageDocument.getElementById("business-may-not-be-shown-detail-link-text").attr("href") shouldBe triggeredMigrationRoutes.CheckHmrcRecordsController.show(isAgent = false).url
       }
 
       //upcoming deadlines section
