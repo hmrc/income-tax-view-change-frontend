@@ -2462,6 +2462,7 @@ credit-and-refund.subHeading.has-no-credits-2                     = ac mae ar y 
 
 money-in-your-account.heading                                           = Arian yn eich cyfrif
 money-in-your-account.credit                                            = Credyd: {0}
+money-in-your-account.credit-stand-over-order                           = Credyd sydd ar gael: {0}
 
 money-in-your-account.no-money                                          = Nid oes unrhyw arian yn eich cyfrif ar hyn o bryd.
 money-in-your-account.no-money-one-refund                               = Nid oes gennych unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae gennych
@@ -2475,6 +2476,11 @@ money-in-your-account.all-credit-allocated                              = Mae’
 money-in-your-account.some-credit-allocated.p1                          = Mae {0} wedi’i neilltuo ar gyfer talu’r taliadau sydd ar y gweill. Gallwch hawlio’r arian hwn yn ôl, ond efallai y bydd yn haws i’w adael yn eich cyfrif i osgoi methu unrhyw ddyddiadau cau ar gyfer talu.
 money-in-your-account.some-credit-allocated.p2.1                        = Os ydych yn hawlio mwy na
 money-in-your-account.some-credit-allocated.p2.2                        = bydd angen i chi wneud taliad arall i dalu’r taliadau sydd ar y gweill cyn y dyddiad cau.
+
+money-in-your-account.stand-over-charges.p1                             = Caiff yr arian yn eich cyfrif ei neilltuo’n awtomatig ar gyfer treth sy’n ddyledus cyn pen 30 diwrnod.
+money-in-your-account.stand-over-charges.p2                             = Gallwch adael yr arian yn eich cyfrif i dalu treth sy’n ddyledus yn nes ymlaen.
+money-in-your-account.stand-over-charges.p3                             = Caiff ei ddefnyddio i dalu treth pan fydd yn ddyledus, gan gynnwys unrhyw dreth sydd wedi’i gohirio unwaith na fydd wedi’i gohirio mwyach. Caiff treth sy’n hwyr, ac sy’n denu llog, ei thalu yn gyntaf.
+
 money-in-your-account.where-from.table-caption                          = O ble y daeth yr arian
 money-in-your-account.where-from.table-header.amount                    = Swm
 money-in-your-account.where-from.table-header.tax-year                  = Blwyddyn dreth

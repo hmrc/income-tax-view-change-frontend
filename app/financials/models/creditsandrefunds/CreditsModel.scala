@@ -31,7 +31,8 @@ case class CreditsModel(availableCreditForRepayment: BigDecimal,
                         totalCredit: BigDecimal,
                         firstPendingAmountRequested: Option[BigDecimal],
                         secondPendingAmountRequested: Option[BigDecimal],
-                        transactions: List[Transaction] ) extends SuccessModel {
+                        transactions: List[Transaction],
+                        dunningLock: Boolean ) extends SuccessModel {
   
   val availableCreditInAccount: Boolean = if(availableCreditForRepayment > 0) true else false
 }
