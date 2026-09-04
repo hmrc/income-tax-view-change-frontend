@@ -1229,7 +1229,7 @@ nextUpdates.r17.tab.gettingSoftware.h2                             = Cael meddal
 nextUpdates.r17.tab.gettingSoftware.text                           = Er mwyn cyflwyno diweddariadau chwarterol, mae’n rhaid i chi, neu’ch asiant, ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Mae sawl meddalwedd ar gael i chi, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
 nextUpdates.r17.tab.gettingSoftware.link.text                      = Dysgwch ragor am feddalwedd sy’n cydweddu (yn agor tab newydd)
 
-nextUpdates.r17.tab.lateSubPen.link.text                           = View your late submission penalty points on the Self Assessments penalties and appeals page.
+nextUpdates.r17.tab.lateSubPen.link.text                           = Ewch i’r dudalen ynghylch cosbau ac apeliadau Hunanasesiad i fwrw golwg dros eich pwyntiau cosb am gyflwyno’n hwyr
 
 nextUpdates.r17.tab.businessMayNotBeShown.detail.heading           = Dysgwch pam ei bod hi’n bosibl nad yw busnes yn ymddangos
 nextUpdates.r17.tab.businessMayNotBeShown.detail.text1             = Ar gyfer blynyddoedd treth rydych yn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddewis ar wahân i optio allan ar gyfer unrhyw ffynhonnell incwm o eiddo neu fasnachwr newydd:
