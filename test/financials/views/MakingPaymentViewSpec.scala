@@ -35,7 +35,8 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
                 hasOverdue: Boolean = false,
                 hasAllPenaltiesOverdue: Boolean = false,
                 hasOverdueNonPenaltyCharges: Boolean = false,
-                hasNotOverdueLPP: Boolean = false): MakingPaymentViewModel =
+                hasNotOverdueLPP: Boolean = false,
+                hasSuspendedCharges: Boolean = false): MakingPaymentViewModel =
     MakingPaymentViewModel(
       backUrl = "/what-you-owe",
       paymentHandoffUrl = "/payment?amountInPence=10000",
@@ -47,7 +48,8 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       unallocatedCredit = unallocatedCredit,
       hasAllPenaltiesOverdue = hasAllPenaltiesOverdue,
       hasOverdueNonPenaltyCharges = hasOverdueNonPenaltyCharges,
-      hasNotOverdueLPP = hasNotOverdueLPP
+      hasNotOverdueLPP = hasNotOverdueLPP,
+      hasSuspendedCharges = hasSuspendedCharges
     )
 
   def render(model: MakingPaymentViewModel = viewModel()): Document =
@@ -135,6 +137,21 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
       document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
       document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
+      document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
+    }
+
+    "render the suspended tax section when there are suspended charges" in {
+      val document = render(viewModel(hasSuspendedCharges = true))
+      document.select("h1").text shouldBe messages("making-payment.heading")
+      document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
+      document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
+      document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
+
+      document.select("h2").get(1).text shouldBe messages("making-payment.suspended-tax.heading")
+      document.getElementById("suspended-tax-p1").text shouldBe messages("making-payment.suspended-tax.p1")
+      document.getElementById("suspended-tax-p2").text shouldBe messages("making-payment.suspended-tax.p2")
+      document.select("#main-content li").get(2).text shouldBe messages("making-payment.suspended-tax.bullet1")
+      document.select("#main-content li").get(3).text shouldBe messages("making-payment.suspended-tax.bullet2")
       document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
     }
   }

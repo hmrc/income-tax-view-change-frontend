@@ -2115,6 +2115,11 @@ making-payment.money-in-account.heading                            = Money in yo
 making-payment.money-in-account.p1.before                          = You have
 making-payment.money-in-account.p1.link                            = money in your account
 making-payment.money-in-account.p1.after                           = ; your current balance is {0}. You can leave the money there to pay your next bill or claim a refund.
+making-payment.suspended-tax.heading                               = Paying suspended tax
+making-payment.suspended-tax.p1                                    = If you do not have tax due or overdue, your payment will be used to pay the suspended tax when it is no longer suspended.
+making-payment.suspended-tax.p2                                    = While the tax is suspended:
+making-payment.suspended-tax.bullet1                               = your payment may show as a credit
+making-payment.suspended-tax.bullet2                               = in some cases, we may hold the payment separately so it is not used for other tax
 making-payment.continue                                            = Continue to make a payment
 
 ## Charge Summary ##
