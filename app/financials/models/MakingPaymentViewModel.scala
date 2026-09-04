@@ -28,6 +28,7 @@ case class MakingPaymentViewModel(
                                    hasAllPenaltiesOverdue: Boolean,
                                    hasOverdueNonPenaltyCharges: Boolean,
                                    hasNotOverdueLPP: Boolean,
+                                   hasSuspendedCharges: Boolean,
                                    hasOverdueCharge: Boolean,
                                    hasBalanceDueWithin30Days: Boolean,
                                    overDueAmount: Option[BigDecimal],

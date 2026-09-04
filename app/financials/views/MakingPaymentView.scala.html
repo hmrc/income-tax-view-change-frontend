@@ -151,6 +151,21 @@
         }
     }
 
+    @if(viewModel.hasSuspendedCharges) {
+                @h2(msg = messages("making-payment.suspended-tax.heading"))
+                @p(id = Some("suspended-tax-p1")) {
+                @messages("making-payment.suspended-tax.p1")
+                }
+                @p(id = Some("suspended-tax-p2")) {
+                @messages("making-payment.suspended-tax.p2")
+                }
+
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>@messages("making-payment.suspended-tax.bullet1")</li>
+                    <li>@messages("making-payment.suspended-tax.bullet2")</li>
+                </ul>
+    }
+
     @govukButton(Button(
         id = Some("continue-to-payment-button"),
         content = Text(messages("making-payment.continue")),

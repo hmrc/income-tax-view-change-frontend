@@ -19,7 +19,7 @@ package financials.services
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
-import financials.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
+import financials.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import common.testUtils.TestSupport
@@ -395,6 +395,50 @@ class MakingPaymentServiceSpec extends TestSupport {
 
       result.map(_.hasNotOverdueLPP) shouldBe Some(false)
       result.map(_.hasAdditionalSections) shouldBe Some(true)
+    }
+
+    "set hasSuspendedCharges to true when there is a charge with dunning lock" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(penaltyTransactionIdFirst, Some(dateService.getCurrentDate)),
+              getDocumentDetail(penaltyTransactionIdSecond)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4028"), Some(penaltyTransactionIdFirst)).copy(items = Some(Seq(SubItem(dunningLock = Some("Stand over order"))))),
+              getFinancialDetail(Some("4029"), Some(penaltyTransactionIdSecond)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasSuspendedCharges) shouldBe Some(true)
+    }
+
+    "set hasSuspendedCharges to false  when there is no charge with a dunning lock" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(penaltyTransactionIdFirst, Some(dateService.getCurrentDate)),
+              getDocumentDetail(penaltyTransactionIdSecond)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4028"), Some(penaltyTransactionIdFirst)),
+              getFinancialDetail(Some("4029"), Some(penaltyTransactionIdSecond)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasSuspendedCharges) shouldBe Some(false)
     }
 
     "set hasOverdueCharge to true when there is overdue charge" in {
