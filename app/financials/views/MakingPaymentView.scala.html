@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import _root_.shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import common.auth.MtdItUser
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
@@ -46,6 +47,58 @@
 ) {
     @h1(msg = messages("making-payment.heading"), id = Some("page-heading"))
 
+    @(viewModel.hasOverdueCharge, viewModel.hasBalanceDueWithin30Days, viewModel.hasInterest) match {
+        case (true, _, _) => {
+            @h2(msg = messages("making-payment.you-have-overdue.heading", viewModel.overDueAmount.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("you-have-overdue")) {
+                @messages("making-payment.you-have-overdue.p1")
+            }
+            @p(id = Some("you-have-overdue")) {
+                @messages("making-payment.you-have-overdue.p2")
+            }
+        }
+
+        case (_, true, _) => {
+            @h2(msg = messages("making-payment.charge-due-within-30-days.heading", viewModel.balanceDueWithin30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("charge-due-within-30-days")) {
+                @messages("making-payment.charge-due-within-30-days.p1")
+            }
+            @p(id = Some("charge-due-within-30-days")) {
+                @messages("making-payment.charge-due-within-30-days.p2")
+            }
+        }
+
+        case (false, _, true) => {
+            @h2(msg = messages("making-payment.not-overdue-but-accruing-interest.heading", viewModel.balanceNotDuein30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("not-overdue-but-accruing-interest")) {
+                @messages("making-payment.not-overdue-but-accruing-interest.p1")
+            }
+            @p(id = Some("not-overdue-but-accruing-interest")) {
+                @messages("making-payment.not-overdue-but-accruing-interest.p2")
+            }
+        }
+
+        case (false, _, false) => {
+            @h2(msg = messages("making-payment.not-overdue-and-no-accruing-interest.heading", viewModel.balanceNotDuein30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("not-overdue-and-no-accruing-interest")) {
+                @messages("making-payment.not-overdue-and-no-accruing-interest.p1")
+            }
+            @p(id = Some("not-overdue-and-no-accruing-interest")) {
+                @messages("making-payment.not-overdue-and-no-accruing-interest.p2")
+            }
+        }
+        @* TODO check what should be here ??? *@
+        case _ => {
+            @h2(msg = messages("making-payment.not-overdue-and-no-accruing-interest.heading", viewModel.balanceNotDuein30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
+            @p(id = Some("not-overdue-and-no-accruing-interest")) {
+                @messages("making-payment.not-overdue-and-no-accruing-interest.p1")
+            }
+            @p(id = Some("not-overdue-and-no-accruing-interest")) {
+                @messages("making-payment.not-overdue-and-no-accruing-interest.p2")
+            }
+        }
+    }
+
     @if(viewModel.hasAdditionalSections) {
         @h2(msg = messages("making-payment.what-payment-goes-towards.heading"))
     }
@@ -65,24 +118,6 @@
 
     @p(id = Some("payment-amount-choice")) {
         @messages("making-payment.what-payment-goes-towards.p3")
-    }
-
-    @if(viewModel.hasInterest) {
-        @h2(msg = messages("making-payment.accruing-interest.heading"))
-
-        @p(id = Some("accruing-interest-p1")) {
-            @messages("making-payment.accruing-interest.p1")
-        }
-
-        @p(id = Some("accruing-interest-p2")) {
-            @messages("making-payment.accruing-interest.p2.before")
-            @link(
-                link = viewModel.whatYouOweUrl,
-                messageKey = "making-payment.accruing-interest.p2.link",
-                id = Some("what-you-owe-link")
-            )
-            @messages("making-payment.accruing-interest.p2.after")
-        }
     }
 
     @if(viewModel.hasPenalty && !viewModel.hasAllPenaltiesOverdue) {
