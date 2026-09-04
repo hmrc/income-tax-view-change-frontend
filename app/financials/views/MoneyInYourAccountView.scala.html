@@ -55,7 +55,11 @@
     @h1(msg = messages("money-in-your-account.heading"))
 
     @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id = Some("credit-amount")) {
-        @messages("money-in-your-account.credit", viewModel.totalCredit.toCurrencyString)
+		@if(viewModel.dunningLock) {
+			@messages("money-in-your-account.credit-stand-over-order", viewModel.totalCredit.toCurrencyString)
+		} else {
+        	@messages("money-in-your-account.credit", viewModel.totalCredit.toCurrencyString)
+		}
     }
 
     @if(viewModel.totalCredit > 0) {
@@ -64,6 +68,14 @@
         @if(viewModel.creditRows.length > 0){
             @whereMoneyCameFromTable(viewModel)
         } else {}
+
+		@if(viewModel.dunningLock) {
+			<!-- TODO: Rename the ids -->
+			@p(id = Some("maybe-allocation-instead")) { @messages("money-in-your-account.stand-over-charges.p1") }
+			@p(id = Some("stand-over-order-p2")) { @messages("money-in-your-account.stand-over-charges.p2") }
+			@p(id = Some("stand-over-order-p3")) { @messages("money-in-your-account.stand-over-charges.p3") }
+		}
+
 
         @ClaimRefundButton()
 
