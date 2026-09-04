@@ -1229,7 +1229,7 @@ nextUpdates.r17.tab.gettingSoftware.h2                             = Cael meddal
 nextUpdates.r17.tab.gettingSoftware.text                           = Er mwyn cyflwyno diweddariadau chwarterol, mae’n rhaid i chi, neu’ch asiant, ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Mae sawl meddalwedd ar gael i chi, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
 nextUpdates.r17.tab.gettingSoftware.link.text                      = Dysgwch ragor am feddalwedd sy’n cydweddu (yn agor tab newydd)
 
-nextUpdates.r17.tab.lateSubPen.link.text                           = View your late submission penalty points on the Self Assessments penalties and appeals page.
+nextUpdates.r17.tab.lateSubPen.link.text                           = Ewch i’r dudalen ynghylch cosbau ac apeliadau Hunanasesiad i fwrw golwg dros eich pwyntiau cosb am gyflwyno’n hwyr
 
 nextUpdates.r17.tab.businessMayNotBeShown.detail.heading           = Dysgwch pam ei bod hi’n bosibl nad yw busnes yn ymddangos
 nextUpdates.r17.tab.businessMayNotBeShown.detail.text1             = Ar gyfer blynyddoedd treth rydych yn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddewis ar wahân i optio allan ar gyfer unrhyw ffynhonnell incwm o eiddo neu fasnachwr newydd:
@@ -1240,9 +1240,9 @@ nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text1         = am hyd at 2
 nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text2         = dim ond pan fyddwch yn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer eich busnesau eraill
 nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text3         = hyd yn oed os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000
 nextUpdates.r17.tab.businessMayNotBeShown.detail.subHeading        = Sut i newid eich rhwymedigaethau adrodd ar gyfer ffynhonnell incwm newydd
-nextUpdates.r17.tab.businessMayNotBeShown.detail.link.prefix       = Gallwch wneud hyn ar unrhyw adeg yn yr
-nextUpdates.r17.tab.businessMayNotBeShown.detail.link.text         = your businesses [GETTING CLARIFICATION]
-nextUpdates.r17.tab.businessMayNotBeShown.detail.link.suffix       = section. [GETTING CLARIFICATION]
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.prefix       = Gallwch wneud hyn ar unrhyw adeg yn yr adran ynghylch
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.text         = eich busnesau
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.suffix       =
 
 
 nextUpdates.updates.software.heading    					    = Cyflwyno diweddariadau drwy feddalwedd

@@ -187,7 +187,8 @@
                                         }
                                     },
                                 messageKey = getMessage("businessMayNotBeShown.detail.link.text"),
-                                id = Some("business-may-not-be-shown-detail-link-text")
+                                id = Some("business-may-not-be-shown-detail-link-text"),
+                                outerMessage = if(messages.lang.code == "cy") "." else ""
                             ),
                             Html(getMessage("businessMayNotBeShown.detail.link.suffix"))
                         )
