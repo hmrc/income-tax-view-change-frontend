@@ -93,6 +93,8 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.getElementById("money-in-account-link").attr("href") shouldBe "/money-in-your-account"
       document.getElementById("money-in-account-p1").text should include("£400.00")
       document.getElementById("money-in-account-p1").text should include("account; your current balance")
+      document.getElementById("money-in-account-p1").nextElementSiblings().get(0).select("li").get(0).text() shouldBe messages("making-payment.money-in-account.bullet1")
+      document.getElementById("money-in-account-p1").nextElementSiblings().get(0).select("li").get(1).text() shouldBe messages("making-payment.money-in-account.bullet2")
     }
 
     "render penalty section with H1/P2/P3 when penalties not overdue" in {
