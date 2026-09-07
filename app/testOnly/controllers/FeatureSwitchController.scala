@@ -18,19 +18,19 @@ package testOnly.controllers
 
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{BusinessDetailsFrontend, FeatureSwitchName, FinancialsFrontend, InvalidFS, NewHubContextRootEnabled, ObligationsFrontend, ReturnsFrontend}
-import testOnly.services.admin.FeatureSwitchService
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
+import common.models.admin.{FeatureSwitchName, InvalidFS, NewHubContextRootEnabled}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import testOnly.services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.collection.immutable.ListMap
 import javax.inject.{Inject, Singleton}
+import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -79,7 +79,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
   }
 
-  lazy val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend, NewHubContextRootEnabled)
+  lazy val newServices: Set[FeatureSwitchName] = Set(NewHubContextRootEnabled)
 
   // TODO: refactor next method
   def submit(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
