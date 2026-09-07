@@ -87,7 +87,7 @@
                 @messages("making-payment.not-overdue-and-no-accruing-interest.p2")
             }
         }
-        @* TODO check what should be here ??? *@
+
         case _ => {
             @h2(msg = messages("making-payment.not-overdue-and-no-accruing-interest.heading", viewModel.balanceNotDuein30daysValue.map(_.abs.toCurrencyString).getOrElse("paymentAllocation.noData")))
             @p(id = Some("not-overdue-and-no-accruing-interest")) {

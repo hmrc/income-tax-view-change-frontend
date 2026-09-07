@@ -66,12 +66,14 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
     Jsoup.parse(makingPaymentView(model)(FakeRequest(), individualUser, messages).body)
 
   "MakingPaymentView" should {
-    // TODO check what should we render in this scenario
-    "render the static content without the first section heading when there are no extra sections" in {
-      val document = render()
+    "render the only 'You Owe' first section heading when there are no extra sections" in {
+      val document = render(viewModel(balanceNotDuein30daysValue = Some(BigDecimal("6700.00"))))
+      val headings = document.select("#main-content h2")
 
       document.select("h1").text shouldBe messages("making-payment.heading")
-      document.select("#main-content h2").isEmpty shouldBe true
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£6,700.00")
+      document.select("#main-content h2").size() shouldBe 1
+
       document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
       document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
       document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
@@ -79,7 +81,7 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
     }
 
     "render penalty and money in account sections when present" in {
-      val document = render(viewModel(hasPenalty = true, unallocatedCredit = Some(BigDecimal(400))))
+      val document = render(viewModel(hasPenalty = true, unallocatedCredit = Some(BigDecimal(400)), balanceNotDuein30daysValue = Some(BigDecimal("1000.00"))))
       val headings = document.select("#main-content h2")
 
       headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,000.00")
@@ -94,10 +96,10 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
     }
 
     "render penalty section with H1/P2/P3 when penalties not overdue" in {
-      val document = render(viewModel(hasPenalty = true))
+      val document = render(viewModel(hasPenalty = true, balanceNotDuein30daysValue = Some(BigDecimal("1200.00"))))
       val headings = document.select("#main-content h2")
 
-      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,000.00")
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,200.00")
       headings.get(1).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
       headings.get(2).text shouldBe messages("making-payment.penalty.heading")
       document.select("#penalty-p1").isEmpty shouldBe true
@@ -108,10 +110,10 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
     }
 
     "render penalty section with H1/P1/P2/P3 when LPP not overdue with overdue non-penalty charges" in {
-      val document = render(viewModel(hasPenalty = true, hasNotOverdueLPP = true, hasOverdueNonPenaltyCharges = true))
+      val document = render(viewModel(hasPenalty = true, hasNotOverdueLPP = true, hasOverdueNonPenaltyCharges = true, hasOverdueCharge = true, overDueAmount = Some(BigDecimal("1350.00"))))
       val headings = document.select("#main-content h2")
 
-      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,000.00")
+      headings.get(0).text shouldBe messages("making-payment.you-have-overdue.heading", "£1,350.00")
       headings.get(1).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
       headings.get(2).text shouldBe messages("making-payment.penalty.heading")
       document.selectById("penalty-p1").text() shouldBe messages("making-payment.penalty.p1")
@@ -122,10 +124,10 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
     }
 
     "render penalty section with H1/P2/P3 when Penalties not overdue with no overdue non penalty charges" in {
-      val document = render(viewModel(hasPenalty = true, hasNotOverdueLPP = true))
+      val document = render(viewModel(hasPenalty = true, hasNotOverdueLPP = true, balanceNotDuein30daysValue = Some(BigDecimal("2300.00"))))
       val headings = document.select("#main-content h2")
 
-      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,000.00")
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£2,300.00")
       headings.get(1).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
       headings.get(2).text shouldBe messages("making-payment.penalty.heading")
       document.select("#penalty-p1").isEmpty shouldBe true
@@ -136,12 +138,12 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
     }
 
     "render no penalties section when all the penalties are overdue" in {
-      val document = render(viewModel(hasAllPenaltiesOverdue = true))
+      val document = render(viewModel(hasAllPenaltiesOverdue = true, balanceNotDuein30daysValue = Some(BigDecimal("1460.00"))))
       document.select("h1").text shouldBe messages("making-payment.heading")
       val headings = document.select("#main-content h2")
 
       headings.size() shouldBe 1
-      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,000.00")
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,460.00")
       document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
       document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
       document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
@@ -175,7 +177,7 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
       document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
     }
-    
+
     "render the correct content when charges are not overdue due but accruing interest is present" in {
       val document = render(viewModel(hasInterest = true, balanceNotDuein30daysValue = Some(BigDecimal("3200.00"))))
       val headings = document.select("#main-content h2")
@@ -191,11 +193,11 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the correct content when charges are not overdue due and no accruing interest present" in {
-      val document = render(viewModel())
+      val document = render(viewModel(balanceNotDuein30daysValue = Some(BigDecimal("5340.00"))))
       val headings = document.select("#main-content h2")
 
       document.select("h1").text shouldBe messages("making-payment.heading")
-      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£1,000.00")
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£5,340.00")
       document.select("#not-overdue-and-no-accruing-interest").get(0).text() shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.p1")
       document.select("#not-overdue-and-no-accruing-interest").get(1).text() shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.p2")
       document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
@@ -205,13 +207,16 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the suspended tax section when there are suspended charges" in {
-      val document = render(viewModel(hasSuspendedCharges = true))
+      val document = render(viewModel(hasSuspendedCharges = true, balanceNotDuein30daysValue = Some(BigDecimal("3200.00"))))
+      val headings = document.select("#main-content h2")
+
+      headings.get(0).text shouldBe messages("making-payment.not-overdue-and-no-accruing-interest.heading", "£3,200.00")
       document.select("h1").text shouldBe messages("making-payment.heading")
       document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
       document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
       document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
 
-      document.select("h2").get(1).text shouldBe messages("making-payment.suspended-tax.heading")
+      headings.get(1).text shouldBe messages("making-payment.suspended-tax.heading")
       document.getElementById("suspended-tax-p1").text shouldBe messages("making-payment.suspended-tax.p1")
       document.getElementById("suspended-tax-p2").text shouldBe messages("making-payment.suspended-tax.p2")
       document.select("#main-content li").get(2).text shouldBe messages("making-payment.suspended-tax.bullet1")
