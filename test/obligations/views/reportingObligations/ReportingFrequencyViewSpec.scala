@@ -47,6 +47,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
     val h2 = "manage-reporting-frequency-heading"
     val p1 = "change-reporting-frequency"
     val p2 = "what-you-can-do"
+    val p3 = "required-obligations"
 
     val manageReportingObligationsHeading = "manage-reporting-obligations-heading"
     val manageReportingObligationsCardHeading = "manage-reporting-obligations-card-heading-1"
@@ -150,6 +151,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           Selectors.h2 -> manageRFHeadingContent,
           Selectors.p1 -> p1Content,
           Selectors.p2 -> p2Content,
+          Selectors.p3 -> requiredObligation,
           Selectors.mandatoryReportingH2 -> mandatoryReportingHeading,
           Selectors.mandatoryReportingInset -> mandatoryReportingInset,
           Selectors.mandatoryReportingText -> mandatoryReportingText,
