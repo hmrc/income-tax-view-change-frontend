@@ -20,12 +20,11 @@ import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{OptOutFs, ReturnsFrontend}
+import common.models.admin.{OptOutFs, PenaltiesAndAppeals, ReturnsFrontend}
 import common.models.obligations.ObligationsModel
 import common.services.AuditingService
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
-import obligations.viewUtils.NextUpdatesViewUtils
 import obligations.views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -44,7 +43,6 @@ class NextUpdatesController @Inject()(
                                        nextUpdatesService: NextUpdatesService,
                                        itvcErrorHandler: ItvcErrorHandler,
                                        optOutService: OptOutService,
-                                       nextUpdatesViewUtils: NextUpdatesViewUtils,
                                        val appConfig: FrontendAppConfig,
                                        val authActions: AuthActions
                                      )
@@ -87,8 +85,6 @@ class NextUpdatesController @Inject()(
                 (checks, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
                 viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates)
               } yield {
-                val whatTheUserCanDoContent = nextUpdatesViewUtils.whatTheUserCanDo(isAgent)
-
                 Ok(
                   nextUpdatesOptOutView(
                     viewModel = viewModel,
@@ -97,9 +93,9 @@ class NextUpdatesController @Inject()(
                     backUrl = backUrl,
                     isSupportingAgent = user.isSupportingAgent,
                     origin = origin,
-                    whatTheUserCanDo = whatTheUserCanDoContent,
                     taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status),
-                    isReturnsEnabled = isEnabled(ReturnsFrontend)
+                    isReturnsEnabled = isEnabled(ReturnsFrontend),
+                    penaltyAndAppealEnabled = isEnabled(PenaltiesAndAppeals)
                   )
                 )
               }
