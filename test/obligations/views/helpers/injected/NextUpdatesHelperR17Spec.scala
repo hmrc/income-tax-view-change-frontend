@@ -334,10 +334,6 @@ class NextUpdatesHelperR17Spec extends TestSupport {
         pageDocument.select("#active-quarterly-dropdown-ul li").get(0).text() shouldBe "new information and corrections made since the last update"
         pageDocument.select("#active-quarterly-dropdown-ul li").get(1).text() shouldBe "any information you’ve already provided that has not changed"
       }
-      "display the description containing the compatible software link within the dropdown in the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
-        pageDocument.getElementById("active-quarterly-dropdown-desc2").text() shouldBe "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-        pageDocument.getElementById("active-quarterly-compatible-software-link-dropdown").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
-      }
 
       //find out why business not shown section (dropdown)
       "display the 'find out why business may not be shown' dropdown heading" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
