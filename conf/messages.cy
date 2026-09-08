@@ -486,9 +486,9 @@ taxYears.dropdown.content.2                                    =
 
 ## Tax Years Page - Error ##
 taxYears.error.subheading                                      = Ni all yr wybodaeth am eich Ffurflenni Treth gael ei harddangos yma ar hyn o bryd
-taxYears.error.preLinkText                                     = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fynd i’ch
+taxYears.error.preLinkText                                     = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth {0} i {1}, mae angen i chi fynd i’ch
 taxYears.error.linkText                                        = cyfrif Hunanasesiad ar-lein blaenorol
-taxYears.error.agentPreLinkText                                = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fewngofnodi i’ch
+taxYears.error.agentPreLinkText                                = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth {0} i {1}, mae angen i chi fewngofnodi i’ch
 taxYears.error.agentPostLinkText                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Summary Page New ##
