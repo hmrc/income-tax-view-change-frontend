@@ -103,7 +103,7 @@
     case (LateSubmissionPenalty, _, _, _)                     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
     case (FirstLatePaymentPenalty, _, true, _)                => firstLatePaymentPenaltyLPIContent()
     case (FirstLatePaymentPenalty, _, _, _)                   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
-    case (ITSAReturnAmendment, _, _, Some(RevenueAmendments)) if isCorrection(viewModel.chargeItem.chargeClassification) => itsaHmrcCorrectionContent(viewModel)
+    case (ITSAReturnAmendment , _ , _ , Some(AutoCorrection | ManualCorrection )) => itsaHmrcCorrectionContent(viewModel)
     case (ITSAReturnAmendment, _, _, Some(RevenueAmendments)) => itsaReturnAmendmentRAContent(viewModel)
     case (ITSAReturnAmendment, _, true, _)                    => itsaAmendmentChargeLPIContent()
     case (ITSAReturnAmendment, _, _, _)                       => itsaReturnAmendmentContent()
