@@ -50,7 +50,8 @@
     origin: Option[String] = None,
     taxYearStatusesCyNy: (ITSAStatus, ITSAStatus),
     isReturnsEnabled: Boolean,
-    penaltyAndAppealEnabled: Boolean
+    penaltyAndAppealEnabled: Boolean,
+    isBusinessDetailsEnabled: Boolean
 )(implicit messages: Messages, user: MtdItUser[_])
 
 @mainTemplate(
@@ -64,7 +65,7 @@
 
     @whatTheUserCanDo
 
-    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled, penaltyAndAppealEnabled)
+    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled, penaltyAndAppealEnabled, isBusinessDetailsEnabled)
 }
 
 @whatTheUserCanDo = {

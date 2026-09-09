@@ -294,7 +294,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextByID("active-quarterly-subheading")(expectedValue = "Quarterly updates due"),
           elementTextByID("active-quarterly-subdesc")(expectedValue = "Every 3 months an update is due for each of your property and sole trader income sources."),
           elementTextBySelector("#active-quarterly-dropdown summary")(expectedValue = "Find out more about quarterly updates"),
-          elementTextByID("active-quarterly-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
+          elementTextByID("active-quarterly-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:")
         )
       }
 
@@ -347,7 +347,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextByID("active-quarterly-subheading")(expectedValue = "Quarterly updates due"),
           elementTextByID("active-quarterly-subdesc")(expectedValue = "Every 3 months an update is due for each of your property and sole trader income sources."),
           elementTextBySelector("#active-quarterly-dropdown summary")(expectedValue = "Find out more about quarterly updates"),
-          elementTextByID("active-quarterly-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
+          elementTextByID("active-quarterly-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:")
         )
       }
 
