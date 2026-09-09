@@ -81,8 +81,8 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl":"${MicroserviceSpecificConstants.baseUrl}/agents/payments-owed",
-              | "backUrl": "${MicroserviceSpecificConstants.baseUrl}/agents/payments-owed"
+              | "returnUrl":"${MicroserviceSpecificConstants.baseUrl}/agents/what-you-owe",
+              | "backUrl": "${MicroserviceSpecificConstants.baseUrl}/agents/what-you-owe"
               |}
               """.stripMargin
           )
