@@ -54,6 +54,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(testIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None
   )
 
@@ -76,6 +77,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = None,
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
   )
 
@@ -90,6 +92,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
   )
 
@@ -100,6 +103,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
   )
 
@@ -114,6 +118,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(testIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(testPropertyCessation),
   )
 
@@ -124,6 +129,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(testPropertyCessation),
   )
 
@@ -134,6 +140,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(testPropertyCessation3),
   )
 
@@ -144,6 +151,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(testPropertyCessation),
   )
 
@@ -154,6 +162,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate2),
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(testPropertyCessation2),
   )
 
@@ -164,6 +173,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = None,
     tradingStartDate = Some(testStartDate2),
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(testPropertyCessation2),
   )
 
@@ -207,6 +217,7 @@ object PropertyDetailsTestConstants {
       incomeSourceType = if (incomeSourceType == UkProperty) Some(ukIncomeType) else Some(foreignIncomeType),
       tradingStartDate = Some(testStartDate),
       contextualTaxYear = None,
+      deleted = None,
       cessation = Some(CessationModel(date = testCeaseDate)),
       latencyDetails = None,
       quarterTypeElection = Some(quarterTypeElectionStandard),
@@ -220,6 +231,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = Some(false),
     cessation = None,
     latencyDetails = None,
     quarterTypeElection = Some(quarterTypeElectionStandard),
@@ -232,6 +244,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = Some(false),
     cessation = None,
     latencyDetails = None,
   )
@@ -243,6 +256,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDateBeforeEarliestStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = None,
   )
@@ -254,6 +268,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = None,
     contextualTaxYear = Some(testContextualTaxYear),
+    deleted= None,
     cessation = None,
     latencyDetails = None
   )
@@ -265,6 +280,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails1)
   )
@@ -276,6 +292,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails4),
     quarterTypeElection = Some(quarterTypeElectionCalendar),
@@ -288,6 +305,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
     quarterTypeElection = Some(quarterTypeElectionCalendar),
@@ -300,6 +318,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = None,
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
   )
@@ -311,6 +330,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDateBeforeEarliestStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = None,
   )
@@ -322,6 +342,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = None,
     contextualTaxYear = Some(testContextualTaxYear),
+    deleted = None,
     cessation = None,
     latencyDetails = None,
   )
@@ -333,6 +354,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
   )
@@ -344,6 +366,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails5),
     quarterTypeElection = Some(quarterTypeElectionStandard),
@@ -356,6 +379,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
     quarterTypeElection = Some(quarterTypeElectionStandard)
@@ -368,6 +392,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = None,
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2)
   )

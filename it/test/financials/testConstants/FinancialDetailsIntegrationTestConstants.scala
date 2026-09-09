@@ -59,6 +59,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
     propertyIncomeType,
     propertyTradingStartDate,
     None,
+    deleted = None,
     None,
   )
   
@@ -542,6 +543,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
     propertyIncomeType,
     propertyTradingStartDate,
     None,
+    deleted = None,
     None,
   )
 

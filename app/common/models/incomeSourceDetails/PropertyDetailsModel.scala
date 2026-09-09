@@ -28,6 +28,7 @@ case class PropertyDetailsModel(
                                  incomeSourceType: Option[String],
                                  tradingStartDate: Option[LocalDate],
                                  contextualTaxYear: Option[String],
+                                 deleted: Option[Boolean],
                                  cessation: Option[CessationModel],
                                  latencyDetails: Option[LatencyDetails] = None,
                                  quarterTypeElection: Option[QuarterTypeElection] = None
