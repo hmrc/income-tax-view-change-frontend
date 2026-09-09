@@ -117,7 +117,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       "The user has missed deadlines" should {
         "have full 'whatTheUserCanDo' section" in new Setup(includeMissedDeadlines = true) {
           nextUpdatesDocument.getElementById("what-the-user-can-do-1").text() shouldBe "You must complete your outstanding quarterly updates for the 2025 to 2026 tax year."
-          nextUpdatesDocument.getElementById("what-the-user-can-do-2").text() shouldBe "Quarterly updates are cumulative. This means your latest outstanding update may include information from earlier missed periods."
+          nextUpdatesDocument.getElementById("what-the-user-can-do-2").text() shouldBe "Quarterly updates are now cumulative. This means your latest outstanding update may include information from earlier missed periods."
           nextUpdatesDocument.getElementById("what-the-user-can-do-3").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations."
           nextUpdatesDocument.getElementById("reporting-frequency-link").attr("href") shouldBe reportingObligationsRoutes.ReportingFrequencyPageController.show(false).url
         }
@@ -125,7 +125,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       "The user does NOT have missed deadlines" should {
         "have full 'whatTheUserCanDo' section" in new Setup() {
           nextUpdatesDocument.select("what-the-user-can-do-2").size() shouldBe 0
-          nextUpdatesDocument.getElementById("what-the-user-can-do-2").text() shouldBe "Quarterly updates are cumulative. This means your latest outstanding update may include information from earlier missed periods."
+          nextUpdatesDocument.getElementById("what-the-user-can-do-2").text() shouldBe "Quarterly updates are now cumulative. This means your latest outstanding update may include information from earlier missed periods."
           nextUpdatesDocument.getElementById("what-the-user-can-do-3").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations."
           nextUpdatesDocument.getElementById("reporting-frequency-link").attr("href") shouldBe reportingObligationsRoutes.ReportingFrequencyPageController.show(false).url
         }

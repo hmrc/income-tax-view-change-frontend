@@ -1179,7 +1179,7 @@ nextUpdates.optOutMultiYear.p.message                              = You are cur
 nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
 
 nextUpdates.reporting.obligations.p.text1                          = You must complete your outstanding quarterly updates for the {0} to {1} tax year.
-nextUpdates.reporting.obligations.p.text2                          = Quarterly updates are cumulative. This means your latest outstanding update may include information from earlier missed periods.
+nextUpdates.reporting.obligations.p.text2                          = Quarterly updates are now cumulative. This means your latest outstanding update may include information from earlier missed periods.
 nextUpdates.reporting.obligations.p.text3                          = Depending on your circumstances,
 nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations
 
