@@ -30,8 +30,6 @@
 @import obligations.services.reportingObligations.optOut.OptOutProposition
 @import _root_.shared.implicits.HtmlFormatter.NbspString
 @import common.auth.MtdItUser
-@import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-@import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 @import common.enums.TriggeredMigration.Channel
 
 @this(
@@ -47,10 +45,10 @@
         implicitDateFormatter: ImplicitDateFormatterImpl,
         appConfig: FrontendAppConfig
 )
-@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled: Boolean, penaltyAndAppealEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
+@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled: Boolean, penaltyAndAppealEnabled: Boolean, isBusinessDetailsEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
-    
+
 @getMessage(key: String, args: String*) = @{
     messages(s"nextUpdates.r17.tab.$key", args: _*)
 }
@@ -178,13 +176,9 @@
                             Html(getMessage("businessMayNotBeShown.detail.link.prefix")),
                             link(
                                 link =
-                                    if(user.incomeSources.channel != Channel.CustomerLed.getValue) triggeredMigrationRoutes.CheckHmrcRecordsController.show(user.isAgent).url
+                                    if(user.incomeSources.channel != Channel.CustomerLed.getValue) appConfig.triggeredMigrationCheckHMRCRecordsUrl(user.isAgent, isBusinessDetailsEnabled)
                                     else {
-                                        if(user.isAgent){
-                                            manageBusinessesRoutes.ManageYourBusinessesController.showAgent().url
-                                        }else{
-                                            manageBusinessesRoutes.ManageYourBusinessesController.show().url
-                                        }
+                                        appConfig.manageBusinessesUrl(user.isAgent, isBusinessDetailsEnabled)
                                     },
                                 messageKey = getMessage("businessMayNotBeShown.detail.link.text"),
                                 id = Some("business-may-not-be-shown-detail-link-text"),

@@ -35,7 +35,7 @@ import play.api.test.Helpers.*
 import obligations.testConstants.BusinessDetailsTestConstants.business1
 import common.views.html.components.link
 import shared.testConstants.NextUpdatesTestConstants
-import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
+import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
 
 import java.time.LocalDate
 
@@ -106,7 +106,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           isSupportingAgent = isSupportingAgent,
           taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status),
           isReturnsEnabled = isEnabled(ReturnsFrontend),
-          penaltyAndAppealEnabled = true
+          penaltyAndAppealEnabled = true,
+          isBusinessDetailsEnabled = true
         )(implicitly, user)
       ))
   }
