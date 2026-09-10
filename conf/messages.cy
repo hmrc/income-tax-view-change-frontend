@@ -2003,7 +2003,6 @@ whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.hmrcCorrection.text                                  = Swm ychwanegol i’w dalu o ganlyniad i gywiriad gan CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.enquiryAmendment.text                                = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
-whatYouOwe.hmrcCorrection.text                                  = Swm ychwanegol i’w dalu o ganlyniad i gywiriad gan CThEF
 whatYouOwe.lateSubmissionPenalty.text                           = Cosb am gyflwyno’n hwyr
 whatYouOwe.firstLatePaymentPenalty.text                         = Cosb gyntaf am dalu’n hwyr
 whatYouOwe.secondLatePaymentPenalty.text                        = Ail gosb am dalu’n hwyr
