@@ -157,8 +157,15 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     defaultMTDITUser(Some(testUserTypeIndividual), businessAndPropertyAligned, request)
   }
 
+  def getIndividualUserTrigMig(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = {
+    defaultMTDITUser(Some(testUserTypeIndividual), businessAndPropertyAlignedTrigMig, request)
+  }
+
   def getAgentUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAligned, request)
+
+  def getAgentUserTrigMig(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAlignedTrigMig, request)
 
   def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel): MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeIndividual), incomeSources, request)
