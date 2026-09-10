@@ -40,6 +40,7 @@
 )
 
 @(viewModel: MoneyInYourAccountViewModel,
+        whatYouOweUrl: String,
         backUrl: String)(implicit request: Request[_],
         user: MtdItUser[_],
         messages: Messages)
@@ -55,7 +56,11 @@
     @h1(msg = messages("money-in-your-account.heading"))
 
     @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id = Some("credit-amount")) {
-        @messages("money-in-your-account.credit", viewModel.totalCredit.toCurrencyString)
+		@if(viewModel.dunningLock) {
+			@messages("money-in-your-account.credit-stand-over-order", viewModel.totalCredit.toCurrencyString)
+		} else {
+        	@messages("money-in-your-account.credit", viewModel.totalCredit.toCurrencyString)
+		}
     }
 
     @if(viewModel.totalCredit > 0) {
@@ -65,6 +70,8 @@
             @whereMoneyCameFromTable(viewModel)
         } else {}
 
+		@StandOverChargeContent()
+
         @ClaimRefundButton()
 
     } else {
@@ -72,6 +79,19 @@
     }
 }
 
+@StandOverChargeContent() = {
+	@if(viewModel.dunningLock) {
+		@h2(msg = messages("money-in-your-account.stand-over-charges.h2"), optId = Some("allocating-credit-heading"))
+		@p(id = Some("stand-over-charges-p1")) { @messages("money-in-your-account.stand-over-charges.p1") }
+		@p(id = Some("stand-over-charges-p2")) { @messages("money-in-your-account.stand-over-charges.p2") }
+		@p(id = Some("stand-over-charges-p3")) { @messages("money-in-your-account.stand-over-charges.p3") }
+		@p(id = Some("what-you-owe-p")) {
+			@messages("chargeSummary.whatYouOwe.textOne")
+			@link(whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText", id = Some("what-you-owe-link"))
+			@messages("chargeSummary.whatYouOwe.textTwo")
+		}
+	} else {}
+}
 
 @NoMoneyInAccountCreditExplanation(viewModel: MoneyInYourAccountViewModel) = {
     @p(classes = "govuk-body", id = Some("credit-explanation")) {

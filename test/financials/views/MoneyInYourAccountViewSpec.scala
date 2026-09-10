@@ -197,5 +197,26 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
 
       }
     }
+    "display correct content" when {
+      "a stand over charge is present" in {
+        val testModel = ANewCreditAndRefundModel()
+          .withAvailableCredit(5.0)
+          .withTotalCredit(5.0)
+          .withStandOverCharge(LocalDate.parse("2022-08-15"), 20.0)
+          .get()
+
+        Seq(true, false).foreach { isAgent =>
+          new TestSetup(
+            isAgent = isAgent,
+            creditAndRefundModel = testModel
+          ) {
+            document.selectById("credit-amount").text() shouldBe "Available credit: £5.00"
+
+            document.selectById("stand-over-charges-p1").text() shouldBe "You can leave the money in your account to pay tax due later."
+            document.selectById("stand-over-charges-p2").text() shouldBe "It will be used to pay for tax when it becomes due, including any suspended tax once it is no longer suspended. Overdue tax with interest will be paid first."
+          }
+        }
+      }
+    }
   }
 }
