@@ -99,7 +99,7 @@ class ChooseTaxYearsRangeController @Inject()(
         form => form.selection match {
           case Some(ChooseTaxYearsRangeForm.mtdOption) =>
             auditSubmission(labels, ChooseTaxYearsRangeForm.mtdOption)
-            Future.successful(Redirect(appConfig.homePageUrl(isAgent = false)))
+            Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.show()))
 
           case Some(ChooseTaxYearsRangeForm.legacyOption) =>
             auditSubmission(labels, ChooseTaxYearsRangeForm.legacyOption)
