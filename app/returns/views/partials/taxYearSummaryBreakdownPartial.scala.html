@@ -52,6 +52,8 @@
 @heading = @{
     if (isPrevious) {
         messages("tax-year-summary.previous-calculation")
+    } else if (isLatest) {
+        messages("tax-year-summary.latest-calculation")
     } else {
         messages("tax-year-summary.tax-calculation")
     }
