@@ -45,7 +45,8 @@ class WhereMoneyCameFromTableSpec extends TestSupport {
     firstPendingAmountRequested = None,
     secondPendingAmountRequested = None,
     creditRows = List(row),
-    checkRefundStatusLink = "/refund-status"
+    checkRefundStatusLink = "/refund-status",
+    dunningLock = false
   )
 
 

@@ -22,6 +22,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.models.admin.{CreditsRefundsRepay, NewHubContextRootEnabled}
 import common.services.AuditingService
 import common.views.html.errorPages.CustomNotFoundErrorView
+import financials.controllers.routes as financialsRoutes
 import financials.models.audit.ClaimARefundAuditModel
 import financials.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import financials.services.{CreditService, RepaymentService}
@@ -58,11 +59,12 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
-          backUrl = appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin)
+          backUrl = appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin),
+          financialsRoutes.WhatYouOweController.show(origin).url
         ) recover logAndRedirect
     }
 
-  private def handleRequest(backUrl: String)
+  private def handleRequest(backUrl: String, whatYouOweUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
@@ -70,7 +72,8 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
       case creditsModel: CreditsModel =>
         val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel, appConfig.repaymentsUrl)
         auditClaimARefund(creditsModel)
-        Ok(moneyInYourAccountView(viewModel, backUrl))
+        
+        Ok(moneyInYourAccountView(viewModel, whatYouOweUrl, backUrl))
     }
   }
 
@@ -78,7 +81,8 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent() async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = appConfig.homePageUrl(isAgent = true, mtdItUser.newHubContextRootEnabled)
+          backUrl = appConfig.homePageUrl(isAgent = true, mtdItUser.newHubContextRootEnabled),
+          financialsRoutes.WhatYouOweController.showAgent().url
         ) recover logAndRedirect
     }
   }
