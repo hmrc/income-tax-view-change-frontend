@@ -30,10 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching with Logging {
 
-  def selectActiveProperty(incomeSourceType: IncomeSourceType, filter: PropertyDetailsModel => Boolean)(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
+  private def selectActiveProperty(incomeSourceType: IncomeSourceType, filter: PropertyDetailsModel => Boolean)(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
 
-    val activeProperty: Seq[PropertyDetailsModel] = user.incomeSources.properties.filter(p => !p.isCeased && filter(p))
-
+    val activeProperty: Seq[PropertyDetailsModel] = user.incomeSources.properties.filter(p => !p.isCeased && !p.deleted.contains(true) && filter(p))
     activeProperty match {
       case property :: Nil =>
         Some(property)

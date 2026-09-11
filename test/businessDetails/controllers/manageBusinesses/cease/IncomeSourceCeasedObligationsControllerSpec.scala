@@ -120,6 +120,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
       incomeSourceType = Some("uk-property"),
       tradingStartDate = None,
       contextualTaxYear = None,
+      deleted = None,
       cessation = None,
       latencyDetails = None
     )

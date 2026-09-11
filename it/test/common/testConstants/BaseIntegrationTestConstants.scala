@@ -238,6 +238,7 @@ object BaseIntegrationTestConstants {
     propertyIncomeType,
     propertyTradingStartDate,
     None,
+    deleted = None,
     None,
   )
 
