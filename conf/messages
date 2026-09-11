@@ -2099,8 +2099,6 @@ whatYouOwe.pre-mtd-outstanding-charges                             = Any payment
 whatYouOwe.tableRow.na                                             = Not applicable
 whatYouOwe.total-row.label                                         = Total (not including accruing interest):
 whatYouOwe.revenueAmendment.label                                  = Extra amount to pay due to HMRC enquiry amendment
-<<<<<<< HEAD
-=======
 
 whatYouOwe.suspended-charges                                       = Tax owed that is currently not being collected
 whatYouOwe.suspended-charges-informalOnly.p1                       = This tax is suspended for review and HMRC will not collect it while it is suspended.
@@ -2112,7 +2110,6 @@ whatYouOwe.paying-suspended-tax.bullet1                            = your paymen
 whatYouOwe.paying-suspended-tax.bullet2                            = in some cases, we may hold the payment separately so it is not used for other tax
 whatYouOwe.paying-suspended-tax.p3                                 = If you make a payment, we’ll suggest you pay the total amount of suspended tax.
 whatYouOwe.paying-suspended-tax.p4                                 = You can pay this amount or enter a different amount.
->>>>>>> main
 
 
 
@@ -3726,7 +3723,6 @@ triggered-migration.check-active-businesses-confirm.error.required   = Select ye
 triggered-migration.checkComplete.greenBoxHeading.1                                     = Check complete
 triggered-migration.checkComplete.greenBoxHeading.2                                     = You have confirmed that HMRC records only list your active businesses
 triggered-migration.checkComplete.whatNext.heading                                      = What to do next
-<<<<<<< HEAD
 triggered-migration.checkComplete.whatNext.p1                                           = You now need to provide HMRC a quarterly update for each of your active sole trader and property income sources.
 triggered-migration.checkComplete.whatNext.p2                                           = To do this, you need to:
 triggered-migration.checkComplete.whatNext.ul.li1                                       = get software that works with Making Tax Digital for Income Tax
@@ -3746,7 +3742,6 @@ chooseTaxYearsRange.hint = The tax year runs from 6 April to 5 April
 chooseTaxYearsRange.option.mtd = {0} to {1} onwards
 chooseTaxYearsRange.option.sa = {0} to {1} and earlier
 chooseTaxYearsRange.error.empty = Select which tax years you want to view and manage
-=======
 triggered-migration.checkComplete.whatNext.p1                                           = We will use the information you have provided to update our records.
 triggered-migration.checkComplete.whatNext.p2                                           = Any updates, deadlines or actions relating to periods when your income sources were active will be shown in your HMRC online account.
 triggered-migration.checkComplete.whatNext.p3                                           = You can check whether there are any updates, deadlines or actions that apply to you.
@@ -3759,4 +3754,3 @@ triggered-migration.completeSteps.p2                                            
 triggered-migration.completeSteps.ul.li1                                                   = confirm your income sources
 triggered-migration.completeSteps.ul.li2                                                   = get compatible software
 triggered-migration.completeSteps.ul.li3                                                   = send your most recent quarterly update
->>>>>>> main

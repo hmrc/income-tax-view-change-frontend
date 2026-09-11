@@ -486,9 +486,9 @@ taxYears.dropdown.content.2                                    =
 
 ## Tax Years Page - Error ##
 taxYears.error.subheading                                      = Ni all yr wybodaeth am eich Ffurflenni Treth gael ei harddangos yma ar hyn o bryd
-taxYears.error.preLinkText                                     = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fynd i’ch
+taxYears.error.preLinkText                                     = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth {0} i {1}, mae angen i chi fynd i’ch
 taxYears.error.linkText                                        = cyfrif Hunanasesiad ar-lein blaenorol
-taxYears.error.agentPreLinkText                                = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fewngofnodi i’ch
+taxYears.error.agentPreLinkText                                = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth {0} i {1}, mae angen i chi fewngofnodi i’ch
 taxYears.error.agentPostLinkText                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Summary Page New ##
@@ -2085,8 +2085,6 @@ whatYouOwe.pre-mtd.body                                         = I wirio a oes 
 whatYouOwe.pre-mtd-link                                         = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.pre-mtd-outstanding-charges                          = Bydd unrhyw daliad a wneir yn cael ei ddefnyddio ar gyfer treth sydd heb eu talu ar gyfer blynyddoedd treth Hunanasesiad blaenorol yn gyntaf, ac ni fydd yn cael ei arddangos yma.
 whatYouOwe.revenueAmendment.label                               = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
-<<<<<<< HEAD
-=======
 
 whatYouOwe.suspended-charges                                    = Treth sy’n ddyledus ond nad yw’n cael ei chasglu ar hyn o bryd
 whatYouOwe.suspended-charges-informalOnly.p1                    = Mae’r dreth hon wedi’i gohirio ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
@@ -2098,7 +2096,6 @@ whatYouOwe.paying-suspended-tax.bullet1                         = gall eich tali
 whatYouOwe.paying-suspended-tax.bullet2                         = mewn rhai achosion, efallai y byddwn yn cadw’r taliad ar wahân fel na chaiff ei ddefnyddio ar gyfer treth arall
 whatYouOwe.paying-suspended-tax.p3                              = Os byddwch chi’n gwneud taliad, byddwn yn awgrymu eich bod yn talu cyfanswm y dreth sydd wedi’i gohirio.
 whatYouOwe.paying-suspended-tax.p4                              = Gallwch dalu’r swm hwn neu nodi swm gwahanol.
->>>>>>> main
 
 making-payment.heading                                          = Gwneud taliad
 making-payment.what-payment-goes-towards.heading                = Tuag at beth fydd eich taliad yn mynd
@@ -3707,7 +3704,6 @@ triggered-migration.check-active-businesses-confirm.error.required   = Dewiswch 
 triggered-migration.checkComplete.greenBoxHeading.1                                     = Gwiriad wedi’i gwblhau
 triggered-migration.checkComplete.greenBoxHeading.2                                     = Rydych wedi cadarnhau bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
 triggered-migration.checkComplete.whatNext.heading                                      = Yr hyn i’w wneud nesaf
-<<<<<<< HEAD
 triggered-migration.checkComplete.whatNext.p1                                           = Mae angen i chi roi diweddariad chwarterol i CThEF ar gyfer pob un o’ch ffynonellau incwm cyfredol o fod yn unig fasnachwr a’ch ffynonellau incwm cyfredol o eiddo.
 triggered-migration.checkComplete.whatNext.p2                                           = I wneud hyn, bydd angen i chi wneud y canlynol:
 triggered-migration.checkComplete.whatNext.ul.li1                                       = defnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
@@ -3727,7 +3723,6 @@ chooseTaxYearsRange.hint = Mae’r flwyddyn dreth yn rhedeg o 6 Ebrill i 5 Ebril
 chooseTaxYearsRange.option.mtd = {0} i {1} ymlaen
 chooseTaxYearsRange.option.sa = {0} i {1} a chyn hynny
 chooseTaxYearsRange.error.empty = Dewiswch pa flynyddoedd treth rydych am eu gweld a’u rheoli
-=======
 triggered-migration.checkComplete.whatNext.p1                                           = Byddwn yn defnyddio’r wybodaeth rydych wedi ei darparu er mwyn diweddaru ein cofnodion.
 triggered-migration.checkComplete.whatNext.p2                                           = Bydd unrhyw ddiweddariadau, dyddiadau cau, neu gamau gweithredu sydd mewn perthynas â chyfnodau pan oedd eich ffynonellau incwm yn weithredol yn cael eu dangos yn eich cyfrif ar-lein CThEF.
 triggered-migration.checkComplete.whatNext.p3                                           = Gallwch wirio a oes unrhyw ddiweddariadau, dyddiadau cau, neu gamau gweithredu sy’n berthnasol i chi.
@@ -3740,4 +3735,3 @@ triggered-migration.completeSteps.p2                                            
 triggered-migration.completeSteps.ul.li1                                                   = cadarnhau eich ffynonellau incwm
 triggered-migration.completeSteps.ul.li2                                                   = cael meddalwedd sy’n cydweddu
 triggered-migration.completeSteps.ul.li3                                                   = anfon eich diweddariad chwarterol mwyaf diweddar
->>>>>>> main

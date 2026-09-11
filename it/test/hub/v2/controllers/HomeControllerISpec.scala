@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-<<<<<<< HEAD:it/test/hub/controllers/HomeControllerISpec.scala
-package hub.controllers
-=======
 package hub.v2.controllers
 
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
->>>>>>> main:it/test/hub/v2/controllers/HomeControllerISpec.scala
 import common.auth.MtdItUser
 import common.enums.MTDIndividual
 import common.helpers.GetInsourceDetailsStub
@@ -60,7 +56,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
   val path = "/"
   "GET /" when {
     "an authenticated user" should {
-<<<<<<< HEAD:it/test/hub/controllers/HomeControllerISpec.scala
       "render the choose tax years page" in {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
         FeatureSwitchStub.stubGetFeatureSwitches()
@@ -75,7 +70,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
         )
       }
       testAuthFailures(path, MTDIndividual)
-=======
       "render the home page" which {
         "retrieving the obligations was unsuccessful" in {
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
@@ -111,7 +105,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
           )
         }
       }
->>>>>>> main:it/test/hub/v2/controllers/HomeControllerISpec.scala
     }
   }
 }

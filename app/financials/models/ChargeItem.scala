@@ -49,21 +49,13 @@ case class ChargeItem(
                        paymentLot: Option[String] = None,
                        creationDate: Option[LocalDate] = None,
                        chargeReference: Option[String],
-<<<<<<< HEAD
-=======
                        chargeClassification: Option[String] = None,
->>>>>>> main
                        isRevenueAmendment: Boolean = false
                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_.isBefore(dateService.getCurrentDate))
-
-<<<<<<< HEAD
-  def getMessageKey(): String = {
-=======
   def getMessageKey: String = {
->>>>>>> main
     if (isRevenueAmendment) {
       "revenueAmendment.label"
     } else {
@@ -314,12 +306,8 @@ object ChargeItem {
       paymentLotItem = documentDetail.paymentLotItem,
       paymentLot = documentDetail.paymentLot,
       chargeReference = financialDetail.chargeReference,
-<<<<<<< HEAD
-      isRevenueAmendment = documentDetail.isRevenueAmendment
-=======
       chargeClassification = documentDetail.chargeClassification,
       isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification)
->>>>>>> main
     )
   }
 

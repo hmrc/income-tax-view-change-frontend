@@ -8,14 +8,6 @@ GET         /assets/*file                                                 contro
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
 #Home Controller
-<<<<<<< HEAD
-GET         /                                                            hub.controllers.ChooseTaxYearsRangeController.show()
-GET         /income-tax                                                   hub.controllers.HomeController.show(origin: Option[String] ?= None)
-GET         /agents/client-income-tax                                     hub.controllers.HomeController.showAgent()
-GET         /agents                                                       hub.controllers.HomeController.showAgent()
-GET         /your-tasks                                                   hub.controllers.newHomePage.HandleYourTasksController.show()
-GET         /agents/your-tasks                                            hub.controllers.newHomePage.HandleYourTasksController.showAgent()
-=======
 GET         /                                                             hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/client-income-tax                                     hub.v1.controllers.HomeController.showAgent()
