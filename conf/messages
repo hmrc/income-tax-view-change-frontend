@@ -3163,7 +3163,6 @@ income.source.added.few.minutes.overdue.updates                                 
 income.source.added.scenario.three.account.updated.p.a                                      = Even if they are not displayed right away on the
 income.source.added.scenario.three.account.updated.p.link                                   = submission deadlines
 income.source.added.scenario.three.account.updated.p.b                                      = page, your account has been updated.
-TODO = once Ayo has clarified change these:
 income.source.added.scenario.three.view.reporting.obligations.prefix                        = Quarterly updates are now cumulative. This means your latest outstanding update may include information from earlier missed periods.
 income.source.added.scenario.three.view.reporting.obligations.p.a                           = Depending on your circumstances, you may be able to
 income.source.added.scenario.three.view.reporting.obligations.link                          = view and change your reporting obligations

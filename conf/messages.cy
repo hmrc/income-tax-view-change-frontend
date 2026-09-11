@@ -3145,11 +3145,10 @@ income.source.added.few.minutes.overdue.updates                                 
 income.source.added.scenario.three.account.updated.p.a                                      = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
 income.source.added.scenario.three.account.updated.p.link                                   = dyddiadau cau ar gyfer cyflwyno
 income.source.added.scenario.three.account.updated.p.b                                      = mae’ch cyfrif wedi’i ddiweddaru.
-TODO = once Ayo has clarified change these:
-income.source.added.scenario.three.view.reporting.obligations.prefix                        = Quarterly updates are now cumulative. This means your latest outstanding update may include information from earlier missed periods.
-income.source.added.scenario.three.view.reporting.obligations.p.a                           = Depending on your circumstances, you may be able to
-income.source.added.scenario.three.view.reporting.obligations.link                          = view and change your reporting obligations
-income.source.added.scenario.three.view.reporting.obligations.p.b                           = for all your businesses.
+income.source.added.scenario.three.view.reporting.obligations.prefix                        = Mae diweddariadau chwarterol bellach yn gronnol. Mae hyn yn golygu efallai bod eich diweddariad diweddaraf sy’n hwyr yn cynnwys gwybodaeth o gyfnodau cynharach a fethwyd.
+income.source.added.scenario.three.view.reporting.obligations.p.a                           = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+income.source.added.scenario.three.view.reporting.obligations.link                          = bwrw golwg dros a newid eich ymrwymiadau o ran adrodd
+income.source.added.scenario.three.view.reporting.obligations.p.b                           = ar gyfer eich holl fusnesau.
 
 income.source.added.scenario.three.view.businesses.link                                     = Bwrw golwg dros eich busnesau
 income.source.added.scenario.three.view.businesses.p                                        = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
