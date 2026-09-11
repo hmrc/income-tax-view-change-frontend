@@ -17,8 +17,7 @@
 package obligations.models.audit
 
 import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
-import common.enums.AuditType.ViewObligationsResponse
-import common.enums.TransactionName
+import common.implicits.Json.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import shared.testConstants.NextUpdatesTestConstants.*
 import play.api.libs.json.Json
@@ -28,30 +27,26 @@ import shared.models.audit.NextUpdatesResponseAuditModel
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
-  val transactionName: String = TransactionName.ViewObligationsResponse
-  val auditEvent: String = ViewObligationsResponse
+  val auditType = "ViewObligationsResponse"
 
   "The NextUpdatesResponseAuditModel" when {
-
-    "Supplied with Multiple Obligations" should {
-
-      val deadlines = List(openObligation, openObligation, overdueObligation)
-      val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
+    val multipleDeadlines = List(openObligation, openObligation, overdueObligation, quarterlyObligation2016)
+    val modelWithMultipleDeadlines = 
+      NextUpdatesResponseAuditModel(
         testMtdItAgentUser,
         testSelfEmploymentId,
-        deadlines
+        multipleDeadlines
       )
 
-      s"Have the correct transaction name of '$transactionName'" in {
-        testNextUpdatesResponseAuditModel.transactionName shouldBe transactionName
+    "constructed" should {
+      s"have the correct audit type of '$auditType'" in {
+        modelWithMultipleDeadlines.auditType shouldBe auditType
       }
+    }
 
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testNextUpdatesResponseAuditModel.auditType shouldBe auditEvent
-      }
-
+    "Supplied with Multiple Obligations" should {
       "Have the correct details for the audit event" in {
-        assertJsonEquals(testNextUpdatesResponseAuditModel.detail, Json.obj(
+        modelWithMultipleDeadlines.toJson shouldEqual Json.obj(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
@@ -80,30 +75,28 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
               "dueDate" -> "2017-10-30",
               "obligationType" -> "Quarterly",
               "periodKey" -> "#002"
+            ),
+            Json.obj(
+              "startDate" -> "2016-05-01",
+              "endDate" -> "2016-07-30",
+              "dueDate" -> "2016-07-30",
+              "obligationType" -> "Quarterly",
+              "dateReceived" -> "2016-07-30",
+              "periodKey" -> "#001"
             ))
           )
-        )
       }
     }
 
     "Supplied with a Single Obligation" should {
-
-      val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
+      val modelWithOneDeadline = NextUpdatesResponseAuditModel(
         testMtdItAgentUser,
         testSelfEmploymentId,
         List(openObligation)
       )
 
-      s"Have the correct transaction name of '$transactionName'" in {
-        testNextUpdatesResponseAuditModel.transactionName shouldBe transactionName
-      }
-
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testNextUpdatesResponseAuditModel.auditType shouldBe auditEvent
-      }
-
       "Have the correct details for the audit event" in {
-        assertJsonEquals(testNextUpdatesResponseAuditModel.detail, Json.obj(
+        modelWithOneDeadline.toJson shouldEqual Json.obj(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
@@ -119,34 +112,26 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
               "obligationType" -> "Quarterly",
               "periodKey" -> "#003"
             )
-          ))
+          )
         )
       }
     }
 
     "Supplied with no Obligations and optional fields" should {
 
-      val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
+      val modelWithNoDeadlines = NextUpdatesResponseAuditModel(
         getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil, "1")),
         testSelfEmploymentId,
-        List()
+        Nil
       )
 
-      s"Have the correct transaction name of '$transactionName'" in {
-        testNextUpdatesResponseAuditModel.transactionName shouldBe transactionName
-      }
-
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testNextUpdatesResponseAuditModel.auditType shouldBe auditEvent
-      }
-
       "Have the correct details for the audit event" in {
-        assertJsonEquals(testNextUpdatesResponseAuditModel.detail, Json.obj(
+        modelWithNoDeadlines.toJson shouldEqual Json.obj(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
           "reportDeadlines" -> Json.arr()
-        ))
+        )
       }
     }
   }

@@ -17,6 +17,7 @@
 package views.components
 
 import common.config.featureswitch.FeatureSwitching
+import common.models.liabilitycalculation.CalculationRevisionType
 import common.testUtils.ViewSpec
 import returns.testConstants.ChargeConstants
 import returns.models.liabilitycalculation.viewmodels.CalculationSummary.localDate
@@ -34,7 +35,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
 
   val mockTestYear = 2025
 
-  def buildCalculationSummary(crystallised: Boolean, unattendedCalc: Boolean = false, isAmended: Boolean = false): CalculationSummary =
+  def buildCalculationSummary(crystallised: Boolean, unattendedCalc: Boolean = false, calculationRevisionType: Option[CalculationRevisionType] = None): CalculationSummary =
     CalculationSummary(
       timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
       income = 1,
@@ -49,7 +50,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
       forecastTotalTaxableIncome = Some(8300),
       periodFrom = Some(LocalDate.of(mockTestYear - 1, 1, 1)),
       periodTo = Some(LocalDate.of(mockTestYear, 1, 1)),
-      isAmended = isAmended
+      calculationRevisionType = calculationRevisionType
     )
 
   val taxCalcCannotBeDisplayedH3Id = "your-tax-calculation-cannot-be-displayed-heading"
@@ -78,12 +79,13 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             isLatest = true,
             isPrevious = true,
             pfaEnabled = true,
-            isAmended = true,
+            calculationRevisionType = Some(CalculationRevisionType.Amendment),
             taxYearViewScenarios = LegacyAndCesa,
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink
+            contactHmrcLink = contactHmrcLink,
+            financialsFrontendEnabled = true
           )
 
         val doc = Jsoup.parse(partial.body)
@@ -113,12 +115,13 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             isLatest = true,
             isPrevious = true,
             pfaEnabled = true,
-            isAmended = true,
+            calculationRevisionType = Some(CalculationRevisionType.Amendment),
             taxYearViewScenarios = IrsaEnrolementHandedOff,
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink
+            contactHmrcLink = contactHmrcLink,
+            financialsFrontendEnabled = true
           )
 
         val doc = Jsoup.parse(partial.body)
@@ -148,12 +151,13 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             isLatest = true,
             isPrevious = true,
             pfaEnabled = true,
-            isAmended = true,
+            calculationRevisionType = Some(CalculationRevisionType.Amendment),
             taxYearViewScenarios = NoIrsaAEnrolement,
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink
+            contactHmrcLink = contactHmrcLink,
+            financialsFrontendEnabled = true
           )
 
         val doc = Jsoup.parse(partial.body)
@@ -184,12 +188,13 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             isLatest = true,
             isPrevious = true,
             pfaEnabled = true,
-            isAmended = true,
+            calculationRevisionType = Some(CalculationRevisionType.Amendment),
             taxYearViewScenarios = AgentCannotViewTaxCalc,
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink
+            contactHmrcLink = contactHmrcLink,
+            financialsFrontendEnabled = true
           )
 
         val doc = Jsoup.parse(partial.body)
@@ -219,12 +224,13 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             isLatest = true,
             isPrevious = true,
             pfaEnabled = true,
-            isAmended = true,
+            calculationRevisionType = Some(CalculationRevisionType.Amendment),
             taxYearViewScenarios = MtdSoftwareShowCalc,
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink
+            contactHmrcLink = contactHmrcLink,
+            financialsFrontendEnabled = true
           )
 
         val doc = Jsoup.parse(partial.body)

@@ -80,9 +80,10 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit =
+  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit = {
     when(mockSessionService.getMongo(any())(any(), any()))
       .thenReturn(Future.successful(result))
+  }
 
   def setupMockSetMongoData(result: Boolean): Unit = {
     when(

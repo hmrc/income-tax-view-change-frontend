@@ -22,7 +22,7 @@ import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import play.api.Logger
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -52,8 +52,8 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                         )(implicit val appConfig: FrontendAppConfig,
                                                          val dateService: DateService,
                                                          mcc: MessagesControllerComponents,
-                                                         val ec: ExecutionContext
-                                                        ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching with MtdConstants {
+                                                         val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching with MtdConstants with Logging{
 
   private lazy val submitUrl: (Boolean, Boolean, IncomeSourceType) => Call = (isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType) =>
     routes.IncomeSourceReportingFrequencyController.submit(isAgent, isChange, incomeSourceType)
@@ -78,7 +78,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
 )
                                                   (implicit user: MtdItUser[_], @unused hc: HeaderCarrier): Future[Result] = {
     updateIncomeSourceAsAdded(sessionData).flatMap {
-      case false => Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+      case false => logger.error(s"${if (isAgent) "Agent - " else ""}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {
           incomeSourceReportingFrequencyService.errorHandler(isAgent).showInternalServerError()
@@ -130,9 +130,8 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
             )
 
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"Could not find an incomeSourceId in session data for $incomeSourceType")
+          val agentPrefix = if (isAgent) "Agent - " else ""
+          logger.error(agentPrefix + s"Could not find an incomeSourceId in session data for $incomeSourceType")
 
           Future.successful {
             incomeSourceReportingFrequencyService.errorHandler(isAgent).showInternalServerError()

@@ -78,6 +78,10 @@ class CheckActiveBusinessesConfirmViewSpec extends TestSupport{
           pageDocument.select(".govuk-error-summary__title").text() shouldBe CheckActiveBusinessConfirmMessages.errorSummaryHeading
           pageDocument.select(".govuk-error-summary__list").text() should include(CheckActiveBusinessConfirmMessages.errorMessage)
           pageDocument.select(".govuk-error-message").text() should include(CheckActiveBusinessConfirmMessages.errorMessage)
+
+          val errorLinkHref: String = pageDocument.select(".govuk-error-summary__list a").attr("href")
+          errorLinkHref shouldBe "#yes-response"
+          pageDocument.getElementById(errorLinkHref.stripPrefix("#")) should not be null
         }
     }
   }

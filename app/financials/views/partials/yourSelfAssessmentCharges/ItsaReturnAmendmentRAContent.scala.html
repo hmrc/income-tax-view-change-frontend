@@ -1,0 +1,50 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.WarningText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import financials.views.helpers.ChargeNameLangHelper
+@import common.config.FrontendAppConfig
+@import financials.models.chargeSummary.ChargeSummaryViewModel
+@import common.models.incomeSourceDetails.TaxYear
+
+@this(
+        p: p,
+        link: link,
+        frontendAppConfig: FrontendAppConfig,
+        govUkWarningText: GovukWarningText
+)
+
+@(viewModel: ChargeSummaryViewModel)(implicit request: Request[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+}
+
+@p(id = Some("itsaEnquiryAmendment.p1")){
+    @getMessage(s"enquiryAmendment.p1")
+    @link(
+        link = viewModel.taxYearSummaryUrl(viewModel.chargeItem.taxYear.endYear),
+        messageKey = getMessage(s"enquiryAmendment.link", viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString),
+        outerMessage = getMessage(s"enquiryAmendment.p2"),
+        id = Some("itsaEnquiryAmendment.link")
+    )
+
+}
+
+@govUkWarningText(WarningText(content = Text(getMessage("itsaReturnAmendment.warning"))))

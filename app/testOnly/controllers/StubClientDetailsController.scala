@@ -16,8 +16,9 @@
 
 package testOnly.controllers
 
+import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.FrontendAppConfig
-import play.api.Logger
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,12 +31,13 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails,
+class StubClientDetailsController @Inject()(featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
+                                            stubClientDetails: StubClientDetails,
                                             matchingStubConnector: MatchingStubConnector)
                                            (implicit mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig,
                                             ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport with Logging {
 
   def form: Form[StubClientDetailsModel] = StubClientDetailsForm.clientDetailsForm.fill(
     StubClientDetailsModel(
@@ -45,32 +47,41 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
     )
   )
 
-  def show: Action[AnyContent] = Action { implicit req =>
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit req =>
     Ok(stubClientDetails(
       clientDetailsForm = form,
-      postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
+      postAction = testOnly.controllers.routes.StubClientDetailsController.submit(isNewContextRoot)
     ))
   }
 
-  def submitWithParams(nino: String, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)) map { response =>
-      Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
-      Redirect(hub.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr))
-    }
-  }
-
-  def submit: Action[AnyContent] = Action.async { implicit request =>
-    StubClientDetailsForm.clientDetailsForm.bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(stubClientDetails(
-        clientDetailsForm = hasErrors,
-        postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
-      ))), { data =>
-        matchingStubConnector.stubClient(data) map { response =>
-          Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
-          Redirect(hub.controllers.agent.routes.EnterClientsUTRController.show())
-        }
+  def submitWithParams(nino: String, utr: String, isNewContextRoot: Boolean): Action[AnyContent] =
+    featureSwitchRetrievalAction.async { implicit request =>
+      matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)).map { _ =>
+        val redirectUrl = if (request.newHubContextRootEnabled)
+          hub.v2.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr)
+        else
+          hub.v1.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr)
+        Redirect(redirectUrl)
       }
-    )
-  }
+    }
+
+  def submit(isNewContextRoot: Boolean): Action[AnyContent] =
+    featureSwitchRetrievalAction.async { implicit request =>
+      StubClientDetailsForm.clientDetailsForm.bindFromRequest().fold(
+        hasErrors => Future.successful(BadRequest(stubClientDetails(
+          clientDetailsForm = hasErrors,
+          postAction = testOnly.controllers.routes.StubClientDetailsController.submit(isNewContextRoot)
+        ))), { data =>
+          matchingStubConnector.stubClient(data).map { response =>
+            logger.info(s"[submit] matching stub, status: ${response.status}, body: ${response.body}")
+            val redirectUrl = if (request.newHubContextRootEnabled)
+              hub.v2.controllers.agent.routes.EnterClientsUTRController.show()
+            else
+              hub.v1.controllers.agent.routes.EnterClientsUTRController.show()
+            Redirect(redirectUrl)
+          }
+        }
+      )
+    }
 
 }

@@ -26,13 +26,13 @@ object NextUpdatesStub { // scalastyle:off number.of.methods
   //NextUpdates Stubs
   //=====================
   def nextUpdatesUrl(nino: String): String = s"/income-tax-obligations/$nino/open-obligations"
-  def nextUpdatesFulfilledUrl(nino: String): String = s"/income-tax-obligations/$nino/fulfilled-obligations"
+  def nextUpdatesFulfilledUrl(nino: String, fromDate: String, toDate: String): String = s"/income-tax-obligations/$nino/fulfilled-obligations/from/$fromDate/to/$toDate"
 
   def stubGetNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
-  def stubGetFulfilledNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
-    WiremockHelper.stubGet(nextUpdatesFulfilledUrl(nino), Status.OK, Json.toJson(deadlines).toString())
+  def stubGetFulfilledNextUpdates(nino: String, deadlines: ObligationsModel, fromDate: String, toDate: String): Unit =
+    WiremockHelper.stubGet(nextUpdatesFulfilledUrl(nino, fromDate, toDate), Status.OK, Json.toJson(deadlines).toString())
 
   def stubGetNextUpdatesError(nino: String): Unit =
     WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")

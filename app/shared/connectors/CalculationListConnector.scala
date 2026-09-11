@@ -19,7 +19,7 @@ package shared.connectors
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import common.models.core.Nino
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import shared.models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CalculationListConnector @Inject()(val http: HttpClientV2,
                                          val appConfig: FrontendAppConfig
-                                        )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                        )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def getCalculationListUrl(nino: String, taxYearRange: String): String = {
     s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
@@ -56,7 +56,7 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
             invalid => {
               (response.json \ "calculations").validate[Seq[CalculationListModel]].asOpt.flatMap(_.headOption)
                 .getOrElse {
-                Logger("application").error("" +
+                logger.error("" +
                   s"Json validation error parsing calculation list response, error $invalid")
                 CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
               }
@@ -65,9 +65,9 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getCalculationList] Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getCalculationList] Response status: ${response.status}, body: ${response.body}")
           }
           CalculationListErrorModel(response.status, response.body)
       }

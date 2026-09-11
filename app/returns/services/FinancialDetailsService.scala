@@ -22,7 +22,7 @@ import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import returns.models.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.NOT_FOUND
 import returns.connectors.GetFinancialDetailsConnector
 import shared.connectors.CalculationListConnector
@@ -36,7 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class FinancialDetailsService @Inject()(val financialDetailsConnector: GetFinancialDetailsConnector,
                                         val calculationListConnector: CalculationListConnector,
                                         implicit val dateService: DateServiceInterface)
-                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
+                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) 
+  extends Logging {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
@@ -99,10 +100,10 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: GetFinanc
       calculationListConnector.getCalculationList(nino, taxYear.endYear.toString, user.mtditid).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
         case err: CalculationListErrorModel if err.code == 404 =>
-          Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")
+          logger.info("User had no calculations for this tax year, therefore is non-crystallised")
           Future.successful(false)
         case err: CalculationListErrorModel =>
-          Logger("application").error("getCalculationList returned a non-valid response")
+          logger.error("getCalculationList returned a non-valid response")
           Future.failed(new InternalServerException(err.message))
       }.map(!_)
     }

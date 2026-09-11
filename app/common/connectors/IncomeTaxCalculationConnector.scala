@@ -19,7 +19,7 @@ package common.connectors
 import common.config.FrontendAppConfig
 import common.enums.TaxYearSummary.CalculationRecord
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: FrontendAppConfig) extends RawResponseReads {
+class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: FrontendAppConfig) extends RawResponseReads with Logging {
 
   val baseUrl: String = config.incomeTaxCalculationService
 
@@ -54,17 +54,17 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: Fronte
         case OK =>
           response.json.validate[LiabilityCalculationResponse].fold(
             invalid => {
-              Logger("application").error(
-                s"Json validation error parsing calculation response, error $invalid")
+              logger.error(
+                s"[getCalculationResponse] Json validation error parsing calculation response, error $invalid")
               LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"Response status: ${response.status},body: ${response.body}")
+            logger.error(s"[getCalculationResponse] Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getCalculationResponse] Response status: ${response.status}, body: ${response.body}")
           }
           LiabilityCalculationError(response.status, response.body)
       }
@@ -81,19 +81,19 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: Fronte
         case OK =>
           response.json.validate[LiabilityCalculationResponse].fold(
             invalid => {
-              Logger("application").error(
-                s"Json validation error parsing calculation response, error $invalid")
+              logger.error(
+                s"[getCalculationResponseByCalcId] Json validation error parsing calculation response, error $invalid")
               LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(
-              s"Response status: ${response.status},body: ${response.body}")
+            logger.error(
+              s"[getCalculationResponseByCalcId] Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(
-              s"Response status: ${response.status}, body: ${response.body}")
+            logger.warn(
+              s"[getCalculationResponseByCalcId] Response status: ${response.status}, body: ${response.body}")
           }
           LiabilityCalculationError(response.status, response.body)
       }

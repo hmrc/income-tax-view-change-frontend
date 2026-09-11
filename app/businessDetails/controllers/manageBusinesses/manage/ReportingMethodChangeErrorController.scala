@@ -23,9 +23,9 @@ import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.IncomeSourcesUtils
 import businessDetails.core.IncomeSourceId.mkIncomeSourceId
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.manage.ReportingMethodChangeErrorView
 import common.auth.{AuthActions, MtdItUser}
@@ -45,7 +45,7 @@ class ReportingMethodChangeErrorController @Inject()(val authActions: AuthAction
                                                     (implicit val ec: ExecutionContext,
                                                      val mcc: MessagesControllerComponents,
                                                      val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with IncomeSourcesUtils {
+  with I18nSupport with IncomeSourcesUtils with Logging {
 
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType
@@ -59,7 +59,7 @@ class ReportingMethodChangeErrorController @Inject()(val authActions: AuthAction
       else handleShowRequest(None, incomeSourceType, isAgent)
     }.recover {
       case ex =>
-        Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"[show] ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
     }
   }
@@ -80,8 +80,7 @@ class ReportingMethodChangeErrorController @Inject()(val authActions: AuthAction
             )
           )
         case None =>
-          Logger("error").info("" +
-            s"could not find incomeSourceId for $incomeSourceType")
+          logger.info(s"could not find incomeSourceId for $incomeSourceType")
           showInternalServerError(isAgent)
       }
     )

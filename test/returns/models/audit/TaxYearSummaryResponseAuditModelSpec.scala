@@ -57,7 +57,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     totalTaxableIncome = 198500,
     forecastIncome = forecastIncome,
     forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
-    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
+    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions,
+    calculationRevisionType = None
   )
 
   def unattendedCalcSummary(forecastIncome: Option[Int] = None,
@@ -72,7 +73,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     totalTaxableIncome = 198500,
     forecastIncome = forecastIncome,
     forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
-    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
+    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions,
+    calculationRevisionType = None
   )
 
   def payments(hasDunningLock: Boolean, codedOutStatusType: Option[CodedOutStatusType], hasInterest: Boolean): List[ChargeItem] = {
@@ -307,7 +309,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
         ), charges = payments(paymentHasADunningLock, codedOutStatusType, hasInterest).map(TaxYearSummaryChargeItem.fromChargeItem),
         obligations = updates, ctaViewModel = emptyCTAViewModel, LPP2Url = "", pfaEnabled = false,
-        previousCalculationSummary = None, financialsFrontendEnabled = false
+        previousCalculationSummary = None, financialsFrontendEnabled = false, hideUnknownBusinessName = false
         ),
       messages
     )
@@ -329,7 +331,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ), charges = payments(paymentHasADunningLock, codedOutStatusType, hasInterest).map(TaxYearSummaryChargeItem.fromChargeItem(_)),
         obligations = updates, showForecastData = true, ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-        pfaEnabled = false, previousCalculationSummary = None, financialsFrontendEnabled = false
+        pfaEnabled = false, previousCalculationSummary = None, financialsFrontendEnabled = false, hideUnknownBusinessName = false
       )
     )
 

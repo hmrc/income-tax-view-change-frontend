@@ -1,0 +1,88 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.common.implicits.ImplicitDateFormatterImpl
+@import _root_.shared.implicits.ImplicitCurrencyFormatter._
+@import common.auth.MtdItUser
+@import financials.models.WhatYouOweViewModel
+@import common.services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import financials.views.html.partials.whatYouOwe._
+@import _root_.shared.implicits.HtmlFormatter.NbspString
+@import common.viewUtils.ExternalUrlHelper
+@import common.config.FrontendAppConfig
+
+@this(
+        appConfig: FrontendAppConfig,
+        link: link,
+        p: p,
+        saNoteParagraph: SaNoteParagraph,
+        saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        availableCreditInAccount: AvailableCreditInAccount,
+)
+@(
+        viewModel: WhatYouOweViewModel,
+        origin: Option[String] = None,
+        isSelfServeTimeToPayEnabled: Boolean
+)(
+        implicit request: Request[_],
+        user: MtdItUser[_],
+        messages: Messages,
+        dateService: DateServiceInterface
+)
+
+@import implicitDateFormatter.longDate
+
+@if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
+    @saPaymentsPreMTDParagraph(utr = viewModel.utr,
+        claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+        adjustPoaUrl = viewModel.adjustPoaUrl,
+        isAgent = user.isAgent)
+
+    @if(viewModel.creditAndRefundEnabled) {
+        @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
+            @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
+        }
+    }
+} else {
+    @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.map { taxYear =>
+        @p(id = Some("adjust-poa-content")) {
+            @link(
+                link = viewModel.adjustPoaUrl,
+                messageKey = getMessage("sa-link-1-body-3", taxYear.startYear.toString, taxYear.endYear.toString),
+                id = Some("adjust-poa-link"),
+                rel = Some("noreferrer noopener")
+            )
+        }
+    }
+
+    @if(viewModel.creditAndRefundEnabled) {
+        @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
+            @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
+        }
+    }
+
+    @saNoteParagraph(utr = viewModel.utr,
+        budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL,
+        isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0,
+        isSelfServeTimeToPayEnabled,
+        viewModel = viewModel)
+}

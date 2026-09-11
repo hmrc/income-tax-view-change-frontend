@@ -16,20 +16,21 @@
 
 package common.controllers
 
-import common.config.FrontendAppConfig
-import common.testUtils.TestSupport
+import common.mocks.auth.MockAuthActions
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*
 
 import java.net.URLEncoder
 
-class SignInControllerSpec extends TestSupport {
+class SignInControllerSpec extends MockAuthActions {
 
-  object TestSignInController extends SignInController(
-    app.injector.instanceOf[FrontendAppConfig])(app.injector.instanceOf[MessagesControllerComponents])
+  override lazy val app: Application = applicationBuilderWithAuthBindings.build()
+
+  val TestSignInController = app.injector.instanceOf[SignInController]
   
   "navigating to SignIn page" should {
+    setupMockFeatureSwitches()
     lazy val result = TestSignInController.signIn(fakeRequestNoSession)
 
     "return OK (303)" in {
@@ -37,7 +38,7 @@ class SignInControllerSpec extends TestSupport {
     }
 
     "Redirect to GG Sign In on Company Auth Frontend" in {
-      val redirectUrl = URLEncoder.encode("http://localhost:9081/report-quarterly/income-and-expenses/view/income-tax", "UTF-8")
+      val redirectUrl = URLEncoder.encode(appConfig.individualHomeUrl(newHubContextRootEnabled), "UTF-8")
       redirectLocation(result) shouldBe Some(
         appConfig.ggSignInUrl + "?continue_url=" + redirectUrl + "&origin=" + appConfig.appName
       )

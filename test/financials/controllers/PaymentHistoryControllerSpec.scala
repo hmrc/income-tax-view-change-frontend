@@ -88,11 +88,6 @@ class PaymentHistoryControllerSpec extends MockAuthActions
               status(result) shouldBe Status.OK
               result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
 
-              val htmlContent = contentAsString(result)
-
-              val document = Jsoup.parse(htmlContent)
-
-              println("Document1: " + document)
             }
             "the user has charge from one year cutover credit tied to that charge from the next year" in {
               setupMockSuccess(mtdUserRole)

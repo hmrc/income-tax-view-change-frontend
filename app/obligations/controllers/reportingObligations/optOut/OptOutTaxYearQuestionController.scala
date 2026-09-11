@@ -27,7 +27,7 @@ import obligations.forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import obligations.services.reportingObligations.optOut.{OptOutService, OptOutSubmissionService}
 import obligations.utils.reportingObligations.JourneyCheckerOptOut
 import obligations.views.html.reportingObligations.optOut.OptOutTaxYearQuestionView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -46,7 +46,7 @@ class OptOutTaxYearQuestionController @Inject()(
                                                )(implicit val appConfig: FrontendAppConfig,
                                                  val mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with JourneyCheckerOptOut {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with JourneyCheckerOptOut with Logging {
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
@@ -106,7 +106,7 @@ class OptOutTaxYearQuestionController @Inject()(
       case Some(OptOutTaxYearQuestionForm.responseNo) =>
         Future(Redirect(reportingObligationsRedirectUrl(isAgent)))
       case _ =>
-        Logger("application").error("[OptOutTaxYearQuestionController.submit] Invalid form response")
+        logger.error("[handleValidForm] Invalid form response")
         Future(errorHandler(isAgent).showInternalServerError())
     }
   }
@@ -132,7 +132,7 @@ class OptOutTaxYearQuestionController @Inject()(
                 handleValidForm(form, isAgent, taxYear, viewModel.redirectToConfirmUpdatesPage)
             )
           case None =>
-            Logger("application").warn(s"[OptOutTaxYearQuestionController.submit] Invalid tax year provided: $taxYear, redirecting to Reporting Frequency Page")
+            logger.warn(s"Invalid tax year provided: $taxYear, redirecting to Reporting Frequency Page")
             Future(Redirect(reportingObligationsRedirectUrl(isAgent)))
         }
       }

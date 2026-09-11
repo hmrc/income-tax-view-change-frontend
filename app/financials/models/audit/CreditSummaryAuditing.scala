@@ -28,7 +28,7 @@ import scala.language.implicitConversions
 
 object CreditSummaryAuditing {
 
-  case class CreditSummaryDetails(date: String, description: String, status: String, amount: String)
+  case class CreditSummaryDetails(date: String, description: String, status: String, amount: BigDecimal)
 
   private def toStatus(credit: CreditDetailModel): String = credit.charge.getChargePaidStatus match {
     case "paid" => "Fully allocated"
@@ -46,7 +46,8 @@ object CreditSummaryAuditing {
       date = credit.date.toString,
       description = toDescription(credit.creditType)(messages),
       status = toStatus(credit),
-      amount = credit.charge.originalAmount.abs.toString())
+      amount = credit.charge.originalAmount.abs
+    )
   }
 
   implicit def toCreditSummaryDetailsSeq(charge: Seq[CreditDetailModel])
@@ -58,7 +59,7 @@ object CreditSummaryAuditing {
                                  userType: String,
                                  credId: String,
                                  mtdRef: String,
-                                 creditOnAccount: String,
+                                 creditOnAccount: BigDecimal,
                                  creditDetails: Seq[CreditSummaryDetails]) extends ExtendedAuditModel {
 
     override val transactionName: String = CreditsSummary

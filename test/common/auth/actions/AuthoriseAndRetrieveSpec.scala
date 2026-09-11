@@ -70,7 +70,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.invokeBlock(
-            fakeRequestWithActiveSession,
+            requestWithFeatureSwitches(fakeRequestWithActiveSession),
             defaultAsyncBody(_ shouldBe expectedResponse))
 
           status(result) shouldBe OK
@@ -88,7 +88,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.invokeBlock(
-            fakeRequestWithActiveSession,
+            requestWithFeatureSwitches(fakeRequestWithActiveSession),
             defaultAsyncBody(_ shouldBe expectedResponse))
 
           status(result) shouldBe OK
@@ -104,7 +104,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
+          requestWithFeatureSwitches(fakeRequestWithActiveSession),
           defaultAsync)
 
         status(result) shouldBe OK
@@ -120,7 +120,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
       )
 
       val result = authAction.invokeBlock(
-        fakeRequestWithActiveSession,
+        requestWithFeatureSwitches(fakeRequestWithActiveSession),
         defaultAsync)
 
       status(result) shouldBe OK
@@ -135,7 +135,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
       )
 
       val result = authAction.invokeBlock(
-        fakeRequestWithActiveSession,
+        requestWithFeatureSwitches(fakeRequestWithActiveSession),
         defaultAsync)
 
       status(result) shouldBe OK
@@ -151,7 +151,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
       )
 
       val result = authAction.invokeBlock(
-        fakeRequestWithActiveSession,
+        requestWithFeatureSwitches(fakeRequestWithActiveSession),
         defaultAsync)
 
       status(result) shouldBe SEE_OTHER
@@ -167,7 +167,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
       )
 
       val result = authAction.invokeBlock(
-        fakeRequestWithActiveSession,
+        requestWithFeatureSwitches(fakeRequestWithActiveSession),
         defaultAsync)
 
       status(result) shouldBe SEE_OTHER

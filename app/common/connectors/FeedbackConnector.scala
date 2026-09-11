@@ -18,7 +18,7 @@ package common.connectors
 
 import common.config.FrontendAppConfig
 import common.forms.FeedbackForm
-import play.api.Logger
+import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.ws.DefaultBodyWritables.writeableOf_urlEncodedForm
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeedbackConnector @Inject()(val http: HttpClientV2,
                                   val config: FrontendAppConfig,
                                   val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-                                 )(implicit val ec: ExecutionContext) extends RawResponseReads with HeaderNames {
+                                 )(implicit val ec: ExecutionContext) extends RawResponseReads with HeaderNames with Logging {
 
   val feedbackServiceSubmitUrl: URL =
     new URI(s"${config.contactFrontendBaseUrl}/contact/beta-feedback/submit?service=${urlEncode(config.contactFormServiceIdentifier)}").toURL
@@ -57,10 +57,10 @@ class FeedbackConnector @Inject()(val http: HttpClientV2,
       .map {resp =>
           resp.status match {
             case OK =>
-              Logger("application").info(s"RESPONSE status: ${resp.status}")
+              logger.info(s"[submit] RESPONSE status: ${resp.status}")
               Right(())
             case status =>
-              Logger("application").error(s"RESPONSE status: ${resp.status}")
+              logger.error(s"[submit] RESPONSE status: ${resp.status}")
               Left(status)
           }
     }

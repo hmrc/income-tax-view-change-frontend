@@ -29,7 +29,7 @@ class ConfirmClientDetailsAuditModelSpec extends TestSupport {
 
   def getConfirmClientDetailsAuditModel(isSupportingAgent: Boolean): ConfirmClientDetailsAuditModel = {
     ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent,
-      mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(testCredId))
+      mtditid = testMtditidAgent, arn = Some(testArn), saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(testCredId))
   }
 
 
@@ -61,6 +61,14 @@ class ConfirmClientDetailsAuditModelSpec extends TestSupport {
         "have the correct detail for the audit event" in {
           getConfirmClientDetailsAuditModel(isSupportingAgent).detail shouldBe detailsAuditData(isSupportingAgent)
         }
+      }
+    }
+
+    "the ARN is missing" should {
+      "omit agentReferenceNumber instead of writing JsNull" in {
+        val detail = getConfirmClientDetailsAuditModel(isSupportingAgent = false).copy(arn = None).detail
+
+        (detail \ "agentReferenceNumber").toOption shouldBe None
       }
     }
   }

@@ -20,7 +20,7 @@ import ITSAStatusUpdateConnectorModel.*
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import common.models.incomeSourceDetails.TaxYear
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
 import play.mvc.Http.Status
@@ -32,9 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appConfig: FrontendAppConfig)
-                                         (implicit val ec: ExecutionContext) extends RawResponseReads {
-
-  private val logger = Logger("application")
+                                         (implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def optOut(taxYear: TaxYear, userNino: String)(implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
     makeITSAStatusUpdate(taxYear, userNino, optOutUpdateReason)
@@ -78,7 +76,7 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
                     .map(failure => s"code: ${failure.code}, reason: ${failure.reason}")
                     .getOrElse("unknown reason")
 
-                logger.error(s"response status: ${response.status}, message: $message")
+                logger.error(s"[makeITSAStatusUpdate] response status: ${response.status}, message: $message")
                 valid
               }
             )

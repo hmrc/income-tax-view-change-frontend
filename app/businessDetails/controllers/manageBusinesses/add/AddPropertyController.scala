@@ -20,7 +20,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRo
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm as form
 import businessDetails.utils.IncomeSourcesUtils
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -40,7 +40,7 @@ class AddPropertyController @Inject()(authActions: AuthActions,
                                      (implicit val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
+  extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils with Logging{
 
   private def getBackUrl(isAgent: Boolean): String = if(isAgent) {
     manageBusinessesRoutes.ManageYourBusinessesController.showAgent().url
@@ -93,7 +93,7 @@ class AddPropertyController @Inject()(authActions: AuthActions,
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
       case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
       case _ =>
-        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
+        logger.error(s"[handleValidForm] Unexpected response, isAgent = $isAgent")
         val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Future.successful(errorHandler.showInternalServerError())
     }

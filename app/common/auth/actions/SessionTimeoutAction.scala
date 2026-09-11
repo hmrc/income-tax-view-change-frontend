@@ -16,8 +16,10 @@
 
 package common.auth.actions
 
+import common.auth.RequestWithFeatureSwitches
+import common.config.FrontendAppConfig
 import common.viewUtils.InternalUrlHelper
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.*
 import uk.gov.hmrc.http.SessionKeys
@@ -26,10 +28,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[Request, Request] with ActionBuilder[Request, AnyContent] {
+class SessionTimeoutAction @Inject()()(implicit val executionContext: ExecutionContext, val appConfig: FrontendAppConfig)
+  extends ActionRefiner[RequestWithFeatureSwitches, RequestWithFeatureSwitches] with Logging {
 
-  override protected def refine[A](request: Request[A]): Future[Either[Result, Request[A]]] = {
+  override def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, RequestWithFeatureSwitches[A]]] = {
 
     val updatedHeaders = request.session.get("Gov-Test-Scenario") match {
       case Some(data) => request.headers.add(("Gov-Test-Scenario", data))
@@ -39,11 +41,11 @@ class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit v
     (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
       case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
-        Logger(getClass).warn("Session Time Out.")
+        logger.warn("Session Time Out.")
         Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
       case (_, _) =>
         val mtdItUserWithUpdatedHeaders = request.withHeaders(updatedHeaders)
-        Future.successful(Right(mtdItUserWithUpdatedHeaders))
+        Future.successful(Right(RequestWithFeatureSwitches(request.featureSwitches)(mtdItUserWithUpdatedHeaders)))
     }
   }
 

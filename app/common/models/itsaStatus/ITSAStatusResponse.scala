@@ -25,11 +25,16 @@ case class ITSAStatusResponseModel(taxYear: String,
 
 case class ITSAStatusResponseError(status: Int, reason: String) extends ITSAStatusResponse
 
+case class ITSAStatusYearOfMigrationModel(yearOfMigrationEndYear: Option[String]) extends ITSAStatusResponse
 
 object ITSAStatusResponseModel {
-  implicit val format: Format[ITSAStatusResponseModel] = Json.format[ITSAStatusResponseModel]
+  given format: Format[ITSAStatusResponseModel] = Json.format[ITSAStatusResponseModel]
 }
 
 object ITSAStatusResponseError {
-  implicit val format: Format[ITSAStatusResponseError] = Json.format[ITSAStatusResponseError]
+  given format: Format[ITSAStatusResponseError] = Json.format[ITSAStatusResponseError]
+}
+
+object ITSAStatusYearOfMigrationModel {
+  given format: Format[ITSAStatusYearOfMigrationModel] = Json.format[ITSAStatusYearOfMigrationModel]
 }

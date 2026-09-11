@@ -121,7 +121,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
 
             val result = action(fakeRequest)
 
-            val redirectUrl = appConfig.homePageUrl(isAgent)
+            val redirectUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
 
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)
@@ -136,7 +136,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
 
             val result = action(fakeRequest)
 
-            val redirectUrl = appConfig.homePageUrl(isAgent)
+            val redirectUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
 
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)

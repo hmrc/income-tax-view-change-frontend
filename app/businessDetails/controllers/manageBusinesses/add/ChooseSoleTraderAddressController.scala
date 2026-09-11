@@ -21,19 +21,19 @@ import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import jakarta.inject.Singleton
-import play.api.Logger
-import play.api.i18n.I18nSupport
-import play.api.mvc.*
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.models.admin.OverseasBusinessAddress
 import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import jakarta.inject.Singleton
+import play.api.Logging
+import play.api.i18n.I18nSupport
+import play.api.mvc.*
 import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,14 +49,15 @@ class ChooseSoleTraderAddressController @Inject()(
                                                  )(implicit val appConfig: FrontendAppConfig,
                                                    val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext
-                                                 ) extends FrontendController(mcc) with FeatureSwitching with IncomeSourcesUtils with I18nSupport with JourneyCheckerManageBusinesses {
+                                                 )
+  extends FrontendController(mcc) with FeatureSwitching with IncomeSourcesUtils with I18nSupport with JourneyCheckerManageBusinesses with Logging{
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
     else itvcErrorHandler
 
-  private def backUrl(isAgent: Boolean): String =
-    appConfig.homePageUrl(isAgent)
+  private def backUrl(isAgent: Boolean)(implicit user: MtdItUser[_]): String =
+    appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled)
 
   private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty
 
@@ -115,7 +116,7 @@ class ChooseSoleTraderAddressController @Inject()(
               case _ =>
                 uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = None))
                 val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = None)))
-                Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] Pre-existing ui session data but invalid form response")
+                logger.error("Pre-existing ui session data but invalid form response")
                 sessionService.setMongoData(updatedData).map { data => showGenericErrorPage }
             }
           case None =>
@@ -143,7 +144,7 @@ class ChooseSoleTraderAddressController @Inject()(
                 val redirect = Redirect(redirectCallByType)
                 sessionService.setMongoData(uiSessionData).map { data => redirect }
               case _ =>
-                Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] No existing ui session data and invalid form response")
+                logger.error("No existing ui session data and invalid form response")
                 Future(showGenericErrorPage)
             }
         }
@@ -170,7 +171,7 @@ class ChooseSoleTraderAddressController @Inject()(
         )
       )
     } else {
-      Future(Redirect(appConfig.homePageUrl(isAgent)))
+      Future(Redirect(appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled)))
     }
   }
 

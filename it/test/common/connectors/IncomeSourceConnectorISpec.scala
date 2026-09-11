@@ -86,7 +86,8 @@ class IncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               mtditId = testMtditid,
               mtdUserRole = MTDIndividual,
               authUserDetails = defaultAuthUserDetails(MTDIndividual),
-              None
+              None,
+              featureSwitches = List()
             )(FakeRequest())
 
           val result = connector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
@@ -109,7 +110,8 @@ class IncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               mtditId = testMtditid,
               mtdUserRole = MTDIndividual,
               authUserDetails = defaultAuthUserDetails(MTDIndividual),
-              None
+              None,
+              featureSwitches = List()
             )(FakeRequest())
 
           val responseBody =

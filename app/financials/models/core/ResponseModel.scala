@@ -16,7 +16,7 @@
 
 package financials.models.core
 
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{Format, JsSuccess, JsValue}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import scala.util.Try
 
 
-object ResponseModel {
+object ResponseModel extends Logging {
 
   trait SuccessModel
 
@@ -43,7 +43,7 @@ object ResponseModel {
     override def read(method: String, url: String, response: HttpResponse): ResponseModel[T] = {
 
       def logInvalidResponse(): ResponseModel[T] = {
-        Logger("application").warn(s"Unable to parse response")
+        logger.warn(s"Unable to parse response")
         Left(InvalidJson)
       }
 

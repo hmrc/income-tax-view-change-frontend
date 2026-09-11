@@ -54,7 +54,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
     "one year opt-out scenarios" ignore {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
-        stubGetFeatureSwitches(List(OptOutFs))
+        stubGetFeatureSwitches(List(OptOutFs), newHubContextRootEnabled)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
         optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue
 
@@ -97,7 +97,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
       }
 
       "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
-        stubGetFeatureSwitches(List(OptOutFs))
+        stubGetFeatureSwitches(List(OptOutFs), newHubContextRootEnabled)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd

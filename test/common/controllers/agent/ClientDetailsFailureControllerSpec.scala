@@ -44,6 +44,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
     val action = testController.show()
     "the user is not authenticated" should {
       "redirect them to sign in" in {
+        setupMockFeatureSwitches()
         setupMockAgentAuthException(mockFAF)()
 
         val result = action(fakeRequestWithActiveSession)
@@ -54,6 +55,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
     }
     "the user has timed out" should {
       "redirect to the session timeout page" in {
+        setupMockFeatureSwitches()
         val result = action(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
@@ -62,6 +64,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
     }
     "the user does not have an agent reference number" should {
       "redirect them to the error page" in {
+        setupMockFeatureSwitches()
         setupMockAgentAuthException(mockFAF)(InsufficientEnrolments())
 
         val result = action(fakeRequestWithActiveSession)
@@ -72,6 +75,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
     }
 
     "return OK and display the client relationship failure page" in {
+      setupMockFeatureSwitches()
       setupMockAgentAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
       mockBusinessIncomeSource()
       mockClientRelationshipFailure(HtmlFormat.empty)

@@ -47,7 +47,7 @@
         title = Text(messages("base.error_summary.heading")),
         errorList = form.errors.map(err =>
           ErrorLink(
-            href = Some(s"#${err.key}"),
+            href = Some("#yes-response"),
             content = Text(messages(err.message, err.args: _*))
           )
         ).toSeq

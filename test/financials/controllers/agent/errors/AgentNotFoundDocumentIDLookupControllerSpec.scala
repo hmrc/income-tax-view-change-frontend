@@ -30,6 +30,7 @@ class AgentNotFoundDocumentIDLookupControllerSpec extends MockAuthActions {
   "Calling the show action of the NotAnAgentController" should {
 
     "render the Agent not found page" in {
+      setupMockFeatureSwitches()
       setupMockAgentWithoutARNAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
       val result = testAgentErrorController.show(fakeRequestWithActiveSession)
       status(result) shouldBe OK

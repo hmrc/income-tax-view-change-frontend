@@ -85,7 +85,8 @@ serviceNavigationPartial: Option[ServiceNavigation] = None, origin: Option[Strin
                 content = Text(messages("paymentHistory.tableHead.taxYear"))
             ),
             HeadCell(
-                content = Text(messages("paymentHistory.table.header.amount"))
+                content = Text(messages("paymentHistory.table.header.amount")),
+                classes = "govuk-!-text-align-right"
             )
         )),
         rows = yearPayments.sortBy(_.date).reverse.zipWithIndex.map{ case (payment, index) => Seq(

@@ -17,16 +17,19 @@
 package financials.controllers.errors
 
 import com.google.inject.{Inject, Singleton}
-import play.api.mvc._
+import common.auth.AuthActions
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import common.views.html.errorPages.CustomNotFoundErrorView
+import play.api.i18n.I18nSupport
 
 import scala.concurrent.Future
 
 @Singleton
-class NotFoundDocumentIDLookupController @Inject()(customNotFoundError: CustomNotFoundErrorView)
-                                                  (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
-  val show: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(customNotFoundError()))
+class NotFoundDocumentIDLookupController @Inject()(authActions: AuthActions,
+                                                    customNotFoundError: CustomNotFoundErrorView)
+                                                  (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
+  val show: Action[AnyContent] = authActions.retrieveFeatureSwitches.async { implicit request =>
+    Future.successful(Ok(customNotFoundError(request.newHubContextRootEnabled)))
   }
 }

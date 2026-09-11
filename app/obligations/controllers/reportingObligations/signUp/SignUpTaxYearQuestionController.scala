@@ -26,7 +26,7 @@ import obligations.forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
 import obligations.services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
 import obligations.utils.reportingObligations.JourneyCheckerSignUp
 import obligations.views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -44,7 +44,7 @@ class SignUpTaxYearQuestionController @Inject()(
                                                  implicit val appConfig: FrontendAppConfig,
                                                  val mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext
-                                               ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
+                                               ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp with Logging {
 
   private def errorHandler(isAgent: Boolean): ShowInternalServerError =
     if (isAgent) itvcErrorHandlerAgent
@@ -102,7 +102,7 @@ class SignUpTaxYearQuestionController @Inject()(
                   case Some(SignUpTaxYearQuestionForm.responseNo) =>
                     Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url))
                   case _ =>
-                    Logger("application").error("[SignUpTaxYearQuestionController.submit] Invalid form response")
+                    logger.error("[submit] Invalid form response")
                     Future(errorHandler(isAgent).showInternalServerError())
                 }
               }

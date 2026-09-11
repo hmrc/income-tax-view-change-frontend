@@ -23,7 +23,8 @@ case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusines
                                       viewUkProperty: Option[ViewPropertyDetailsViewModel],
                                       viewForeignProperty: Option[ViewPropertyDetailsViewModel],
                                       viewCeasedBusinesses: List[CeasedBusinessDetailsViewModel],
-                                      displayStartDate: Boolean)
+                                      displayStartDate: Boolean,
+                                      hideBusinessName: Boolean)
 
 case class ViewBusinessDetailsViewModel(incomeSourceId: IncomeSourceId,
                                         incomeSource: Option[String],

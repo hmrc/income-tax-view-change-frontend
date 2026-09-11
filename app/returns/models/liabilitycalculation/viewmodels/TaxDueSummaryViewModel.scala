@@ -21,7 +21,7 @@ import common.models.liabilitycalculation.*
 import common.models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import CalculationSummary.getTaxDue
 import common.models.obligations.ObligationsModel
-import play.api.Logger
+import play.api.Logging
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: String = "",
@@ -63,7 +63,10 @@ case class TaxDueSummaryViewModel(
                                    transitionProfitRow: Option[TransitionProfitRow] = None,
                                    highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None,
                                    winterFuelPaymentCharge: Option[BigDecimal] = None,
-                                   pensionContributionReliefs: Option[PensionContributionReliefs] = None
+                                   pensionContributionReliefs: Option[PensionContributionReliefs] = None,
+                                   taxRefundedOrSetOff: Option[BigDecimal] = None,
+                                   totalTaxAndNicsDue: Option[BigDecimal] = None,
+                                   totalIncomeTaxAndNicsAndCgt:Option[BigDecimal] = None
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -74,6 +77,13 @@ case class TaxDueSummaryViewModel(
     }
   }
 
+  def getSATaxAmount: Option[BigDecimal] = {
+    (taxRefundedOrSetOff, totalIncomeTaxAndNicsAndCgt) match {
+      case (Some(_), _) => totalTaxAndNicsDue
+      case (None, Some(_)) => totalIncomeTaxAndNicsAndCgt
+      case (None, None) => totalIncomeTaxAndNicsDue
+    }
+  }
   def getModifiedBaseTaxBand: Option[TaxBands] = {
     val payPensionsProfitTaxBand = payPensionsProfitBands.flatMap(bands => bands.find(_.name.equals("BRT")))
     val savingsTaxBand = savingsAndGainsBands.flatMap(bands => bands.find(_.name.equals("BRT")))
@@ -154,23 +164,26 @@ object TaxDueSummaryViewModel {
           )}
         ),
         winterFuelPaymentCharge = calc.taxCalculation.flatMap(tc => tc.incomeTax.winterFuelPaymentCharge),
-        pensionContributionReliefs = calc.pensionContributionReliefs
+        pensionContributionReliefs = calc.pensionContributionReliefs,
+        taxRefundedOrSetOff = calc.taxCalculation.flatMap(_.taxRefundedOrSetOff),
+        totalTaxAndNicsDue = calc.taxCalculation.flatMap(_.totalTaxAndNicsDue),
+        totalIncomeTaxAndNicsAndCgt = calc.taxCalculation.flatMap(_.totalIncomeTaxAndNicsAndCgt)
       )
       case None => TaxDueSummaryViewModel()
     }
   }
 }
 
-object TransitionProfitRow {
+object TransitionProfitRow extends Logging {
   def apply(incomeTaxCharged: Option[BigDecimal], totalTaxableProfit: Option[BigDecimal]): Option[TransitionProfitRow] = {
 
     (incomeTaxCharged, totalTaxableProfit) match {
       case (Some(tax), Some(profit)) => Some(TransitionProfitRow(incomeTaxCharged = tax, totalTaxableProfit = profit))
       case (None, Some(_)) =>
-        Logger("application").warn(s"missing incomeTaxChargedOnTransitionProfits")
+        logger.warn(s"missing incomeTaxChargedOnTransitionProfits")
         None
       case (Some(_), None) =>
-        Logger("application").warn(s"missing totalTaxableTransitionProfit")
+        logger.warn(s"missing totalTaxableTransitionProfit")
         None
       case _ => None
     }

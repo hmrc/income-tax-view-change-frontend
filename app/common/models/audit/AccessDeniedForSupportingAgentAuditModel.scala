@@ -19,19 +19,22 @@ package common.models.audit
 import common.auth.AuthorisedAndEnrolledRequest
 import common.enums.AuditType.AccessDeniedForSupportingAgent
 import common.enums.TransactionName
+import common.utils.audit.Utilities.arnToJson
 import play.api.libs.json.{JsValue, Json}
 
 case class AccessDeniedForSupportingAgentAuditModel(mtdItUser: AuthorisedAndEnrolledRequest[_]) extends ExtendedAuditModel {
   override val transactionName: String = TransactionName.AccessDeniedForSupportingAgent
   override val detail: JsValue = {
+    import mtdItUser.authUserDetails.agentReferenceNumber as arn
+
     Json.obj("mtditid" -> mtdItUser.mtditId,
-      "agentReferenceNumber" -> mtdItUser.authUserDetails.agentReferenceNumber,
       "saUtr" -> mtdItUser.saUtr,
       "userType" -> "Agent",
       "isSupportingAgent" -> true,
       "credId" -> mtdItUser.authUserDetails.credId,
       "nino" -> mtdItUser.clientDetails.map(_.nino),
-    "clientName" -> mtdItUser.optClientNameAsString)
+    "clientName" -> mtdItUser.optClientNameAsString) ++
+      arnToJson(arn)
   }
   override val auditType: String = AccessDeniedForSupportingAgent
 }

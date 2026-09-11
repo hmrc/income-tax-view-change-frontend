@@ -44,7 +44,8 @@ object TaxYearSummaryChargeItem {
       amountCodedOut = chargeItem.amountCodedOut,
       isAccruingInterest = chargeItem.isAccruingInterest,
       dunningLock = chargeItem.dunningLock,
-      chargeReference = chargeItem.chargeReference
+      chargeReference = chargeItem.chargeReference,
+      chargeClassification = chargeItem.chargeClassification
     )
   }
 
@@ -68,7 +69,8 @@ object TaxYearSummaryChargeItem {
       amountCodedOut = chargeItem.amountCodedOut,
       isAccruingInterest = isLatePaymentInterest,
       dunningLock = chargeItem.dunningLock,
-      chargeReference = chargeItem.chargeReference
+      chargeReference = chargeItem.chargeReference,
+      chargeClassification = chargeItem.chargeClassification
     )
   }
 
@@ -93,7 +95,8 @@ case class TaxYearSummaryChargeItem(
                                      amountCodedOut: Option[BigDecimal],
                                      isAccruingInterest: Boolean = false,
                                      dunningLock: Boolean,
-                                     chargeReference: Option[String]) extends TransactionItem {
+                                     chargeReference: Option[String],
+                                     chargeClassification: Option[String]) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
 

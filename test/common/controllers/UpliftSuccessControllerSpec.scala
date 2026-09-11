@@ -56,6 +56,7 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
 
       "audit and redirect to the home controller" in {
 
+        setupMockFeatureSwitches()
         setupMockSuccess(MTDIndividual)
         mockItsaStatusRetrievalAction()
         mockSingleBusinessIncomeSource()
@@ -98,7 +99,7 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
         whenReady(result) { response =>
           verifyAudit(expectedIvOutcomeSuccessAuditModel)
           response.header.status shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(appConfig.individualHomeUrl)
+          redirectLocation(result) shouldBe Some(appConfig.individualHomeUrl(newHubContextRootEnabled))
         }
 
       }

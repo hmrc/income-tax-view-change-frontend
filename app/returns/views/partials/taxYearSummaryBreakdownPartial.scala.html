@@ -16,10 +16,12 @@
 
 @import _root_.shared.implicits.ImplicitCurrencyFormatter._
 @import _root_.common.implicits.ImplicitDateFormatterImpl
+@import common.config.FrontendAppConfig
 @import returns.models.liabilitycalculation.viewmodels.CalculationSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import play.twirl.api.HtmlFormat
+@import common.models.liabilitycalculation.CalculationRevisionType.{correctionAndRevenueAmendmentTypes, CustomerRejection}
 
 @this(
     govukWarningText : GovukWarningText,
@@ -28,8 +30,10 @@
     h3: h3,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     p: p,
-    link : link
+    link : link,
+    govukInsetText: GovukInsetText
 )
+
 
 @(
     overview: CalculationSummary,
@@ -39,8 +43,9 @@
     caption: Option[String] = None,
     origin: Option[String] = None,
     isLatest: Boolean = false,
-    isPrevious: Boolean = false
-)(implicit messages: Messages)
+    isPrevious: Boolean = false,
+    financialsFrontendEnabled: Boolean
+)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @import implicitDateFormatter._
 
@@ -60,14 +65,113 @@
     }
 }
 
+@paymentsLink = @{
+    appConfig.financialsPaymentHistoryUrl(isAgent, financialsFrontendEnabled)
+}
+
+@whatYouOweLink = @{
+    appConfig.financialsWhatYouOweUrl(isAgent, None, financialsFrontendEnabled)
+}
+
 @overviewDescription = @{
-    (isLatest, isPrevious) match {
-        case (true, false) =>
+    (isLatest, isPrevious, overview.calculationRevisionType) match {
+        case (true, false, Some(revisionType)) if correctionAndRevenueAmendmentTypes.contains(revisionType) =>
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("correction-and-revenue-amendment-overview-description")) {
+                        Html(messages("tax-year-summary.latest-calculation.correction-revenueAmendment.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+                    },
+                    govukInsetText(InsetText(
+                        id = Some("correction-and-revenue-amendment-inset"),
+                        content = HtmlContent(
+                            p(id = Some("latest-calculcation-inset-1"), classes = "govuk-body govuk-!-font-weight-bold")(Html(messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-1"))).toString +
+                            p(id = Some("latest-calculcation-inset-2"))(Html(messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-2"))).toString +
+                            p(id = Some("latest-calculcation-inset-3"))(
+                                Html(
+                                    messages("tax-year-summary-latest-calculation.correction-revenueAmendment.inset-3") +
+                                    link(
+                                        link = paymentsLink,
+                                        messageKey = messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-1"),
+                                        id = Some("payments-history-link")
+                                    ).toString +
+                                    messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-inset-4") +
+                                    link(
+                                        link = whatYouOweLink,
+                                        messageKey = messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-2"),
+                                        id = Some("what-you-owe-link"),
+                                        outerMessage = messages("base.fullstop")
+                                    ).toString
+
+                                )
+                            ).toString
+                        )
+                    ))
+                )
+            )
+        case (false, true, Some(revisionType)) if correctionAndRevenueAmendmentTypes.contains(revisionType) =>
+
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("previous-calculation-overview-description")) {
+                        Html(messages("tax-year-summary.previous-calculation.correction-revenueAmendment.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+                    },
+                    h3(optId = Some("previous-calculation-subheading"), msg = messages("tax-year-summary.previous-calculation.correction-revenueAmendment.subheading", overview.timestamp.map(_.toLongDate).getOrElse("")), classes = "govuk-heading-m"),
+                    p(id = Some("previous-calculation-note")) {
+                        Html(messages("tax-year-summary.previous-calculation.correction-revenueAmendment.subheading.desc"))
+                    }
+                )
+            )
+        case (true, false, Some(revisionType)) if revisionType == CustomerRejection =>
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("rejection-overview-description")) {
+                        Html(messages("tax-year-summary.latest-calculation.rejection.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+                    },
+                    govukInsetText(InsetText(
+                        id = Some("rejection-inset"),
+                        content = HtmlContent(
+                            p(id = Some("latest-calculcation-inset-1"), classes = "govuk-body govuk-!-font-weight-bold")(Html(messages("tax-year-summary.latest-calculation.rejection.inset-1"))).toString +
+                                    p(id = Some("latest-calculcation-inset-2"))(Html(messages("tax-year-summary.latest-calculation.rejection.inset-2"))).toString +
+                                    p(id = Some("latest-calculcation-inset-3"))(
+                                        Html(
+                                            messages("tax-year-summary-latest-calculation.rejection.inset-3") +
+                                                    link(
+                                                        link = paymentsLink,
+                                                        messageKey = messages("tax-year-summary.latest-calculation.rejection.inset-link-1"),
+                                                        id = Some("payments-history-link")
+                                                    ).toString +
+                                                    messages("tax-year-summary.latest-calculation.rejection.inset-inset-4") +
+                                                    link(
+                                                        link = whatYouOweLink,
+                                                        messageKey = messages("tax-year-summary.latest-calculation.rejection.inset-link-2"),
+                                                        id = Some("what-you-owe-link"),
+                                                        outerMessage = messages("base.fullstop")
+                                                    ).toString
+
+                                        )
+                                    ).toString
+                        )
+                    ))
+                )
+            )
+        case (false, true, Some(revisionType)) if revisionType == CustomerRejection =>
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("previous-calculation-overview-description")) {
+                        Html(messages("tax-year-summary.previous-calculation.rejection.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+                    },
+                    h3(optId = Some("previous-calculation-subheading"), msg = messages("tax-year-summary.previous-calculation.rejection.subheading", overview.timestamp.map(_.toLongDate).getOrElse("")), classes = "govuk-heading-m"),
+                    p(id = Some("previous-calculation-note")) {
+                        Html(messages("tax-year-summary.previous-calculation.rejection.subheading.desc"))
+                    }
+                )
+            )
+        case (true, false, _) =>
             p(id = Some("latest-calculation-overview-description")) {
                 Html(messages("tax-year-summary.latest-calculation-desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
             }
-        case (false, true) =>
-            val noteText = if(overview.isAmended) "tax-year-summary.previous-calculation-note-amended" else "tax-year-summary.previous-calculation-note-finalised"
+        case (false, true, _) =>
+            val noteText = if(overview.calculationRevisionType.isDefined) "tax-year-summary.previous-calculation-note-amended" else "tax-year-summary.previous-calculation-note-finalised"
 
             HtmlFormat.fill(
                 Seq(
@@ -202,14 +306,14 @@
                 ),
                 Option.when(isAgent)(
                     Seq(
-                        TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due"), classes = "govuk-!-font-weight-bold"))),
+                        TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due"), classes = "govuk-!-font-weight-bold govuk-link govuk-body"))),
                         TableRow(content = Text(overview.taxDue.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
                 Option.when(!isAgent)(
                     Seq(
-                        TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due"), classes = "govuk-!-font-weight-bold"))),
-                        TableRow(content = Text(overview.taxDue.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
+                        TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due"), classes = "govuk-!-font-weight-bold govuk-link govuk-body"))),
+                        TableRow(content = Text(overview.getSATaxAmount.get.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
             ).flatten

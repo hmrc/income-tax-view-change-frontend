@@ -17,24 +17,44 @@
 package common.auth
 
 import common.enums.MTDUserRole
+import common.models.admin.{FeatureSwitch, NewHubContextRootEnabled}
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
-case class AuthorisedUserRequest[A](authUserDetails: AuthUserDetails)
-                                   (implicit request: Request[A]) extends WrappedRequest[A](request)
+case class RequestWithFeatureSwitches[A](featureSwitches: List[FeatureSwitch])
+                                        (implicit request: Request[A]) extends WrappedRequest[A](request) {
+
+  val newHubContextRootEnabled = featureSwitches.exists(x => x.name.name == NewHubContextRootEnabled.name && x.isEnabled)
+}
+
+case class AuthorisedUserRequest[A](authUserDetails: AuthUserDetails,
+                                    featureSwitches: List[FeatureSwitch])
+                                   (implicit request: Request[A]) extends WrappedRequest[A](request) {
+
+  val newHubContextRootEnabled = featureSwitches.exists(x => x.name.name == NewHubContextRootEnabled.name && x.isEnabled)
+
+}
 
 
 case class AuthorisedAgentWithClientDetailsRequest[A](authUserDetails: AuthUserDetails,
-                                                      clientDetails: AgentClientDetails)
-                                                     (implicit request: Request[A]) extends WrappedRequest[A](request)
+                                                      clientDetails: AgentClientDetails,
+                                                      featureSwitches: List[FeatureSwitch])
+                                                     (implicit request: Request[A]) extends WrappedRequest[A](request) {
+
+  val newHubContextRootEnabled = featureSwitches.exists(x => x.name.name == NewHubContextRootEnabled.name && x.isEnabled)
+
+}
 
 
 case class AuthorisedAndEnrolledRequest[A](mtditId: String,
                                            mtdUserRole: MTDUserRole,
                                            authUserDetails: AuthUserDetails,
-                                           clientDetails: Option[AgentClientDetails])
+                                           clientDetails: Option[AgentClientDetails],
+                                           featureSwitches: List[FeatureSwitch])
                                            (implicit request: Request[A]) extends WrappedRequest[A](request) {
   val saUtr: Option[String] = if(clientDetails.isDefined) clientDetails.map(_.utr) else authUserDetails.saUtr
+  val maybeArn: Option[String] = authUserDetails.agentReferenceNumber
+  
   def optClientNameAsString: Option[String] = {
     val optClientName = clientDetails.fold[Option[Name]](None)(_.clientName)
     val firstName = optClientName.fold[Option[String]](None)(_.name)
@@ -44,5 +64,7 @@ case class AuthorisedAndEnrolledRequest[A](mtditId: String,
       case _ => None
     }
   }
+
+  val newHubContextRootEnabled = featureSwitches.exists(x => x.name.name == NewHubContextRootEnabled.name && x.isEnabled)
 
 }

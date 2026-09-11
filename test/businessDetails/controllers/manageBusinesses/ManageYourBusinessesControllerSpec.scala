@@ -62,7 +62,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession()
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any(), any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -70,7 +70,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
                   viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                   viewForeignProperty = None,
                   viewCeasedBusinesses = Nil,
-                  displayStartDate = true
+                  displayStartDate = true,
+                  hideBusinessName = false
                 )
               )
             )
@@ -87,7 +88,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession()
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any(), any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -95,7 +96,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
                   viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                   viewForeignProperty = None,
                   viewCeasedBusinesses = Nil,
-                  displayStartDate = false
+                  displayStartDate = false,
+                  hideBusinessName = false
                 )
               )
             )
@@ -111,7 +113,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockFeatureSwitches(DisplayBusinessStartDate)
           mockBothIncomeSources()
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any(), any()))
             .thenReturn(
               Left(MissingFieldException("Trading Name"))
             )
@@ -127,7 +129,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession()
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any(), any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -135,7 +137,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
                   viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                   viewForeignProperty = None,
                   viewCeasedBusinesses = Nil,
-                  displayStartDate = true
+                  displayStartDate = true,
+                  hideBusinessName = false
                 )
               )
             )
@@ -157,14 +160,14 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       s"the $mtdUserRole is authenticated" should {
         "render the manage businesses page" when {
           "the DisplayBusinessStartDate FS in enabled" in {
+            setupMockFeatureSwitches(DisplayBusinessStartDate)
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            setupMockFeatureSwitches(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession()
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any(), any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
@@ -172,7 +175,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
                     viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                     viewForeignProperty = None,
                     viewCeasedBusinesses = Nil,
-                    displayStartDate = true
+                    displayStartDate = true,
+                    hideBusinessName = false
                   )
                 )
               )
@@ -188,7 +192,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockFeatureSwitches(DisplayBusinessStartDate)
             mockBothIncomeSources()
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any(), any()))
               .thenReturn(
                 Left(MissingFieldException("Trading Name"))
               )
@@ -204,7 +208,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession()
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any(), any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
@@ -212,7 +216,8 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
                     viewUkProperty = Some(viewUkPropertyDetailsViewModel),
                     viewForeignProperty = None,
                     viewCeasedBusinesses = Nil,
-                    displayStartDate = true
+                    displayStartDate = true,
+                    hideBusinessName = false
                   )
                 )
               )

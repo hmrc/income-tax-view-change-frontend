@@ -156,7 +156,8 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     amountCodedOut = None,
     dunningLock = false,
     poaRelevantAmount = None,
-    chargeReference = Some("chargeRef")
+    chargeReference = Some("chargeRef"),
+    chargeClassification = None
   )
   val chargeItemWithCodingOutAccepted: ChargeItem = chargeItemWithNoInterest.copy(
     transactionType = BalancingCharge,
@@ -513,6 +514,8 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
           interestEndDate = None, accruingInterestAmount = None, transactionType = PoaTwoReconciliationDebit)
         val itsaAmendmentCharge = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
           interestEndDate = None, accruingInterestAmount = None, transactionType = ITSAReturnAmendment)
+        val itsaAmendmentWithEnquiryAmendmentCharge = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = ITSAReturnAmendment, chargeClassification = Some("RA"))
         val mfaDebit = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
           interestEndDate = None, accruingInterestAmount = None, transactionType = MfaDebitCharge)
         val nics2 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
@@ -552,6 +555,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
 
         getChargeType(itsaAmendmentCharge, false) shouldBe Some("Balancing payment: extra amount due to amended return")
         getChargeType(itsaAmendmentCharge, true) shouldBe Some("Late payment interest on balancing payment: extra amount due to amended return")
+        getChargeType(itsaAmendmentWithEnquiryAmendmentCharge, false) shouldBe Some("Extra amount to pay due to HMRC enquiry amendment")
 
         getChargeType(mfaDebit, false) shouldBe Some("MFADebit")
 

@@ -27,7 +27,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.models.core.{Mode, NormalMode}
-import play.api.Logger
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -47,7 +47,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses with Logging {
 
   private def getBackUrl(isAgent: Boolean, mode: Mode): String = {
     ((isAgent, mode) match {
@@ -112,7 +112,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
   }.recover {
     case ex =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[handleRequest] ${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 
@@ -170,8 +170,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
     }
   }.recover {
   case ex =>
-    Logger("application")
-      .error(s"${ex.getMessage} - ${ex.getCause}")
+    logger.error(s"[handleSubmitRequest] ${ex.getMessage} - ${ex.getCause}")
     errorHandler.showInternalServerError()
 }
 

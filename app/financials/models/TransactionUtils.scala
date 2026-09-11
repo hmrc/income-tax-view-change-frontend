@@ -16,11 +16,11 @@
 
 package financials.models
 
-import play.api.Logger
+import play.api.Logging
 
 import scala.util.{Failure, Success, Try}
 
-trait TransactionUtils {
+trait TransactionUtils extends Logging {
 
   def getChargeItemOpt(financialDetails: List[FinancialDetail])
                       (documentDetail: DocumentDetail): Option[ChargeItem] = {
@@ -29,7 +29,7 @@ trait TransactionUtils {
       financialDetails)
     ) match {
       case Failure(exception) =>
-        Logger("application").warn(exception.getMessage)
+        logger.warn(s"[getChargeItemOpt] ${exception.getMessage}")
         None
       case Success(value) =>
         Some(value)

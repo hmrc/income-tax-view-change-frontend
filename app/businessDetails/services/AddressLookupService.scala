@@ -22,7 +22,7 @@ import common.config.FrontendAppConfig
 import common.models.core.Mode
 import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
                                      addressLookupConnector: AddressLookupConnector)
-                                    (implicit ec: ExecutionContext) {
+                                    (implicit ec: ExecutionContext) extends Logging {
   case class AddressError(status: String) extends RuntimeException
 
   def initialiseAddressJourney(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean, ukOnly: Boolean)
@@ -42,10 +42,10 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
       ukOnly = ukOnly
     ) map {
       case Left(UnexpectedPostStatusFailure(status)) =>
-        Logger("application").info(s"error during initialise $status")
+        logger.info(s"error during initialise $status")
         Left(AddressError("status: " + status))
       case Right(PostAddressLookupSuccessResponse(location: Option[String])) =>
-        Logger("application").info(message = s"success response: $location")
+        logger.info(message = s"success response: $location")
         Right(location)
     }
   }
@@ -55,17 +55,17 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
       case Some(addressLookupId: String) =>
         addressLookupConnector.getAddressDetails(addressLookupId) map {
           case Left(UnexpectedGetStatusFailure(status)) =>
-            Logger("application").error(s"failed to get details for $id with status $status")
+            logger.error(s"failed to get details for $id with status $status")
             Left(AddressError("status: " + status))
-          case Left(_) => Logger("application").error(s"failed to get details for $id with unknown status")
+          case Left(_) => logger.error(s"failed to get details for $id with unknown status")
             Left(AddressError("status: unknown"))
           case Right(None) =>
-            Logger("application").info(s"failed to get details for $id")
+            logger.info(s"failed to get details for $id")
             Left(AddressError("Not found"))
           case Right(Some(model)) => Right(model)
         }
       case None =>
-        Logger("application").error("No id provided")
+        logger.error("No id provided")
         Future(Left(AddressError("No id provided")))
     }
   }

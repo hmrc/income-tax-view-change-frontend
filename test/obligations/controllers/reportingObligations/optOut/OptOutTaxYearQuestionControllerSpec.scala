@@ -77,14 +77,6 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
     }
   }
 
-  private def homeLink(isAgent: Boolean): String = {
-    if (isAgent) {
-      "/report-quarterly/income-and-expenses/view/agents"
-    } else {
-      "/report-quarterly/income-and-expenses/view"
-    }
-  }
-
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
 
@@ -137,7 +129,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val result = action(fakeRequest)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get should include(homeLink(isAgent))
+          redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
         }
       }
     }

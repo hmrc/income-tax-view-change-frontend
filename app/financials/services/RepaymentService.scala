@@ -19,35 +19,33 @@ package financials.services
 import common.exceptions.{RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
 import financials.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import financials.connectors.RepaymentConnector
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, implicit val ec: ExecutionContext) {
+class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, implicit val ec: ExecutionContext)
+  extends Logging{
 
   def start(nino: String, fullAmount: Option[BigDecimal])
            (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, String]] = {
-    Logger("application").debug("" +
-      s"Repayment journey start with nino: $nino and fullAmount: $fullAmount ")
+    logger.debug(s"Repayment journey start with nino: $nino and fullAmount: $fullAmount ")
     fullAmount match {
       case Some(amt) =>
         repaymentConnector.start(nino, math.abs(amt.toDouble)).map {
           case RepaymentJourneyModel(nextUrl) =>
             Right(nextUrl)
           case RepaymentJourneyErrorResponse(status, message) =>
-            Logger("application").error("" +
-              s"Repayment journey start error with response code: $status and message: $message")
+            logger.error(s"Repayment journey start error with response code: $status and message: $message")
             Left(RepaymentStartJourneyException(status, message))
         }.recover { case ex =>
-          Logger("application").error("" +
-            s"Repayment journey start error with exception: $ex")
+          logger.error(s"Repayment journey start error with exception: $ex")
           Left(ex)
         }
       case None =>
-        Logger("application").error("Amount is none")
+        logger.error("Amount is none")
         Future.successful(Left(RepaymentStartJourneyAmountIsNoneException))
 
     }
@@ -55,17 +53,15 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
 
   def view(nino: String)
           (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, String]] = {
-    Logger("application").debug(s"Repayment journey view with nino: $nino")
+    logger.debug(s"Repayment journey view with nino: $nino")
     repaymentConnector.view(nino).map {
       case RepaymentJourneyModel(nextUrl) =>
         Right(nextUrl)
       case RepaymentJourneyErrorResponse(status, message) =>
-        Logger("application").error(" " +
-          s" Repayment journey view error with response code: $status and message: $message")
+        logger.error(s" Repayment journey view error with response code: $status and message: $message")
         Left(RepaymentViewJourneyException(status, message))
     }.recover { case ex: Exception =>
-      Logger("application").error("" +
-        s"Repayment journey view error with exception: $ex")
+      logger.error(s"Repayment journey view error with exception: $ex")
       Left(ex)
     }
   }

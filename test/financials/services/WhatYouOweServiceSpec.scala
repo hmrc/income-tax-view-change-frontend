@@ -309,7 +309,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
       "return list including penalties" in {
         testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweLatePaymentPenalties)
-        testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsWithMixedData4Penalties, expectedResult = whatYouOweDataWithMixedDate4PenaltiesUnfilered)
+        testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsWithMixedData4Penalties, expectedResult = whatYouOweDataWithMixedData4PenaltiesUnfiltered)
       }
       "return list excluding penalties" in {
         testGetWhatYouOweChargesList(penaltiesEnabled = false, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweEmpty)
@@ -410,6 +410,160 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     "the user has no UTR" should {
       "return None without calling the outstanding charges connector" in {
         TestWhatYouOweService.getTotalBalance(chargesListWithPositiveBalance) shouldBe None
+      }
+    }
+  }
+
+  "WhatYouOweService.getFilteredChargesList" when {
+
+    "given an empty list of financial details" should {
+      "return an empty list" in {
+        TestWhatYouOweService.getFilteredChargesList(
+          List.empty,
+          isPenaltiesEnabled = true,
+          mainChargeIsNotPaidFilter
+        ) shouldBe List.empty
+      }
+    }
+
+    "given charges of known types with remaining amounts" should {
+      "return all matching charges sorted by due date" in {
+        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
+          .thenReturn(Future.successful(OutstandingChargesModel(List())))
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetailsWithMixedData2)))
+
+        val result = TestWhatYouOweService.getFilteredChargesList(
+          List(financialDetailsWithMixedData2),
+          isPenaltiesEnabled = true,
+          mainChargeIsNotPaidFilter
+        )
+
+        result should not be empty
+        result.map(_.dueDate.get) shouldBe sorted
+      }
+    }
+
+    "given a charge with codedOutStatus Accepted" should {
+      "exclude the accepted coded-out charge from the result" in {
+        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
+          .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
+
+        val result = TestWhatYouOweService.getFilteredChargesList(
+          List(financialDetailsBalancingCharges),
+          isPenaltiesEnabled = true,
+          mainChargeIsNotPaidFilter
+        )
+
+        result.forall(!_.codedOutStatus.contains(Accepted)) shouldBe true
+      }
+    }
+
+    "given penalty charges when penalties are disabled" should {
+      "exclude all penalty charges from the result" in {
+        val result = TestWhatYouOweService.getFilteredChargesList(
+          List(financialDetailsModelLatePaymentPenalties),
+          isPenaltiesEnabled = false,
+          mainChargeIsNotPaidFilter
+        )
+
+        result.forall(!_.isPenalty) shouldBe true
+      }
+    }
+
+    "given penalty charges when penalties are enabled" should {
+      "include penalty charges in the result" in {
+        val result = TestWhatYouOweService.getFilteredChargesList(
+          List(financialDetailsModelLatePaymentPenalties),
+          isPenaltiesEnabled = true,
+          mainChargeIsNotPaidFilter
+        )
+
+        result.exists(_.isPenalty) shouldBe true
+      }
+    }
+
+    "given charges where all have zero remaining to pay" should {
+      "return an empty list when using the mainChargeIsNotPaidFilter" in {
+        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
+          .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0)))))
+
+        val result = TestWhatYouOweService.getFilteredChargesList(
+          List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0))),
+          isPenaltiesEnabled = true,
+          mainChargeIsNotPaidFilter
+        )
+
+        result shouldBe empty
+      }
+    }
+
+    "given financial details with mixed MFA and non-MFA charges" should {
+      "include only non-MFA known charge types" in {
+        val result = TestWhatYouOweService.getFilteredChargesList(
+          List(financialDetailsMFADebits),
+          isPenaltiesEnabled = true,
+          mainChargeIsNotPaidFilter
+        )
+
+        result shouldBe whatYouOweDataWithMFADebitsData.chargesList
+      }
+    }
+
+    "given charges across multiple financial detail models" should {
+      "return a combined and sorted list of all qualifying charges" in {
+        val result = TestWhatYouOweService.getFilteredChargesList(
+          List(financialDetailsWithMixedData1, financialDetailsWithMixedData2),
+          isPenaltiesEnabled = true,
+          mainChargeIsNotPaidFilter
+        )
+
+        result should not be empty
+        result.map(_.dueDate.get) shouldBe sorted
+      }
+    }
+
+    "given a charge with a customer rejection classification (RC)" should {
+      "exclude the rejected correction charge from the result" in {
+        val rejectedCorrectionDetail = DocumentDetail(
+          taxYear = 2022,
+          transactionId = id1040000124,
+          documentDescription = Some("TRM New Charge"),
+          documentText = Some("documentText"),
+          outstandingAmount = 100.00,
+          originalAmount = 100.00,
+          documentDate = LocalDate.of(2018, 3, 29),
+          interestOutstandingAmount = None,
+          interestRate = None,
+          latePaymentInterestId = None,
+          interestFromDate = None,
+          interestEndDate = None,
+          accruingInterestAmount = None,
+          effectiveDateOfPayment = Some(LocalDate.parse("2022-08-24")),
+          documentDueDate = Some(LocalDate.parse("2022-08-24")),
+          chargeClassification = Some("RC")
+        )
+        val financialDetailsWithRejection = FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+          documentDetails = List(rejectedCorrectionDetail),
+          financialDetails = List(
+            FinancialDetail("2022", Some("ITSA Return Amendment"), Some("4915"), Some(id1040000124), None, Some("ABCD1234"),
+              Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100),
+              Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2022-08-24"))))))
+          )
+        )
+
+        val result = TestWhatYouOweService.getFilteredChargesList(
+          List(financialDetailsWithRejection),
+          isPenaltiesEnabled = true,
+          mainChargeIsNotPaidFilter
+        )
+
+        result shouldBe empty
       }
     }
   }

@@ -74,15 +74,18 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         document.getElementsByClass("govuk-heading-xl").first().text() shouldBe heading
       }
 
-      "render the description for the business start date" in new Setup(isAgent, "Standard", incomeSourceType) {
-        val descriptionText: String = incomeSourceType match {
-          case SelfEmployment => "This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate."
-          case UkProperty => "This is the date you first received rental income from this UK property business, such as letting or renting out a property or land."
-          case ForeignProperty => "This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land."
+      "render the subheading question" in new Setup(isAgent, "Standard", incomeSourceType) {
+        val question: String = incomeSourceType match {
+          case UkProperty => "When did you first receive rental income from this UK property business?"
+          case ForeignProperty => "When did you first receive rental income from this foreign property business?"
+          case SelfEmployment => "When did your business start trading?"
         }
 
+        document.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe question
+      }
+
+      "render the description for the business start date" in new Setup(isAgent, "Standard", incomeSourceType) {
         document.getElementById("business-start-date-description-1").text() shouldBe "The date your business started trading can be today, in the past or up to 7 days in the future."
-        document.getElementById("business-start-date-description-2").text() shouldBe descriptionText
       }
       "render the hint" in new Setup(isAgent, "Standard", incomeSourceType) {
         document.getElementById("value-hint").text() shouldBe "For example, 27 3 2020"

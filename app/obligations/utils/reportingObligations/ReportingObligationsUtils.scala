@@ -31,22 +31,22 @@ trait ReportingObligationsUtils extends FeatureSwitching {
 
   def withOptOutFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (!isEnabled(OptOutFs)) {
-      redirectHome(user.isAgent)
+      redirectHome(user.isAgent, user.newHubContextRootEnabled)
     } else {
       codeBlock
     }
   }
 
   def withOptOutRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    if (isEnabled(OptOutFs)) codeBlock else redirectHome(user.isAgent)
+    if (isEnabled(OptOutFs)) codeBlock else redirectHome(user.isAgent, user.newHubContextRootEnabled)
   }
 
   def withSignUpRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    if (isEnabled(SignUpFs)) codeBlock else redirectHome(user.isAgent)
+    if (isEnabled(SignUpFs)) codeBlock else redirectHome(user.isAgent, user.newHubContextRootEnabled)
   }
 
-  private def redirectHome(isAgent: Boolean): Future[Result] = 
-    Future.successful(Redirect(appConfig.homePageUrl(isAgent)))
+  private def redirectHome(isAgent: Boolean, newHubContextRootEnabled: Boolean): Future[Result] = 
+    Future.successful(Redirect(appConfig.homePageUrl(isAgent, newHubContextRootEnabled)))
 
   protected def redirectReportingFrequency(userType: Option[AffinityGroup]): Future[Result] =
     userType match {

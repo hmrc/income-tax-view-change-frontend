@@ -16,7 +16,7 @@
 
 package common.mocks.services.admin
 
-import common.models.admin.{FeatureSwitch, FeatureSwitchName}
+import common.models.admin.{FeatureSwitch, FeatureSwitchName, NewHubContextRootEnabled}
 import common.services.admin.FeatureSwitchService
 import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.any
@@ -35,6 +35,7 @@ trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
     when(mockFeatureSwitchService.getAll()(any())).thenReturn(Future(
       FeatureSwitchName.allFeatureSwitches.map { fsName =>
         fsName.name match
+          case fs if fs == NewHubContextRootEnabled.name => FeatureSwitch(fsName, newHubContextRootEnabled)
           case fs if featureSwitches.map(_.name).contains(fs) => FeatureSwitch(fsName, true)
           case _ => FeatureSwitch(fsName, false)
       }.toList

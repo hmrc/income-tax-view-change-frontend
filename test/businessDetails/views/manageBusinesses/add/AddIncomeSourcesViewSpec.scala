@@ -29,8 +29,8 @@ import play.twirl.api.HtmlFormat
 
 class AddIncomeSourcesViewSpec extends TestSupport {
   val addIncomeSources: AddIncomeSourcesView = app.injector.instanceOf[AddIncomeSourcesView]
-  val backUrl: String = appConfig.homePageUrl(isAgent = false)
-  val backUrlAgent: String = appConfig.homePageUrl(isAgent = true)
+  val backUrl: String = appConfig.homePageUrl(isAgent = false, newHubContextRootEnabled)
+  val backUrlAgent: String = appConfig.homePageUrl(isAgent = true, newHubContextRootEnabled)
 
 
   val viewModelMax: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(

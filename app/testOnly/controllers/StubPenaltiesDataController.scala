@@ -35,7 +35,7 @@ class StubPenaltiesDataController @Inject()()
                                             val penaltiesStubConnector: PenaltiesStubConnector
                                   ) extends BaseController with I18nSupport {
 
-  val submitStubbedPenaltyDetails: Action[JsValue] = Action.async(parse.json) {
+  def submitStubbedPenaltyDetails(isNewContextRoot: Boolean): Action[JsValue] = Action.async(parse.json) {
     implicit request =>
       withJsonBody[PenaltiesDataModel](
         json => {
@@ -52,7 +52,7 @@ class StubPenaltiesDataController @Inject()()
       )
   }
 
-  val submitStubbedFinancialData: Action[JsValue] = Action.async(parse.json) {
+  def submitStubbedFinancialData(isNewContextRoot: Boolean): Action[JsValue] = Action.async(parse.json) {
     implicit request =>
       withJsonBody[PenaltiesDataModel](
         json => {

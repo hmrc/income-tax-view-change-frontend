@@ -21,14 +21,14 @@ import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.models.incomeSourceDetails.TaxYear
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.optOut.OptOutService
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait JourneyCheckerOptOut extends ReportingObligationsUtils {
+trait JourneyCheckerOptOut extends ReportingObligationsUtils with Logging {
   self =>
 
   val itvcErrorHandler: ItvcErrorHandler
@@ -43,7 +43,7 @@ trait JourneyCheckerOptOut extends ReportingObligationsUtils {
       optOutService.saveIntent(taxYear).flatMap {
         case true => codeBlock
         case false =>
-          Logger("application").error(s"[JourneyCheckerOptOut][withSessionData] - Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer","No Referer"))._2}")
+          logger.error(s"Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer","No Referer"))._2}")
           Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent)))
       }
     } else {

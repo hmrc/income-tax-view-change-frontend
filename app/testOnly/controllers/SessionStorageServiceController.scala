@@ -16,12 +16,13 @@
 
 package testOnly.controllers
 
-import common.auth.{AuthActions, FrontendAuthorisedFunctions}
+import common.auth.FrontendAuthorisedFunctions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.services.SessionDataService
 import common.models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
-import play.api.Logger
-import play.api.mvc._
+import common.auth.AuthActions
+import play.api.Logging
+import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -34,14 +35,15 @@ class SessionStorageServiceController @Inject()(val authActions: AuthActions,
                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
                                                 val sessionDataService: SessionDataService
                                                )(implicit val ec: ExecutionContext,
-                                                 val mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+                                                 val mcc: MessagesControllerComponents)
+  extends FrontendController(mcc) with Logging{
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShow(isAgent = false)
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def showAgent(isNewContextRoot: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleShow(isAgent = true)
   }
@@ -49,7 +51,7 @@ class SessionStorageServiceController @Inject()(val authActions: AuthActions,
   private def handleShow(isAgent: Boolean)(implicit request: Request[_], hc: HeaderCarrier): Future[Result] = {
     sessionDataService.getSessionData() map {
       case Left(ex: Throwable) =>
-        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
+        logger.error(s"${if (isAgent) "Agent" else "Individual"}" +
           s" - GET user data request to income-tax-session-data unsuccessful: - message: ${ex.getMessage} - cause: ${ex.getCause} - ")
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
       case Right(model: SessionDataGetSuccess) =>

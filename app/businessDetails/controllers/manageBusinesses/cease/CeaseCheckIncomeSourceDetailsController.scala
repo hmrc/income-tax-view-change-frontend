@@ -25,7 +25,7 @@ import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -53,7 +53,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses with Logging{
 
   private lazy val backUrl: Boolean => String = (isAgent: Boolean) => if (isAgent) manageBusinessesRoutes.ManageYourBusinessesController.showAgent().url
   else manageBusinessesRoutes.ManageYourBusinessesController.show().url
@@ -90,7 +90,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent] " else ""}" +
+        logger.error(s"${if (isAgent) "[Agent] " else ""}" +
           s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
         Redirect(routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType, isTriggeredMigration))
     }
@@ -102,18 +102,18 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
         incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(user.incomeSources, IncomeSourceId(id), endDate) match {
           case Right(viewModel) => Some(viewModel)
           case Left(ex) =>
-            Logger("application").error(s"Unable to get view model for SelfEmployment: ${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"Unable to get view model for SelfEmployment: ${ex.getMessage} - ${ex.getCause}")
             None
         }
       case (None, Some(endDate), _) =>
         incomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(user.incomeSources, endDate, incomeSourceType) match {
           case Right(viewModel) => Some(viewModel)
           case Left(ex) =>
-            Logger("application").error(s"Unable to get view model for $incomeSourceType: ${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"Unable to get view model for $incomeSourceType: ${ex.getMessage} - ${ex.getCause}")
             None
         }
       case (_, _, _) =>
-        Logger("application").error(s"Unable to get required data from session for $incomeSourceType")
+        logger.error(s"Unable to get required data from session for $incomeSourceType")
         None
     }
   }
@@ -149,7 +149,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"Error Submitting Cease Date: ${ex.getMessage}", ex.getCause)
+        logger.error(s"Error Submitting Cease Date: ${ex.getMessage}", ex.getCause)
         errorHandler.showInternalServerError()
     }
   }
@@ -159,7 +159,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
     (incomeSourceIdOpt, endDateOpt) match {
       case (Some(incomeSourceId), Some(endDate)) => updateCessationDate(endDate, SelfEmployment, IncomeSourceId(incomeSourceId), isAgent, isTriggeredMigration)
       case _ => Future.successful {
-        Logger("application").error(s"Missing income source id or end date.")
+        logger.error(s"Missing income source id or end date.")
         errorHandler.showInternalServerError()
       }
     }
@@ -174,13 +174,13 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
             val incomeSourceId = IncomeSourceId(property.incomeSourceId)
             updateCessationDate(endDate, incomeSourceType, incomeSourceId, isAgent, isTriggeredMigration)
           case None =>
-            Logger("application").error(s"Unable to retrieve property income source.")
+            logger.error(s"Unable to retrieve property income source.")
             Future.successful {
               errorHandler.showInternalServerError()
             }
         }
       case _ =>
-        Logger("application").error(s"Missing end date.")
+        logger.error(s"Missing end date.")
         Future.successful {
           errorHandler.showInternalServerError()
         }
@@ -207,8 +207,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
         Future.successful(Redirect(redirectCall))
 
       case Left(error) =>
-        Logger("application").error("" +
-          " Unsuccessful update response received")
+        logger.error("Unsuccessful update response received")
 
         auditingService.extendedAudit(
           CeaseIncomeSourceAuditModel(

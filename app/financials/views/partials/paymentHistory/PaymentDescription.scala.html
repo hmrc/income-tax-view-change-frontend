@@ -15,6 +15,7 @@
  *@
 
 @import financials.models.repaymentHistory.PaymentHistoryEntry
+@import financials.models.*
 
 @this()
 @(
@@ -26,7 +27,7 @@
 )
 
 <a class="govuk-link" href="@{payment.linkUrl}">
-    @{messages(s"paymentHistory.${payment.creditType.key}")}
+    @{payment.description}
     <div><span class="govuk-visually-hidden">
         @{payment.visuallyHiddenText}
         @{if (yearPayments.size > 1) s" Item ${(index + 1)} " else ""}

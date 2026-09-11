@@ -18,14 +18,14 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.models.admin.DisplayBusinessStartDate
+import common.models.admin.{DisplayBusinessStartDate, NewHubContextRootEnabled}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import shared.enums.JourneyType.Add
 
@@ -43,14 +43,14 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val sessionService: SessionService,
                                           val mcc: MessagesControllerComponents) extends FrontendController(mcc)
-  with I18nSupport with IncomeSourcesUtils {
+  with I18nSupport with IncomeSourcesUtils with Logging {
 
   def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
         sources = user.incomeSources,
-        backUrl = appConfig.individualHomeUrl
+        backUrl = appConfig.individualHomeUrl(isEnabled(NewHubContextRootEnabled))
       )(implicitly, itvcErrorHandler)
   }
 
@@ -59,7 +59,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
       handleRequest(
         isAgent = true,
         sources = mtdItUser.incomeSources,
-        backUrl = appConfig.agentHomeUrl
+        backUrl = appConfig.agentHomeUrl(isEnabled(NewHubContextRootEnabled))
       )(implicitly, itvcErrorHandlerAgent)
 
   }
@@ -78,11 +78,11 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
           ))
         } recover {
           case ex: Exception =>
-            Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
             errorHandler.showInternalServerError()
         }
       case Failure(ex) =>
-        Logger("application").error(s"Error: ${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"Error: ${ex.getMessage} - ${ex.getCause}")
         Future(errorHandler.showInternalServerError())
     }
   }

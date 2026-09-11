@@ -17,6 +17,7 @@
 package common.mocks.services
 
 import common.models.audit.{AuditModel, ExtendedAuditModel}
+import common.models.obligations.SingleObligationModel
 import common.services.AuditingService
 import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.any
@@ -25,6 +26,7 @@ import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
+import common.auth.MtdItUser
 
 import scala.concurrent.ExecutionContext
 
@@ -37,6 +39,16 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
 
   lazy val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
+  def verifyViewObligationsResponseAuditEvent(incomeSourceId: String, nextUpdates: Seq[SingleObligationModel]) = 
+    verify(mockAuditingService).sendViewObligationsResponseAuditEvent(
+      ArgumentMatchers.eq(incomeSourceId),
+      ArgumentMatchers.eq(nextUpdates)
+    )(using 
+      ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[ExecutionContext],
+      ArgumentMatchers.any[MtdItUser[_]]
+    )
+    
   def verifyAudit(model: AuditModel, path: Option[String] = None): Unit = {
     verify(mockAuditingService).audit(
       ArgumentMatchers.eq(model),

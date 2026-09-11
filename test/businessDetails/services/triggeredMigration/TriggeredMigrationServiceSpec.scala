@@ -48,14 +48,16 @@ class TriggeredMigrationServiceSpec extends TestSupport with MockSessionService 
         businesses = List(business1),
         properties = List(ukPropertyDetails, foreignPropertyDetails)
       )
-
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None)
+      
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None, "2027", false)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"),Some("Fruit Ltd"), Some("nextUpdates.business"))),
         hasActiveUkProperty = true,
         hasActiveForeignProperty = true,
-        triggeredMigrationState = None
+        triggeredMigrationState = None,
+        yearOfMigrationEndYear = 2027,
+        hideBusinessName = false
       )
 
       result shouldBe expectedResult
@@ -70,27 +72,31 @@ class TriggeredMigrationServiceSpec extends TestSupport with MockSessionService 
         )
       )
 
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None)
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None, "2027", false)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = false,
         hasActiveForeignProperty = false,
         triggeredMigrationState = None,
-        numberOfCeasedBusinesses = 1
+        numberOfCeasedBusinesses = 1,
+        yearOfMigrationEndYear = 2027,
+        hideBusinessName = false
       )
 
       result shouldBe expectedResult
     }
 
     "return a view model with an active sole trader business and no active uk or foreign property businesses due to no returned businesses" in {
-      val result = service.getCheckHmrcRecordsViewModel(baseIncomeSources, None)
+      val result = service.getCheckHmrcRecordsViewModel(baseIncomeSources, None, "2027", false)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = false,
         hasActiveForeignProperty = false,
-        triggeredMigrationState = None
+        triggeredMigrationState = None,
+        yearOfMigrationEndYear = 2027,
+        hideBusinessName = false
       )
 
       result shouldBe expectedResult
@@ -101,15 +107,17 @@ class TriggeredMigrationServiceSpec extends TestSupport with MockSessionService 
         businesses = List(business1.copy(cessation = Some(CessationModel(Some(LocalDate.now()))))),
         properties = List(ukPropertyDetails)
       )
-
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None)
+      
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None, "2027", false)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = true,
         hasActiveForeignProperty = false,
         triggeredMigrationState = None,
-        numberOfCeasedBusinesses = 1
+        numberOfCeasedBusinesses = 1,
+        yearOfMigrationEndYear = 2027,
+        hideBusinessName = false
       )
 
       result shouldBe expectedResult
@@ -121,13 +129,15 @@ class TriggeredMigrationServiceSpec extends TestSupport with MockSessionService 
         properties = List(ukPropertyDetails, foreignPropertyDetails)
       )
 
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, Some(TriggeredMigrationCeased))
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, Some(TriggeredMigrationCeased), "2027", false)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"),Some("Fruit Ltd"), Some("nextUpdates.business"))),
         hasActiveUkProperty = true,
         hasActiveForeignProperty = true,
-        triggeredMigrationState = Some(TriggeredMigrationCeased)
+        triggeredMigrationState = Some(TriggeredMigrationCeased),
+        yearOfMigrationEndYear = 2027,
+        hideBusinessName = false
       )
 
       result shouldBe expectedResult
@@ -139,13 +149,15 @@ class TriggeredMigrationServiceSpec extends TestSupport with MockSessionService 
         properties = List(ukPropertyDetails, foreignPropertyDetails)
       )
 
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, Some(TriggeredMigrationAdded(SelfEmployment)))
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, Some(TriggeredMigrationAdded(SelfEmployment)), "2027", false)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"),Some("Fruit Ltd"), Some("nextUpdates.business"))),
         hasActiveUkProperty = true,
         hasActiveForeignProperty = true,
-        triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment))
+        triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment)),
+        yearOfMigrationEndYear = 2027,
+        hideBusinessName = false
       )
 
       result shouldBe expectedResult
@@ -157,14 +169,16 @@ class TriggeredMigrationServiceSpec extends TestSupport with MockSessionService 
         properties = List(foreignPropertyDetails)
       )
 
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None)
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None, "2027", false)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = false,
         hasActiveForeignProperty = true,
         triggeredMigrationState = None,
-        numberOfCeasedBusinesses = 1
+        numberOfCeasedBusinesses = 1,
+        yearOfMigrationEndYear = 2027,
+        hideBusinessName = false
       )
 
       result shouldBe expectedResult

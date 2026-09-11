@@ -54,7 +54,7 @@
 }
 
 @getHomePageUrl = @{
-    appConfig.homePageUrl(user.isAgent)
+    appConfig.homePageUrl(user.isAgent, user.newHubContextRootEnabled)
 }
 
 @getWhatYouNeedToKnowUrl = @{

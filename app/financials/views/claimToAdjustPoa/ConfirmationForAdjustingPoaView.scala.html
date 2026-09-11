@@ -44,7 +44,7 @@
 }
 
 @getHomePageUrl = @{
-    appConfig.homePageUrl(user.isAgent)
+    appConfig.homePageUrl(user.isAgent, user.newHubContextRootEnabled)
 }
 
 @getMessage(key: String, args: String*) = @{

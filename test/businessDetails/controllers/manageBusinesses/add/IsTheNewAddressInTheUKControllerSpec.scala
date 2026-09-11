@@ -97,6 +97,8 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
 
+                val result = action(fakeRequest)
+
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheNewAddressInTheUKHeading))
                 document.select(".govuk-back-link").attr("href") shouldBe addBusinessRoutes.ChooseSoleTraderAddressController.show(mtdRole != MTDIndividual).url
@@ -114,6 +116,8 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
 
+                val result = action(fakeRequest)
+
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
                 status(result) shouldBe OK
@@ -127,6 +131,10 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
@@ -151,6 +159,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
           }
           "redirect to the home page page" when {
             "fs is disables using the manage businesses journey" in {
+<<<<<<< HEAD
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -158,9 +167,18 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
                     .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
+=======
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
+              val result = action(fakeRequest)
+>>>>>>> main
 
-                status(result) shouldBe SEE_OTHER
-                redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result).get should include(appConfig.individualHomeUrl(newHubContextRootEnabled))
             }
           }
         }

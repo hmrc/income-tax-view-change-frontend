@@ -24,7 +24,7 @@ import financials.models.CreditType.{creditsWithSummaryPages, cutOver}
 import shared.models.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import financials.models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import financials.services.claimToAdjustPoa.ClaimToAdjustHelper.poaDocumentDescriptions
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
@@ -37,7 +37,8 @@ sealed trait FinancialDetailsResponseModel
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  codingDetails: List[CodingDetails] = List(),
                                  documentDetails: List[DocumentDetail],
-                                 financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
+                                 financialDetails: List[FinancialDetail])
+  extends FinancialDetailsResponseModel with Logging {
 
   def dunningLockExists(documentId: String): Boolean = {
     documentDetails.filter(_.transactionId == documentId)
@@ -203,7 +204,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         case Success(res) =>
           Some(res)
         case Failure(ex) =>
-          Logger("application").warn(s"Failed conversion - asChargeItems - ${ex.getMessage}")
+          logger.warn(s"[asChargeItems] Failed conversion - ${ex.getMessage}")
           None
       }
     ).flatMap(x => x.map(y => List(y)).getOrElse(List[ChargeItem]()))
@@ -219,7 +220,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       case Success(res) =>
         res
       case Failure(ex) =>
-        Logger("application").warn(s"Failed conversion - toChargeItem - ${ex.getMessage}")
+        logger.warn(s"[toChargeItem] Failed conversion - ${ex.getMessage}")
         List[ChargeItem]()
     }
   }

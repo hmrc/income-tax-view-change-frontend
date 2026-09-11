@@ -133,7 +133,7 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
     "return a list of all models with source in date order" when {
 
       "calling .allDeadlinesWithSource" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
+        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource(false, false)(
           BaseTestConstants.testMtdItUser) shouldBe List(
           ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", overdueQuarterlyObligation),
           ObligationWithIncomeType("nextUpdates.business", overdueObligation),
@@ -147,7 +147,7 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
     "return a list of all models with source in dateReceived order if the previous flag is set to true" when {
 
       "calling .allDeadlinesWithSource" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous = true)(
+        NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous = true, false)(
           BaseTestConstants.testMtdItUser) shouldBe List(
           ObligationWithIncomeType("nextUpdates.business", openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1)))),
           ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", overdueQuarterlyObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
@@ -159,7 +159,7 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
     "return an empty list" when {
 
       "calling .allDeadlinesWithSource" in {
-        obligationsAllDeadlinesSuccessNotValidObligationType.allDeadlinesWithSource()(
+        obligationsAllDeadlinesSuccessNotValidObligationType.allDeadlinesWithSource(false, false)(
           BaseTestConstants.testMtdItUserNoIncomeSource) shouldBe List()
       }
     }
@@ -167,7 +167,7 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
     "return a list of only specific updates with source in date order" when {
 
       "calling .allQuarterly" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allQuarterly(
+        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allQuarterly(false)(
           BaseTestConstants.testMtdItUser) shouldBe List(
           ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", overdueQuarterlyObligation),
           ObligationWithIncomeType("nextUpdates.business", overdueObligation),
@@ -177,7 +177,7 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
       }
 
       "calling .allCrystallised" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(
+        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(false)(
           BaseTestConstants.testMtdItUser) shouldBe List(
           ObligationWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )

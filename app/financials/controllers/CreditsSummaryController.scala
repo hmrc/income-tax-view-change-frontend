@@ -25,7 +25,7 @@ import financials.models.audit.CreditSummaryAuditing
 import financials.models.creditDetailModel.CreditDetailModel
 import financials.services.CreditHistoryService
 import financials.views.html.CreditsSummaryView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,7 +45,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
                                           msgApi: MessagesApi,
                                           val auditingService: AuditingService,
                                           ec: ExecutionContext
-                                        ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+                                        ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging {
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
     financialsRoutes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
@@ -85,26 +85,26 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
                     hc: HeaderCarrier): Future[Result] = {
     creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
       case Right(credits) =>
-        val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
+        val sortedCredits: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay) 
         val maybeAvailableCredit: Option[BigDecimal] =
           credits.flatMap(_.availableCredit.filter(_ > 0.00)).headOption
-        auditCreditSummary(maybeAvailableCredit, charges)
+        auditCreditSummary(maybeAvailableCredit, sortedCredits)
         val backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear)
         Future.successful(Ok(creditsView(
           calendarYear = calendarYear,
           backUrl = backUrl,
           utr = user.saUtr,
           serviceNavigationPartial = user.serviceNavigationPartial,
-          charges = charges,
+          charges = sortedCredits,
           maybeAvailableCredit = maybeAvailableCredit,
           origin = origin)))
       case Left(_) =>
         if (isAgent) {
-          Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+          logger.error(s"Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}, isAgent: $isAgent")
           Future.successful(agentItvcErrorHandler.showInternalServerError())
         }
         else {
-          Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+          logger.error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}, isAgent: $isAgent")
           Future.successful(itvcErrorHandler.showInternalServerError())
         }
     }
@@ -140,7 +140,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
         userType = user.userType.fold("")(_.toString),
         credId = user.credId.getOrElse(""),
         mtdRef = user.mtditid,
-        creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
+        creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)),
         creditDetails = toCreditSummaryDetailsSeq(charges)(msgApi)
       )
     )

@@ -457,6 +457,25 @@
     }.toSeq
 }
 
+@taxRefundedOrSetOffHead = @{
+    Some(Seq(
+        HeadCell(
+            content = Text(messages("taxCal_breakdown.table.taxRefundedOrSetOff.header")),
+            classes = "bold"
+        ),
+        HeadCell(
+            content = Text(messages("taxCal_breakdown.table.amount")),
+            classes = "govuk-table__header--numeric bold"
+        )
+    ))
+}
+@taxRefundedOrSetOffRows = @{
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.taxRefundedOrSetOff")), classes = "govuk-table__cell"),
+            TableRow(content = HtmlContent(viewModel.taxRefundedOrSetOff.getOrElse(BigDecimal(0)).toCurrency), classes = "govuk-table__cell govuk-table__cell--numeric no-wrap")
+        )
+    }
+
 @mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     useFallbackBackLink = true, btaAndPtaServiceNavigation = serviceNavigationPartial) {
 
@@ -643,13 +662,23 @@
         ))
     }
 
+    @if(viewModel.taxRefundedOrSetOff.nonEmpty) {
+            @govukTable(Table(
+                head = taxRefundedOrSetOffHead,
+                rows = Seq(taxRefundedOrSetOffRows),
+                caption = Some(messages("taxCal_breakdown.table.taxRefundedOrSetOff.caption")),
+                captionClasses = "govuk-heading-l",
+                attributes = Map("id" -> "tax-deductions-table")
+            ))
+        }
+
     @govukTable(Table(
         rows = Seq(Seq(
             TableRow(
                 content = Text(messages("taxCal_breakdown.table.totalIncomeTaxAndNicsDue")),
                 classes = "govuk-table__header total-section-with-spacing"),
             TableRow(
-                content = Text(viewModel.totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)).toCurrencyString),
+                content = Text(viewModel.getSATaxAmount.getOrElse(BigDecimal(0)).toCurrencyString),
                 classes = "govuk-table__header govuk-table__header--numeric total-section-with-spacing"),
         ))
     ))

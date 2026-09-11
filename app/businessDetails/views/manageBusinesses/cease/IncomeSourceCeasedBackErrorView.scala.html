@@ -51,7 +51,7 @@
 }
 
 @getHomeUrl = @{
-    appConfig.homePageUrl(isAgent)
+    appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled)
 }
 
 @mainTemplate(

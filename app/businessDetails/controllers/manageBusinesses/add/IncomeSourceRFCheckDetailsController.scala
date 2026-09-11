@@ -24,7 +24,7 @@ import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeS
 import businessDetails.services.{CreateBusinessDetailsService, SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -54,7 +54,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
                                                      val mcc: MessagesControllerComponents,
                                                      val appConfig: FrontendAppConfig, dateService: DateServiceInterface
                                                     ) extends FrontendController(mcc)
-  with JourneyCheckerManageBusinesses with I18nSupport {
+  with JourneyCheckerManageBusinesses with I18nSupport with Logging{
 
   private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
@@ -134,8 +134,8 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
 
           updateReportingMethod(isAgent, IncomeSourceId(id), incomeSourceType, newReportingMethods.filterNot(_.latencyIndicator))
         case _ =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
+          val agentPrefix = if (isAgent) "Agent - " else ""
+          logger.error(agentPrefix +
             s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
           Future.successful(Redirect(errorRedirectUrl(isAgent, incomeSourceType)))
       }
@@ -156,7 +156,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
     handleUpdateResults(isAgent, incomeSourceType, results)
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[updateReportingMethod] ${ex.getMessage} - ${ex.getCause}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
 
@@ -167,16 +167,15 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
     updateResults.map { results =>
       val successCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseModel])
       val errorCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseError])
-      val prefix = ""
 
       if (successCount == results.length) {
-        Logger("application").info(prefix + s"Successfully updated all new selected reporting methods for $incomeSourceType")
+        logger.info(s"Successfully updated all new selected reporting methods for $incomeSourceType")
         Redirect(redirectUrl(isAgent, incomeSourceType))
       } else if (errorCount == results.length) {
-        Logger("application").info(prefix + s"Unable to update all new selected reporting methods for $incomeSourceType")
+        logger.info(s"Unable to update all new selected reporting methods for $incomeSourceType")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       } else {
-        Logger("application").info(prefix + s"Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
+        logger.info(s"Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       }
     }
