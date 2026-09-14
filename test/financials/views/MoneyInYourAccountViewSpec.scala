@@ -50,6 +50,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
   class TestSetup(
                    creditAndRefundModel: CreditsModel,
                    isAgent: Boolean = false,
+                   whatYouOweUrl: String = "testUrl",
                    backUrl: String = "testString",
                    welshLang: Boolean = false) {
 
@@ -67,6 +68,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
     lazy val page: HtmlFormat.Appendable =
       moneyInYourAccountView(
         viewModel,
+        whatYouOweUrl,
         backUrl)(FakeRequest(), testUser, testMessages)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
@@ -195,6 +197,35 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
             .text() shouldBe s"17 Aug 2022 " + messages("money-in-your-account.where-from.correction-row.description") + s" 2022 to 2023 " + "£40.00"
         }
 
+      }
+    }
+    "display correct content" when {
+      "a stand over charge is present" in {
+        val testModel = ANewCreditAndRefundModel()
+          .withAvailableCredit(5.0)
+          .withTotalCredit(5.0)
+          .withStandOverCharge(LocalDate.parse("2022-08-15"), 20.0)
+          .get()
+
+        Seq(true, false).foreach { isAgent =>
+          new TestSetup(
+            isAgent = isAgent,
+            creditAndRefundModel = testModel
+          ) {
+            document.selectById("credit-amount").text() shouldBe "Available credit: £5.00"
+
+            document.selectById("allocating-credit-heading").text() shouldBe "Allocating credit to payments due soon"
+            document.selectById("stand-over-charges-p1").text() shouldBe "Money in your account is automatically set aside for tax due within 30 days."
+            document.selectById("stand-over-charges-p2").text() shouldBe "You can leave the money in your account to pay tax due later."
+            document.selectById("stand-over-charges-p3").text() shouldBe "It will be used to pay for tax when it becomes due, including any suspended tax once it is no longer suspended. Overdue tax with interest will be paid first."
+
+            if (isAgent) {
+              document.selectById("what-you-owe-p").text() shouldBe "View what your client owes to check if they have any other charges to pay."
+            } else {
+              document.selectById("what-you-owe-p").text() shouldBe "View what you owe to check if you have any other charges to pay."
+            }
+          }
+        }
       }
     }
   }

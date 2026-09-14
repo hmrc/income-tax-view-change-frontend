@@ -159,11 +159,11 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
               doc.select("#main-content").select("#where-the-money-came-from-table tbody tr:nth-child(8)")
                 .text() shouldBe s"15 May $testPreviousTaxYear " + messages("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYear to $testTaxYear " + "£700.00"
               doc.select("#main-content").select("#where-the-money-came-from-table tbody tr:nth-child(9)")
-                .text() shouldBe s"16 Aug ${testTaxYear2023 - 1} " + messages("money-in-your-account.where-from.payment-row.description", "15 Jun 2021") + s" ${testTaxYear2023 - 1} to $testTaxYear2023 " + "£100.00"
+                .text() shouldBe s"16 Aug ${testTaxYear2023 - 1} " + messages("money-in-your-account.where-from.payment-row.description", "15 June 2021") + s" ${testTaxYear2023 - 1} to $testTaxYear2023 " + "£100.00"
               doc.select("#main-content").select("#where-the-money-came-from-table tbody tr:nth-child(10)")
-                .text() shouldBe s"16 Aug ${testTaxYear2023 - 1} " + messages("money-in-your-account.where-from.payment-row.description", "15 Jun 2021") + s" ${testTaxYear2023 - 1} to $testTaxYear2023 " + "£500.00"
+                .text() shouldBe s"16 Aug ${testTaxYear2023 - 1} " + messages("money-in-your-account.where-from.payment-row.description", "15 June 2021") + s" ${testTaxYear2023 - 1} to $testTaxYear2023 " + "£500.00"
               doc.select("#main-content").select("#where-the-money-came-from-table tbody tr:nth-child(11)")
-                .text() shouldBe s"16 Aug ${testTaxYear2023 - 1} " + messages("money-in-your-account.where-from.payment-row.description", "15 Jun 2021") + s" ${testTaxYear2023 - 1} to $testTaxYear2023 " + "£300.00"
+                .text() shouldBe s"16 Aug ${testTaxYear2023 - 1} " + messages("money-in-your-account.where-from.payment-row.description", "15 June 2021") + s" ${testTaxYear2023 - 1} to $testTaxYear2023 " + "£300.00"
               doc.select("#main-content").select("#where-the-money-came-from-table tbody tr:nth-child(12)")
                 .text() shouldBe messages("chargeSummary.noData") + " " + messages("money-in-your-account.where-from.refund-row.description") + " " + messages("chargeSummary.noData") + " −£4.00"
               doc.select("#main-content").select("#where-the-money-came-from-table tbody tr:nth-child(13)")
