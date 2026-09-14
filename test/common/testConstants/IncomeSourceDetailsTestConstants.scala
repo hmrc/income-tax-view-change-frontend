@@ -42,6 +42,8 @@ object IncomeSourceDetailsTestConstants {
   val propertyIncomeOnly = IncomeSourceDetailsModel(testNino, testMtditid, None, List(), List(propertyDetails))
   val businessAndPropertyAligned = IncomeSourceDetailsModel(testNino, testMtditid, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(alignedBusiness), List(propertyDetails))
+  val businessAndPropertyAlignedTrigMig = IncomeSourceDetailsModel(testNino, testMtditid, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
+    List(alignedBusiness), List(propertyDetails), channel = "Hmrc-led-confirmed")
   val singleBusinessAndPropertyMigrat2019 = IncomeSourceDetailsModel(testNino, testMtditid, Some(testMigrationYear2019), List(alignedBusiness), List(propertyDetails))
   val noIncomeDetails = IncomeSourceDetailsModel(nino = testNino, mtdbsa = testMtditid, yearOfMigration = None, businesses = List(), properties = Nil)
   val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)

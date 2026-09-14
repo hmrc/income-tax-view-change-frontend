@@ -224,7 +224,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = true).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         financialsRoutes.ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
-      paymentHandOffUrl = financialsRoutes.PaymentController.makingPayment(_, None).url,
+      paymentHandOffUrl = financialsRoutes.PaymentController.agentMakingPayment(_).url,
       selfServeTimeToPayEnabled = true,
       totalBalance = totalBalance
     )
@@ -1224,6 +1224,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("due-0-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
           appConfig.taxYearSummaryUrl(isAgent = true, taxYear = fixedDate.getYear, returnsEnabled = true)
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.agentMakingPayment(5000).url
       }
 
       "not have button Pay now with no charges but coded out" in new AgentTestSetup(charges = noChargesButCodedOutModel) {

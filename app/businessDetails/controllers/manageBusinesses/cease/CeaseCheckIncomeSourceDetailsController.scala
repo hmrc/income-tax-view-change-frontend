@@ -174,9 +174,9 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
             val incomeSourceId = IncomeSourceId(property.incomeSourceId)
             updateCessationDate(endDate, incomeSourceType, incomeSourceId, isAgent, isTriggeredMigration)
           case None =>
-            logger.error(s"Unable to retrieve property income source.")
+            logger.error(s"Unable to retrieve property income source. Redirecting to Manage Your Businesses page.")
             Future.successful {
-              errorHandler.showInternalServerError()
+              Redirect(manageBusinessesRoutes.ManageYourBusinessesController.show())
             }
         }
       case _ =>

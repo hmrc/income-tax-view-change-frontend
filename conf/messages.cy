@@ -486,9 +486,9 @@ taxYears.dropdown.content.2                                    =
 
 ## Tax Years Page - Error ##
 taxYears.error.subheading                                      = Ni all yr wybodaeth am eich Ffurflenni Treth gael ei harddangos yma ar hyn o bryd
-taxYears.error.preLinkText                                     = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fynd i’ch
+taxYears.error.preLinkText                                     = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth {0} i {1}, mae angen i chi fynd i’ch
 taxYears.error.linkText                                        = cyfrif Hunanasesiad ar-lein blaenorol
-taxYears.error.agentPreLinkText                                = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fewngofnodi i’ch
+taxYears.error.agentPreLinkText                                = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth {0} i {1}, mae angen i chi fewngofnodi i’ch
 taxYears.error.agentPostLinkText                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Summary Page New ##
@@ -550,6 +550,8 @@ tax-year-summary.payments.hmrcCorrection.text                  = Swm ychwanegol 
 tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
+tax-year-summary.payments.lpi.hmrcCorrection.text              = Llog am dalu’n hwyr ar y swm ychwanegol o ganlyniad i gywiriadau CThEF
+tax-year-summary.payments.lpi.enquiryAmendment.text            = Llog am dalu’n hwyr ar y swm ychwanegol o ganlyniad i ddiwygiad yn sgil ymholiad CThEF
 tax-year-summary.payments.firstLatePaymentPenalty.text         = Cosb gyntaf am dalu’n hwyr
 tax-year-summary.payments.secondLatePaymentPenalty.text        = Ail gosb am dalu’n hwyr
 tax-year-summary.payments.lateSubmissionPenalty.text           = Cosb am gyflwyno’n hwyr
@@ -1174,7 +1176,9 @@ nextUpdates.optOutOneYear.p.link                                = optio allan o 
 nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
 nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
 
-nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.reporting.obligations.p.text1                       = Mae’n rhaid i chi gyflwyno’ch diweddariadau chwarterol hwyr ar gyfer blwyddyn dreth {0} i {1}.
+nextUpdates.reporting.obligations.p.text2                       = Mae diweddariadau chwarterol yn gronnus. Mae hyn yn golygu efallai bod eich diweddariad diweddaraf sy’n hwyr yn cynnwys gwybodaeth o gyfnodau cynharach a fethwyd.
+nextUpdates.reporting.obligations.p.text3                       = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd
 
 ## Next updates Page - R17 Content Changes ##
@@ -1187,16 +1191,12 @@ nextUpdates.r17.tab.quarterly.dropdown.heading                     = Dysgwch rag
 nextUpdates.r17.tab.quarterly.dropdown.text1                       = Diweddariad chwarterol yw cyfanswm yr incwm a’r treuliau ar gyfer y flwyddyn dreth hyd yn hyn. Mae’n cyfuno’r canlynol:
 nextUpdates.r17.tab.quarterly.dropdown.text2                       = gwybodaeth newydd a chywiriadau a wnaed ers y diweddariad diwethaf
 nextUpdates.r17.tab.quarterly.dropdown.text3                       = unrhyw wybodaeth ychwanegol yr ydych eisoes wedi’i darparu sydd heb newid
-nextUpdates.r17.tab.quarterly.dropdown.text4                       = Mae hyn yn cael ei wneud drwy
-nextUpdates.r17.tab.quarterly.dropdown.link.text                   = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
-nextUpdates.r17.tab.quarterly.link.text1                           = Er mwyn gweld diweddariadau a gyflwynwyd yn flaenorol, ewch i’r dudalen
+nextUpdates.r17.tab.quarterly.link.text1                           = Os nad oes busnes yn ymddangos, mae’n bosibl nad oes angen cyflwyno diweddariadau chwarterol ar gyfer y busnes hwnnw yn ystod y flwyddyn dreth hon.
 nextUpdates.r17.tab.quarterly.link.text2                           = trosolwg ar gyfer blynyddoedd treth
 nextUpdates.r17.tab.quarterly.link.text3                           = .
 nextUpdates.r17.tab.quarterly.subheading2                          = Ffurflen Dreth i’w chyflwyno
-nextUpdates.r17.tab.quarterly.text3                                = Os ydych wedi cyflwyno diweddariadau chwarterol ar gyfer y flwyddyn dreth, byddwch hefyd yn nodi unrhyw incwm drethadwy arall yn eich Ffurflen Dreth. Yna, bydd angen i chi gyflwyno’ch Ffurflen Dreth gan ddefnyddio
-nextUpdates.r17.tab.quarterly.text4                                = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
-nextUpdates.r17.tab.quarterly.text5                                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
-nextUpdates.r17.tab.quarterly.text6                                = 31 Ionawr {0}.
+nextUpdates.r17.tab.quarterly.text3                                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
+nextUpdates.r17.tab.quarterly.text4                                = 31 Ionawr {0}.
 nextUpdates.r17.tab.quarterly.table.heading                        = Dyddiadau cau ar y gweill
 nextUpdates.r17.tab.quarterly.table.heading.row1                   = Dyddiad cau
 nextUpdates.r17.tab.quarterly.table.heading.row2                   = Cyfnod
@@ -1226,6 +1226,26 @@ nextUpdates.r17.tab.annual.text4                                   = 31 Ionawr {
 nextUpdates.r17.tab.annual.ny.label                                = Blwyddyn dreth {0} i {1}
 nextUpdates.r17.tab.annual.ny.heading                              = Blwyddyn dreth {0} i {1}
 nextUpdates.r17.tab.annual.ny.text1                                = Ni fydd dyddiadau cau i’w gweld hyd nes eu bod yn dod yn rhan o’r flwyddyn dreth bresennol.
+
+nextUpdates.r17.tab.gettingSoftware.h2                             = Cael meddalwedd
+nextUpdates.r17.tab.gettingSoftware.text                           = Er mwyn cyflwyno diweddariadau chwarterol, mae’n rhaid i chi, neu’ch asiant, ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Mae sawl meddalwedd ar gael i chi, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+nextUpdates.r17.tab.gettingSoftware.link.text                      = Dysgwch ragor am feddalwedd sy’n cydweddu (yn agor tab newydd)
+
+nextUpdates.r17.tab.lateSubPen.link.text                           = Ewch i’r dudalen ynghylch cosbau ac apeliadau Hunanasesiad i fwrw golwg dros eich pwyntiau cosb am gyflwyno’n hwyr
+
+nextUpdates.r17.tab.businessMayNotBeShown.detail.heading           = Dysgwch pam ei bod hi’n bosibl nad yw busnes yn ymddangos
+nextUpdates.r17.tab.businessMayNotBeShown.detail.text1             = Ar gyfer blynyddoedd treth rydych yn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddewis ar wahân i optio allan ar gyfer unrhyw ffynhonnell incwm o eiddo neu fasnachwr newydd:
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul1.text1         = a ddechreuodd llai na 2 flynedd yn ôl
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul1.text2         = sy’n cael ei ddechrau gennych yn y dyfodol
+nextUpdates.r17.tab.businessMayNotBeShown.detail.text2             = Mae’r opsiwn hwn ar gael i’ch busnesau newydd:
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text1         = am hyd at 2 o flynyddoedd treth
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text2         = dim ond pan fyddwch yn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer eich busnesau eraill
+nextUpdates.r17.tab.businessMayNotBeShown.detail.ul2.text3         = hyd yn oed os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000
+nextUpdates.r17.tab.businessMayNotBeShown.detail.subHeading        = Sut i newid eich rhwymedigaethau adrodd ar gyfer ffynhonnell incwm newydd
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.prefix       = Gallwch wneud hyn ar unrhyw adeg yn yr adran ynghylch
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.text         = eich busnesau
+nextUpdates.r17.tab.businessMayNotBeShown.detail.link.suffix       =
+
 
 nextUpdates.updates.software.heading    					    = Cyflwyno diweddariadau drwy feddalwedd
 nextUpdates.updates.software.dec1       					    = Defnyddiwch eich
@@ -1716,7 +1736,7 @@ reporting.frequency.ceasedBusiness.warning.text.2                   =
 reporting.frequency.latency.details.section.header                            = Gall amlder eich adroddiadau ar gyfer eich busnes newydd fod ar sail amlder gwahanol
 reporting.frequency.latency.details.section.text.para1                        = Ar gyfer blynyddoedd treth lle yr ydych yn adrodd yn chwarterol, gallwch ddewis i adrodd yn flynyddol ar gyfer unrhyw ffynhonnell incwm o eiddo neu fasnachwr newydd:
 reporting.frequency.latency.details.section.text.para1.bullet1                = a ddechreuodd llai na 2 flynedd yn ôl
-reporting.frequency.latency.details.section.text.para1.bullet2                = a fydd yn dechrau yn y dyfodol
+reporting.frequency.latency.details.section.text.para1.bullet2                = eich bod yn dechrau yn y dyfodol
 reporting.frequency.latency.details.section.text.para2                        = Mae’r opsiwn hwn ar gael i fusnesau newydd:
 reporting.frequency.latency.details.section.text.para2.bullet1                = am hyd ar 2 flwyddyn dreth
 reporting.frequency.latency.details.section.text.para2.bullet2                = ar yr amod eich bod yn adrodd yn chwarterol ar gyfer eich busnesau eraill
@@ -1729,7 +1749,7 @@ reporting.frequency.latency.details.section.text.para3.text.2                 =
 reporting.frequency.latency.details.section.header.updateR17                  = Gall amlder eich adroddiadau ar gyfer eich busnes newydd fod ar sail amlder gwahanol
 reporting.frequency.latency.details.section.text.para1.updateR17              = Ar gyfer blynyddoedd treth rydych yn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddewis ar wahân i optio allan ar gyfer unrhyw ffynhonnell incwm o eiddo neu fasnachwr newydd:
 reporting.frequency.latency.details.section.text.para1.bullet1.updateR17      = a ddechreuodd llai na 2 flynedd yn ôl
-reporting.frequency.latency.details.section.text.para1.bullet2.updateR17      = a fydd yn dechrau yn y dyfodol
+reporting.frequency.latency.details.section.text.para1.bullet2.updateR17      = eich bod yn dechrau yn y dyfodol
 reporting.frequency.latency.details.section.text.para2.updateR17              = Mae’r opsiwn hwn ar gael i’ch busnesau newydd:
 reporting.frequency.latency.details.section.text.para2.bullet1.updateR17      = am hyd ar 2 flwyddyn dreth
 reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = dim ond pan fyddwch yn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer eich busnesau eraill
@@ -1998,9 +2018,9 @@ whatYouOwe.reviewAndReconcilePoa2.text                          = Ail daliad ar 
 whatYouOwe.lpi.reviewAndReconcilePoa1.text                      = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
 whatYouOwe.lpi.reviewAndReconcilePoa2.text                      = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
+whatYouOwe.hmrcCorrection.text                                  = Swm ychwanegol i’w dalu o ganlyniad i gywiriad gan CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.enquiryAmendment.text                                = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
-whatYouOwe.hmrcCorrection.text                                  = Swm ychwanegol i’w dalu o ganlyniad i gywiriad gan CThEF
 whatYouOwe.lateSubmissionPenalty.text                           = Cosb am gyflwyno’n hwyr
 whatYouOwe.firstLatePaymentPenalty.text                         = Cosb gyntaf am dalu’n hwyr
 whatYouOwe.secondLatePaymentPenalty.text                        = Ail gosb am dalu’n hwyr
@@ -2298,6 +2318,8 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog a
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text     = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol taliad cyntaf ar gyfrif
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text     = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol ail daliad ar gyfrif
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
+chargeSummary.lpi.chargeHistory.created.hmrcCorrection.text             = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol o ganlyniad i gywiriadau CThEF
+chargeSummary.lpi.chargeHistory.created.enquiryAmendment.text           = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol o ganlyniad i ddiwygiad yn sgil ymholiad CThEF
 chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text        = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol taliad mantoli
 
 chargeSummary.lpi.balancingCharge.p1                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
@@ -2586,6 +2608,8 @@ yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Talwch
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					    = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading				        = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading	    		        = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+yourSelfAssessmentChargeSummary.lpi.hmrcCorrection.text.heading                         = Llog am dalu’n hwyr ar y swm ychwanegol o ganlyniad i gywiriadau CThEF
+yourSelfAssessmentChargeSummary.lpi.enquiryAmendment.text.heading                       = Llog am dalu’n hwyr ar y swm ychwanegol o ganlyniad i ddiwygiad yn sgil ymholiad CThEF
 yourSelfAssessmentChargeSummary.lpi.interestPeriod								        = Cyfnod llog:
 yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates							    = {0} i {1}
 
@@ -2718,6 +2742,9 @@ yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                     
 yourSelfAssessmentChargeSummary.enquiryAmendment.p1                                 = Yn dilyn gwiriad cydymffurfio, gwnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Newidiodd hyn eich
 yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = cyfrifiad treth ar gyfer {0} i {1}
 yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , gan arwain at swm ychwanegol i’w dalu tuag at eich bil treth.
+
+yourSelfAssessmentChargeSummary.hmrcCorrection.p1                                   = Fe wnaeth CThEF gywiro eich Ffurflen Dreth ac fe arweiniodd hyn at swm ychwanegol i’w dalu tuag at eich bil treth {0} i {1}.
+yourSelfAssessmentChargeSummary.chargeHistory.hmrcCorrection.caption.text           = Mae’r swm ychwanegol hwn yn cyfrannu at eich bil treth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
@@ -3127,9 +3154,9 @@ income.source.added.few.minutes.overdue.updates                                 
 income.source.added.scenario.three.account.updated.p.a                                      = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
 income.source.added.scenario.three.account.updated.p.link                                   = dyddiadau cau ar gyfer cyflwyno
 income.source.added.scenario.three.account.updated.p.b                                      = mae’ch cyfrif wedi’i ddiweddaru.
-
+income.source.added.scenario.three.view.reporting.obligations.prefix                        = Mae diweddariadau chwarterol bellach yn gronnol. Mae hyn yn golygu efallai bod eich diweddariad diweddaraf sy’n hwyr yn cynnwys gwybodaeth o gyfnodau cynharach a fethwyd.
 income.source.added.scenario.three.view.reporting.obligations.p.a                           = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-income.source.added.scenario.three.view.reporting.obligations.link                          = bwrw golwg dros a newid eich ymrwymiadau adrodd
+income.source.added.scenario.three.view.reporting.obligations.link                          = bwrw golwg dros a newid eich ymrwymiadau o ran adrodd
 income.source.added.scenario.three.view.reporting.obligations.p.b                           = ar gyfer eich holl fusnesau.
 
 income.source.added.scenario.three.view.businesses.link                                     = Bwrw golwg dros eich busnesau
