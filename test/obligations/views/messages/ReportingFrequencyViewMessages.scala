@@ -22,7 +22,7 @@ object ReportingFrequencyViewMessages {
   val agentTitle = "Your reporting frequency - Manage your Self Assessment - GOV.UK"
   val pageHeadingContentNew = "Your reporting obligations"
   val pageHeadingContent = "Your reporting frequency"
-  val requiredObligation = "These are your required obligations. you must complete any outstanding updates before you can submit your return."
+  val requiredObligation = "These are your required obligations. You must complete any outstanding updates before you can submit your return."
   val manageRFHeadingContent = "Manage your reporting frequency for all your businesses"
   val p1Content = "If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years."
   val p2Content = "This is what you can do for all your businesses:"
