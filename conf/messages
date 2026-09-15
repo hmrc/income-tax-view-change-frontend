@@ -1687,7 +1687,7 @@ reporting.frequency.compatibleSoftware.p3.R17                           = If you
 reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = If you are opted out or exempt, you can find out here how to
 reporting.frequency.compatibleSoftware.link2.text                       = file your Self Assessment tax return
 
-reporting.frequency.required.obligation                             = These are your required obligations. you must complete any outstanding updates before you can submit your return.
+reporting.frequency.required.obligation                             = These are your required obligations. You must complete any outstanding updates before you can submit your return.
 reporting.frequency.table.h2                                        = How often you need to report
 reporting.frequency.table.h2.R17                                    = How you report for each tax year
 reporting.frequency.table.heading.taxyear                           = Tax year
