@@ -16,7 +16,7 @@
 
 package testOnly.connectors
 
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.{CREATED, TOO_MANY_REQUESTS}
 import play.api.libs.json.*
 import play.api.libs.ws.writeableOf_JsValue
@@ -49,7 +49,7 @@ case class AuthExchange(bearerToken: String, sessionAuthorityUri: String)
 class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                                     val userRepository: UserRepository,
                                     val http: HttpClientV2)
-                                   (implicit ec: ExecutionContext) extends PlayAuthConnector {
+                                   (implicit ec: ExecutionContext) extends PlayAuthConnector with Logging {
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
 
   override def httpClientV2: HttpClientV2 = http
@@ -90,9 +90,9 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
           case (Some(token), Some(sessionUri), Some(receivedGatewayToken)) =>
             Future.successful((AuthExchange(token, sessionUri), GovernmentGatewayToken(receivedGatewayToken)))
           case (token, sessionUri, gatewayToken) =>
-            Logger("application").info("HEADERS: " + headers)
-            Logger("application").info("response json:" + response.json)
-            Logger("application").info(s"login response info: $token :: $sessionUri :: $gatewayToken")
+            logger.info("HEADERS: " + headers)
+            logger.info("response json:" + response.json)
+            logger.info(s"login response info: $token :: $sessionUri :: $gatewayToken")
             Future.failed(new RuntimeException("Internal Error, missing headers or gatewayToken in response from auth-login-api"))
         }
       case response@HttpResponse(TOO_MANY_REQUESTS, _, _) =>

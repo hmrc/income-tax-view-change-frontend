@@ -24,7 +24,9 @@ case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecords
                                      hasActiveUkProperty: Boolean,
                                      hasActiveForeignProperty: Boolean,
                                      triggeredMigrationState: Option[TriggeredMigrationState],
-                                     numberOfCeasedBusinesses: Int = 0
+                                     numberOfCeasedBusinesses: Int = 0,
+                                     yearOfMigrationEndYear: Int,
+                                     hideBusinessName: Boolean
                                     ) {
   def checkActiveBusinessesLink(isAgent: Boolean): String = triggeredMigrationRoutes.CheckActiveBusinessesConfirmController.show(isAgent).url
 

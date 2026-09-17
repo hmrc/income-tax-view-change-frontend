@@ -320,6 +320,35 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with TransactionUtils 
     )
   )
 
+  val financialDetailsSuccessWithEnquiryAmendment: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    documentDetails = List(
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear,
+        transactionId = "testTransactionId",
+        documentDescription = Some("ITSA Return Amendment Debit"),
+        chargeClassification = Some("RA"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2018, 3, 29),
+        originalAmount = 1000.00,
+        outstandingAmount = 500.00,
+        interestOutstandingAmount = Some(0.00),
+        interestEndDate = Some(LocalDate.of(2021, 6, 24)),
+        accruingInterestAmount = Some(100.00),
+        effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
+        documentDueDate = Some(LocalDate.of(2021, 4, 23))
+      )),
+    financialDetails = List(
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        mainType = Some("ITSA Return Amendment Debit"),
+        mainTransaction = Some("4915"),
+        transactionId = Some("testTransactionId"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)))))
+      )
+    )
+  )
+
   val emptyPaymentsList: List[TaxYearSummaryChargeItem] = List.empty
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(

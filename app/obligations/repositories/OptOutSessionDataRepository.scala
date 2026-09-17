@@ -22,7 +22,7 @@ import common.models.itsaStatus.ITSAStatus
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{Json, OFormat}
 import shared.enums.JourneyType.{Opt, OptOutJourney}
 import shared.models.UIJourneySessionData
@@ -32,14 +32,17 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionDataRepository) {
+class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionDataRepository) extends Logging{
 
   def saveIntent(intent: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     OptionT(repository.get(hc.sessionId.get.value, Opt(OptOutJourney)))
       .map(journeySd => journeySd.copy(optOutSessionData = journeySd.optOutSessionData.map(_.copy(selectedOptOutYear = Some(intent.toString)))))
       .flatMap(journeySd => OptionT.liftF(repository.set(journeySd)))
       .getOrElse({
-        Logger("application").error(s"Failed to collect session data for sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} when trying to save opt out. Tax year intent was: ${intent.toString}. From referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+        logger.error(
+          s"Failed to collect session data for sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} " +
+            s"when trying to save opt out. Tax year intent was: ${intent.toString}. " +
+            s"From referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
         false
       })
   }

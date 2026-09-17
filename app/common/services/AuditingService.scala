@@ -18,7 +18,7 @@ package common.services
 
 import common.config.FrontendAppConfig
 import common.models.audit.{AuditModel, ExtendedAuditModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,20 +29,24 @@ import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json.Writes
+import shared.models.audit.NextUpdatesResponseAuditModel
+import common.models.obligations.SingleObligationModel
+import common.auth.MtdItUser
 
 @Singleton
-class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
+class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) extends Logging {
 
   def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
-    Logger("application").debug(s"Splunk Audit Event:\n\n$dataEvent")
+    logger.debug(s"Splunk Audit Event:\n\n$dataEvent")
     auditConnector.sendEvent(dataEvent).map {
       case Success =>
-        Logger("application").debug("Splunk Audit Successful")
+        logger.debug("Splunk Audit Successful")
       case Failure(err, _) =>
-        Logger("application").debug(s"Splunk Audit Error, message: $err")
+        logger.debug(s"Splunk Audit Error, message: $err")
       case Disabled =>
-        Logger("application").debug("Auditing Disabled")
+        logger.debug("Auditing Disabled")
     }
   }
 
@@ -59,14 +63,14 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
 
     val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(identity))
 
-    Logger("application").debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
+    logger.debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
       case Success =>
-        Logger("application").debug("Splunk Audit Successful")
+        logger.debug("Splunk Audit Successful")
       case Failure(err, _) =>
-        Logger("application").debug(s"Splunk Audit Error, message: $err")
+        logger.debug(s"Splunk Audit Error, message: $err")
       case Disabled =>
-        Logger("application").debug("Auditing Disabled")
+        logger.debug("Auditing Disabled")
     }
   }
 
@@ -82,5 +86,12 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
       detail = details
     )
   }
+
+  private def sendAuditEvent[T : Writes](auditType: String, event: T)(using HeaderCarrier, ExecutionContext): Unit = 
+    auditConnector.sendExplicitAudit(auditType, event)
+
+  def sendViewObligationsResponseAuditEvent(incomeSourceId: String, nextUpdates: Seq[SingleObligationModel])(using HeaderCarrier, ExecutionContext, MtdItUser[?]) = 
+    val model = NextUpdatesResponseAuditModel(incomeSourceId, nextUpdates)
+    sendAuditEvent(model.auditType, model)
 
 }

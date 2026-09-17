@@ -23,7 +23,7 @@ import financials.connectors.PayApiConnector
 import financials.models.audit.InitiatePayNowAuditModel
 import financials.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import financials.services.MakingPaymentService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,7 +42,7 @@ class PaymentController @Inject()(val authActions: AuthActions,
                                   makingPaymentView: MakingPaymentView
                                  )(implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
-                                   val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                   val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with Logging {
 
   def handleHandoff(paymentAmountInPence: Long, origin: Option[String] = None)
                    (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
@@ -56,7 +56,7 @@ class PaymentController @Inject()(val authActions: AuthActions,
           case PaymentJourneyErrorResponse(status, message) => logAndHandleError(s"Failed to start payments journey due to downstream response, status: $status, message: $message")
           case _: PaymentJourneyResponse => logAndHandleError("Failed to start payments journey due to downstream response")
         }.recover{
-          case ex => logAndHandleError(ex.getMessage)
+          case ex => logAndHandleError(s"[handleHandoff] ${ex.getMessage}")
         }
       case _ => Future.successful(
         logAndHandleError("Failed to start payments journey due to missing UTR")
@@ -111,12 +111,12 @@ class PaymentController @Inject()(val authActions: AuthActions,
     makingPaymentService.createViewModel(backUrl, paymentHandoffUrl, whatYouOweUrl, moneyInYourAccountUrl, payPenaltyUrl, showInterestSection).map {
       case Some(viewModel) => Ok(makingPaymentView(viewModel))
       case None =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}Failed to create MakingPaymentViewModel")
+        logger.error(s"${if (isAgent) "Agent - " else ""}Failed to create MakingPaymentViewModel")
         val errorHandler = if(isAgent) itvcAgentErrorHandler else itvcErrorHandler
         errorHandler.showInternalServerError()
     }.recover {
       case ex =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}Error received while getting Making payment page details: ${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"${if (isAgent) "Agent - " else ""}Error received while getting Making payment page details: ${ex.getMessage} - ${ex.getCause}")
         val errorHandler = if(isAgent) itvcAgentErrorHandler else itvcErrorHandler
         errorHandler.showInternalServerError()
     }
@@ -124,7 +124,7 @@ class PaymentController @Inject()(val authActions: AuthActions,
 
   def logAndHandleError(message: String)
                        (implicit mtdItUser: MtdItUser[_]): Result = {
-    Logger("application").error(message)
+    logger.error(message)
     val errorHandler = if(mtdItUser.isAgent) itvcAgentErrorHandler else itvcErrorHandler
     errorHandler.showInternalServerError()
   }

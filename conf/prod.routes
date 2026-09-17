@@ -1,4 +1,6 @@
 # Add all the application routes to the app.routes file
+->         /manage-self-assessment                                  appNew.Routes
+->         /manage-self-assessment/agents                           agentNew.Routes
 ->         /report-quarterly/income-and-expenses/view               app.Routes
 ->         /report-quarterly/income-and-expenses/view/agents        agent.Routes
 ->         /                                                        health.Routes

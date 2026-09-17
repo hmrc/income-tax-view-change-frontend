@@ -43,9 +43,9 @@ case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistory
     s"$from to $to at $rate%"
   }
 
-  val totalRefund: String = repaymentHistoryItem.flatMap(_.totalRepaymentAmount).map(_.toString).getOrElse("")
+  val totalRefund = repaymentHistoryItem.map(_.totalRepaymentAmount)
   val requestedOn: String = repaymentHistoryItem.flatMap(_.creationDate).map(_.toString).getOrElse("")
-  val requestedAmount: String = repaymentHistoryItem.map(_.amountRequested).map(_.toString).getOrElse("")
+  val requestedAmount  = repaymentHistoryItem.map(_.amountRequested)
 
   val repaymentHistoryDetail = Json.obj("estimatedDate" -> repaymentHistoryItem.map(_.estimatedRepaymentDate),
     "method" -> repaymentHistoryItem.map(_.repaymentMethod),
@@ -53,7 +53,7 @@ case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistory
     "requestedOn" -> requestedOn,
     "refundReference" -> repaymentHistoryItem.map(_.repaymentRequestNumber),
     "requestedAmount" -> requestedAmount,
-    "refundAmount" -> repaymentHistoryItem.map(_.amountApprovedforRepayment.map(_.toString)),
+    "refundAmount" -> repaymentHistoryItem.map(_.amountApprovedforRepayment),
     "interestAmount" -> repaymentInterestContent.map(_.total),
     "interestDescription" -> interestDescription)
   override val detail: JsValue = userAuditDetails(user) ++ repaymentHistoryDetail

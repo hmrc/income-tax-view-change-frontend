@@ -43,7 +43,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
         httpStatus(SEE_OTHER),
-        redirectURI(appConfig.enterClientsUTRUrl)
+        redirectURI(appConfig.enterClientsUTRUrl(newHubContextRootEnabled))
       )
     }
   }
@@ -65,7 +65,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
         httpStatus(SEE_OTHER),
-        redirectURI(appConfig.enterClientsUTRUrl)
+        redirectURI(appConfig.enterClientsUTRUrl(newHubContextRootEnabled))
       )
     }
   }

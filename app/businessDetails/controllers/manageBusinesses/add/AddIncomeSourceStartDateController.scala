@@ -28,7 +28,7 @@ import common.implicits.ImplicitDateFormatterImpl
 import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.DateService
 import common.views.html.errorPages.CustomNotFoundErrorView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -52,7 +52,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
                                                    val dateService: DateService,
                                                    val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext)
-  extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
+  extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport with Logging{
 
   def show(isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
@@ -115,7 +115,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
     }.recover {
       case ex =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[AddIncomeSourceStartDateController]${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"[handleShowRequest] ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -145,8 +145,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
     )
   }.recover {
     case ex =>
-      Logger("application")
-        .error(s"[${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }

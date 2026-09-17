@@ -21,7 +21,7 @@ import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
 import businessDetails.models.incomeSourceDetails.Address
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -48,7 +48,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                            val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses with Logging {
 
   private def getBackURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): String = {
     ((isAgent, mode) match {
@@ -102,7 +102,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[handleRequest] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -153,7 +153,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[handleSubmitRequest] ${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 

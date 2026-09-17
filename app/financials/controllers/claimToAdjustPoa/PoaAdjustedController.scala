@@ -28,7 +28,7 @@ import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.utils.ErrorRecovery
 import financials.utils.claimToAdjust.WithSessionAndPoa
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import shared.enums.AfterSubmissionPage
@@ -49,7 +49,7 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
                                       val agentErrorHandler: AgentItvcErrorHandler,
                                       val mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with WithSessionAndPoa with FeatureSwitching with ErrorRecovery {
+  extends FrontendController(mcc) with I18nSupport with WithSessionAndPoa with FeatureSwitching with ErrorRecovery with Logging {
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
@@ -61,10 +61,10 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
 
   private def checkAndLogAPIDataSet(session: PoaAmendmentData, poa: PaymentOnAccountViewModel): Unit = {
     if (session.newPoaAmount.contains(poa.totalAmountOne)) {
-      Logger("application").info(s"Amount returned from API equals amount in mongo: ${poa.totalAmountOne}")
+      logger.info(s"Amount returned from API equals amount in mongo: ${poa.totalAmountOne}")
     }
     else {
-      Logger("application").error(s"Amount returned from API: ${poa.totalAmountOne} does not equal amount in mongo: ${session.newPoaAmount}")
+      logger.error(s"Amount returned from API: ${poa.totalAmountOne} does not equal amount in mongo: ${session.newPoaAmount}")
     }
   }
 

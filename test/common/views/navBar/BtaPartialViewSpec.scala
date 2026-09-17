@@ -24,7 +24,7 @@ import common.views.html.navBar.BtaPartial
 class BtaPartialViewSpec extends TestSupport {
 
   val btaPartialView = app.injector.instanceOf[BtaPartial]
-  lazy val page: HtmlFormat.Appendable = btaPartialView()(implicitly)
+  lazy val page: HtmlFormat.Appendable = btaPartialView(newHubContextRootEnabled)(implicitly)
   lazy val document = Jsoup.parse(page.body)
 
   "The BtaPartial view" should {
@@ -45,8 +45,8 @@ class BtaPartialViewSpec extends TestSupport {
 
       lazy val homeButton = document.getElementById("it-quarterly-reporting-home-button")
 
-      s"has the correct link to '${appConfig.individualHomeUrl}'" in {
-        homeButton.attr("href") shouldBe appConfig.individualHomeUrl
+      s"has the correct link to '${appConfig.individualHomeUrl(newHubContextRootEnabled)}'" in {
+        homeButton.attr("href") shouldBe appConfig.individualHomeUrl(newHubContextRootEnabled)
       }
 
       s"has the correct button text of ${messages("bta_partial.home_button")}" in {

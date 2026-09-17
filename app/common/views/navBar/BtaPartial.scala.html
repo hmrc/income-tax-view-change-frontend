@@ -26,7 +26,7 @@
     button: href_button,
     p: p
 )
-@()(implicit messages: Messages)
+@(newHubContextRootEnabled: Boolean)(implicit messages: Messages)
 
 <section id="section-it-qr" class="section divider--bottom">
 
@@ -36,6 +36,6 @@
 
     @p(id=Some("it-quarterly-reporting-p2"))(Html(messages("bta_partial.p2")))
 
-    @button(id=Some("it-quarterly-reporting-home-button"), href={appConfig.individualHomeUrl}, text=messages("bta_partial.home_button"))
+    @button(id=Some("it-quarterly-reporting-home-button"), href={appConfig.individualHomeUrl(newHubContextRootEnabled)}, text=messages("bta_partial.home_button"))
 
 </section>

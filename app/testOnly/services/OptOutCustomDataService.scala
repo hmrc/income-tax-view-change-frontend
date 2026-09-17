@@ -21,7 +21,7 @@ import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json, OWrites, Writes}
 import testOnly.models.{DataModel, Nino}
@@ -33,7 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfig,
                                         val dateService: DateServiceInterface,
-                                        val dynamicStubService: DynamicStubService) extends OptOutCustomDataUploadHelper {
+                                        val dynamicStubService: DynamicStubService)
+  extends OptOutCustomDataUploadHelper with Logging {
 
   implicit val hipStatusDetailWriter: Writes[StatusDetail] = new Writes[StatusDetail] {
     override def writes(statusDetail: StatusDetail): JsValue = {
@@ -83,14 +84,14 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
   def uploadCalculationListData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
     handleDefaultValues(status = status) {
-      Logger("application").info(s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatAsShortYearRange} > and < status: $status >")
+      logger.info(s"[uploadCalculationListData] Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatAsShortYearRange} > and < status: $status >")
       dynamicStubService.overwriteCalculationList(nino = nino, taxYearRange = taxYear.formatAsShortYearRange, crystallisationStatus = status)
     }
   }
 
   def uploadITSAStatusData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     handleDefaultValues(status = status) {
-      Logger("application").info(s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatAsShortYearRange} > and < status: $status >")
+      logger.info(s"[uploadCalculationListData]  Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatAsShortYearRange} > and < status: $status >")
       dynamicStubService.overwriteItsaStatus(nino = nino, taxYearRange = taxYear.formatAsShortYearRange, ITSAStatus = status)
     }
   }
@@ -100,7 +101,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
                                    cyMinusOneItsaStatus: String,
                                    cyItsaStatus: String,
                                    cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    Logger("application").info(s"cyMinusOneItsaStatus :: $cyMinusOneItsaStatus, cyItsaStatus:: $cyItsaStatus, cyPlusOneItsaStatus:: $cyPlusOneItsaStatus")
+    logger.info(s"cyMinusOneItsaStatus :: $cyMinusOneItsaStatus, cyItsaStatus:: $cyItsaStatus, cyPlusOneItsaStatus:: $cyPlusOneItsaStatus")
 
     def commonStatusDetails(taxYear: TaxYear, status: ITSAStatus) =
       StatusDetail(

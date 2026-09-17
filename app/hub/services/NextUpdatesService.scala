@@ -19,7 +19,7 @@ package hub.services
 import common.auth.MtdItUser
 import common.models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import common.services.DateServiceInterface
-import play.api.Logger
+import play.api.Logging
 import shared.connectors.ObligationsConnector
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class NextUpdatesService @Inject()(
                                     val obligationsConnector: ObligationsConnector
-                                  )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
+                                  )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) extends Logging {
 
   def getDueDates(openObligations: Option[Future[ObligationsResponseModel]] = None)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
     openObligations.getOrElse(getOpenObligations()).map {
@@ -46,7 +46,7 @@ class NextUpdatesService @Inject()(
   }
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
-    Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
+    logger.debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
     obligationsConnector.getOpenObligations()
   }
 
@@ -74,14 +74,14 @@ class NextUpdatesService @Inject()(
         val nextTaxReturnDate: Option[LocalDate] = nextCrystallisationDueDate match {
           case Some(date) => Some(date)
           case None =>
-            Logger("application").info("[getNextDueDates] No upcoming crystallisation obligation found - falling back to static next tax return due date")
+            logger.info("No upcoming crystallisation obligation found - falling back to static next tax return due date")
             Some(fallbackNextTaxReturnDate)
         }
 
         (nextQuarterlyDueDate, nextTaxReturnDate)
 
       case error: ObligationsErrorModel =>
-        Logger("application").warn(s"[getNextDueDates] Failed to fetch obligations: ${error.message}")
+        logger.warn(s"Failed to fetch obligations: ${error.message}")
         (None, Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31)))
     }
   }

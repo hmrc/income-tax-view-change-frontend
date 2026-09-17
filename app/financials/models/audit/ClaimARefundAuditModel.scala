@@ -23,13 +23,14 @@ import common.models.audit.ExtendedAuditModel
 import common.utils.audit.Utilities.userAuditDetails
 import financials.models.*
 import financials.models.creditsandrefunds.{CreditsModel, Transaction}
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: MtdItUser[_])
+  extends ExtendedAuditModel with Logging {
 
   override val auditType: String = ClaimARefundResponse
   override val transactionName: String = ClaimARefund
@@ -63,10 +64,10 @@ case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: Mtd
       case (Some(RepaymentInterest), _) => s"Credit from repayment interest - ${credit.taxYearString}"
       case (_, Some(date)) if credit.isPayment => s"Payment made on ${getFullDueDate(date)}"
       case (_, None) if credit.isPayment =>
-        Logger("application").error("Missing or non-matching credit: not a valid payment date")
+        logger.error("Missing or non-matching credit: not a valid payment date")
         "unknownDate"
       case (_, _) =>
-        Logger("application").error("Missing or non-matching credit: not a valid credit type")
+        logger.error("Missing or non-matching credit: not a valid credit type")
         "unknownCredit"
     }
   }

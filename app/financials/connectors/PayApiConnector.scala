@@ -19,7 +19,7 @@ package financials.connectors
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import financials.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
@@ -31,7 +31,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PayApiConnector @Inject()(http: HttpClientV2,
-                                val appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends FeatureSwitching {
+                                val appConfig: FrontendAppConfig)(implicit ec: ExecutionContext)
+  extends FeatureSwitching with Logging {
 
   val startUrlJourney: String = appConfig.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
 
@@ -59,15 +60,15 @@ class PayApiConnector @Inject()(http: HttpClientV2,
         case response if response.status == CREATED =>
           response.json.validate[PaymentJourneyModel].fold(
             invalid => {
-              Logger("application").error(s"Invalid Json with $invalid")
+              logger.error(s"[startPaymentJourney] Invalid Json with $invalid")
               PaymentJourneyErrorResponse(response.status, "Invalid Json")
             },
             valid => valid
           )
         case response => if (response.status >= 500) {
-            Logger("application").error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+            logger.error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
           } else {
-            Logger("application").warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+            logger.warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
           }
           PaymentJourneyErrorResponse(response.status, response.body)
     }

@@ -88,7 +88,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
-            val backUrl = appConfig.homePageUrl(isAgent)
+            val backUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
@@ -100,7 +100,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
-            val backUrl = appConfig.homePageUrl(isAgent)
+            val backUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
@@ -115,7 +115,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             val result = action(fakeRequest)
 
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = appConfig.homePageUrl(isAgent)
+            val redirectUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }

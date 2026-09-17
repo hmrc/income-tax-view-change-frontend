@@ -19,9 +19,9 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedBackErrorView
 import common.auth.{AuthActions, MtdItUser}
@@ -40,7 +40,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
                                                      val ec: ExecutionContext,
                                                      val itvcErrorHandler: ItvcErrorHandler,
                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
+  extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport with Logging {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -92,8 +92,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
           Future.successful {
             Redirect(routes.IncomeSourceReportingFrequencyController.show(isAgent, isChange = false, incomeSourceType))
           }
-        case None => Logger("application").error(
-          "Error: Unable to find id in session")
+        case None => logger.error("Error: Unable to find id in session")
           Future.successful {
             errorHandler.showInternalServerError()
           }

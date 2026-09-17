@@ -317,7 +317,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
           val expected =
             ReportingObligationsAuditModel(
               agentReferenceNumber = None,
-              auditType = "ReportingObligationsPage",
               credId = Some("testCredId"),
               mtditid = "XAIT00001234567",
               nino = "AB123456C",
@@ -366,7 +365,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
           val expected =
             ReportingObligationsAuditModel(
               agentReferenceNumber = None,
-              auditType = "ReportingObligationsPage",
               credId = Some("testCredId"),
               mtditid = "XAIT00001234567",
               nino = "AB123456C",
@@ -415,7 +413,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
           val expected =
             ReportingObligationsAuditModel(
               agentReferenceNumber = None,
-              auditType = "ReportingObligationsPage",
               credId = Some("testCredId"),
               mtditid = "XAIT00001234567",
               nino = "AB123456C",
@@ -465,7 +462,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
           val expected =
             ReportingObligationsAuditModel(
               agentReferenceNumber = None,
-              auditType = "ReportingObligationsPage",
               credId = Some("testCredId"),
               mtditid = "XAIT00001234567",
               nino = "AB123456C",

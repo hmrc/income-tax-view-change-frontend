@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import common.models.core.Nino
 import financials.models.repaymentHistory.*
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
                                           val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                           )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def getAllRepaymentHistoryUrl(nino: String): String = {
     s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/repayments/$nino"
@@ -57,16 +57,20 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
             )
             .fold(
               invalid => {
-                Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
+                logger.error(
+                  s"[getRepaymentHistoryByRepaymentId] Json validation error parsing repayment response, error $invalid"
+                )
                 RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
               },
               valid => valid
             )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+            logger.error(
+              s"[getRepaymentHistoryByRepaymentId] Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
+            logger.warn(
+              s"[getRepaymentHistoryByRepaymentId] Response status: ${response.status}, body: ${response.body}")
           }
           RepaymentHistoryErrorModel(response.status, response.body)
       }
@@ -91,16 +95,17 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
             )
             .fold(
               invalid => {
-                Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
+                logger.error(
+                  s"[getRepaymentHistoryByNino] Json validation error parsing repayment response, error $invalid")
                 RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
               },
               valid => valid
             )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getRepaymentHistoryByNino] Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getRepaymentHistoryByNino] Response status: ${response.status}, body: ${response.body}")
           }
           RepaymentHistoryErrorModel(response.status, response.body)
       }

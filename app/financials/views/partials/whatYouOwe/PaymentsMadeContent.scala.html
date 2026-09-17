@@ -37,7 +37,7 @@
 )
 
 @getNoPaymentsDueText = {
-    @p(id = Some("no-payments-due"))(Html(getMessage(if(user.isAgent) "no-payments-due-agent" else "no-payments-due")))
+    @p(id = Some("no-payments-due"))(Html(getMessage("no-payments-due")))
 }
 
 @viewModel.whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
@@ -60,7 +60,7 @@
     ))
 }
 
-@if(viewModel.utr.isDefined && !user.isAgent) {
+@if(viewModel.utr.isDefined) {
     @{
         viewModel.whatYouOweChargesList.getDefaultPaymentAmount match {
             case Some(value) => paymentButton(value)

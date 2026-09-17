@@ -106,6 +106,7 @@ val rows = {
                     ),
                     value = Value(content = Text(name))
                 ))
+            case None if viewModel.hideUnknownBusinessName => None
             case None =>
                 Some(SummaryListRow(
                     key = Key(

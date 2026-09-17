@@ -56,7 +56,7 @@ class SelectYourReasonViewSpec extends TestSupport {
   val bullet4 = "More of my income will be taxed at source"
   val bullet4Hint = "For example, under PAYE."
   val continue = "Continue"
-  val continueLink = "/report-quarterly/income-and-expenses/view"
+  lazy val continueLink = appConfig.individualHomeUrl(newHubContextRootEnabled)
   val errorSummaryHeading = "There is a problem"
   val errorSummary = "Select the main reason you’re reducing your payments on account"
   val errorSummarySubheading = "Select the main reason you’re reducing your payments on account"

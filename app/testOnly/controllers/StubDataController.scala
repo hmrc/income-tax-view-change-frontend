@@ -18,7 +18,7 @@ package testOnly.controllers
 
 import common.config.FrontendAppConfig
 import common.controllers.BaseController
-import play.api.Logger
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
@@ -37,13 +37,13 @@ class StubDataController @Inject()(stubDataView: StubDataView)
                                    val mcc: MessagesControllerComponents,
                                    val executionContext: ExecutionContext,
                                    val dynamicStubConnector: DynamicStubConnector
-                                  ) extends BaseController with I18nSupport {
+                                  ) extends BaseController with I18nSupport with Logging{
 
-  val show: Action[AnyContent] = Action.async { implicit request =>
+  def show(): Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(StubDataForm.stubDataForm)))
   }
 
-  val submit: Action[AnyContent] = Action.async {
+  def submit(): Action[AnyContent] = Action.async {
     implicit request =>
       StubDataForm.stubDataForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
@@ -59,14 +59,14 @@ class StubDataController @Inject()(stubDataView: StubDataView)
       )
   }
 
-  val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def stubProxy(): Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[DataModel](
       json => {
         dynamicStubConnector.addData(json).map(
           response => response.status match {
             case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
             case _ =>
-              Logger("application").error(response.body)
+              logger.error(s"[stubProxy] ${response.body}")
               InternalServerError(response.body)
           }
         )
@@ -74,7 +74,7 @@ class StubDataController @Inject()(stubDataView: StubDataView)
     )
   }
 
-  val deleteAllProxy: Action[AnyContent] = Action.async { implicit request =>
+  def deleteAllProxy(): Action[AnyContent] = Action.async { implicit request =>
     dynamicStubConnector.deleteAllData().map(
       response => response.status match {
         case OK => Ok("Delete All Data from the Stub...")

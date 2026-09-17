@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,7 +42,7 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                  (implicit val ec: ExecutionContext,
                                              val mcc: MessagesControllerComponents,
-                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
+                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils with Logging {
 
   def show(isAgent: Boolean, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
     val backUrl = if(isAgent) {
@@ -70,13 +70,11 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
           ))
         } recover {
           case ex: Exception =>
-            Logger("application").error(
-              s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"[handleRequest] Session Error: ${ex.getMessage} - ${ex.getCause}")
             errorHandler.showInternalServerError()
         }
       case Left(ex) =>
-        Logger("application").error(
-          s"Error: ${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"[handleRequest] Error: ${ex.getMessage} - ${ex.getCause}")
         Future(errorHandler.showInternalServerError())
     }
   }

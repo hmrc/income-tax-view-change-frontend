@@ -25,7 +25,7 @@ import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewMode
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.models.incomeSourceDetails.*
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -56,9 +56,7 @@ class IncomeSourceAddedController @Inject()(
                                              dateService: DateServiceInterface,
                                              val sessionService: SessionService
                                            )(implicit val appConfig: FrontendAppConfig, mcc: MessagesControllerComponents, val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching {
-
-  val logger: Logger = Logger("application")
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching with Logging {
 
   private[controllers] def getManageBusinessUrl(isAgent: Boolean) =
     if (isAgent) {
@@ -106,7 +104,7 @@ class IncomeSourceAddedController @Inject()(
                            )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
     val errorView = errorHandler.showInternalServerError()
-    val agentPrefix = if (isAgent) "[Agent]" else ""
+    val agentPrefix = if (isAgent) "Agent" else ""
 
     val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
 
@@ -145,7 +143,7 @@ class IncomeSourceAddedController @Inject()(
             }
             result
           case _ =>
-            logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+            logger.error(s"[handleRequest] $agentPrefix - Unable to retrieve Mongo session data for $incomeSourceType")
             Future(Redirect(manageYourBusinessesRoutes.CannotGoBackErrorController.noJourneySessionShow(isAgent)))
         }
     } yield {
@@ -207,8 +205,8 @@ class IncomeSourceAddedController @Inject()(
             )
           )
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+          val agentPrefix = if (isAgent) "Agent " else ""
+          logger.error(s"[handleSuccess] $agentPrefix- Unable to retrieve Mongo session data for $incomeSourceType")
           showErrorView
       }
     }

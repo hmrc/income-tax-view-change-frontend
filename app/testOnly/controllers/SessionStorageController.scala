@@ -30,7 +30,7 @@ class SessionStorageController @Inject()
   extends FrontendController(mcc) with I18nSupport {
 
 
-  val show: Action[AnyContent] = Action.async { implicit request =>
+  def show(): Action[AnyContent] = Action.async { implicit request =>
     // we really don't need to show these
     val filterOutKeys = Seq("sessionId", "authToken", "csrfToken", "origin")
     val sessionDataStr: String = request.session
@@ -49,7 +49,7 @@ class SessionStorageController @Inject()
       res match {
         case Some((k, v)) =>
           Future.successful(
-            Redirect("/report-quarterly/income-and-expenses/view/test-only/showSession")
+            Redirect(routes.SessionStorageController.show())
               .withSession(request.session + (k -> v))
           )
         case None =>

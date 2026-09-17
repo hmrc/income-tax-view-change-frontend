@@ -38,11 +38,11 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
                                      val dynamicStubConnector: DynamicStubConnector
                                     ) extends BaseController with I18nSupport {
 
-  val show: Action[AnyContent] = Action.async { implicit request =>
+  def show(): Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(StubSchemaForm.stubSchemaForm)))
   }
 
-  val submit: Action[AnyContent] = Action.async {
+  def submit(): Action[AnyContent] = Action.async {
     implicit request =>
       StubSchemaForm.stubSchemaForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
@@ -57,7 +57,7 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
       )
   }
 
-  val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def stubProxy(): Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[SchemaModel](
       json => dynamicStubConnector.addSchema(json).map(
         response => response.status match {
@@ -68,7 +68,7 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
     )
   }
 
-  val deleteAllProxy: Action[AnyContent] = Action.async { implicit request =>
+  def deleteAllProxy(): Action[AnyContent] = Action.async { implicit request =>
     dynamicStubConnector.deleteAllSchemas().map(
       response => response.status match {
         case OK => Ok("Deleting All Schemas from the Stub...")

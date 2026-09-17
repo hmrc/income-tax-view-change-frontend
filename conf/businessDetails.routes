@@ -14,4 +14,7 @@ GET   /agents/check-your-active-businesses/confirm   businessDetails.controllers
 POST  /check-your-active-businesses/confirm          businessDetails.controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = false)
 POST  /agents/check-your-active-businesses/confirm   businessDetails.controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = true)
 
+GET        /complete-steps                          businessDetails.controllers.triggeredMigration.CompleteStepsController.show(isAgent: Boolean = false)
+GET        /agents/complete-steps                   businessDetails.controllers.triggeredMigration.CompleteStepsController.show(isAgent: Boolean = true)
+
 ->          /                                                             manageBusinesses.Routes

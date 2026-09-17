@@ -17,7 +17,7 @@
 package common.services
 
 import common.connectors.CustomerFactsUpdateConnector
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CustomerFactsUpdateService @Inject()(
                                             customerFactsUpdateConnector: CustomerFactsUpdateConnector
-                                          ) {
+                                          ) extends Logging {
 
   def updateCustomerFacts(mtdId: String)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
@@ -35,15 +35,15 @@ class CustomerFactsUpdateService @Inject()(
     customerFactsUpdateConnector.updateCustomerFacts(mtdId)
       .map { response =>
         response.status match {
-          case OK => Logger("application").info(s"Customer facts update returned OK for mtdId=$mtdId")
+          case OK => logger.info(s"Customer facts update returned OK for mtdId=$mtdId")
           case status => 
-            Logger("application").error(s"[CustomerFactsUpdateService][updateCustomerFacts] Customer facts update failed. status=$status for mtdId=$mtdId body=${response.body}")
+            logger.error(s"Customer facts update failed. status=$status for mtdId=$mtdId body=${response.body}")
             throw new Exception(s"Customer facts update failed. status=$status for mtdId=$mtdId body=${response.body}")
         }
       }
       .recoverWith {
         case e =>
-          Logger("application").error(s"[CustomerFactsUpdateService][updateCustomerFacts] Customer facts update failed due to exception for mtdId=$mtdId", e)
+          logger.error(s"Customer facts update failed due to exception for mtdId=$mtdId", e)
           Future.failed(e)
       }
   }

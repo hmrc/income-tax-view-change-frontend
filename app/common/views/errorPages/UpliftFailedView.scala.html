@@ -17,6 +17,7 @@
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
 @import common.viewUtils.InternalUrlHelper
+@import common.config.FrontendAppConfig
 
 @this(
     mainTemplate: unifiedLayout,
@@ -24,7 +25,7 @@
     p: p,
     link: link,
     bulletPointList: bulletPointList
-)
+)(implicit val appConfig: FrontendAppConfig)
 
 @()(implicit request : Request[_], messages: Messages)
 

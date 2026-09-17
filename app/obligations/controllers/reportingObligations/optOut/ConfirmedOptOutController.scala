@@ -26,7 +26,7 @@ import obligations.models.reportingObligations.optOut.*
 import obligations.services.reportingObligations.optOut.{MultiYearOptOutProposition, OptOutService}
 import obligations.utils.reportingObligations.ReportingObligationsUtils
 import obligations.views.html.reportingObligations.optOut.ConfirmedOptOutView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -46,7 +46,7 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext
                                          )
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils with Logging {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -87,10 +87,10 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
   }
 
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(isAgent: Boolean, method: String)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
       case ex: Exception =>
-        Logger("application").error(s"request failed :: $ex")
+        logger.error(s"[$method] request failed :: $ex")
         errorHandler(isAgent).showInternalServerError()
     }
   }
@@ -98,7 +98,7 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withOptOutFS {
-        withRecover(isAgent) {
+        withRecover(isAgent, "show") {
           for {
             viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
             viewScenarioContent: ConfirmedOptOutViewScenarios <- viewScenarioHandler()
@@ -106,10 +106,10 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
           } yield {
             (viewScenarioContent, viewModel) match {
               case (_, None) =>
-                Logger("application").error(s"[ConfirmedOptOutController][show] Cannot create opt-out confirmation view model. Redirecting to cannot-go-back page")
+                logger.error(s"Cannot create opt-out confirmation view model. Redirecting to cannot-go-back page")
                 Redirect(obligationsErrorRoutes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)))
               case (viewScenario, Some(viewModel)) =>
-                Logger("application").debug(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
+                logger.debug(s"Success, showing ConfirmedOptOutView for scenario: $viewScenario")
                 Ok(view(
                   viewModel = viewModel,
                   confirmedOptOutViewScenarios = viewScenario,

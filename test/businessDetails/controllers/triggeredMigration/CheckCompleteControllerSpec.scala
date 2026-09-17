@@ -20,25 +20,31 @@ import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.TriggeredMigration
-import common.services.DateServiceInterface
+import common.models.itsaStatus.ITSAStatusYearOfMigrationModel
+import common.services.{DateServiceInterface, YearOfMigrationService}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import org.mockito.ArgumentMatchers.any
+import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
 import scala.annotation.unused
 import scala.concurrent.Future
 
 class CheckCompleteControllerSpec extends MockAuthActions {
 
+  lazy val mockYearOfMigrationService = sMock[YearOfMigrationService]
+
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
-        api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
+        api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector),
+        api.inject.bind[YearOfMigrationService].toInstance(mockYearOfMigrationService)
       )
       .build()
 
@@ -57,7 +63,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
 
-    @unused val homeUrl = appConfig.homePageUrl(isAgent)
+    @unused val homeUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
 
     s"show(isAgent = $isAgent)" when {
       val action = controller.show(isAgent)
@@ -69,7 +75,9 @@ class CheckCompleteControllerSpec extends MockAuthActions {
           mockItsaStatusRetrievalAction()
           mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
-
+          when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+            .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
+          
           val result = action(fakeRequest)
           status(result) shouldBe 200
           contentAsString(result) should include("Check complete")
@@ -82,7 +90,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
 
           val result = action(fakeRequest)
           status(result) shouldBe 303
-          redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+          redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
         }
       }
 

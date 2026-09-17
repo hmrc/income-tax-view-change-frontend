@@ -70,11 +70,11 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
     commonAuditDetails(af) ++ Json.obj(
     "estimatedDate" -> "2021-07-23",
     "method" -> "BACS",
-    "totalRefund" -> "12345",
+    "totalRefund" -> 12345,
     "requestedOn" -> "2021-07-21",
     "refundReference" -> "000000003135",
-    "requestedAmount" -> "705.2",
-    "refundAmount" -> "705.2",
+    "requestedAmount" -> 705.2,
+    "refundAmount" -> 705.2,
     "interestAmount" -> 9.67,
     "interestDescription" -> "31 July 2021 to 30 November 2021 at 1.76%"
     )

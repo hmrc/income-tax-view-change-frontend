@@ -27,7 +27,7 @@ import obligations.models.reportingObligations.optOut.CheckOptOutUpdateAnswersVi
 import obligations.services.reportingObligations.optOut.{OptOutService, OptOutSubmissionService}
 import obligations.utils.reportingObligations.JourneyCheckerOptOut
 import obligations.views.html.reportingObligations.optOut.CheckOptOutUpdateAnswersView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -48,18 +48,18 @@ class ConfirmOptOutUpdateController @Inject()(
                                                val ec: ExecutionContext,
                                                val mcc: MessagesControllerComponents
                                              )
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with JourneyCheckerOptOut {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with JourneyCheckerOptOut with Logging {
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(isAgent: Boolean, method: String)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
-      case ex: Exception => handleError(s"request failed :: $ex", isAgent)
+      case ex: Exception => handleError(s"[$method] request failed :: $ex", isAgent)
     }
   }
 
   private def handleError(message: String, isAgent: Boolean)(implicit request: Request[_]): Result = {
     val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    Logger("application").error(message)
+    logger.error(message)
     errorHandler(isAgent).showInternalServerError()
   }
 
@@ -68,7 +68,7 @@ class ConfirmOptOutUpdateController @Inject()(
       withOptOutRFChecks {
         optOutService.fetchJourneyCompleteStatus().flatMap(journeyIsComplete => {
           if(!journeyIsComplete){
-            withRecover(isAgent) {
+            withRecover(isAgent, "show") {
               val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
               withSessionData(isStart = false, selectedTaxYear) {
                 for {

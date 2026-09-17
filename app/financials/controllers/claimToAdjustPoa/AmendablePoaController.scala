@@ -24,7 +24,7 @@ import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.utils.ErrorRecovery
 import financials.utils.claimToAdjust.WithSessionAndPoa
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import shared.enums.InitialPage
@@ -47,7 +47,7 @@ class AmendablePoaController @Inject()(val authActions: AuthActions,
                                        val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport
     with ImplicitCurrencyFormatter
-    with WithSessionAndPoa with ErrorRecovery {
+    with WithSessionAndPoa with ErrorRecovery with Logging {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
@@ -62,7 +62,7 @@ class AmendablePoaController @Inject()(val authActions: AuthActions,
               Ok(view(viewModel))
             )
           case Left(ex) =>
-            Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
             Future.failed(ex)
         }
       } recover logAndRedirect

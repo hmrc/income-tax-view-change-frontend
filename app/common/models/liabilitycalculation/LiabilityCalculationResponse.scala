@@ -57,6 +57,8 @@ case class Metadata(
   def isCalculationCrystallised: Boolean = crystallisedTypes.map(_.value).contains(calculationType)
 
   def isCalculationNotCrystallised: Boolean = notCrystallisedTypes.map(_.value).contains(calculationType)
+  
+  def calculationRevisionType: Option[CalculationRevisionType] = CalculationRevisionType.getCalculationRevisionType(calculationType, calculationReason)
 
   def hasAnAmendment: Boolean = amendmentTypes.map(_.value).contains(calculationType)
 }

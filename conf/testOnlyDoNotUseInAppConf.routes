@@ -12,81 +12,89 @@
 
 # Add all the application routes to the prod.routes file
 
-## Test only assets using this route
-GET         /report-quarterly/income-and-expenses/view/test-only/assets/*filePath                     testOnly.controllers.TestOnlyAssetsController.at(filePath: String)
+## Test only new context root
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.show()
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.submit()
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-client/nino/:nino/utr/:utr      testOnly.controllers.StubClientDetailsController.submitWithParams(nino: String, utr: String)
+GET         /manage-self-assessment/test-only/assets/*filePath                     testOnly.controllers.TestOnlyAssetsController.at(filePath: String)
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.show()
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.submit()
+GET         /manage-self-assessment/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.show()
+POST        /manage-self-assessment/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.submit()
+GET         /manage-self-assessment/test-only/stub-client/nino/:nino/utr/:utr      testOnly.controllers.StubClientDetailsController.submitWithParams(nino: String, utr: String)
 
-+ nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema/proxy                    testOnly.controllers.StubSchemaController.stubProxy()
+GET         /manage-self-assessment/test-only/stub-schema                          testOnly.controllers.StubSchemaController.show()
+POST        /manage-self-assessment/test-only/stub-schema                          testOnly.controllers.StubSchemaController.submit()
 
 + nocsrf
-DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/proxy                    testOnly.controllers.StubSchemaController.deleteAllProxy()
+POST        /manage-self-assessment/test-only/stub-schema/proxy                    testOnly.controllers.StubSchemaController.stubProxy()
 
 + nocsrf
-GET         /report-quarterly/income-and-expenses/view/test-only/custom-login                         testOnly.controllers.CustomLoginController.showLogin()
+DELETE      /manage-self-assessment/test-only/all-schemas/proxy                    testOnly.controllers.StubSchemaController.deleteAllProxy()
 
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/submitLogin                          testOnly.controllers.CustomLoginController.postLogin()
-
-
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.show()
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.submit()
+GET         /manage-self-assessment/test-only/custom-login                         testOnly.controllers.CustomLoginController.showLogin(isNewContextRoot: Boolean = true)
 
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-data/proxy                      testOnly.controllers.StubDataController.stubProxy()
+POST        /manage-self-assessment/test-only/submitLogin                          testOnly.controllers.CustomLoginController.postLogin()
+
+
+GET         /manage-self-assessment/test-only/stub-data                            testOnly.controllers.StubDataController.show()
+POST        /manage-self-assessment/test-only/stub-data                            testOnly.controllers.StubDataController.submit()
 
 + nocsrf
-DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy                       testOnly.controllers.StubDataController.deleteAllProxy()
+POST        /manage-self-assessment/test-only/stub-data/proxy                      testOnly.controllers.StubDataController.stubProxy()
 
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/add-user/proxy                       testOnly.controllers.StubUsersController.stubUsers()
+DELETE      /manage-self-assessment/test-only/all-data/proxy                       testOnly.controllers.StubDataController.deleteAllProxy()
 
 + nocsrf
-DELETE      /report-quarterly/income-and-expenses/view/test-only/delete-all-users/proxy               testOnly.controllers.StubUsersController.deleteUsers()
+POST        /manage-self-assessment/test-only/add-user/proxy                       testOnly.controllers.StubUsersController.stubUsers()
 
-GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.show()
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.submit()
+DELETE      /manage-self-assessment/test-only/delete-all-users/proxy               testOnly.controllers.StubUsersController.deleteUsers()
 
-GET        /report-quarterly/income-and-expenses/view/test-only/enable-all-feature-switches          testOnly.controllers.FeatureSwitchController.enableAll()
+GET         /manage-self-assessment/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.show(isNewContextRoot: Boolean = true)
++ nocsrf
+POST        /manage-self-assessment/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.submit()
 
-GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial                          testOnly.controllers.TestBTAPartialController.viewBTAPartial()
+GET        /manage-self-assessment/test-only/enable-all-feature-switches          testOnly.controllers.FeatureSwitchController.enableAll()
+
+GET         /manage-self-assessment/test-only/bta-partial                          testOnly.controllers.TestBTAPartialController.viewBTAPartial()
+
+GET        /manage-self-assessment/test-only/calc-id-to-session/:calculationId    testOnly.controllers.SessionAlterationController.addCalcId(calculationId: String)
+
+GET        /manage-self-assessment/test-only/showSession                          testOnly.controllers.SessionStorageController.show()
+
+GET       /manage-self-assessment/test-only/upsertSession                         testOnly.controllers.SessionStorageController.upsert(key: Option[String], value: Option[String])
+
+GET         /manage-self-assessment/test-only/message-check                       testOnly.controllers.MessageCheckController.show()
+
+GET         /manage-self-assessment/test-only/message-check-welsh                 testOnly.controllers.MessageCheckController.showWelsh()
+
+GET         /manage-self-assessment/test-only/session-storage                                      testOnly.controllers.SessionStorageServiceController.show()
+GET         /manage-self-assessment/agents/test-only/session-storage                               testOnly.controllers.SessionStorageServiceController.showAgent()
+
++nocsrf
+PUT        /manage-self-assessment/test-only/featureSwitches/:featureSwitchName                             testOnly.controllers.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
+GET        /manage-self-assessment/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchesAdminController.get()
+
++nocsrf
+PUT        /manage-self-assessment/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchesAdminController.putAll()
+
++nocsrf
+PUT        /manage-self-assessment/test-only/featureSwitch/:featureSwitchName/:isEnabled                    testOnly.controllers.FeatureSwitchController.setSwitch(featureSwitchName: FeatureSwitchName, isEnabled: Boolean)
+#GET        /manage-self-assessment/test-only/allfeatureSwitches                                                testOnly.controllers.FeatureSwitchController.show()
+#POST       /manage-self-assessment/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchController.submit()
+
++nocsrf
+POST    /manage-self-assessment/test-only/penaltiesData/penaltyDetails                   testOnly.controllers.StubPenaltiesDataController.submitStubbedPenaltyDetails()
+
++nocsrf
+POST    /manage-self-assessment/test-only/penaltiesData/financialDetails                 testOnly.controllers.StubPenaltiesDataController.submitStubbedFinancialData()
+
+
+## Test only old context root
++ nocsrf
+GET         /report-quarterly/income-and-expenses/view/test-only/custom-login                         testOnly.controllers.CustomLoginController.showLogin(isNewContextRoot: Boolean = false)
+
+GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.show(isNewContextRoot: Boolean = false)
 
 ->          /                                                                                          prod.Routes
-
-GET        /report-quarterly/income-and-expenses/view/test-only/calc-id-to-session/:calculationId    testOnly.controllers.SessionAlterationController.addCalcId(calculationId: String)
-
-GET        /report-quarterly/income-and-expenses/view/test-only/showSession                          testOnly.controllers.SessionStorageController.show()
-
-GET       /report-quarterly/income-and-expenses/view/test-only/upsertSession                         testOnly.controllers.SessionStorageController.upsert(key: Option[String], value: Option[String])
-
-GET         /report-quarterly/income-and-expenses/view/test-only/message-check                       testOnly.controllers.MessageCheckController.show()
-
-GET         /report-quarterly/income-and-expenses/view/test-only/message-check-welsh                 testOnly.controllers.MessageCheckController.showWelsh()
-
-GET         /report-quarterly/income-and-expenses/view/test-only/session-storage                                      testOnly.controllers.SessionStorageServiceController.show()
-GET         /report-quarterly/income-and-expenses/view/agents/test-only/session-storage                               testOnly.controllers.SessionStorageServiceController.showAgent()
-
-+nocsrf
-PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches/:featureSwitchName                             testOnly.controllers.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
-GET        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchesAdminController.get()
-
-+nocsrf
-PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchesAdminController.putAll()
-
-+nocsrf
-PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitch/:featureSwitchName/:isEnabled                    testOnly.controllers.FeatureSwitchController.setSwitch(featureSwitchName: FeatureSwitchName, isEnabled: Boolean)
-#GET        /report-quarterly/income-and-expenses/view/test-only/allfeatureSwitches                                                testOnly.controllers.FeatureSwitchController.show()
-#POST       /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchController.submit()
-
-+nocsrf
-POST    /report-quarterly/income-and-expenses/view/test-only/penaltiesData/penaltyDetails                   testOnly.controllers.StubPenaltiesDataController.submitStubbedPenaltyDetails()
-
-+nocsrf
-POST    /report-quarterly/income-and-expenses/view/test-only/penaltiesData/financialDetails                 testOnly.controllers.StubPenaltiesDataController.submitStubbedFinancialData()

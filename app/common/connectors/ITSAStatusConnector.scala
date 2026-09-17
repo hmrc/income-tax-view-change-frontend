@@ -18,7 +18,7 @@ package common.connectors
 
 import common.config.FrontendAppConfig
 import common.models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ITSAStatusConnector @Inject()(val http: HttpClientV2,
                                     val appConfig: FrontendAppConfig
-                                   )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                   )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def getITSAStatusDetailUrl(taxableEntityId: String, taxYear: String, futureYears: Boolean, history: Boolean): String = {
     s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/itsa-status/status/$taxableEntityId/$taxYear?futureYears=${futureYears.toString}&history=${history.toString}"
@@ -45,22 +45,22 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
         case OK =>
           response.json.validate[List[ITSAStatusResponseModel]].fold(
             invalid => {
-              Logger("application").error(s"Json validation error parsing itsa-status response, error $invalid")
+              logger.error(s"Json validation error parsing itsa-status response, error $invalid")
               Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response"))
             },
             valid => {
-              Logger("application").debug(s"Get ITSA Status returned OK with valid response ${valid.toString}")
+              logger.debug(s"Get ITSA Status returned OK with valid response ${valid.toString}")
               Right(valid)
             }
           )
         case NOT_FOUND =>
-          Logger("application").debug(s"Get ITSA Status returned NOT_FOUND")
+          logger.debug(s"Get ITSA Status returned NOT_FOUND")
           Right(List())
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getITSAStatusDetail Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getITSAStatusDetail] Response status: ${response.status}, body: ${response.body}")
           }
           Left(ITSAStatusResponseError(response.status, response.body))
       }

@@ -29,7 +29,7 @@ import common.models.admin.ObligationsFrontend
 import common.services.DateService
 import common.models.incomeSourceDetails.TaxYear.getTaxYearModel
 import businessDetails.services.NextUpdatesService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import shared.enums.CannotGoBackPage
@@ -52,7 +52,8 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                                              implicit val ec: ExecutionContext,
                                              val mcc: MessagesControllerComponents,
                                              val appConfig: FrontendAppConfig
-                                           ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+                                           )
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with Logging{
 
   private lazy val errorHandler: Boolean => ShowInternalServerError =
     (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -87,7 +88,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                 incomeSourceId = None
               )
             case (_, _, _, _) =>
-              Logger("application").error(s"Missing session values")
+              logger.error(s"Missing session values")
               Future(errorHandler(isAgent).showInternalServerError())
           }
         }
@@ -130,7 +131,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
   }
 
   private def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_]): Future[Result] = {
-    Logger("application").error(s"${if (isAgent) "[Agent] - " else ""}$message")
+    logger.error(s"${if (isAgent) "Agent - " else ""}$message")
     Future(errorHandler(isAgent).showInternalServerError())
   }
 
@@ -158,7 +159,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
       case SelfEmployment =>
         id.orElse {
           val message = "Missing required income source ID for Self Employment"
-          Logger("application").error(message)
+          logger.error(message)
           None
         }
       case UkProperty | ForeignProperty =>

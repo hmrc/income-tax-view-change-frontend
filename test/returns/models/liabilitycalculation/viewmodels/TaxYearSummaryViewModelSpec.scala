@@ -52,7 +52,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
     forecastTotalTaxableIncome = Some(8300),
     periodFrom = Some(LocalDate.of(2020 - 1, 1, 1)),
     periodTo = Some(LocalDate.of(2021, 1, 1)),
-    isAmended = false
+    calculationRevisionType = None
   )
 
   val testCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2024, 2025)))
@@ -65,7 +65,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
           Some(testCalculationSummary.copy(forecastIncomeTaxAndNics = None)), None,
           testWithMissingOriginalAmountChargesList,
           testObligationsModel, showForecastData = true, ctaViewModel = testCTAViewModel,
-          LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false
+          LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Forecast Tax Due"
@@ -78,7 +78,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
           Some(testCalculationSummary.copy(timestamp = None)), None,
           testWithMissingOriginalAmountChargesList,
           testObligationsModel, showForecastData = true, ctaViewModel = testCTAViewModel, LPP2Url = "",
-          pfaEnabled = false, financialsFrontendEnabled = false
+          pfaEnabled = false, financialsFrontendEnabled = false, hideUnknownBusinessName = false
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"

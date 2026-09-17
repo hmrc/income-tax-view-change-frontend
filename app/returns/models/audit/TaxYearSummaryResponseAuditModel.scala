@@ -153,7 +153,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
       Json.obj("dateSubmitted"-> updates.obligation.dateReceived)
   }
 
-  private val updatesDetail: Seq[JsObject] = taxYearSummaryViewModel.obligations.allDeadlinesWithSource(previous = true)(mtdItUser).map(updatesJson)
+  private val updatesDetail: Seq[JsObject] = taxYearSummaryViewModel.obligations.allDeadlinesWithSource(previous = true, false)(mtdItUser).map(updatesJson)
 
   override val detail: JsValue = {
     userAuditDetails(mtdItUser) ++

@@ -56,7 +56,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
         httpStatus(SEE_OTHER),
-        redirectURI(appConfig.individualHomeUrl)
+        redirectURI(appConfig.individualHomeUrl(newHubContextRootEnabled))
       )
     }
   }
@@ -78,7 +78,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
         httpStatus(SEE_OTHER),
-        redirectURI(appConfig.individualHomeUrl)
+        redirectURI(appConfig.individualHomeUrl(newHubContextRootEnabled))
       )
     }
 

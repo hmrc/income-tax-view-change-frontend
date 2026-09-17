@@ -205,7 +205,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     val businessTrade = "Test Trade"
     val businessAddressAsString = "64 Zoo Lane Cbeebies ZO0 1AN United Kingdom"
 
-    val backUrl: String = appConfig.homePageUrl(isAgent)
+    val backUrl: String = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
     val postAction: Call = addBusinessRoutes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, mode = NormalMode)
 
 

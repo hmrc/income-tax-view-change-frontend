@@ -19,14 +19,14 @@ package financials.controllers
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.models.admin.CreditsRefundsRepay
+import common.models.admin.{CreditsRefundsRepay, NewHubContextRootEnabled}
 import common.services.AuditingService
 import common.views.html.errorPages.CustomNotFoundErrorView
 import financials.models.audit.ClaimARefundAuditModel
 import financials.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import financials.services.{CreditService, RepaymentService}
 import financials.utils.ErrorRecovery
-import financials.views.html.{CreditAndRefundsView, MoneyInYourAccountView}
+import financials.views.html.MoneyInYourAccountView
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
                                              val creditService: CreditService,
-                                             val view: CreditAndRefundsView,
                                              val moneyInYourAccountView: MoneyInYourAccountView,
                                              val repaymentService: RepaymentService,
                                              val auditingService: AuditingService,
@@ -59,19 +58,19 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
-          backUrl = appConfig.individualHomeUrlWithOrigin(origin)
+          backUrl = appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin)
         ) recover logAndRedirect
     }
 
-  def handleRequest(backUrl: String)
+  private def handleRequest(backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
-        Ok(customNotFoundErrorView()(user, messages))
+        Ok(customNotFoundErrorView(isEnabled(NewHubContextRootEnabled)))
       case creditsModel: CreditsModel =>
         val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel, appConfig.repaymentsUrl)
         auditClaimARefund(creditsModel)
-        Ok(moneyInYourAccountView(viewModel, backUrl)(user, user, messages))
+        Ok(moneyInYourAccountView(viewModel, backUrl))
     }
   }
 
@@ -79,7 +78,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent() async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = appConfig.homePageUrl(isAgent = true)
+          backUrl = appConfig.homePageUrl(isAgent = true, mtdItUser.newHubContextRootEnabled)
         ) recover logAndRedirect
     }
   }
@@ -93,7 +92,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
             isAgent = false
           ) recover logAndRedirect
         } else {
-          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+          Future.successful(Ok(customNotFoundErrorView(user.newHubContextRootEnabled)(user, user.messages)))
         }
     }
 
@@ -106,7 +105,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
             isAgent = true
           ) recover logAndRedirect
         } else {
-          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+          Future.successful(Ok(customNotFoundErrorView(user.newHubContextRootEnabled)(user, user.messages)))
         }
     }
 
@@ -114,7 +113,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits flatMap {
       case _ if !isEnabled(CreditsRefundsRepay) =>
-        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+        Future.successful(Ok(customNotFoundErrorView(user.newHubContextRootEnabled)(user, messages)))
       case creditsModel: CreditsModel =>
         repaymentService.start(user.nino, Some(creditsModel.availableCreditForRepayment)) map {
           case Right(nextUrl) =>

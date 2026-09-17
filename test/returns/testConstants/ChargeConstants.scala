@@ -45,7 +45,8 @@ trait ChargeConstants {
                       lpiWithDunningLock: Option[BigDecimal] = Some(100.0),
                       dunningLock: Boolean = false,
                       poaRelevantAmount: Option[BigDecimal] = None,
-                      chargeReference: Option[String] = None): ChargeItem = ChargeItem(
+                      chargeReference: Option[String] = None,
+                      chargeClassification: Option[String] = None): ChargeItem = ChargeItem(
     transactionId = transactionId,
     taxYear = taxYear,
     transactionType = transactionType,
@@ -64,6 +65,7 @@ trait ChargeConstants {
     interestRate = interestRate,
     amountCodedOut = amountCodedOut,
     poaRelevantAmount = poaRelevantAmount,
-    chargeReference = chargeReference
+    chargeReference = chargeReference,
+    chargeClassification = chargeClassification
   )
 }

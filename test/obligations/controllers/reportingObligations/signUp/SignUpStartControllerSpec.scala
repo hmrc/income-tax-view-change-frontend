@@ -97,7 +97,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
 
-          val redirectUrl = appConfig.homePageUrl(isAgent)
+          val redirectUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
 
           when(mockSignUpService.fetchSavedSignUpSessionData()(any(), any(), any()))
             .thenReturn(Future.successful(Some(SignUpSessionData(None, None, None))))
@@ -120,7 +120,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           val result = action(fakeRequest)
 
 
-          val redirectUrl = appConfig.homePageUrl(isAgent)
+          val redirectUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(redirectUrl)
@@ -134,7 +134,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
 
           val result = action(fakeRequest)
 
-          val redirectUrl = appConfig.homePageUrl(isAgent)
+          val redirectUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(redirectUrl)

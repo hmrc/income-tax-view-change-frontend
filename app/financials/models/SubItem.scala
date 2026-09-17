@@ -16,7 +16,7 @@
 
 package financials.models
 
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.*
 
 import java.time.LocalDate
@@ -40,7 +40,7 @@ case class SubItem(dueDate: Option[LocalDate] = None,
                    transactionId: Option[String] = None,
                    codedOutStatus: Option[String] = None)
 
-object SubItem {
+object SubItem extends Logging {
 
   implicit val writes: OWrites[SubItem] = Json.writes[SubItem]
 
@@ -91,7 +91,7 @@ object SubItem {
       true
     } catch {
       case _: Exception =>
-        Logger("application").warn(s"The returned 'subItem' field <$s> could not be parsed as an integer")
+        logger.warn(s"The returned 'subItem' field <$s> could not be parsed as an integer")
         false
     }
   }

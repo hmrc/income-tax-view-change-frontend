@@ -23,7 +23,7 @@ import common.enums.GatewayPage.TaxYearSummaryPage
 import common.enums.TaxYearSummary.*
 import common.enums.TaxYearSummary.CalculationType.fromStringToCalculationTypeValue
 import common.implicits.ImplicitDateFormatter
-import common.models.admin.{FinancialsFrontend, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
+import common.models.admin.{FinancialsFrontend, HideBusinessName, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation
@@ -33,7 +33,7 @@ import common.services.{AuditingService, DateServiceInterface}
 import returns.models.{ChargeItem, DocumentDetail, FirstLatePaymentPenalty, LateSubmissionPenalty, PoaOneDebit, PoaTwoDebit, SecondLatePaymentPenalty, TransactionUtils}
 import returns.models.*
 import returns.services.FinancialDetailsService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
 import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
@@ -71,7 +71,8 @@ class TaxYearSummaryController @Inject()(
                                           dateService: DateServiceInterface,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext
-                                        ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
+                                        )
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils with Logging {
 
   lazy val financialsFrontendEnabled: MtdItUser[_] => Boolean = user => isEnabled(FinancialsFrontend)(user)
 
@@ -79,12 +80,9 @@ class TaxYearSummaryController @Inject()(
   private def taxYearsUrl(origin: Option[String]): String = returns.controllers.routes.TaxYearsController.showTaxYears(origin).url
 
   private def whatYouOweUrl(origin: Option[String])(implicit user: MtdItUser[_]): String = appConfig.financialsWhatYouOweUrl(true, origin, financialsFrontendEnabled(user))
-
-  private def homeUrl(origin: Option[String]): String = appConfig.individualHomeUrlWithOrigin(origin)
-
+  
   // Agent back urls
   private lazy val agentTaxYearsUrl: String = returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
-  private lazy val agentHomeUrl: String = appConfig.agentHomeUrl
   private lazy val agentWhatYouOweUrl: MtdItUser[_] => String = user =>
     appConfig.financialsWhatYouOweUrl(true, financialsFrontendEnabled = financialsFrontendEnabled(user))
 
@@ -139,7 +137,7 @@ class TaxYearSummaryController @Inject()(
 
     (liabilityCalc, previousCalc, getLPP2Link(chargeItems, isAgent)) match {
       case (liabilityCalc: LiabilityCalculationResponse, None, Some(lpp2Url)) =>
-        Logger("application").debug(s"[TaxYearSummaryController][renderView][$taxYear] Attempting to show successful latest calc view with no previous calc")
+        logger.debug(s"taxYear: $taxYear, Attempting to show successful latest calc view with no previous calc")
         handleCalcSuccess(
           mtdItId = mtdItUser.mtditid,
           nino = mtdItUser.nino,
@@ -157,7 +155,7 @@ class TaxYearSummaryController @Inject()(
       case (liabilityCalc: LiabilityCalculationResponse, Some(previousCalc), Some(lpp2Url)) =>
         previousCalc match {
           case previousCalc: LiabilityCalculationResponse =>
-            Logger("application").debug(s"[TaxYearSummaryController][renderView][$taxYear] Attempting to show successful calc view for previous calc")
+            logger.debug(s"taxYear: $taxYear, Attempting to show successful calc view for previous calc")
             handleCalcSuccess(
               mtdItId = mtdItUser.mtditid,
               nino = mtdItUser.nino,
@@ -173,7 +171,7 @@ class TaxYearSummaryController @Inject()(
               isAgent = isAgent
             )
           case error: LiabilityCalculationError =>
-            Logger("application").error(s"[TaxYearSummaryController][renderView][$taxYear] Unable to show calc view for previous calc")
+            logger.error(s"taxYear: $taxYear, Unable to show calc view for previous calc")
             handleCalcError(
               mtdItId = mtdItUser.mtditid,
               nino = mtdItUser.nino,
@@ -190,7 +188,7 @@ class TaxYearSummaryController @Inject()(
             )
         }
       case (error: LiabilityCalculationError, previousCalc, Some(lpp2Url)) =>
-        Logger("application").error(s"[TaxYearSummaryController][renderView][$taxYear] Unable to show calc view for latest calc, PreviousCalc is defined: ${previousCalc.isDefined}")
+        logger.error(s"taxYear: $taxYear, Unable to show calc view for latest calc, PreviousCalc is defined: ${previousCalc.isDefined}")
 
         handleCalcError(
           mtdItId = mtdItUser.mtditid,
@@ -208,10 +206,10 @@ class TaxYearSummaryController @Inject()(
         )
       case (_, _, None) =>
         if isAgent then
-          Logger("application").error(s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          logger.error(s"Agent - taxYear: $taxYear, No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
           Future(agentItvcErrorHandler.showInternalServerError())
         else
-          Logger("application").error(s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          logger.error(s"taxYear: $taxYear, No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
           Future(itvcErrorHandler.showInternalServerError())
     }
   }
@@ -262,13 +260,14 @@ class TaxYearSummaryController @Inject()(
         ctaViewModel = claimToAdjustViewModel,
         LPP2Url = lpp2Url,
         pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-        financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
+        financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser),
+        hideUnknownBusinessName = isEnabled(HideBusinessName)
       )
 
     val isNotCrystallisedShowInset: Boolean =
       fromStringToCalculationTypeValue(latestCalc.metadata.calculationType) match {
         case CalculationType.UnknownCalculationType =>
-          Logger("application").error(s"[TaxYearSummaryController][handleCalcSuccess] Found:${latestCalc.metadata.calculationType}, Returned: UnknownCalculationType")
+          logger.error(s"[handleCalcSuccess] Found:${latestCalc.metadata.calculationType}, Returned: UnknownCalculationType")
           latestCalc.metadata.isCalculationNotCrystallised
         case _ =>
           latestCalc.metadata.isCalculationNotCrystallised
@@ -277,7 +276,7 @@ class TaxYearSummaryController @Inject()(
 
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
-    Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with Calc data")
+    logger.info(s"taxYear: $taxYear, Rendered Tax year summary page with Calc data")
 
     val selfAssessmentLink: Option[String] = mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
     val taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(latestCalc), TaxYear(taxYear - 1, taxYear))
@@ -337,12 +336,13 @@ class TaxYearSummaryController @Inject()(
           ctaViewModel = claimToAdjustViewModel,
           LPP2Url = lpp2Url,
           pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
+          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser),
+          hideUnknownBusinessName = isEnabled(HideBusinessName)
         )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
 
-      Logger("application").debug(s"[handleCalcError][$taxYear] Rendered Tax year summary page with No Calc data")
+      logger.debug(s"taxYear: $taxYear, Rendered Tax year summary page with No Calc data")
 
       val selfAssessmentLink: Option[String] =
         mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
@@ -355,7 +355,7 @@ class TaxYearSummaryController @Inject()(
           .exists { liabilityCalculationResponse =>
             fromStringToCalculationTypeValue(liabilityCalculationResponse.metadata.calculationType) match {
               case CalculationType.UnknownCalculationType =>
-                Logger("application").error(s"[TaxYearSummaryController][handleCalcError] Found: ${liabilityCalculationResponse.metadata.calculationType}, Returned: UnknownCalculationType")
+                logger.error(s"[handleCalcError] Found: ${liabilityCalculationResponse.metadata.calculationType}, Returned: UnknownCalculationType")
                 liabilityCalculationResponse.metadata.isCalculationNotCrystallised
               case _ =>
                 liabilityCalculationResponse.metadata.isCalculationNotCrystallised
@@ -400,12 +400,13 @@ class TaxYearSummaryController @Inject()(
           ctaViewModel = claimToAdjustViewModel,
           LPP2Url = lpp2Url,
           pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
+          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser),
+          hideUnknownBusinessName = isEnabled(HideBusinessName)
         )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
 
-      Logger("application").debug(s"[handleCalcError][$taxYear] Rendered Tax year summary page with No Calc data")
+      logger.debug(s"taxYear: $taxYear,  Rendered Tax year summary page with No Calc data")
 
       val selfAssessmentLink: Option[String] =
         mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
@@ -418,7 +419,7 @@ class TaxYearSummaryController @Inject()(
           .exists(liabilityCalculationResponse =>
             fromStringToCalculationTypeValue(liabilityCalculationResponse.metadata.calculationType) match {
               case CalculationType.UnknownCalculationType =>
-                Logger("application").error(s"[TaxYearSummaryController][handleCalcError] Found: ${liabilityCalculationResponse.metadata.calculationType}, Returned: UnknownCalculationType")
+                logger.error(s"[handleCalcError] Found: ${liabilityCalculationResponse.metadata.calculationType}, Returned: UnknownCalculationType")
                 liabilityCalculationResponse.metadata.isCalculationNotCrystallised
               case _ =>
                 liabilityCalculationResponse.metadata.isCalculationNotCrystallised
@@ -520,10 +521,10 @@ class TaxYearSummaryController @Inject()(
         f(chargeItemsNoCodingOut ++ chargeItemsLpi ++ chargeItemsCodingOutPaye ++ chargeItemsCodingOutNotPaye ++ chargeItemsCodingOutFullyCollectedPoa)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
-        Logger("application").error(s"[withTaxYearFinancials][Agent] Could not retrieve financial details for year: $taxYear")
+        logger.error(s"Agent - Could not retrieve financial details for year: $taxYear")
         Future(itvcErrorHandler.showInternalServerError())
       case _ =>
-        Logger("application").error(s"[withTaxYearFinancials] Could not retrieve financial details for year: $taxYear")
+        logger.error(s"Could not retrieve financial details for year: $taxYear")
         Future(agentItvcErrorHandler.showInternalServerError())
     }
   }
@@ -538,10 +539,10 @@ class TaxYearSummaryController @Inject()(
         f(obligationsModel)
       case _ =>
         if (isAgent) {
-          Logger("application").error(s"Could not retrieve obligations for year: $taxYear")
+          logger.error(s"Agent - Could not retrieve obligations for year: $taxYear")
           Future(agentItvcErrorHandler.showInternalServerError())
         } else {
-          Logger("application").error(s"[Agent]Could not retrieve obligations for year: $taxYear")
+          logger.error(s"Could not retrieve obligations for year: $taxYear")
           Future(itvcErrorHandler.showInternalServerError())
         }
     }
@@ -552,7 +553,7 @@ class TaxYearSummaryController @Inject()(
     referer.map(URI.create(_).getPath.equals(taxYearsUrl(origin))) match {
       case Some(true) => taxYearsUrl(origin)
       case Some(false) if referer.map(URI.create(_).getPath.equals(whatYouOweUrl(origin))).get => whatYouOweUrl(origin)
-      case _ => homeUrl(origin)
+      case _ => appConfig.individualHomeUrlWithOrigin(mtdItUser.newHubContextRootEnabled, origin)
     }
   }
 
@@ -560,7 +561,7 @@ class TaxYearSummaryController @Inject()(
     referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
       case Some(true) => agentTaxYearsUrl
       case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get => agentWhatYouOweUrl(mtdItUser)
-      case _ => agentHomeUrl
+      case _ => appConfig.agentHomeUrl(mtdItUser.newHubContextRootEnabled)
     }
   }
 
@@ -597,7 +598,7 @@ class TaxYearSummaryController @Inject()(
   }.recover {
     case ex: Throwable =>
       val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
-      Logger("application").error(s"[TaxYearSummaryController][handleRequest] ${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause}", ex)
+      logger.error(s"[handleRequest] ${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause}", ex)
       errorHandler.showInternalServerError()
   }
 
@@ -608,7 +609,7 @@ class TaxYearSummaryController @Inject()(
         case _ => Future(TYSClaimToAdjustViewModel(None))
       }
       case Left(ex: Throwable) =>
-        Logger("application").error(s"There was an error when getting the POA Entry point < cause: ${ex.getCause} message: ${ex.getMessage} >")
+        logger.error(s"There was an error when getting the POA Entry point < cause: ${ex.getCause} message: ${ex.getMessage} >")
         Future.failed(ex)
     }
   }

@@ -17,8 +17,8 @@
 package financials.models
 
 import common.testUtils.UnitSpec
-import financials.enums.ChargeClassificationType
 import org.scalatest.prop.TableDrivenPropertyChecks.*
+import shared.enums.ChargeClassificationType
 
 class ChargeClassificationTypeSpec extends UnitSpec {
 
@@ -54,6 +54,33 @@ class ChargeClassificationTypeSpec extends UnitSpec {
 
       forAll(invalidChargeClassificationTypesTable) { value =>
         ChargeClassificationType.fromString(value) shouldBe None
+      }
+    }
+  }
+
+  "isRevenueAmendment" should {
+    "return true" when {
+      "the chargeClassification is RA" in {
+        ChargeClassificationType.isRevenueAmendment(Some("RA")) shouldBe true
+      }
+    }
+
+    "return false" when {
+      "the chargeClassification is not RevenueAmendments type" in {
+        val notRevenueAmendmentsTypesTable = Table(
+          "String Value",
+          ChargeClassificationType.values.collect {
+            case v if v != ChargeClassificationType.RevenueAmendments => v.value
+          }.mkString(",")
+        )
+
+        forAll(notRevenueAmendmentsTypesTable) { value =>
+          ChargeClassificationType.isRevenueAmendment(Some(value)) shouldBe false
+        }
+      }
+
+      "the chargeClassification is not present" in {
+        ChargeClassificationType.isRevenueAmendment(None) shouldBe false
       }
     }
   }

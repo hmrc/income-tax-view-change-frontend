@@ -27,7 +27,7 @@ import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import businessDetails.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import businessDetails.models.incomeSourceDetails.*
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,7 +36,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.models.admin.{DisplayBusinessStartDate, ObligationsFrontend}
+import common.models.admin.{DisplayBusinessStartDate, HideBusinessName, ObligationsFrontend}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, PropertyDetailsModel, QuarterReportingType, QuarterTypeElection, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateService, ITSAStatusService}
@@ -62,7 +62,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                    (implicit val ec: ExecutionContext,
                                                     val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching {
+  with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching with Logging {
 
   private def getBackUrl(isAgent: Boolean): String =
     if (isAgent) {
@@ -94,7 +94,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                 case Some(realId) =>
                   handleSoleTrader(realId, getBackUrl(isAgent), isAgent)
                 case None =>
-                  Logger("application").error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+                  logger.error(s"[show] no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
                   Future.successful(errorHandler(isAgent).showInternalServerError())
               }
             case _ =>
@@ -102,7 +102,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                 sources = user.incomeSources,
                 isAgent = isAgent,
                 backUrl = getBackUrl(isAgent),
-                incomeSourceType = incomeSourceType
+                incomeSourceType = incomeSourceType,
+                hideUnknownBusinessName = isEnabled(HideBusinessName)
               )
           }
         }
@@ -118,8 +119,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         incomeSourceType match {
           case SelfEmployment => incomeSourceIdOpt match {
             case Some(realId) => handleSoleTrader(realId.hash, backUrl, isAgent)
-            case None => Logger("application")
-              .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+            case None => logger
+              .error(s"[showChange] no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
               Future.successful(errorHandler(isAgent).showInternalServerError())
           }
           case _ =>
@@ -127,7 +128,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
               sources = user.incomeSources,
               isAgent = isAgent,
               backUrl = backUrl,
-              incomeSourceType = incomeSourceType
+              incomeSourceType = incomeSourceType,
+              hideUnknownBusinessName = isEnabled(HideBusinessName)
             )
         }
       }
@@ -158,7 +160,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       viewModel <- getManageIncomeSourceViewModel(
         sources = user.incomeSources,
         incomeSourceId = incomeSourceId,
-        currentItsaStatus = currentItsaStatus
+        currentItsaStatus = currentItsaStatus,
+        hideUnknownBusinessName = isEnabled(HideBusinessName)
       )
     } yield {
 
@@ -173,7 +176,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
 
     result.recover {
       case ex =>
-        Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"[handleSoleTrader] ${ex.getMessage} - ${ex.getCause}")
         if (isAgent) {
           itvcErrorHandlerAgent.showInternalServerError()
         } else {
@@ -185,11 +188,12 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
   def handleProperty(sources: IncomeSourceDetailsModel,
                      isAgent: Boolean,
                      backUrl: String,
-                     incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+                     incomeSourceType: IncomeSourceType,
+                     hideUnknownBusinessName: Boolean)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
     
     getCurrentITSAStatus(currentTaxYear).flatMap { currentItsaStatus =>
-      getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType, currentItsaStatus)
+      getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType, currentItsaStatus, hideUnknownBusinessName)
         .map { viewModel =>
           Ok(view(
             viewModel = viewModel,
@@ -200,7 +204,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
           ))
         }.recover {
           case ex =>
-            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"[handleProperty] ${ex.getMessage} - ${ex.getCause}")
             errorHandler(isAgent).showInternalServerError()
         }
     }
@@ -245,7 +249,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                            latencyYearsQuarterly: LatencyYearsQuarterly,
                                            latencyYearsAnnual: LatencyYearsAnnual,
                                            latencyYearsCrystallised: LatencyYearsCrystallised,
-                                           currentItsaStatus: ITSAStatus
+                                           currentItsaStatus: ITSAStatus,
+                                           hideUnknownBusinessName: Boolean
                                          ): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
@@ -260,7 +265,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       incomeSourceType = SelfEmployment,
       currentTaxYearEnd = dateService.getCurrentTaxYearEnd,
       quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
-      currentItsaStatus = currentItsaStatus
+      currentItsaStatus = currentItsaStatus,
+      hideUnknownBusinessName = hideUnknownBusinessName
     )
   }
 
@@ -269,7 +275,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                 latencyYearsAnnual: LatencyYearsAnnual,
                                                 latencyYearsCrystallised: LatencyYearsCrystallised,
                                                 incomeSourceType: IncomeSourceType,
-                                                currentItsaStatus: ITSAStatus): ManageIncomeSourceDetailsViewModel = {
+                                                currentItsaStatus: ITSAStatus,
+                                                hideUnknownBusinessName: Boolean): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,
@@ -283,7 +290,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       incomeSourceType = incomeSourceType,
       currentTaxYearEnd = dateService.getCurrentTaxYearEnd,
       quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
-      currentItsaStatus = currentItsaStatus
+      currentItsaStatus = currentItsaStatus,
+      hideUnknownBusinessName = hideUnknownBusinessName
     )
   }
 
@@ -291,7 +299,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
   private def getManageIncomeSourceViewModel(
                                               sources: IncomeSourceDetailsModel,
                                               incomeSourceId: IncomeSourceId,
-                                              currentItsaStatus: ITSAStatus
+                                              currentItsaStatus: ITSAStatus,
+                                              hideUnknownBusinessName: Boolean
                                             )(implicit user: MtdItUser[_],
                                               hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
@@ -314,7 +323,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = None,
         secondYear = None
-      ), currentItsaStatus = currentItsaStatus
+      ), currentItsaStatus = currentItsaStatus,
+        hideUnknownBusinessName = hideUnknownBusinessName
     ))
 
     desiredIncomeSourceMaybe match {
@@ -322,7 +332,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
             if(latencyDetails.isBusinessOrPropertyInLatency(dateService.getCurrentTaxYearEnd))
-              handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails, currentItsaStatus)
+              handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails, currentItsaStatus, hideUnknownBusinessName)
             else
               defaultViewModel(desiredIncomeSource)
           case None =>
@@ -336,7 +346,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
   private def handleLatencyAndCrystallisationDetails(
                                                       desiredIncomeSource: BusinessDetailsModel,
                                                       latencyDetails: LatencyDetails,
-                                                      currentItsaStatus: ITSAStatus
+                                                      currentItsaStatus: ITSAStatus,
+                                                      hideUnknownBusinessName: Boolean
                                                     )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
@@ -353,7 +364,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             latencyYearsCrystallised = LatencyYearsCrystallised(
               firstYear = None,
               secondYear = None
-            ), currentItsaStatus = currentItsaStatus
+            ), currentItsaStatus = currentItsaStatus,
+            hideUnknownBusinessName = hideUnknownBusinessName
           )
 
         case Some(crystallisationList: List[Boolean]) =>
@@ -365,7 +377,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
               firstYear = crystallisationList.headOption,
               secondYear = crystallisationList.lastOption
             ),
-            currentItsaStatus = currentItsaStatus
+            currentItsaStatus = currentItsaStatus,
+            hideUnknownBusinessName = hideUnknownBusinessName
           )
       }
     }
@@ -375,7 +388,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
   private def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel,
                                                      incomeSourceType: IncomeSourceType,
                                                      @unused isAgent: Boolean,
-                                                     currentItsaStatus: ITSAStatus
+                                                     currentItsaStatus: ITSAStatus,
+                                                     hideUnknownBusinessName: Boolean
                                                     )(implicit user: MtdItUser[_],
                                                       hc: HeaderCarrier,
                                                       ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
@@ -399,7 +413,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsAnnual = LatencyYearsAnnual(Some(false), Some(false)),
       latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
       incomeSourceType = incomeSourceType,
-      currentItsaStatus = currentItsaStatus
+      currentItsaStatus = currentItsaStatus, 
+      hideUnknownBusinessName = hideUnknownBusinessName
     ))
 
     desiredIncomeSourceMaybe match {
@@ -407,7 +422,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
             if(latencyDetails.isBusinessOrPropertyInLatency(dateService.getCurrentTaxYearEnd))
-              handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType, currentItsaStatus)
+              handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType, currentItsaStatus, hideUnknownBusinessName)
             else
               defaultViewModel(desiredIncomeSource)
 
@@ -424,7 +439,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                                  desiredIncomeSource: PropertyDetailsModel,
                                                                  latencyDetails: LatencyDetails,
                                                                  incomeSourceType: IncomeSourceType,
-                                                                 currentItsaStatus: ITSAStatus
+                                                                 currentItsaStatus: ITSAStatus,
+                                                                 hideUnknownBusinessName: Boolean
                                                                )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
@@ -441,7 +457,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             latencyYearsAnnual = latencyYearsQuarterlyAndAnnualStatus.latencyYearsAnnual,
             latencyYearsCrystallised = LatencyYearsCrystallised(None, None),
             incomeSourceType = incomeSourceType,
-            currentItsaStatus = currentItsaStatus
+            currentItsaStatus = currentItsaStatus,
+            hideUnknownBusinessName = hideUnknownBusinessName
           )
 
         case Some(crystallisationList: List[Boolean]) =>
@@ -451,7 +468,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             latencyYearsAnnual = latencyYearsQuarterlyAndAnnualStatus.latencyYearsAnnual,
             latencyYearsCrystallised = LatencyYearsCrystallised(crystallisationList.headOption, crystallisationList.lastOption),
             incomeSourceType = incomeSourceType,
-            currentItsaStatus = currentItsaStatus
+            currentItsaStatus = currentItsaStatus,
+            hideUnknownBusinessName = hideUnknownBusinessName
           )
       }
     }

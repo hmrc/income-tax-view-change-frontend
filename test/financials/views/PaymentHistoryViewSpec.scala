@@ -23,6 +23,7 @@ import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.testUtils.ViewSpec
 import shared.implicits.ImplicitCurrencyFormatter.*
+import shared.enums.ChargeClassificationType.*
 import financials.models.*
 import financials.models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import financials.models.repaymentHistory.PaymentHistoryEntry
@@ -115,9 +116,9 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   val repaymentRequestNumber = "000000003135"
 
   val groupedRepayments: List[(Int, List[PaymentHistoryEntry])] = List(
-    (2021, List(PaymentHistoryEntry("2021-08-22", Repayment, None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface),
-      PaymentHistoryEntry("2021-08-21", Repayment, Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface),
-      PaymentHistoryEntry("2021-08-20", Repayment, Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface)))
+    (2021, List(PaymentHistoryEntry("2021-08-22", Repayment, None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None, isRevenueAmendment = false)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-21", Repayment, Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None, isRevenueAmendment = false)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-20", Repayment, Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None, isRevenueAmendment = false)(dateServiceInterface)))
   )
 
   val expectedDatesOrder: List[String] = List("25 December 2020", "13 April 2020", "25 December 2019", "25 September 2019", "25 April 2019", "25 April 2018")
@@ -144,8 +145,11 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
-  val entry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None)(dateServiceInterface)
+  val entry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = ITSAReturnAmendmentCredit, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None, isRevenueAmendment = false)(dateServiceInterface)
+
+  val revenueAmendmentEntry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = ITSAReturnAmendmentCredit, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None, isRevenueAmendment = true, Some(RevenueAmendments))(dateServiceInterface)
 
   def getContent(row: Int)(implicit layoutContent: Element): String = {
     val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
@@ -169,7 +173,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             entry.copy(date = "2020-12-20", creditType = PaymentType)(dateServiceInterface),
             entry.copy(date = "2020-12-19", creditType = Repayment)(dateServiceInterface))))) {
 
-          document.getElementById("payment-0").child(0).ownText() shouldBe "Credit from HMRC adjustment"
+          document.getElementById("payment-0").child(0).ownText() shouldBe "Credit from your amended tax return"
           document.getElementById("payment-1").child(0).ownText() shouldBe "Credit from an earlier tax year"
           document.getElementById("payment-2").child(0).ownText() shouldBe "Credit from overpaid tax"
           document.getElementById("payment-3").child(0).ownText() shouldBe "Credit from repayment interest"
@@ -205,6 +209,10 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             document.title() shouldBe messages("htmlTitle", messages("paymentHistory.heading"))
             layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.heading")
           }
+        s"display revenue amendments in the table" in new PaymentHistorySetup(List(
+          (2020, List(revenueAmendmentEntry)))) {
+          document.getElementById("payment-0").child(0).ownText() shouldBe "Credit from HMRC enquiry amendment"
+        }
       }
 
       s"the user has has a payment history for multiple years" should {
@@ -320,6 +328,29 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 2).selectNth("td", 4).text() shouldBe "£300.00"
+      }
+    }
+
+    "logged in as either user or agent" should {
+      "display credit and corrections correctly" in {
+        Seq(true, false).foreach { isAgent => 
+          new PaymentHistorySetup(List(
+            (2026, List(
+              PaymentHistoryEntry("2026-05-03", ITSAReturnAmendmentCredit, Some(200.0), None, "someLink", "", None)(dateServiceInterface), // normal credit 
+              PaymentHistoryEntry("2026-05-02", ITSAReturnAmendmentCredit, Some(300.0), None, "someLink", "", None, false, Some(AutoCorrection))(dateServiceInterface), // corrections 
+              PaymentHistoryEntry("2026-05-01", ITSAReturnAmendmentCredit, Some(400.0), None, "someLink", "", None, false, Some(ManualCorrection))(dateServiceInterface) 
+            ))),
+            isAgent = isAgent
+          ) {
+              val table = layoutContent.select("table > tbody")
+              table.select("tr:nth-child(1)")
+                .text() shouldBe "3 May 2026 " + s"${messages("paymentHistory.IRA-credit")} Item 1" + " 2026 to 2027 " + "£200.00"
+              table.select("tr:nth-child(2)")
+                .text() shouldBe "2 May 2026 " + s"${messages("paymentHistory.correction")} Item 2" + " 2026 to 2027 " + "£300.00"
+              table.select("tr:nth-child(3)")
+                .text() shouldBe "1 May 2026 " + s"${messages("paymentHistory.correction")} Item 3" + " 2026 to 2027 " + "£400.00"
+          }
+        }
       }
     }
   }

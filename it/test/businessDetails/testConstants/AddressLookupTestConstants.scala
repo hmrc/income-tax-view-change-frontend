@@ -16,6 +16,7 @@
 
 package businessDetails.testConstants
 
+import common.config.FrontendAppConfig
 import play.api.libs.json.Json
 import common.helpers.WiremockHelper.baseUrl
 
@@ -37,17 +38,17 @@ object AddressLookupTestConstants {
     accessibilityUrl + "?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"
   }
 
-  val ukRequestBodyIndividual = Json.parse(
+  def ukRequestBodyIndividual(implicit appConfig: FrontendAppConfig) = Json.parse(
     s"""{
       |  "version": 2,
       |  "options": {
       |    "continueUrl": "$baseUrl/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "$baseUrl/session-timeout",
-      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
+      |      "timeoutUrl": "${appConfig.hubBaseUrl()}/session-timeout",
+      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl()}/keep-alive"
       |    },
-      |    "signOutHref": "$baseUrl/sign-out",
+      |    "signOutHref": "${appConfig.hubBaseUrl()}/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -67,7 +68,7 @@ object AddressLookupTestConstants {
       |      "showSearchAgainLink": true,
       |      "showConfirmChangeText": true
       |    },
-      |    "phaseFeedbackLink": "$baseUrl/feedback",
+      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl()}/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": true
@@ -110,7 +111,7 @@ object AddressLookupTestConstants {
       |  }
       |}""".stripMargin)
 
-  val ukRequestBodyAgent = Json.parse(
+  def ukRequestBodyAgent(implicit appConfig: FrontendAppConfig) = Json.parse(
     s"""
       |{
       |  "version": 2,
@@ -118,10 +119,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/agents/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "$baseUrl/session-timeout",
-      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
+      |      "timeoutUrl": "${appConfig.hubBaseUrl()}/session-timeout",
+      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl()}/keep-alive"
       |    },
-      |    "signOutHref": "$baseUrl/sign-out",
+      |    "signOutHref": "${appConfig.hubBaseUrl()}/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -141,7 +142,7 @@ object AddressLookupTestConstants {
       |      "showSearchAgainLink": true,
       |      "showConfirmChangeText": true
       |    },
-      |    "phaseFeedbackLink": "$baseUrl/agents/feedback",
+      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl()}/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": true
@@ -185,7 +186,7 @@ object AddressLookupTestConstants {
       |}
       |""".stripMargin)
   
-  val internationalRequestBodyInvididual = Json.parse(
+  def internationalRequestBodyInvididual(implicit appConfig: FrontendAppConfig) = Json.parse(
     s"""
       |{
       |  "version": 2,
@@ -193,10 +194,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "$baseUrl/session-timeout",
-      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
+      |      "timeoutUrl": "${appConfig.hubBaseUrl()}/session-timeout",
+      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl()}/keep-alive"
       |    },
-      |    "signOutHref": "$baseUrl/sign-out",
+      |    "signOutHref": "${appConfig.hubBaseUrl()}/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -217,7 +218,7 @@ object AddressLookupTestConstants {
       |      "line3MaxLength": 35,
       |      "townMaxLength": 35
       |    },
-      |    "phaseFeedbackLink": "$baseUrl/feedback",
+      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl()}/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": false
@@ -273,7 +274,7 @@ object AddressLookupTestConstants {
       |}
       |""".stripMargin)
 
-  val internationalRequestBodyAgent = Json.parse(
+  def internationalRequestBodyAgent(implicit appConfig: FrontendAppConfig) = Json.parse(
     s"""
       |{
       |  "version": 2,
@@ -281,10 +282,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/agents/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "$baseUrl/session-timeout",
-      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
+      |      "timeoutUrl": "${appConfig.hubBaseUrl()}/session-timeout",
+      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl()}/keep-alive"
       |    },
-      |    "signOutHref": "$baseUrl/sign-out",
+      |    "signOutHref": "${appConfig.hubBaseUrl()}/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -305,7 +306,7 @@ object AddressLookupTestConstants {
       |      "line3MaxLength": 35,
       |      "townMaxLength": 35
       |    },
-      |    "phaseFeedbackLink": "$baseUrl/agents/feedback",
+      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl()}/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": false

@@ -52,7 +52,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   def signUpLink(i: Int)(implicit document: Document) = document.getElementById(s"sign-up-link-$i")
   def optOutLink(i: Int)(implicit document: Document) = document.getElementById(s"opt-out-link-$i")
 
-  class SelfEmploymentSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+  class SelfEmploymentSetup(isAgent: Boolean, startDateEnabled: Boolean = true, hideBusinessName: Boolean = false) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
       manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, SelfEmployment).url
@@ -60,7 +60,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
-        selfEmploymentViewModel,
+        selfEmploymentViewModel.copy(hideUnknownBusinessName = hideBusinessName),
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
@@ -708,6 +708,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "do not display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(true, startDateEnabled = false) {
       Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+
+    "do not display business name if HideBusinessName is enabled" in new SelfEmploymentSetup(true, hideBusinessName = true) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Business Name") shouldBe false
     }
   }
 

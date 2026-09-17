@@ -666,7 +666,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                     elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                     elementTextByID("separately-choose-to-opt-out")("For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:"),
                     elementTextByID("latency-section-1-bullet-1")("started less than 2 years ago"),
-                    elementTextByID("latency-section-1-bullet-2")("that you start in future"),
+                    elementTextByID("latency-section-1-bullet-2")("that you start in the future"),
                     elementTextByID("options-available")("This option is available to your new businesses:"),
                     elementTextByID("latency-section-2-bullet-1")("for up to 2 tax years"),
                     elementTextByID("latency-section-2-bullet-2")("only when you use Making Tax Digital for Income Tax for your other businesses"),

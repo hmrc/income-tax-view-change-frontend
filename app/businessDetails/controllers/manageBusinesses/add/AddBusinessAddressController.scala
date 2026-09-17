@@ -19,7 +19,7 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import com.google.inject.Singleton
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -47,7 +47,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
                                              mcc: MessagesControllerComponents,
                                              val sessionService: SessionService
                                             )
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils with Logging {
 
   def show(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async { implicit user =>
     handleRequest(isAgent = false, mode = mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
@@ -74,10 +74,10 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
       case Right(Some(location)) =>
         Redirect(location)
       case Right(None) =>
-        Logger("application").error("No redirect location returned from connector")
+        logger.error("No redirect location returned from connector")
         errorHandler.showInternalServerError()
       case Left(_) =>
-        Logger("application").error("Unexpected response")
+        logger.error("[initialiseJourney] Unexpected response")
         errorHandler.showInternalServerError()
     }
   }
@@ -96,7 +96,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
               case Right(_) =>
                 Future.successful(Redirect(addressLookupConfirmUrl(addressLookupId)))
               case Left(_) =>
-                Logger("application").info(s"[AddBusinessAddressController] - addressLookupId expired/invalid, starting new ALF journey")
+                logger.info(s"addressLookupId expired/invalid, starting new ALF journey")
                 initialiseJourney(isAgent = isAgent, mode = mode, isTriggeredMigration)(user, errorHandler)
             }
 
@@ -152,8 +152,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
 
   }.recover {
     case ex =>
-      Logger("application")
-        .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
+      logger.error(s"[handleSubmitRequest] Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
       errorHandler.showInternalServerError()
   }
 

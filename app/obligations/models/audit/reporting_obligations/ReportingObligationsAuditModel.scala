@@ -21,7 +21,6 @@ import play.api.libs.json.{JsObject, Json, OFormat}
 
 case class ReportingObligationsAuditModel(
                                            agentReferenceNumber: Option[String],
-                                           auditType: String,
                                            credId: Option[String],
                                            mtditid: String,
                                            nino: String,
@@ -35,7 +34,6 @@ case class ReportingObligationsAuditModel(
 
   def detail: JsObject = {
     Json.obj(
-      "auditType" -> auditType,
       "mtditid" -> mtditid,
       "nino" -> nino,
       "userType" -> userType.toString,

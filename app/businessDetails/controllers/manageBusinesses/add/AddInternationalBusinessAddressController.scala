@@ -24,7 +24,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.Mode
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -40,9 +40,8 @@ class AddInternationalBusinessAddressController @Inject()(val authActions: AuthA
                                                           val itvcErrorHandler: ItvcErrorHandler,
                                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                           mcc: MessagesControllerComponents,
-                                                          val sessionService: SessionService
-                                                         )
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+                                                          val sessionService: SessionService)
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils with Logging {
   
   def show(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
       handleRequest(isAgent, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
@@ -64,10 +63,10 @@ class AddInternationalBusinessAddressController @Inject()(val authActions: AuthA
       case Right(Some(location)) =>
         Redirect(location)
       case Right(None) =>
-        Logger("application").error("[AddInternationalBusinessAddressController][initialiseJourney] No redirect location returned from connector")
+        logger.error("[initialiseJourney] No redirect location returned from connector")
         errorHandler.showInternalServerError()
       case Left(_) =>
-        Logger("application").error("[AddInternationalBusinessAddressController][initialiseJourney] Unexpected response")
+        logger.error("[initialiseJourney] Unexpected response")
         errorHandler.showInternalServerError()
     }
   }
@@ -85,7 +84,7 @@ class AddInternationalBusinessAddressController @Inject()(val authActions: AuthA
                 case Right(_) =>
                   Future.successful(Redirect(addressLookupConfirmUrl(addressLookupId)))
                 case Left(_) =>
-                  Logger("application").info(s"[AddInternationalBusinessAddressController][handleRequest] - addressLookupId expired/invalid, starting new ALF journey")
+                  logger.info(s"[handleRequest] - addressLookupId expired/invalid, starting new ALF journey")
                   initialiseJourney(isAgent = isAgent, mode = mode, isTriggeredMigration)(user, errorHandler)
               }
 

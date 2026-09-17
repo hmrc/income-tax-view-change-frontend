@@ -77,7 +77,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       adjustmentHistory = adjustmentHistory,
       poaExtraChargeLink = poaExtraChargeLink,
       LSPUrl = "testLSPUrl",
-      LPPUrl = "testLPPUrl")
+      LPPUrl = "testLPPUrl",
+      taxYearSummaryUrl = (taxYear: Int) => appConfig.taxYearSummaryUrl(isAgent, taxYear, returnsEnabled = true)
+    )
 
     val view: Html = chargeSummary(viewModel, whatYouOweUrl)
     val document: Document = Jsoup.parse(view.toString())
@@ -124,7 +126,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       amountCodedOut = None,
       dunningLock = false,
       poaRelevantAmount = None,
-      chargeReference = Some("chargeRef")
+      chargeReference = Some("chargeRef"),
+      chargeClassification = None
     ))
 
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String], taxYear: Option[String] = None): PaymentHistoryAllocations =
@@ -1465,14 +1468,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "chargeHistory enabled with a matching link to the credits summary page when there isn't a charge breakdown page for a credit" in new TestSetup(chargeItem = chargeItemModel(),
             chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = creditsWithoutBreakdownPages) {
             document.select(Selectors.table).select("a").size shouldBe 10
-            document.select(Selectors.table).select("a").forEach(el => println(el.attr("href")))
             document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.CreditsSummaryController.showCreditsSummary(2026).url) shouldBe true
           }
 
           "chargeHistory enabled with a matching link to charge summary breakdown page for a credit when it's present" in new TestSetup(chargeItem = chargeItemModel(),
             chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = creditsWithBreakdownPages) {
             document.select(Selectors.table).select("a").size shouldBe 10
-            document.select(Selectors.table).select("a").forEach(el => println(el.attr("href")))
             document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.ChargeSummaryController.show(2026, "PAYID01").url) shouldBe true
           }
 
@@ -1529,7 +1530,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         poaTwoChargeUrl = "",
         adjustmentHistory = defaultAdjustmentHistory,
         LSPUrl = "",
-        LPPUrl = "")
+        LPPUrl = "",
+        taxYearSummaryUrl = (taxYear: Int) => appConfig.taxYearSummaryUrl(isAgent = false, taxYear = taxYear, returnsEnabled = true)
+      )
       val thrownException = intercept[MissingFieldException] {
 
         chargeSummary(exceptionViewModel, financialsRoutes.WhatYouOweController.show().url)

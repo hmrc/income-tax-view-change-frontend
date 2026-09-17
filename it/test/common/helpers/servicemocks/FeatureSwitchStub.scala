@@ -17,7 +17,7 @@
 package common.helpers.servicemocks
 
 import common.helpers.WiremockHelper
-import common.models.admin.{FeatureSwitch, FeatureSwitchName}
+import common.models.admin.{FeatureSwitch, FeatureSwitchName, NewHubContextRootEnabled}
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 
@@ -25,15 +25,20 @@ object FeatureSwitchStub {
 
   def featureSwitchUrl(): String = s"/features?configOnly=false"
 
-  def stubGetFeatureSwitches(featureSwitches: List[FeatureSwitchName] = List()): Unit = {
-    WiremockHelper.stubGet(featureSwitchUrl(), OK, featureSwitchResponse(featureSwitches).toString())
+  def stubGetFeatureSwitches(featureSwitches: List[FeatureSwitchName] = List(), newHubContextRootEnabled: Boolean): Unit = {
+    WiremockHelper.stubGet(featureSwitchUrl(), OK, featureSwitchResponse(featureSwitches, newHubContextRootEnabled).toString())
   }
   
-  def featureSwitchResponse(featureSwitches: List[FeatureSwitchName]): JsValue = {
-    Json.toJson(FeatureSwitchName.allFeatureSwitches.map { fsName =>
+  def featureSwitchesResponse(featureSwitches: List[FeatureSwitchName] = List(), newHubContextRootEnabled: Boolean): List[FeatureSwitch] = {
+    FeatureSwitchName.allFeatureSwitches.map { fsName =>
       fsName.name match
+        case fs if fs == NewHubContextRootEnabled.name => FeatureSwitch(fsName, newHubContextRootEnabled)
         case fs if featureSwitches.map(_.name).contains(fs) => FeatureSwitch(fsName, true)
         case _ => FeatureSwitch(fsName, false)
-    }.toList)
+    }.toList
+  }
+  
+  def featureSwitchResponse(featureSwitches: List[FeatureSwitchName], newHubContextRootEnabled: Boolean): JsValue = {
+    Json.toJson(featureSwitchesResponse(featureSwitches, newHubContextRootEnabled))
   }
 }

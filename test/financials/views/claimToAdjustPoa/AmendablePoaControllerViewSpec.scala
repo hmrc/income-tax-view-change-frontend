@@ -116,7 +116,7 @@ class AmendablePoaControllerViewSpec extends TestSupport {
   def getWhatYouNeedToKnowUrl(isAgent: Boolean): String =
     claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(isAgent).url
 
-  def getCancelLinkUrl(isAgent: Boolean): String = appConfig.homePageUrl(isAgent)
+  def getCancelLinkUrl(isAgent: Boolean): String = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
 
   executeTest(isAgent = true)
   executeTest(isAgent = false)

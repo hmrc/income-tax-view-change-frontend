@@ -19,16 +19,16 @@ package businessDetails.utils
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.OverseasBusinessAddress
+import common.models.admin.{NewHubContextRootEnabled, OverseasBusinessAddress}
 import common.models.incomeSourceDetails.PropertyDetailsModel
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IncomeSourcesUtils extends FeatureSwitching {
+trait IncomeSourcesUtils extends FeatureSwitching with Logging {
 
   def selectActiveProperty(incomeSourceType: IncomeSourceType, filter: PropertyDetailsModel => Boolean)(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
 
@@ -38,7 +38,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       case property :: Nil =>
         Some(property)
       case _ =>
-        Logger("application").error(s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
+        logger.error(s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
         None
     }
   }
@@ -53,7 +53,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
 
   def withOverseasBusinessFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (!isEnabled(OverseasBusinessAddress)) {
-      Future(Redirect(appConfig.homePageUrl(user.isAgent)))
+      Future(Redirect(appConfig.homePageUrl(user.isAgent, isEnabled(NewHubContextRootEnabled))))
     } else {
       comeBlock
     }

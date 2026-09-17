@@ -28,7 +28,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckHmrcRecordsView
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
-import common.services.AuditingService
+import common.services.{AuditingService, YearOfMigrationService}
+import play.api.Logging
+import common.models.admin.HideBusinessName
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,11 +39,12 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
                                            val auth: AuthActions,
                                            triggeredMigrationService: TriggeredMigrationService,
                                            sessionService: SessionService,
-                                           auditingService: AuditingService)
+                                           auditingService: AuditingService,
+                                           yearOfMigrationService: YearOfMigrationService)
                                           (mcc: MessagesControllerComponents,
                                            implicit val appConfig: FrontendAppConfig,
                                            implicit val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
+  extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils with Logging {
 
   def show(isAgent: Boolean, state: Option[String] = None): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
     withTriggeredMigrationFS {
@@ -52,13 +55,23 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
         sessionService.clearSession(sessionId.value)
       }
 
-      val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, TriggeredMigrationState.getStateFromString(state))
+      for {
+        yearOfMigration <- yearOfMigrationService.getYearOfMigration(user.nino).flatMap {
+          _.yearOfMigrationEndYear match {
+            case Some(year) => Future.successful(year)
+            case None =>
+              logger.error("[CheckHmrcRecordsController][Show] Year of migration not found for triggered migrated user")
+              Future.failed(new RuntimeException("[CheckHmrcRecordsController][Show] Year of migration not found"))
+          }
+        }
+        viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, TriggeredMigrationState.getStateFromString(state), yearOfMigration, isEnabled(HideBusinessName))
+      } yield {
+        val referer: String = user.headers.get(REFERER).getOrElse("-")
 
-      val referer: String = user.headers.get(REFERER).getOrElse("-")
+        auditingService.extendedAudit(TriggeredMigrationStartAuditModel(referer))
 
-      auditingService.extendedAudit(TriggeredMigrationStartAuditModel(referer))
-
-      Future.successful(Ok(view(viewModel, isAgent)))
+        Ok(view(viewModel, isAgent))
+      }
     }
   }
 }

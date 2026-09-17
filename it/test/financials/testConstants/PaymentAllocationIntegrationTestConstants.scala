@@ -295,6 +295,14 @@ object PaymentAllocationIntegrationTestConstants {
     )
   )
 
+  val testValidPaymentAndLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
+    Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
+    Seq(
+      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2")),
+      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), None, Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId"))
+    )
+  )
+
   val testValidNoLpiPaymentAllocationHmrcAdjustment: PaymentAllocations = PaymentAllocations(
     amount = Some(-800.00), method = Some("Payment"), transactionDate = Some(LocalDate.parse("2021-01-31")), reference = Some("GF235688"),
     allocations = Seq(

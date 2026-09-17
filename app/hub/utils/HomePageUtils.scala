@@ -18,7 +18,7 @@ package hub.utils
 
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.PenaltiesAndAppeals
+import common.models.admin.{NewHubContextRootEnabled, PenaltiesAndAppeals}
 import common.services.DateServiceInterface
 import controllers.Execution.trampoline
 import financials.models.*
@@ -92,11 +92,39 @@ trait HomePageUtils extends FeatureSwitching {
       .sortWith(_ isBefore _)
       .headOption
 
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) hub.controllers.newHomePage.routes.HandleYourTasksController.showAgent().url else hub.controllers.newHomePage.routes.HandleYourTasksController.show().url
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = hub.controllers.newHomePage.routes.RecentActivityController.show(isAgent, origin).url
-  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = hub.controllers.routes.HomeController.handleOverview(origin, isAgent).url
-  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = hub.controllers.routes.HomeController.handleHelp(origin, isAgent).url
+  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean)(implicit user: MtdItUser[_]): String = {
+    (isEnabled(NewHubContextRootEnabled), isAgent) match {
+      case (true, true) => hub.v2.controllers.newHomePage.routes.HandleYourTasksController.showAgent().url
+      case (true, false) => hub.v2.controllers.newHomePage.routes.HandleYourTasksController.show().url
+      case (false, true) => hub.v1.controllers.newHomePage.routes.HandleYourTasksController.showAgent().url
+      case (false, false) => hub.v1.controllers.newHomePage.routes.HandleYourTasksController.show().url
+    }
+  }
 
+  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean)(implicit user: MtdItUser[_]): String = {
+    if(isEnabled(NewHubContextRootEnabled)) {
+      hub.v2.controllers.newHomePage.routes.RecentActivityController.show(isAgent, origin).url
+    } else {
+      hub.v1.controllers.newHomePage.routes.RecentActivityController.show(isAgent, origin).url
+    }
+  }
+
+  def overviewUrl(origin: Option[String] = None, isAgent: Boolean)(implicit user: MtdItUser[_]): String = {
+    if(isEnabled(NewHubContextRootEnabled)) {
+      hub.v2.controllers.routes.HomeController.handleOverview(origin, isAgent).url
+    } else {
+      hub.v1.controllers.routes.HomeController.handleOverview(origin, isAgent).url
+    }
+  }
+
+  def helpUrl(origin: Option[String] = None, isAgent: Boolean)(implicit user: MtdItUser[_]): String = {
+    if(isEnabled(NewHubContextRootEnabled)) {
+      hub.v2.controllers.routes.HomeController.handleHelp(origin, isAgent).url
+    } else {
+      hub.v1.controllers.routes.HomeController.handleHelp(origin, isAgent).url
+    }
+  }
+  
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
   }

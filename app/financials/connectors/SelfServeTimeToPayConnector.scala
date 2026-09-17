@@ -16,9 +16,10 @@
 
 package financials.connectors
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import financials.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsValue, Json}
@@ -33,45 +34,45 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
                                             config: FrontendAppConfig
-                                           )(implicit ec: ExecutionContext) {
+                                           )(implicit ec: ExecutionContext) extends Logging {
   val journeyStartUrl: String = config.setUpAPaymentPlanUrl + "/essttp-backend/sa/itsa/journey/start"
 
-  private val bodyWYO: JsValue = Json.parse(
+  private val bodyWYO: MtdItUser[_] => JsValue = user => Json.parse(
     s"""
        {
-        "returnUrl": "${config.homePageUrl(false)}",
+        "returnUrl": "${config.homePageUrl(false, user.newHubContextRootEnabled)}",
         "backUrl": "${financialsRoutes.WhatYouOweController.show().path}"
        }
       """.stripMargin
   )
 
-  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
+  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[SelfServeTimeToPayJourneyResponse] = {
 
     val body = bodyWYO
 
     http
       .post(url"$journeyStartUrl")
-      .withBody(body)
+      .withBody(body(user))
       .execute[HttpResponse]
       .map {
         case response if response.status == CREATED =>
           response.json.validate[SelfServeTimeToPayJourneyResponseModel].fold(
             invalid => {
-              Logger("application").error(s"Invalid Json with $invalid")
+              logger.error(s"[startSelfServeTimeToPayJourney] Invalid Json with $invalid")
               SelfServeTimeToPayJourneyErrorResponse(response.status, "Invalid Json")
             },
             valid => valid
           )
         case response => if (response.status >= 400) {
-          Logger("application").error(s"Self Serve Time To Pay journey start error with response code: ${response.status} and body: ${response.body}")
+          logger.error(s"Self Serve Time To Pay journey start error with response code: ${response.status} and body: ${response.body}")
         } else {
-          Logger("application").warn(s"Self Serve Time To Pay journey start error with response code: ${response.status} and body: ${response.body}")
+          logger.warn(s"Self Serve Time To Pay journey start error with response code: ${response.status} and body: ${response.body}")
         }
           SelfServeTimeToPayJourneyErrorResponse(response.status, response.body)
       }
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+      logger.error(s"[startSelfServeTimeToPayJourney] Unexpected future failed error, ${ex.getMessage}")
       SelfServeTimeToPayJourneyErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
   }
 }

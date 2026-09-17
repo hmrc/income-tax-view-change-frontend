@@ -35,7 +35,6 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
           val details =
             ReportingObligationsAuditModel(
               agentReferenceNumber = None,
-              auditType = "fakeAuditType",
               credId = Some("fakeCredId"),
               mtditid = "fakeMtditid",
               nino = "fakeNino",
@@ -56,7 +55,6 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
             ).detail
 
           val expected = Json.obj(
-            "auditType" -> "fakeAuditType",
             "credId" -> "fakeCredId",
             "mtditid" -> "fakeMtditid",
             "nino" -> "fakeNino",
@@ -85,7 +83,6 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
           val details =
             ReportingObligationsAuditModel(
               agentReferenceNumber = Some("fakeagentReferenceNumber"),
-              auditType = "fakeAuditType",
               credId = Some("fakeCredId"),
               mtditid = "fakeMtditid",
               nino = "fakeNino",
@@ -107,7 +104,6 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
 
           val expected = Json.obj(
             "agentReferenceNumber" -> "fakeagentReferenceNumber",
-            "auditType" -> "fakeAuditType",
             "credId" -> "fakeCredId",
             "mtditid" -> "fakeMtditid",
             "nino" -> "fakeNino",
@@ -137,7 +133,6 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
           val details =
             ReportingObligationsAuditModel(
               agentReferenceNumber = Some("fakeagentReferenceNumber"),
-              auditType = "fakeAuditType",
               credId = Some("fakeCredId"),
               mtditid = "fakeMtditid",
               nino = "fakeNino",
@@ -159,7 +154,6 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
 
           val expected = Json.obj(
             "agentReferenceNumber" -> "fakeagentReferenceNumber",
-            "auditType" -> "fakeAuditType",
             "credId" -> "fakeCredId",
             "mtditid" -> "fakeMtditid",
             "nino" -> "fakeNino",
@@ -189,7 +183,6 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
           val details =
             ReportingObligationsAuditModel(
               agentReferenceNumber = Some("fakeagentReferenceNumber"),
-              auditType = "fakeAuditType",
               credId = Some("fakeCredId"),
               mtditid = "fakeMtditid",
               nino = "fakeNino",
@@ -217,7 +210,6 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
 
           val expected = Json.obj(
             "agentReferenceNumber" -> "fakeagentReferenceNumber",
-            "auditType" -> "fakeAuditType",
             "credId" -> "fakeCredId",
             "mtditid" -> "fakeMtditid",
             "nino" -> "fakeNino",

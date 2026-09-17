@@ -21,7 +21,7 @@ import businessDetails.utils.JourneyCheckerManageBusinesses
 import AddIncomeSourceStartDateCheckForm.*
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.services.SessionService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -51,7 +51,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter with JourneyCheckerManageBusinesses with Logging {
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
@@ -97,14 +97,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
             )
           }
         case None =>
-          Logger("application").error("" +
-            "Failed to get income source start date from session")
+          logger.error("Failed to get income source start date from session")
           Future.successful(errorHandler(isAgent).showInternalServerError())
       }
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[AddIncomeSourceStartDateCheckController]${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[handleShowRequest] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -146,14 +145,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
               )
           )
         case None =>
-          Logger("application").error("" +
-            "Failed to get income source start date from session")
+          logger.error("Failed to get income source start date from session")
           Future.successful(errorHandler(isAgent).showInternalServerError())
       }
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[AddIncomeSourceStartDateCheckController]${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[handleSubmitRequest] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -178,7 +176,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
       case (Some(AddIncomeSourceStartDateCheckForm.responseYes), _) =>
         Future.successful(Redirect(successUrl))
       case _ =>
-        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
+        logger.error(s"[handleValidForm] Unexpected response, isAgent = $isAgent")
         Future.successful(errorHandler(isAgent).showInternalServerError())
     }
   }
@@ -204,7 +202,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
         }
 
       case None =>
-        Logger("application").error("Unable to find addIncomeSourceData in session data")
+        logger.error("Unable to find addIncomeSourceData in session data")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
@@ -229,7 +227,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
         }
 
       case None =>
-        Logger("application").error("Unable to find addIncomeSourceData in session data")
+        logger.error("Unable to find addIncomeSourceData in session data")
         Future(errorHandler(isAgent).showInternalServerError())
     }
   }

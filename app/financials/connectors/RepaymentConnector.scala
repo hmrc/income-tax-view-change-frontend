@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import financials.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import common.models.core.ViewHistory
 import financials.models.core.{RepaymentJourneyResponseModel, RepaymentRefund}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, UNAUTHORIZED}
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RepaymentConnector @Inject()(
                                     httpClient: HttpClientV2,
                                     config: FrontendAppConfig
-                                  )(implicit ec: ExecutionContext) {
+                                  )(implicit ec: ExecutionContext) extends Logging {
 
   private[connectors] val startRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
   private[connectors] val viewRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/view-history"
@@ -51,19 +51,19 @@ class RepaymentConnector @Inject()(
         case response if response.status == ACCEPTED =>
           response.json.validate[RepaymentJourneyModel].fold(
             invalidJson => {
-              Logger("application").error(s"Invalid Json with $invalidJson")
+              logger.error(s"[start] Invalid Json with $invalidJson")
               RepaymentJourneyErrorResponse(response.status, "Invalid Json")
             },
             identity
           )
         case response if response.status == UNAUTHORIZED =>
-          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          logger.error(s"[start] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response if response.status >= INTERNAL_SERVER_ERROR =>
-          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          logger.error(s"[start] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response =>
-          Logger("application").warn(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          logger.warn(s"[start] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
           RepaymentJourneyErrorResponse(response.status, response.body)
       }
   }
@@ -79,19 +79,19 @@ class RepaymentConnector @Inject()(
         case response if response.status == ACCEPTED =>
           response.json.validate[RepaymentJourneyModel].fold(
             invalidJson => {
-              Logger("application").error(s"Invalid Json with $invalidJson")
+              logger.error(s"[view] Invalid Json with $invalidJson")
               RepaymentJourneyErrorResponse(response.status, "Invalid Json")
             },
             identity
           )
         case response if response.status == UNAUTHORIZED =>
-          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          logger.error(s"[view] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response if response.status >= INTERNAL_SERVER_ERROR =>
-          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          logger.error(s"[view] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response =>
-          Logger("application").warn(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          logger.warn(s"[view] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
           RepaymentJourneyErrorResponse(response.status, response.body)
       }
   }

@@ -22,7 +22,7 @@ import common.implicits.ImplicitDateFormatter
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.AuditingService
 import returns.forms.utils.SessionKeys.calcPagesBackPage
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import returns.models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
@@ -47,7 +47,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdownView
                                         val languageUtils: LanguageUtils,
                                         val appConfig: FrontendAppConfig,
                                         val mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter with TaxCalcFallBackBackLink {
+  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter with TaxCalcFallBackBackLink with Logging {
 
 
   def handleRequest(origin: Option[String] = None,
@@ -65,15 +65,14 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdownView
           case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent,
             serviceNavigationPartial = user.serviceNavigationPartial))
           case _ =>
-            Logger("application").warn(s"[$taxYear] No income data could be retrieved. Not found")
+            logger.warn(s"taxYear: $taxYear, No income data could be retrieved. Not found")
             itvcErrorHandler.showInternalServerError()
         }
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
-        Logger("application").info(s"[$taxYear] No income data found.")
+        logger.info(s"taxYear: $taxYear, No income data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"[$taxYear] No new calc income data error found. Downstream error")
+        logger.error(s"taxYear: $taxYear, No new calc income data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }

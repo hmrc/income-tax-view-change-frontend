@@ -40,7 +40,7 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future
@@ -93,7 +93,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
 
@@ -110,7 +110,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
 
@@ -124,7 +124,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(invalidUKAddressNoPostCode)))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(invalidUKAddressNoPostCode)))))
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
 
@@ -138,7 +138,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(foreignAddress)))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(foreignAddress)))))
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
 
@@ -151,16 +151,16 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
           }
           "redirect to the home page page" when {
             "fs is disables using the manage businesses journey" in {
-                setupMockSuccess(mtdRole)
-                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-                setupMockCreateSession(true)
-                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
-                    .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
-                val result = action(fakeRequest)
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
+              val result = action(fakeRequest)
 
-                status(result) shouldBe SEE_OTHER
-                redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result).get should include(appConfig.individualHomeUrl(newHubContextRootEnabled))
             }
           }
         }

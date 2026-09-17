@@ -16,22 +16,20 @@
 
 package financials.controllers.errors
 
-import common.testUtils.TestSupport
-import common.views.html.errorPages.CustomNotFoundErrorView
+import common.mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*
 
-class NotFoundDocumentIDLookupControllerSpec extends TestSupport {
+class NotFoundDocumentIDLookupControllerSpec extends MockAuthActions {
+  
+  override lazy val app: Application = applicationBuilderWithAuthBindings.build()
 
-  object NotFoundDocumentIDLookupController extends NotFoundDocumentIDLookupController(
-    app.injector.instanceOf[CustomNotFoundErrorView])(
-    app.injector.instanceOf[MessagesControllerComponents]
-  )
+  val NotFoundDocumentIDLookupController = app.injector.instanceOf[NotFoundDocumentIDLookupController]
 
   "the NotFoundDocumentIDLookupController.show() action" should {
-
+    setupMockFeatureSwitches()
     lazy val result = NotFoundDocumentIDLookupController.show(fakeRequestNoSession)
     lazy val document = Jsoup.parse(contentAsString(result))
 

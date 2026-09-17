@@ -60,11 +60,3 @@
     index = index,
     chargeSummaryUrl = chargeSummaryUrl
 )
-
-@if(charge.dunningLock){
-    <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
-}
-
-@if(charge.isOverdue() && charge.hasLpiWithDunningLock){
-    <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
-}

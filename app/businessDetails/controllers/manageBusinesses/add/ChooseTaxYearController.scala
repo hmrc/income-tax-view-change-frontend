@@ -23,7 +23,7 @@ import businessDetails.models.incomeSourceDetails.IncomeSourceReportingFrequency
 import businessDetails.services.SessionService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import play.api.Logger
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -51,7 +51,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
                                         val ec: ExecutionContext,
                                         val appConfig: FrontendAppConfig,
                                         val dateService: DateService)
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with Logging{
 
   private def isCheckedForCurrentTy(sessionData: UIJourneySessionData): Option[Boolean] = {
     Some(displayOptionToChangeForCurrentTy(sessionData) && sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyCurrentYear))
@@ -147,7 +147,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
           case _ => Future.failed(new Exception(s"failed to retrieve session data for journey ${journeyType.toString}"))
         }.recover {
           case ex =>
-            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"[submit] ${ex.getMessage} - ${ex.getCause}")
             incomeSourceRFService.errorHandler(isAgent).showInternalServerError()
         }
       }

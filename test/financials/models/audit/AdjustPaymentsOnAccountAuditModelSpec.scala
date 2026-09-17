@@ -40,6 +40,15 @@ class AdjustPaymentsOnAccountAuditModelSpec extends TestSupport {
       isDecreased = true)(typeOfUser)
   }
 
+  val increasedAdjustedPaymentsOnAccountAuditModel: AdjustPaymentsOnAccountAuditModel = {
+    AdjustPaymentsOnAccountAuditModel(isSuccessful = true,
+      previousPaymentOnAccountAmount = 3000.00,
+      requestedPaymentOnAccountAmount = 3500.00,
+      adjustmentReasonCode = "005",
+      adjustmentReasonDescription = "",
+      isDecreased = false)(getIndividualUser(FakeRequest()))
+  }
+
   lazy val detailsAuditDataSuccess: AffinityGroup => JsValue = af =>
     commonAuditDetails(af) ++ Json.obj(
       "outcome" -> Json.obj("isSuccessful" -> true),
@@ -48,6 +57,15 @@ class AdjustPaymentsOnAccountAuditModelSpec extends TestSupport {
       "adjustmentReasonCode" -> "001",
       "adjustmentReasonDescription" -> "My main income will be lower",
       "isDecreased" -> true
+    )
+
+  lazy val detailsAuditDataIncreased: AffinityGroup => JsValue = af =>
+    commonAuditDetails(af) ++ Json.obj(
+      "outcome" -> Json.obj("isSuccessful" -> true),
+      "previousPaymentOnAccountAmount" -> 3000.00,
+      "requestedPaymentOnAccountAmount" -> 3500.00,
+      "adjustmentReasonCode" -> "005",
+      "isDecreased" -> false
     )
 
   lazy val detailsAuditDataFailure: AffinityGroup => JsValue = af =>
@@ -79,6 +97,12 @@ class AdjustPaymentsOnAccountAuditModelSpec extends TestSupport {
 
     "have the correct agent detail for the audit event" in {
       getAdjustPaymentsOnAccountAuditModel(true,isAgent = true).detail shouldBe detailsAuditDataSuccess(Agent)
+    }
+  }
+
+  "AdjustPaymentsOnAccountAuditModel when the user increases the payments" should {
+    "have the correct detail for the audit event" in {
+      assertJsonEquals(increasedAdjustedPaymentsOnAccountAuditModel.detail, detailsAuditDataIncreased(Individual))
     }
   }
 

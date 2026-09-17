@@ -21,14 +21,15 @@ import common.services.DateServiceInterface
 import financials.controllers.routes as financialsRoutes
 import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.*
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
+import shared.enums.ChargeClassificationType
 
-object RepaymentHistoryUtils {
+object RepaymentHistoryUtils extends Logging {
 
   private def getControllerHref(transactionId: Option[String], isAgent: Boolean) = {
     if (isAgent) {
@@ -97,7 +98,7 @@ object RepaymentHistoryUtils {
     val filteredPayments = payments.flatMap { payment => filterPayment(payment, isAgent) match {
         case Right(entry) => Some(entry)
         case Left(error) =>
-          Logger("application").error(s"Error processing payment: ${error.getMessage}")
+          logger.error(s"Error processing payment: ${error.getMessage}")
           None
       }
     }
@@ -116,22 +117,21 @@ object RepaymentHistoryUtils {
     val hasCredit = payment.credit.isDefined
     val hasLot = payment.lot.isDefined && payment.lotItem.isDefined
 
-    (hasCredit,  hasLot, payment.creditType) match {
-      case (true, _, Some(MfaCreditType))                                   => Right(mfaCreditEntry(payment, isAgent))
-      case (true, _, Some(CutOverCreditType))                               => creditEntry(payment, isAgent)
-      case (true, _, Some(PoaOneReconciliationCredit))                      => creditEntry(payment, isAgent, true)
-      case (true, _, Some(PoaTwoReconciliationCredit))                      => creditEntry(payment, isAgent, true)
-      case (true, _ ,Some(ITSAReturnAmendmentCredit))                       => creditEntry(payment, isAgent, true)
-      case (true, _, Some(BalancingChargeCreditType))                       => creditEntry(payment, isAgent)
-      case (true, _, Some(RepaymentInterest))                               => creditEntry(payment, isAgent)
-      case (false, true, Some(PaymentType))                                 => Right(paymentToHMRCEntry(payment, isAgent))
-      case (_, _, _)                                                        => Left(MissingFieldException("Invalid Payment Data"))
+    payment.creditType match {
+      case Some(PaymentType) if !hasCredit && hasLot =>
+        Right(paymentToHMRCEntry(payment, isAgent))
+      case Some(MfaCreditType) if hasCredit =>
+        Right(mfaCreditEntry(payment, isAgent))
+      case Some(PoaOneReconciliationCredit | PoaTwoReconciliationCredit | ITSAReturnAmendmentCredit) if hasCredit =>
+        creditEntry(payment, isAgent, true)
+      case _ =>
+        creditEntry(payment, isAgent)
     }
   }
 
   private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)
                                 (implicit dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
-    Logger("application").info("json:" + Json.prettyPrint(Json.toJson(payment)))
+    logger.info("[paymentToHMRCEntry] json:" + Json.prettyPrint(Json.toJson(payment)))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
       creditType = PaymentType,
@@ -139,7 +139,8 @@ object RepaymentHistoryUtils {
       amount = payment.amount,
       linkUrl = getControllerHref(payment.transactionId, isAgent),
       visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}",
-      taxYear = Some(payment.taxYear)
+      taxYear = Some(payment.taxYear),
+      chargeClassification = payment.chargeClassification.flatMap(ChargeClassificationType.fromString)
     )
   }
 
@@ -150,7 +151,8 @@ object RepaymentHistoryUtils {
       amount = payment.amount,
       linkUrl = getCreditsLinkUrl(payment.documentDate, isAgent),
       visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}",
-      taxYear = Some(payment.taxYear)
+      taxYear = Some(payment.taxYear),
+      chargeClassification = payment.chargeClassification.flatMap(ChargeClassificationType.fromString)
     )
   }
 
@@ -176,7 +178,9 @@ object RepaymentHistoryUtils {
         else
           getCreditsLinkUrl(dueDate, isAgent),
         visuallyHiddenText = transactionId,
-        taxYear = Some(payment.taxYear)
+        taxYear = Some(payment.taxYear),
+        isRevenueAmendment = payment.isRevenueAmendment,
+        chargeClassification = payment.chargeClassification.flatMap(ChargeClassificationType.fromString)
       )
     }
   }
@@ -189,7 +193,8 @@ object RepaymentHistoryUtils {
       transactionId = Some(chargeItem.transactionId),
       linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId, codedOut = Some(true)),
       visuallyHiddenText = chargeItem.transactionType.toString,
-      taxYear = Some(chargeItem.taxYear.endYear)
+      taxYear = Some(chargeItem.taxYear.endYear), 
+      chargeClassification = chargeItem.chargeClassification.flatMap(ChargeClassificationType.fromString)
     )
   }
 

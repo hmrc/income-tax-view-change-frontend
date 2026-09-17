@@ -24,7 +24,7 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.{DateServiceInterface, ITSAStatusService}
 import returns.views.html.partials.overview.ProofOfYourIncomeView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import returns.models.ProofOfYourIncomeCardViewModel
@@ -43,23 +43,24 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
                                             implicit val dateService: DateServiceInterface)
                                            (implicit val ec: ExecutionContext,
                                             mcc: MessagesControllerComponents,
-                                            val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                            val appConfig: FrontendAppConfig)
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with Logging {
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       if (isEnabled(MortgageEvidence)) {
-        handleRequest(appConfig.individualHomeUrlWithOrigin(origin), false)
+        handleRequest(appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin), false)
       } else {
-        Future.successful(Redirect(appConfig.individualYourTasksUrl))
+        Future.successful(Redirect(appConfig.individualYourTasksUrl(user.newHubContextRootEnabled)))
       }
   }
 
   def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async {
     implicit mtdItUser =>
       if (isEnabled(MortgageEvidence)) {
-        handleRequest(appConfig.agentHomeUrl, true)
+        handleRequest(appConfig.agentHomeUrl(mtdItUser.newHubContextRootEnabled), true)
       } else {
-        Future.successful(Redirect(appConfig.agentYourTasksUrl))
+        Future.successful(Redirect(appConfig.agentYourTasksUrl(mtdItUser.newHubContextRootEnabled)))
       }
   }
 
@@ -98,11 +99,11 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
           )))
 
         case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
-          Logger("application").info(s"No data for tax year: $taxYearFormattedEnd - Skipping.")
+          logger.info(s"No data for tax year: $taxYearFormattedEnd - Skipping.")
           Future.successful(None)
 
         case _ =>
-          Logger("application").error("Unexpected error occurred while retrieving calculation data.")
+          logger.error("Unexpected error occurred while retrieving calculation data.")
           Future.failed(new Exception("CALC_ERROR"))
       }
     }

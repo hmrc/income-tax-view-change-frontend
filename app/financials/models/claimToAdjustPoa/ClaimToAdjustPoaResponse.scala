@@ -16,12 +16,12 @@
 
 package financials.models.claimToAdjustPoa
 
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.CREATED
 import play.api.libs.json.{Format, JsSuccess, Json}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-object ClaimToAdjustPoaResponse {
+object ClaimToAdjustPoaResponse extends Logging {
 
   case class ClaimToAdjustPoaSuccess(processingDate: String)
 
@@ -54,7 +54,7 @@ object ClaimToAdjustPoaResponse {
             case JsSuccess(model, _) =>
               Right(model)
             case _ =>
-              Logger("application").warn(s"Unable to parse success response")
+              logger.warn(s"Unable to parse success response")
               Left(ClaimToAdjustPoaInvalidJson)
           }
         case _ =>
@@ -62,7 +62,7 @@ object ClaimToAdjustPoaResponse {
             case JsSuccess(model, _) =>
               Left(model)
             case _ =>
-              Logger("application").warn(s"Unable to parse failure response")
+              logger.warn(s"Unable to parse failure response")
               Left(ClaimToAdjustPoaInvalidJson)
           }
       }

@@ -145,7 +145,6 @@ class ReportingObligationsAuditService @Inject()(
 
     ReportingObligationsAuditModel(
       agentReferenceNumber = mtdItUser.arn,
-      auditType = ReportingObligationsPage.name,
       credId = mtdItUser.credId,
       mtditid = mtdItUser.mtditid,
       nino = mtdItUser.nino,

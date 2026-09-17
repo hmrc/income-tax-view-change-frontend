@@ -18,9 +18,11 @@ package returns.models
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import play.api.Logger
+import shared.enums.ChargeClassificationType.{isRevenueAmendment, isCorrection}
+import play.api.Logging
+import shared.enums.ChargeClassificationType
 
-trait TransactionItem {
+trait TransactionItem extends Logging {
 
   val transactionId: String
 
@@ -35,6 +37,8 @@ trait TransactionItem {
   val isAccruingInterest: Boolean
 
   val amountCodedOut: Option[BigDecimal]
+
+  val chargeClassification: Option[String]
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean
 
@@ -67,10 +71,13 @@ trait TransactionItem {
       case (LateSubmissionPenalty, _)           => "lateSubmissionPenalty.text"
       case (FirstLatePaymentPenalty, _)         => "firstLatePaymentPenalty.text"
       case (SecondLatePaymentPenalty, _)        => "secondLatePaymentPenalty.text"
-      case (ITSAReturnAmendment, _)             => "itsaReturnAmendment.text"
+      case (ITSAReturnAmendment, _) =>
+        if (isCorrection(chargeClassification)) "hmrcCorrection.text"
+        else if (isRevenueAmendment(chargeClassification)) "enquiryAmendment.text"
+        else "itsaReturnAmendment.text"
       case (ITSAReturnAmendmentCredit, _)       => "itsaReturnAmendmentCredit.text"
       case error =>
-        Logger("application").error(s"Missing or non-matching charge type: $error found")
+        logger.error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"
     }
 }

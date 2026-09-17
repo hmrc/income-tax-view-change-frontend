@@ -28,7 +28,8 @@ case class TaxDeductedAtSource(
                                 stateBenefits: Option[BigDecimal] = None,
                                 specialWithholdingTaxOrUkTaxPaid: Option[BigDecimal] = None,
                                 inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
-                                taxTakenOffTradingIncome: Option[BigDecimal] = None
+                                taxTakenOffTradingIncome: Option[BigDecimal] = None,
+                                taxTakenOffOtherIncome: Option[BigDecimal] = None
                               )
 
 object TaxDeductedAtSource {

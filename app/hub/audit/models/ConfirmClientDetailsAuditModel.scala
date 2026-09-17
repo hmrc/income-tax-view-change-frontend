@@ -19,12 +19,13 @@ package hub.audit.models
 import common.enums.AuditType.ClientDetailsConfirmed
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities.arnToJson
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class ConfirmClientDetailsAuditModel(clientName: String,
                                           nino: String,
                                           mtditid: String,
-                                          arn: String,
+                                          arn: Option[String],
                                           saUtr: String,
                                           isSupportingAgent: Boolean,
                                           credId: Option[String]) extends ExtendedAuditModel {
@@ -37,10 +38,9 @@ case class ConfirmClientDetailsAuditModel(clientName: String,
     "nino" -> nino,
     "mtditid" -> mtditid,
     "saUtr" -> saUtr,
-    "agentReferenceNumber" -> arn,
     "userType" -> "Agent",
     "isSupportingAgent" -> isSupportingAgent
-  ) ++
+  ) ++ arnToJson(arn) ++
     Json.obj("credId" -> credId)
 
   override val detail: JsValue = userDetailsJson ++ Json.obj("clientName" -> clientName)

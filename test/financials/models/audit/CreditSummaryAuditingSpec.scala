@@ -140,7 +140,7 @@ class CreditSummaryAuditingSpec extends TestSupport {
         userType = testUserTypeIndividual.toString,
         credId = testCredId,
         mtdRef = testMtditid,
-        creditOnAccount = "5",
+        creditOnAccount = 5.00,
         creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgApi)
       )
 
@@ -150,7 +150,7 @@ class CreditSummaryAuditingSpec extends TestSupport {
           "userType" -> testUserTypeIndividual.toString,
           "credId" -> testCredId,
           "mtditid" -> testMtditid,
-          "creditOnAccount" -> "5",
+          "creditOnAccount" -> 5.00,
           "creditDetails" -> testCreditSummaryModel.getCreditDetails
         )
     }

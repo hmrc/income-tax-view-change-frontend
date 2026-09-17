@@ -516,8 +516,22 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = None)
           val key = poa1.getChargeTypeKey
           key shouldBe "balancingCharge.text"
+        }        
+        "charge is an ITSAReturnAmendment correction" in {
+          val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = Some("AC"))
+          charge.getChargeTypeKey shouldBe "hmrcCorrection.text"
         }
-  }
+
+        "charge is an ITSAReturnAmendment revenue amendment" in {
+         val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = Some("RA"))
+          charge.getChargeTypeKey shouldBe "enquiryAmendment.text"
+        }
+
+        "charge is an ITSAReturnAmendment with no classification" in {
+          val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = None)
+          charge.getChargeTypeKey shouldBe "itsaReturnAmendment.text"
+        }
+    }
 
   "filterAllowedCharges" should {
     "filter out FS related charges" when {

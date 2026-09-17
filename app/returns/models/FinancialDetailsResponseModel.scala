@@ -19,7 +19,7 @@ package returns.models
 import common.models.incomeSourceDetails.TaxYear
 import common.models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import common.services.DateServiceInterface
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{Format, Json}
 import shared.enums.DocumentType.{Poa1Charge, Poa2Charge}
 import shared.models.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
@@ -34,7 +34,8 @@ sealed trait FinancialDetailsResponseModel
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  codingDetails: List[CodingDetails] = List(),
                                  documentDetails: List[DocumentDetail],
-                                 financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
+                                 financialDetails: List[FinancialDetail])
+  extends FinancialDetailsResponseModel with Logging {
   
   // TODO: method possibly is not required at all: TaxYearSummaryController -> withTaxYearFinancials
   def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
@@ -64,7 +65,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       case Success(res) =>
         res
       case Failure(ex) =>
-        Logger("application").warn(s"Failed conversion - toChargeItem - ${ex.getMessage}")
+        logger.warn(s"[toChargeItem] Failed conversion - ${ex.getMessage}")
         List[ChargeItem]()
     }
   }

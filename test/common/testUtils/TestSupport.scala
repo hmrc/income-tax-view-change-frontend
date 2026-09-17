@@ -16,8 +16,9 @@
 
 package common.testUtils
 
-import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData
 import common.auth.actions.AuthActionsTestData.*
+import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
@@ -53,8 +54,9 @@ import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
-
+  
   implicit val actorSystem: ActorSystem = app.actorSystem
+  val newHubContextRootEnabled = true
 
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {
@@ -155,8 +157,15 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     defaultMTDITUser(Some(testUserTypeIndividual), businessAndPropertyAligned, request)
   }
 
+  def getIndividualUserTrigMig(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = {
+    defaultMTDITUser(Some(testUserTypeIndividual), businessAndPropertyAlignedTrigMig, request)
+  }
+
   def getAgentUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAligned, request)
+
+  def getAgentUserTrigMig(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAlignedTrigMig, request)
 
   def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel): MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeIndividual), incomeSources, request)

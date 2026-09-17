@@ -31,7 +31,7 @@
 @import financials.views.html.partials.yourSelfAssessmentCharges.ChargeDetails
 @import financials.views.html.partials.yourSelfAssessmentCharges.{WhatIsPaymentOnAccount, InterestOnChargeRARPoaSection}
 @import financials.views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
-@import financials.views.html.partials.yourSelfAssessmentCharges.PaymentAllocationTable
+@import financials.views.html.partials.yourSelfAssessmentCharges.ChargeSummaryPaymentAllocationTable
 @import financials.models.paymentAllocationCharges.PaymentAllocationViewModel
 @import _root_.shared.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
@@ -59,7 +59,7 @@
         interestOnYourChargeSection: InterestOnYourChargeSection,
         interestOnYourChargeTable: InterestOnYourChargeTable,
         paymentHistoryTable: PaymentHistoryTable,
-        paymentAllocationTable: PaymentAllocationTable,
+        chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
         chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
         whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
         interestOnChargeRARPoaSection: InterestOnChargeRARPoaSection
@@ -83,7 +83,7 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@pageHeading = @{ ChargeNameLangHelper.getHeading(viewModel.chargeItem, viewModel.latePaymentInterestCharge) }
+@pageHeading = @{ChargeNameLangHelper.getHeading(viewModel.chargeItem, viewModel.latePaymentInterestCharge)}
 
 @WYOLinkContent = {
     @p() {
@@ -106,8 +106,8 @@
     gatewayPage = viewModel.gatewayPage,
     btaAndPtaServiceNavigation = viewModel.serviceNavigationPartial) {
 
-    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
-        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
+    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock || (viewModel.chargeHasDunningLock && viewModel.chargeHistoryEnabled)) {
+        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig, viewModel.chargeHistoryEnabled)
     }
 
     @hmrcPageHeading(PageHeading(
@@ -121,9 +121,10 @@
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
-                  if(viewModel.chargeItem.isCodingOutFullyCollected) "amountCollected" else
-                  if(viewModel.chargeItem.isCodingOutAccepted) "toBeCollected" else
-                  if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
+                  if(viewModel.chargeItem.isCodingOutFullyCollected) "amountCollected"
+                  else if(viewModel.chargeItem.isCodingOutAccepted) "toBeCollected"
+                  else if(viewModel.chargeHasDunningLock && viewModel.chargeHistoryEnabled) "stoodOverFullCharge"
+                  else if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
                   else "charge"
               )
           }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
@@ -187,13 +188,15 @@
         }
     }
   }
+
     @if(viewModel.latePaymentInterestCharge) {
         <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
             s"${
                 getMessage(
                     if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
-                        if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
-                        else "charge"
+                        if(viewModel.chargeItem.isOverdue() && !viewModel.chargeItem.dunningLock || viewModel.chargeItem.isPaid && !viewModel.chargeItem.dunningLock) "overDueCharge"
+                        else if (viewModel.chargeItem.dunningLock) "stoodOverFullCharge"
+                            else "charge"
                 )
             }\t${viewModel.chargeItem.interestRemainingToPay.toCurrencyString}"
         }</h2>
@@ -231,6 +234,6 @@
         @paymentHistoryTable(viewModel)
     }
     @if(viewModel.isCredit && paymentAllocations.isDefined) {
-        @paymentAllocationTable(paymentAllocations.get, viewModel.creditsRefundRepayEnabled)
+        @chargeSummaryPaymentAllocationTable(paymentAllocations.get, viewModel.creditsRefundRepayEnabled)
     }
 }

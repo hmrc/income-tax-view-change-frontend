@@ -19,7 +19,7 @@ package obligations.repositories
 import cats.data.OptionT
 import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.SignUpSessionData
-import play.api.Logger
+import play.api.Logging
 import shared.enums.JourneyType.{Opt, SignUpJourney}
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SignUpSessionDataRepository @Inject()(val repository: UIJourneySessionDataRepository) {
+class SignUpSessionDataRepository @Inject()(val repository: UIJourneySessionDataRepository) extends Logging {
 
   def saveIntent(intent: TaxYear)(implicit hc: HeaderCarrier,
                                   ec: ExecutionContext): Future[Boolean] = {
@@ -36,7 +36,7 @@ class SignUpSessionDataRepository @Inject()(val repository: UIJourneySessionData
       map(journeySd => journeySd.copy(signUpSessionData = journeySd.signUpSessionData.map(_.copy(selectedSignUpYear = Some(intent.toString))))).
       flatMap(journeySd => OptionT.liftF(repository.set(journeySd))).
       getOrElse({
-        Logger("application").error(s"Failed to collect session data for sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} when trying to save sign up. Tax year intent was: ${intent.toString}. From referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+        logger.error(s"Failed to collect session data for sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} when trying to save sign up. Tax year intent was: ${intent.toString}. From referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
         false
       })
   }
@@ -65,7 +65,7 @@ class SignUpSessionDataRepository @Inject()(val repository: UIJourneySessionData
       .getOrElse(false)
       .map {
         case false =>
-          Logger("application").error(s"[OptInService][updateJourneyStatusInSessionData] Failed to set journeyIsComplete flag")
+          logger.error(s"Failed to set journeyIsComplete flag")
           false
         case x => x
       }

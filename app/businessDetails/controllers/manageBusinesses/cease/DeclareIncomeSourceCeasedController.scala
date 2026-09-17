@@ -23,7 +23,7 @@ import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.core.IncomeSourceId.mkIncomeSourceId
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -48,7 +48,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
                                                     mcc: MessagesControllerComponents,
                                                     val ec: ExecutionContext
                                                    )
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with Logging {
 
   private def getBackUrl(isAgent: Boolean): String = if(isAgent) {
     manageBusinessesRoutes.ManageYourBusinessesController.showAgent().url
@@ -86,7 +86,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
 
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
-          Logger("application").error("IncomeSourceId not found for SelfEmployment")
+          logger.error("IncomeSourceId not found for SelfEmployment")
           Future.successful { showInternalServerError() }
         case (_, _, maybeBusinessName) =>
           Future.successful(
@@ -104,8 +104,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
       }
     } recover {
       case ex: Exception =>
-        Logger("application")
-          .error(s"Error getting declare income source ceased page: ${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"Error getting declare income source ceased page: ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError()
     }
 
@@ -122,7 +121,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
       }
   } recover {
     case ex: Exception =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[handleSubmitRequest] ${ex.getMessage} - ${ex.getCause}")
       showInternalServerError()
   }
 

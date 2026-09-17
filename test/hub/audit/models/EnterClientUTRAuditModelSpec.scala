@@ -94,5 +94,11 @@ class EnterClientUTRAuditModelSpec extends TestSupport {
     "user is an agent and api returns failure" in {
       getEnterClientUTRAuditModel(false, None).detail shouldBe detailsAuditDataFailure
     }
+
+    "an agent has no ARN" in {
+      val detail = getEnterClientUTRAuditModel(true, Some(false)).copy(arn = None).detail
+
+      (detail \ "agentReferenceNumber").toOption shouldBe None
+    }
   }
 }

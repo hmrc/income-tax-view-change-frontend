@@ -25,7 +25,7 @@ import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.auth.MtdItUser
 import common.models.admin.IdempotencyKeyForCreateIncomeSource
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import shared.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
@@ -36,7 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
+trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils with Logging {
   self =>
 
   val sessionService: SessionService
@@ -129,8 +129,8 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
           case _ => journeyRestartUrl(isTriggeredMigration)(user)
         }
       case Left(ex) =>
-        val agentPrefix = if (isAgent(user)) "[Agent]" else ""
-        Logger("application").error(s"$agentPrefix" + s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
+        val agentPrefix = if (isAgent(user)) "Agent - " else ""
+        logger.error(s"$agentPrefix" + s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
         journeyRestartUrl(isTriggeredMigration)(user)
     }
   }

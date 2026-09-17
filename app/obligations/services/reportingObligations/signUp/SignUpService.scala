@@ -27,7 +27,7 @@ import obligations.models.reportingObligations.signUp.*
 import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.SignUpProposition.*
 import obligations.services.reportingObligations.signUp.core.{SignUpInitialState, SignUpProposition}
-import play.api.Logger
+import play.api.Logging
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,7 +38,7 @@ class SignUpService @Inject()(
                                itsaStatusService: ITSAStatusService,
                                dateService: DateServiceInterface,
                                repository: SignUpSessionDataRepository,
-                            ) {
+                            ) extends Logging{
 
   def saveIntent(intent: TaxYear)(implicit user: MtdItUser[_],
                                   hc: HeaderCarrier,
@@ -152,12 +152,12 @@ class SignUpService @Inject()(
             case (Some(true), true, _) => Future.successful(Some(SignUpTaxYearQuestionViewModel(proposition.currentTaxYear)))
             case (Some(false), _, true) => Future.successful(Some(SignUpTaxYearQuestionViewModel(proposition.nextTaxYear)))
             case _ =>
-              Logger("application").warn(s"[OptInService] invalid tax year provided, redirecting to Reporting Obligations Page")
+              logger.warn(s"invalid tax year provided, redirecting to Reporting Obligations Page")
               Future.successful(None)
           }
         }
       case _ =>
-        Logger("application").warn("[OptInService] No tax year provided, redirecting to Reporting Obligations Page")
+        logger.warn("No tax year provided, redirecting to Reporting Obligations Page")
         Future.successful(None)
     }
   }
@@ -203,9 +203,7 @@ class SignUpService @Inject()(
         }
 
       case None =>
-        Logger("application").error(
-          "[OptInService][initialiseOptInContextData] Could not initialise session"
-        )
+        logger.error("Could not initialise session")
         Future.successful(false)
     }
   }

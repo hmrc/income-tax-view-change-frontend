@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import financials.models.chargeHistory.ChargesHistoryResponse.{ChargesHistoryResponse, ChargesHistoryResponseReads}
 import financials.models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ChargeHistoryConnector @Inject()(val httpV2: HttpClientV2,
                                        val appConfig: FrontendAppConfig
-                                      )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                      )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def getChargeHistoryUrl(nino: String, chargeReference: String): String = {
     s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/charge-history/$nino/chargeReference/$chargeReference"
@@ -40,17 +40,17 @@ class ChargeHistoryConnector @Inject()(val httpV2: HttpClientV2,
                       (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
     chargeRef match {
       case Some(chargeReference) => val url = getChargeHistoryUrl(nino, chargeReference)
-        Logger("application").debug(s"GET $url")
+        logger.debug(s"GET $url")
 
         httpV2
           .get(url"$url")
           .execute[ChargesHistoryResponse]
           .recover {
             case ex =>
-              Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+              logger.error(s"Unexpected failure, ${ex.getMessage}", ex)
               ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
           }
-      case None => Logger("application").info("No charge history found as no chargeReference value supplied")
+      case None => logger.info("No charge history found as no chargeReference value supplied")
         Future(ChargesHistoryModel("", "", "", None))
     }
 

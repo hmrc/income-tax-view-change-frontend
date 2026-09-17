@@ -19,13 +19,13 @@ package obligations.services
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.FinancialsFrontend
+import common.models.admin.{FinancialsFrontend, HideBusinessName}
 import common.services.DateServiceInterface
 import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import common.models.obligations.{ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import obligations.models.*
 import obligations.services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
-import play.api.Logger
+import play.api.Logging
 import shared.connectors.ObligationsConnector
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -45,11 +45,11 @@ class NextUpdatesService @Inject()(
                                     val obligationsConnector: ObligationsConnector
                                   )(implicit ec: ExecutionContext,
                                     val dateService: DateServiceInterface,
-                                    val appConfig: FrontendAppConfig) extends FeatureSwitching {
+                                    val appConfig: FrontendAppConfig) extends FeatureSwitching with Logging{
 
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
     val allDeadlines =
-      obligationsModel.obligationsByDate.flatMap { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+      obligationsModel.obligationsByDate(isEnabled(HideBusinessName)).flatMap { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         if (obligations.headOption.exists(_.obligation.obligationType == "Quarterly")) {
           val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
           Some(
@@ -69,7 +69,7 @@ class NextUpdatesService @Inject()(
   }
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
-    Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
+    logger.debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
     obligationsConnector.getOpenObligations()
   }
 
@@ -87,7 +87,7 @@ class NextUpdatesService @Inject()(
                                (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
     getAllObligationsWithinDateRange(queryTaxYear.toFinancialYearStart, queryTaxYear.toFinancialYearEnd).map {
       case obligationsModel: ObligationsModel =>
-        QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts)
+        QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts(isEnabled(HideBusinessName)))
       case _ => QuarterlyUpdatesCountForTaxYear(queryTaxYear, noQuarterlyUpdates)
     }
   }

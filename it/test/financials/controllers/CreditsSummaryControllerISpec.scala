@@ -22,6 +22,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.helpers.GetInsourceDetailsStub
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
+import common.helpers.servicemocks.FeatureSwitchStub.featureSwitchesResponse
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
@@ -41,7 +42,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
   def testUser(mtdUserRole: MTDUserRole): AuthorisedAndEnrolledRequest[_] = {
     AuthorisedAndEnrolledRequest(
       testMtditid, mtdUserRole, defaultAuthUserDetails(mtdUserRole),
-      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails)
+      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails),
+      featureSwitchesResponse(newHubContextRootEnabled = newHubContextRootEnabled)
     )(FakeRequest())
   }
 
@@ -66,8 +68,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   testNino,
-                  s"${testTaxYear - 1}-04-06",
-                  s"$testTaxYear-04-05")(
+                  s"${testTaxYear}-04-06",
+                  s"${testTaxYear+1}-04-05")(
                   OK,
                   testValidFinancialDetailsModelCreditAndRefundsJson(
                     -1400,
@@ -78,7 +80,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                  FinancialDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  FinancialDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"$testTaxYear-04-06", s"${testTaxYear + 1}-04-05")
 
                   AuditStub.verifyAuditContainsDetail(
                     IncomeSourceDetailsResponseAuditModel(
@@ -102,7 +104,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                       userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
                       credId = credId,
                       mtdRef = testMtditid,
-                      creditOnAccount = "5",
+                      creditOnAccount = 5.00,
                       creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
                     ).detail
                   )
@@ -118,8 +120,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
 
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   testNino,
-                  s"${testTaxYear - 1}-04-06",
-                  s"$testTaxYear-04-05")(
+                  s"${testTaxYear}-04-06",
+                  s"${testTaxYear+1}-04-05")(
                   OK,
                   testValidFinancialDetailsModelCreditAndRefundsJsonV2(
                     -1400,
@@ -130,7 +132,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                  FinancialDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  FinancialDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"$testTaxYear-04-06", s"${testTaxYear + 1}-04-05")
 
                   AuditStub.verifyAuditContainsDetail(
                     IncomeSourceDetailsResponseAuditModel(
@@ -154,7 +156,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                       userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
                       credId = credId,
                       mtdRef = testMtditid,
-                      creditOnAccount = "5",
+                      creditOnAccount = 5.00,
                       creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
                     ).detail
                   )

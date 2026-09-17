@@ -17,15 +17,14 @@
 package common.auth.actions
 
 import com.google.inject.Singleton
-import common.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest, Constants, FrontendAuthorisedFunctions}
+import common.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest, Constants, FrontendAuthorisedFunctions, RequestWithFeatureSwitches}
 import common.config.FrontendAppConfig
-import common.controllers.errors.routes as errorRoutes
-import common.controllers.routes as appRoutes
 import common.enums.MTDIndividual
 import common.models.audit.IvUpliftRequiredAuditModel
 import common.services.AuditingService
 import common.utils.AuthUtils.{ORIGIN, mtdEnrolmentName}
-import play.api.Logger
+import common.viewUtils.InternalUrlHelper
+import play.api.Logging
 import play.api.mvc.*
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.*
@@ -49,19 +48,17 @@ class AuthoriseAndRetrieveIndividualForNrs @Inject()(val authorisedFunctions: Fr
                                                      val appConfig: FrontendAppConfig,
                                                      mcc: MessagesControllerComponents,
                                                      val auditingService: AuditingService)
-  extends AuthoriseHelper with ActionRefiner[Request, AuthorisedAndEnrolledRequest]{
+  extends AuthoriseHelper with ActionRefiner[RequestWithFeatureSwitches, AuthorisedAndEnrolledRequest] with Logging {
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
   lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
-  val logger = Logger(getClass)
-
-  override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+  override protected def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    implicit val req: Request[A] = request
+    implicit val req: RequestWithFeatureSwitches[A] = request
 
     // authorise on HMRC-MTD-IT enrolment and Individual / Organisation affinity group
     val predicate: Predicate =
@@ -78,23 +75,23 @@ class AuthoriseAndRetrieveIndividualForNrs @Inject()(val authorisedFunctions: Fr
   }
 
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
-  def ivUpliftRedirectUrl[A](implicit request: Request[A]):String = {
+  def ivUpliftRedirectUrl[A](implicit request: RequestWithFeatureSwitches[A]):String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.baseUrl
     @unused val origin = request.getQueryString(ORIGIN)
-    val completionUrl: String = s"$host${appRoutes.UpliftSuccessController.success().url}"
-    val failureUrl: String = s"$host${errorRoutes.UpliftFailedController.show().url}"
+    val completionUrl: String = s"$host${InternalUrlHelper.upliftSuccessUrl}"
+    val failureUrl: String = s"$host${InternalUrlHelper.upliftFailureUrl}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
   }
 
   private def redirectIfAgentNrs[A]()(
-    implicit @unused request: Request[A]): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+    implicit @unused request: RequestWithFeatureSwitches[A]): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ =>
       logger.error(s"Agent on endpoint for individuals")
-      Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl)))
+      Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl(request.newHubContextRootEnabled))))
   }
 
   private def redirectIfInsufficientConfidenceNrs[A]()(
-    implicit request: Request[A],
+    implicit request: RequestWithFeatureSwitches[A],
     hc: HeaderCarrier): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
 
     case _ ~ _ ~ _ ~ ag ~ confidenceLevel ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _
@@ -104,7 +101,7 @@ class AuthoriseAndRetrieveIndividualForNrs @Inject()(val authorisedFunctions: Fr
   }
 
   private def constructAuthorisedAndEnrolledUserForNrs[A]()(
-    implicit request: Request[A]): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+    implicit request: RequestWithFeatureSwitches[A]): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel ~ internalId ~ externalId ~ nino ~
     dateOfBirth ~ email ~ groupIdentifier ~ credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~
     credentialStrength ~ loginTimes =>
@@ -141,7 +138,8 @@ class AuthoriseAndRetrieveIndividualForNrs @Inject()(val authorisedFunctions: Fr
                 mtditId = mtdItId,
                 MTDIndividual,
                 authUserDetails = authUserDetails,
-                clientDetails = None
+                clientDetails = None,
+                featureSwitches = request.featureSwitches
               )
             )
           )

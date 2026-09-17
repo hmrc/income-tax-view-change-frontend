@@ -20,7 +20,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.services.DateServiceInterface
 import financials.services.SelfServeTimeToPayService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,7 +36,8 @@ class SelfServeTimeToPayController @Inject()(val authActions: AuthActions,
                                               implicit val dateService: DateServiceInterface,
                                              )(implicit val appConfig: FrontendAppConfig,
                                                val mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                               val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with Logging {
 
   def fetchUrl(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
@@ -52,10 +53,10 @@ class SelfServeTimeToPayController @Inject()(val authActions: AuthActions,
       selfServeTimeToPayService.startSelfServeTimeToPayJourney.map {
         case Left(value) =>
           if(user.isAgent){
-            Logger("application").error(s"Unexpected error")
+            logger.error(s"[handleRequest] Unexpected error")
             itvcErrorHandlerAgent.showInternalServerError()
           }else {
-            Logger("application").error(s"Unexpected error")
+            logger.error(s"[handleRequest] Unexpected error")
             itvcErrorHandler.showInternalServerError()
           }
         case Right(url) => SeeOther(url)

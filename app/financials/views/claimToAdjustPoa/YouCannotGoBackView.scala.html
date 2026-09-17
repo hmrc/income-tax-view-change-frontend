@@ -54,7 +54,7 @@ else financialsRoutes.WhatYouOweController.show().url
 }
 
 @getHomeUrl = @{
-appConfig.homePageUrl(user.isAgent)
+appConfig.homePageUrl(user.isAgent, user.newHubContextRootEnabled)
 }
 
 @mainTemplate(

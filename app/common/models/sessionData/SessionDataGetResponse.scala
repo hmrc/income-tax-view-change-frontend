@@ -16,7 +16,7 @@
 
 package common.models.sessionData
 
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -46,20 +46,20 @@ object SessionDataGetResponse {
 
   type SessionGetResponse = Either[SessionDataGetFailure, SessionDataGetSuccess]
 
-  implicit object SessionGetResponseReads extends HttpReads[SessionGetResponse] {
+  implicit object SessionGetResponseReads extends HttpReads[SessionGetResponse] with Logging {
     override def read(method: String, url: String, response: HttpResponse): SessionGetResponse = {
       response.status match {
         case OK =>
-          Logger("application").info("Get session call successful. OK response was returned from the API")
+          logger.info("Get session call successful. OK response was returned from the API")
           response.json.validate[SessionDataGetSuccess].fold(
             invalid => Left(SessionDataUnexpectedResponse(s"Json validation error for SessionDataModel. Invalid: $invalid")),
             valid => Right(valid)
           )
         case NOT_FOUND =>
-          Logger("application").error(s"No user session was found. status: $NOT_FOUND")
+          logger.error(s"No user session was found. status: $NOT_FOUND")
           Left(SessionDataNotFound(s"No user session was found. status: $NOT_FOUND"))
         case status =>
-          Logger("application").error(s"User session could not be retrieved. status: $status")
+          logger.error(s"User session could not be retrieved. status: $status")
           Left(SessionDataUnexpectedResponse(s"User session could not be retrieved. status: $status"))
       }
     }

@@ -22,14 +22,14 @@ import common.models.core.Nino
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import shared.enums.{BeforeSubmissionPage, InitialPage, JourneyState}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
+trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust with Logging {
   self =>
 
   val claimToAdjustService: ClaimToAdjustService
@@ -57,10 +57,10 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
       result <- (session, poa) match {
         case (Some(s), Some(p)) =>
           if (s.journeyCompleted) {
-            Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
+            logger.info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
             createSessionCodeBlock(p)(codeBlock)
           } else {
-            Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
+            logger.info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
             codeBlock(s, p)
           }
         case (None, Some(p)) =>

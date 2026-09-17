@@ -17,7 +17,7 @@
 package common.auth
 
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.models.admin.FeatureSwitch
+import common.models.admin.{FeatureSwitch, NewHubContextRootEnabled}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.AffinityGroup
@@ -59,5 +59,7 @@ case class MtdItUser[A](mtditid: String,
   def addFeatureSwitches(newFeatureSwitches: List[FeatureSwitch]) = copy(featureSwitches = newFeatureSwitches)
 
   def addServiceNavigation(partial: ServiceNavigation) = copy(serviceNavigationPartial = Some(partial))
+
+  val newHubContextRootEnabled = featureSwitches.exists(x => x.name.name == NewHubContextRootEnabled.name && x.isEnabled)
 
 }

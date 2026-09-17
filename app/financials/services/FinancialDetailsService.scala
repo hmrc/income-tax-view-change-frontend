@@ -19,10 +19,10 @@ package financials.services
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
-import common.services.DateServiceInterface
 import financials.connectors.FinancialDetailsConnector
+import common.services.{DateServiceInterface, YearOfMigrationService}
 import financials.models.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,8 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialDetailsService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
+                                        val yearOfMigrationService: YearOfMigrationService,
                                         implicit val dateService: DateServiceInterface)
-                                       (implicit val appConfig: FrontendAppConfig) {
+                                       (implicit val appConfig: FrontendAppConfig) extends Logging {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
@@ -44,40 +45,41 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
 
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    logger.debug(s"[getAllFinancialDetails] Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
-      taxYear =>
-        Logger("application").debug(s"Getting financial details for TaxYear: $taxYear")
-        financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
-          case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
-          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
-          case _ => None
-        }
-    }).map(_.flatten)
+    yearOfMigrationService.orderedTaxYearsByYearOfMigration(user.nino)
+      .flatMap { taxYearList =>
+        Future.sequence(taxYearList.map {
+          taxYear =>
+            logger.debug(s"[getAllFinancialDetails] Getting financial details for TaxYear: $taxYear")
+            financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
+              case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
+              case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
+              case _ => None
+            }
+        }).map(_.flatten)
+      }
+
   }
 
   def getAllFinancialDetailsV2(implicit user: MtdItUser[_],
                                hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    logger.debug(s"[getAllFinancialDetailsV2] Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    val yearsOfMigration = user.incomeSources.orderedTaxYearsByYearOfMigration
-    if (yearsOfMigration.isEmpty)
-      Future.successful(None)
-    else {
-      val (from, to) = (yearsOfMigration.min, yearsOfMigration.max)
+    yearOfMigrationService.orderedTaxYearsByYearOfMigration(user.nino).flatMap { taxYearList =>
+      if (taxYearList.isEmpty)
+        Future.successful(None)
+      else {
+        val (from, to) = (taxYearList.min, taxYearList.max)
 
-      for {
-        response <- financialDetailsConnector.getFinancialDetailsByTaxYearRange(TaxYearRange(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to)), user.nino)
-
-      } yield response match {
-        case financialDetails: FinancialDetailsModel => Some(financialDetails)
-        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some(error)
-        case _ => None
+        for {
+          response <- financialDetailsConnector.getFinancialDetailsByTaxYearRange(TaxYearRange(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to)), user.nino)
+        } yield response match {
+          case financialDetails: FinancialDetailsModel => Some(financialDetails)
+          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some(error)
+          case _ => None
+        }
       }
-
     }
   }
 

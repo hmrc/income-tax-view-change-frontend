@@ -30,7 +30,7 @@ import obligations.services.NextUpdatesService
 import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
-import play.api.Logger
+import play.api.Logging
 import shared.services.CalculationListService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -44,7 +44,7 @@ class OptOutService @Inject()(
                                nextUpdatesService: NextUpdatesService,
                                dateService: DateServiceInterface,
                                optOutRepository: OptOutSessionDataRepository
-                             ) {
+                             ) extends Logging {
 
   def fetchOptOutProposition()(implicit user: MtdItUser[_],
                                hc: HeaderCarrier,
@@ -229,15 +229,15 @@ class OptOutService @Inject()(
             case (Some((true, propositionTaxYear)), Some(propositionType)) if propositionType.state(propositionTaxYear).isDefined =>
               Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(propositionTaxYear), numberOfQuarterlyUpdates, currentYearStatus, nextYearStatus))
             case (Some((true, _)), Some(_)) =>
-              Logger("application").warn("[OptOutService] Unknown scenario for opt out tax year, redirecting to Reporting Obligations Page")
+              logger.warn("Unknown scenario for opt out tax year, redirecting to Reporting Obligations Page")
               None
             case _ =>
-              Logger("application").warn("[OptOutService] Invalid tax year provided, redirecting to Reporting Obligations Page")
+              logger.warn("Invalid tax year provided, redirecting to Reporting Obligations Page")
               None
           }
         }
       case _ =>
-        Logger("application").warn("[OptOutService] No tax year provided, redirecting to Reporting Obligations Page")
+        logger.warn("No tax year provided, redirecting to Reporting Obligations Page")
         Future.successful(None)
     }
   }
@@ -245,7 +245,7 @@ class OptOutService @Inject()(
   def saveIntent(taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     optOutRepository.saveIntent(taxYear).recover {
       case ex: Exception =>
-        Logger("application").error(s"[OptOutService.saveIntent] - Could not save intent tax year to session: $ex")
+        logger.error(s"Could not save intent tax year to session: $ex")
         false
     }
   }

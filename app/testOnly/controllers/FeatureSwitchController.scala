@@ -18,20 +18,19 @@ package testOnly.controllers
 
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{FeatureSwitchName, InvalidFS}
-import testOnly.services.admin.FeatureSwitchService
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
-import common.models.admin.{BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend}
-import play.api.Logger
+import common.models.admin.{FeatureSwitchName, InvalidFS, NewHubContextRootEnabled}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import testOnly.services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.collection.immutable.ListMap
 import javax.inject.{Inject, Singleton}
+import scala.collection.immutable.ListMap
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -40,48 +39,51 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
                                        (implicit mcc: MessagesControllerComponents,
                                         val appConfig: FrontendAppConfig,
                                         ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging {
 
   val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
   val PROD_FEATURES: String = "feature-switch.prod-switches"
 
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { implicit request =>
-
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequest(request)
     featureSwitchService.set(featureFlagName, isEnabled).map {
       case true =>
-        Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
+        logger.info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
         Ok(s"Flag $featureFlagName set to $isEnabled")
       case false =>
-        Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result failure")
+        logger.info(s"Set FSS - $FeatureSwitchName - $isEnabled: result failure")
         InternalServerError(s"Error while setting flag $featureFlagName to $isEnabled")
     }
   }
 
-  def show(): Action[AnyContent] = Action.async { implicit user =>
-    featureSwitchService.getAll().flatMap { featureSwitches =>
-      val fss = ListMap(
-        featureSwitches
-          .filter(_.name.name != InvalidFS.name)
-          .map(x => FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
-          .sortBy(_._1.name)
-          :_*
-      )
-      
-      Future.successful(
-        Ok(
-          featureSwitchView(
-            switchNames = fss,
-            testOnly.controllers.routes.FeatureSwitchController.submit()
+  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit user =>
+    if (!isNewContextRoot) {
+      Future.successful(Redirect(routes.FeatureSwitchController.show(true)))
+    } else {
+      featureSwitchService.getAll().flatMap { featureSwitches =>
+        val fss = ListMap(
+          featureSwitches
+            .filter(_.name.name != InvalidFS.name)
+            .map(x => FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
+            .sortBy(_._1.name)
+            : _*
+        )
+
+        Future.successful(
+          Ok(
+            featureSwitchView(
+              switchNames = fss,
+              routes.FeatureSwitchController.submit()
+            )
           )
         )
-      )
+      }
     }
   }
 
-  lazy val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend)
+  lazy val newServices: Set[FeatureSwitchName] = Set(NewHubContextRootEnabled)
 
   // TODO: refactor next method
   def submit(): Action[AnyContent] = Action.async { implicit request =>
@@ -122,7 +124,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       case _ if submittedData.contains(PROD_FEATURES) =>
         for {
           _ <- featureSwitchService.resetToProd()
-        } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
+        } yield Redirect(routes.FeatureSwitchController.show(true))
       case _ =>
         // TODO: might worth to use setAll method from relevant repo (transactional approach?)
         for {
@@ -131,7 +133,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
               (fs, enableState) <- (getEnabledFeatureSwitches ++ getDisabledFeatureSwitches)
             } yield featureSwitchService.set(fs, enableState)
           )
-        } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
+        } yield Redirect(routes.FeatureSwitchController.show(true))
     }
   }
 
@@ -148,8 +150,8 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
         }
       )
     } yield {
-      Logger("application").info(s"Enabled all FSS")
-      Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
+      logger.info(s"Enabled all FSS")
+      Redirect(testOnly.controllers.routes.FeatureSwitchController.show(true))
     }
   }
 }

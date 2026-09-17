@@ -16,12 +16,10 @@
 
 package shared.models
 
-import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, IncomeSourceReportingFrequencySourceData, ManageIncomeSourceData}
-import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import businessDetails.models.incomeSourceDetails.*
+import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.models.reportingObligations.signUp.SignUpSessionData
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.*
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -45,61 +43,7 @@ case class UIJourneySessionData(
 object UIJourneySessionData {
 
   implicit val format: OFormat[UIJourneySessionData] = {
-
-    (
-      (__ \ "sessionId").format[String] ~
-        (__ \ "journeyType").format[String] ~
-        (__ \ "addIncomeSourceData").formatNullable[AddIncomeSourceData] ~
-        (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData] ~
-        (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData] ~
-        (__ \ "optOutSessionData").formatNullable[OptOutSessionData] ~
-        (__ \ "signUpSessionData").formatNullable[SignUpSessionData] ~
-        (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData] ~
-        (__ \ "triggeredMigrationData").formatNullable[TriggeredMigrationSessionData] ~
-        (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat) ~
-        (__ \ "journeyIsComplete").formatNullable[Boolean]
-      ).apply(
-      (
-        sessionId,
-        journeyType,
-        addIncomeSourceData,
-        manageIncomeSourceData,
-        ceaseIncomeSourceData,
-        optOutSessionData,
-        signUpSessionData,
-        incomeSourceReportingFrequencyData,
-        triggeredMigrationData,
-        lastUpdated,
-        journeyIsComplete
-      ) =>
-        UIJourneySessionData(
-          sessionId,
-          journeyType,
-          addIncomeSourceData,
-          manageIncomeSourceData,
-          ceaseIncomeSourceData,
-          optOutSessionData,
-          signUpSessionData,
-          incomeSourceReportingFrequencyData,
-          triggeredMigrationData,
-          lastUpdated,
-          journeyIsComplete
-        ),
-      u =>
-        (
-          u.sessionId,
-          u.journeyType,
-          u.addIncomeSourceData,
-          u.manageIncomeSourceData,
-          u.ceaseIncomeSourceData,
-          u.optOutSessionData,
-          u.signUpSessionData,
-          u.incomeSourceReportingFrequencyData,
-          u.triggeredMigrationData,
-          u.lastUpdated,
-          u.journeyIsComplete
-        )
-    )
+    implicit val mongoInstantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
+    Json.format[UIJourneySessionData]
   }
-
 }

@@ -51,7 +51,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = SelfEmployment,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeStandard),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val selfEmploymentViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel =
@@ -77,7 +78,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = SelfEmployment,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeStandard),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val selfEmploymentViewModelCYUnknown: ManageIncomeSourceDetailsViewModel =
@@ -103,7 +105,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = SelfEmployment,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeStandard),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val selfEmploymentViewModelWithUnknowns: ManageIncomeSourceDetailsViewModel =
@@ -129,7 +132,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = SelfEmployment,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = None,
-      currentItsaStatus = ITSAStatus.Annual
+      currentItsaStatus = ITSAStatus.Annual,
+      hideUnknownBusinessName = false
     )
 
   val ukViewModel: ManageIncomeSourceDetailsViewModel =
@@ -155,7 +159,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = UkProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeCalendar),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val ukViewModelOneYearQuarterly: ManageIncomeSourceDetailsViewModel =
@@ -181,7 +186,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = UkProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeCalendar),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val ukPropertyViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel =
@@ -207,7 +213,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = UkProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeStandard),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val ukPropertyViewModelCYUnknown: ManageIncomeSourceDetailsViewModel =
@@ -233,7 +240,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = UkProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeStandard),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel =
@@ -259,7 +267,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = UkProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = None,
-      currentItsaStatus = ITSAStatus.Annual
+      currentItsaStatus = ITSAStatus.Annual,
+      hideUnknownBusinessName = false
     )
 
   val foreignViewModel: ManageIncomeSourceDetailsViewModel =
@@ -285,7 +294,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = ForeignProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeCalendar),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val foreignPropertyViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel =
@@ -311,7 +321,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = ForeignProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeStandard),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val foreignPropertyLatencyYearTwoUnknown: ManageIncomeSourceDetailsViewModel =
@@ -337,7 +348,8 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = ForeignProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = Some(QuarterTypeStandard),
-      currentItsaStatus = ITSAStatus.Mandated
+      currentItsaStatus = ITSAStatus.Mandated,
+      hideUnknownBusinessName = false
     )
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel =
@@ -363,6 +375,7 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = ForeignProperty,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = None,
-      currentItsaStatus = ITSAStatus.Annual
+      currentItsaStatus = ITSAStatus.Annual,
+      hideUnknownBusinessName = false
     )
 }

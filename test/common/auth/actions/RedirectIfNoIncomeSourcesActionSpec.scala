@@ -18,7 +18,6 @@ package common.auth.actions
 
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
-import common.controllers.routes as appRoutes
 import common.models.admin.{FeatureSwitchName, NoIncomeSourcesRedirect}
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
@@ -32,7 +31,7 @@ import scala.concurrent.Future
 class RedirectIfNoIncomeSourcesActionSpec extends AuthActionsSpecHelper {
 
   def actionWithSwitch(enabledSwitches: Set[FeatureSwitchName]) =
-    new RedirectIfNoIncomeSourcesAction(mockAppConfig) {
+    new RedirectIfNoIncomeSourcesAction(appConfig) {
       override def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean =
         enabledSwitches.contains(featureSwitch)
     }
@@ -92,7 +91,7 @@ class RedirectIfNoIncomeSourcesActionSpec extends AuthActionsSpecHelper {
           val result = actionEnabled.invokeBlock(request, defaultAsync)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(appRoutes.NoIncomeSourcesController.show(isAgent = false).url)
+          redirectLocation(result).get should include("/no-income-sources")
         }
 
         "redirect an agent user to the no income sources page" in {
@@ -105,7 +104,7 @@ class RedirectIfNoIncomeSourcesActionSpec extends AuthActionsSpecHelper {
           val result = actionEnabled.invokeBlock(request, defaultAsync)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(appRoutes.NoIncomeSourcesController.show(isAgent = true).url)
+          redirectLocation(result).get should include("/agents/no-income-sources")
         }
       }
     }

@@ -1,0 +1,46 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package shared.enums
+
+enum ChargeClassificationType(val value: String):
+  case AutoCorrection extends ChargeClassificationType("AC")
+  case ManualCorrection extends ChargeClassificationType("MC")
+  case RejectedCorrection extends ChargeClassificationType("RC")
+  case RevenueAmendments extends ChargeClassificationType("RA")
+  case AutoFinancialAdjustment extends ChargeClassificationType("AF")
+
+object ChargeClassificationType:
+  def fromString(value: String): Option[ChargeClassificationType] =
+    values.find(_.value == value)
+
+  def isRevenueAmendment(chargeClassification: Option[String]): Boolean =
+    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
+      case Some(ChargeClassificationType.RevenueAmendments) => true
+      case _                                                => false
+    }
+
+  def isCorrection(chargeClassification: Option[String]): Boolean =
+    chargeClassification.flatMap(ChargeClassificationType.fromString) match {
+      case Some(AutoCorrection) | Some(ManualCorrection) => true
+      case _ => false
+    }
+    
+  def isCustomerRejection(chargeClassification: Option[String]): Boolean =
+    chargeClassification.flatMap(ChargeClassificationType.fromString) match {
+      case Some(RejectedCorrection) => true
+      case _ => false
+    }

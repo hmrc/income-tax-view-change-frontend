@@ -26,6 +26,7 @@ import common.models.admin.OptOutFs
 import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import common.implicits.Json.*
 import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -108,7 +109,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               pageTitleAgent("nextUpdates.heading")
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).toJson)
           }
 
           "has no obligations" in {
@@ -175,7 +176,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               isElementVisibleById("updates-and-deadlines-tabs")(expectedValue = true),
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).toJson)
           }
 
           "has obligations and the Opt Out feature switch disabled" in {
@@ -213,7 +214,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               isElementVisibleById("#updates-software-link")(expectedValue = false),
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).toJson)
           }
 
           "Opt Out feature switch is enabled" should {

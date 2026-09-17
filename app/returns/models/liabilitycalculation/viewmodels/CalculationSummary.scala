@@ -17,7 +17,7 @@
 package returns.models.liabilitycalculation.viewmodels
 
 import common.implicits.ImplicitDateParser
-import common.models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
+import common.models.liabilitycalculation.{CalculationRevisionType, LiabilityCalculationResponse, Messages}
 
 import java.time.LocalDate
 
@@ -36,11 +36,22 @@ case class CalculationSummary(
                                periodFrom: Option[LocalDate] = None,
                                periodTo: Option[LocalDate] = None,
                                messages: Option[Messages] = None,
-                               isAmended: Boolean = false
+                               calculationRevisionType: Option[CalculationRevisionType],
+                               taxRefundedOrSetOff: Option[BigDecimal] = None,
+                               totalTaxAndNicsDue: Option[BigDecimal] = None,
+                               totalIncomeTaxAndNicsAndCgt:Option[BigDecimal] = None
                              ) {
 
   def errorPresent(): Boolean = {
     messages.exists(_.errorMessages.nonEmpty)
+  }
+
+  def getSATaxAmount: Option[BigDecimal] = {
+    (taxRefundedOrSetOff, totalIncomeTaxAndNicsAndCgt) match {
+      case (Some(_), _) => totalTaxAndNicsDue
+      case (None, Some(_)) => totalIncomeTaxAndNicsAndCgt
+      case (None, None) => Some(taxDue)
+    }
   }
 
 }
@@ -68,7 +79,6 @@ object CalculationSummary extends ImplicitDateParser {
   }
 
   def apply(calc: LiabilityCalculationResponse): CalculationSummary = {
-
     CalculationSummary(
       timestamp = calc.metadata.calculationTimestamp.map(_.toZonedDateTime.toLocalDate),
       crystallised = calc.metadata.isCalculationCrystallised,
@@ -84,7 +94,10 @@ object CalculationSummary extends ImplicitDateParser {
       periodFrom = calc.metadata.periodFrom,
       periodTo = calc.metadata.periodTo,
       messages = calc.messages,
-      isAmended = calc.metadata.hasAnAmendment
+      calculationRevisionType = calc.metadata.calculationRevisionType,
+      taxRefundedOrSetOff = calc.calculation.flatMap(record => record.taxCalculation.flatMap(_.taxRefundedOrSetOff)),
+      totalTaxAndNicsDue = calc.calculation.flatMap(record => record.taxCalculation.flatMap(_.totalTaxAndNicsDue)),
+      totalIncomeTaxAndNicsAndCgt = calc.calculation.flatMap(record => record.taxCalculation.flatMap(_.totalIncomeTaxAndNicsAndCgt))
     )
   }
 }
