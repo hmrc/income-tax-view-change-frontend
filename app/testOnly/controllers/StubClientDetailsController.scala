@@ -47,14 +47,14 @@ class StubClientDetailsController @Inject()(featureSwitchRetrievalAction: Featur
     )
   )
 
-  def show(isNewContextRoot: Boolean): Action[AnyContent] = Action { implicit req =>
+  def show(): Action[AnyContent] = Action { implicit req =>
     Ok(stubClientDetails(
       clientDetailsForm = form,
-      postAction = testOnly.controllers.routes.StubClientDetailsController.submit(isNewContextRoot)
+      postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
     ))
   }
 
-  def submitWithParams(nino: String, utr: String, isNewContextRoot: Boolean): Action[AnyContent] =
+  def submitWithParams(nino: String, utr: String): Action[AnyContent] =
     featureSwitchRetrievalAction.async { implicit request =>
       matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)).map { _ =>
         val redirectUrl = if (request.newHubContextRootEnabled)
@@ -65,12 +65,12 @@ class StubClientDetailsController @Inject()(featureSwitchRetrievalAction: Featur
       }
     }
 
-  def submit(isNewContextRoot: Boolean): Action[AnyContent] =
+  def submit(): Action[AnyContent] =
     featureSwitchRetrievalAction.async { implicit request =>
       StubClientDetailsForm.clientDetailsForm.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(stubClientDetails(
           clientDetailsForm = hasErrors,
-          postAction = testOnly.controllers.routes.StubClientDetailsController.submit(isNewContextRoot)
+          postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
         ))), { data =>
           matchingStubConnector.stubClient(data).map { response =>
             logger.info(s"[submit] matching stub, status: ${response.status}, body: ${response.body}")

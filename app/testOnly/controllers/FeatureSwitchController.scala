@@ -45,7 +45,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
   val PROD_FEATURES: String = "feature-switch.prod-switches"
 
-  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean, isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
+  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { implicit request =>
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequest(request)
     featureSwitchService.set(featureFlagName, isEnabled).map {
@@ -59,30 +59,34 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   }
 
   def show(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit user =>
-    featureSwitchService.getAll().flatMap { featureSwitches =>
-      val fss = ListMap(
-        featureSwitches
-          .filter(_.name.name != InvalidFS.name)
-          .map(x => FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
-          .sortBy(_._1.name)
-          : _*
-      )
+    if (!isNewContextRoot) {
+      Future.successful(Redirect(routes.FeatureSwitchController.show(true)))
+    } else {
+      featureSwitchService.getAll().flatMap { featureSwitches =>
+        val fss = ListMap(
+          featureSwitches
+            .filter(_.name.name != InvalidFS.name)
+            .map(x => FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
+            .sortBy(_._1.name)
+            : _*
+        )
 
-      Future.successful(
-        Ok(
-          featureSwitchView(
-            switchNames = fss,
-            routes.FeatureSwitchController.submit(isNewContextRoot)
+        Future.successful(
+          Ok(
+            featureSwitchView(
+              switchNames = fss,
+              routes.FeatureSwitchController.submit()
+            )
           )
         )
-      )
+      }
     }
   }
 
   lazy val newServices: Set[FeatureSwitchName] = Set(NewHubContextRootEnabled)
 
   // TODO: refactor next method
-  def submit(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
+  def submit(): Action[AnyContent] = Action.async { implicit request =>
 
     val submittedData: Set[String] = request.body.asFormUrlEncoded match {
       case None => Set.empty
@@ -120,7 +124,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       case _ if submittedData.contains(PROD_FEATURES) =>
         for {
           _ <- featureSwitchService.resetToProd()
-        } yield Redirect(routes.FeatureSwitchController.show(isNewContextRoot))
+        } yield Redirect(routes.FeatureSwitchController.show(true))
       case _ =>
         // TODO: might worth to use setAll method from relevant repo (transactional approach?)
         for {
@@ -129,11 +133,11 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
               (fs, enableState) <- (getEnabledFeatureSwitches ++ getDisabledFeatureSwitches)
             } yield featureSwitchService.set(fs, enableState)
           )
-        } yield Redirect(routes.FeatureSwitchController.show(isNewContextRoot))
+        } yield Redirect(routes.FeatureSwitchController.show(true))
     }
   }
 
-  def enableAll(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
+  def enableAll(): Action[AnyContent] = Action.async { implicit request =>
 
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequest(request)
@@ -147,7 +151,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       )
     } yield {
       logger.info(s"Enabled all FSS")
-      Redirect(testOnly.controllers.routes.FeatureSwitchController.show(isNewContextRoot))
+      Redirect(testOnly.controllers.routes.FeatureSwitchController.show(true))
     }
   }
 }
