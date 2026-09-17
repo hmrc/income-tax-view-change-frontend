@@ -38,12 +38,12 @@ class SessionStorageServiceController @Inject()(val authActions: AuthActions,
                                                  val mcc: MessagesControllerComponents)
   extends FrontendController(mcc) with Logging{
 
-  def show(isNewContextRoot: Boolean): Action[AnyContent] = authActions.asMTDIndividual().async {
+  def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShow(isAgent = false)
   }
 
-  def showAgent(isNewContextRoot: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleShow(isAgent = true)
   }
