@@ -231,6 +231,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     incomeSourceType = Some(testIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None
   )
 
@@ -255,6 +256,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
     quarterTypeElection = Some(quarterTypeElectionCalendar),
   )
@@ -266,6 +268,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
+    deleted = None,
     cessation = None,
   )
 

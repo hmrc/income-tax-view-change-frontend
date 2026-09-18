@@ -34,6 +34,7 @@ object IncomeSourceIntegrationTestConstants {
     ukPropertyIncomeType,
     propertyTradingStartDate,
     None,
+    deleted = None,
     None,
   )
 
