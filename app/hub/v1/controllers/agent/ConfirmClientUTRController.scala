@@ -86,7 +86,7 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
         ))
 
         Future(
-          Redirect(hub.v1.controllers.routes.HomeController.showAgent().url)
+          Redirect(hub.v2.controllers.routes.HomeController.showAgent().url)
             .addingToSession(SessionKeys.confirmedClient -> "true")
         )
     }
