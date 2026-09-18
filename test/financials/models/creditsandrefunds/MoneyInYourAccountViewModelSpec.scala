@@ -134,7 +134,8 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
           dueDate = Some(dueDate),
           documentDate = None,
           effectiveDateOfPayment = Some(effectiveDateOfPayment),
-          transactionId = "PAYMENT01"
+          transactionId = "PAYMENT01",
+          dunningLock = false
         )
       val paymentRow = CreditRow.fromTransaction(paymentTransaction)
       paymentRow shouldBe Some(PaymentCreditRow(paymentTransaction, dueDate, effectiveDateOfPayment))
@@ -148,7 +149,8 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
           dueDate = None,
           documentDate = None,
           effectiveDateOfPayment = None,
-          transactionId = "REFUND01"
+          transactionId = "REFUND01",
+          dunningLock = false
         )
       val refundRow = CreditRow.fromTransaction(refundTransaction)
       refundRow shouldBe Some(RefundRow(refundTransaction, LocalDate.now()))
@@ -165,7 +167,8 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
           dueDate = None,
           documentDate = Some(documentDate),
           effectiveDateOfPayment = None,
-          transactionId = "MFA01"
+          transactionId = "MFA01",
+          dunningLock = false
         )
       val creditRow = CreditRow.fromTransaction(creditTransaction)
       creditRow shouldBe Some(CreditViewRow(creditTransaction, taxYear, documentDate, false))
