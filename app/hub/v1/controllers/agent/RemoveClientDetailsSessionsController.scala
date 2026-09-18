@@ -16,7 +16,7 @@
 
 package hub.v1.controllers.agent
 
-import common.auth.AuthActions
+import hub.v1.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.utils.sessionUtils.SessionKeys
