@@ -86,7 +86,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with SessionCookieBaker {
 
-  lazy val newHubContextRootEnabled = true
+  lazy val newHubContextRootEnabled = false
   lazy val defaultFeatureSwitches: List[FeatureSwitch] = List(FeatureSwitch(NewHubContextRootEnabled, newHubContextRootEnabled))
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
