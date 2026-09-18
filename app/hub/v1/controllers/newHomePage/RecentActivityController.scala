@@ -17,7 +17,8 @@
 package hub.v1.controllers.newHomePage
 
 import com.google.inject.{Inject, Singleton}
-import common.auth.{AuthActions, MtdItUser}
+import hub.v1.auth.AuthActions
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{PaymentHistoryRefunds, RecentActivity}
