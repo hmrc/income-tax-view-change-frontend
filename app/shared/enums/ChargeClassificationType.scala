@@ -16,6 +16,8 @@
 
 package shared.enums
 
+import play.api.libs.json.*
+
 enum ChargeClassificationType(val value: String):
   case AutoCorrection extends ChargeClassificationType("AC")
   case ManualCorrection extends ChargeClassificationType("MC")
@@ -44,3 +46,18 @@ object ChargeClassificationType:
       case Some(RejectedCorrection) => true
       case _ => false
     }
+
+  private val chargeClassificationFromValue: Map[String, ChargeClassificationType] = ChargeClassificationType.values.map(cc => cc.value -> cc).toMap
+
+  given reads: Reads[ChargeClassificationType] = Reads {
+    case JsString(value) =>
+      chargeClassificationFromValue.get(value) match {
+        case Some(chargeClassification) => JsSuccess(chargeClassification)
+        case None => JsError(s"Unknown ChargeClassificationType value: $value")
+      }
+    case _ => JsError("Expected a string value for ChargeClassificationType")
+  }
+
+  given writes: Writes[ChargeClassificationType] = Writes { chargeClassification =>
+    JsString(chargeClassification.value)
+  }
