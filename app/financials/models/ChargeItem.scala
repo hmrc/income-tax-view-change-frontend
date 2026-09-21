@@ -50,15 +50,23 @@ case class ChargeItem(
                        creationDate: Option[LocalDate] = None,
                        chargeReference: Option[String],
                        chargeClassification: Option[String] = None,
-                       isRevenueAmendment: Boolean = false
+                       isRevenueAmendment: Boolean = false,
+                       dunningLockValue: Option[String] = None,
+                       totalSoAmt: Option[BigDecimal] = None
                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_.isBefore(dateService.getCurrentDate))
 
+  private val formalStandOver = "Formal Standover"
+
   def getMessageKey: String = {
     if (isRevenueAmendment) {
-      "revenueAmendment.label"
+      if(dunningLockValue.contains(formalStandOver)){
+        "standover.formal.label"
+      }else {
+        getChargeTypeKey
+      }
     } else {
       getChargeTypeKey
     }
@@ -308,7 +316,15 @@ object ChargeItem {
       paymentLot = documentDetail.paymentLot,
       chargeReference = financialDetail.chargeReference,
       chargeClassification = documentDetail.chargeClassification,
-      isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification)
+      isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification),
+      //fetching only first value since we can have only one Stand over per charge
+      dunningLockValue = financialDetails
+        .filter(_.transactionId.contains(documentDetail.transactionId))
+        .flatMap(_.items
+          .flatMap(_.flatMap(_.dunningLock)
+            .headOption))
+        .headOption,
+      totalSoAmt = documentDetail.totalSoAmt
     )
   }
 

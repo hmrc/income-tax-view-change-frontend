@@ -51,7 +51,8 @@ class BalanceDetailsSpec extends UnitSpec {
     totalCredit,
     firstPendingAmountRequested,
     secondPendingAmountRequested,
-    unallocatedCredit
+    unallocatedCredit,
+    totalFormalAndInformal = None
   )
 
 

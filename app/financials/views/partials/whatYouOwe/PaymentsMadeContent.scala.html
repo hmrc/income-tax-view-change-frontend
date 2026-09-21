@@ -63,12 +63,21 @@
 @if(viewModel.utr.isDefined) {
     @{
         viewModel.whatYouOweChargesList.getDefaultPaymentAmount match {
-            case Some(value) => paymentButton(value)
+            case Some(value) => {
+                if(viewModel.hasOnlySuspendedCharges){
+                    if(!viewModel.informalChargesList.isEmpty){
+                        paymentButton(value)
+                    }else {
+                        paymentButton(viewModel.totalFormalAndInformal.getOrElse(0))
+                    }
+                }else{
+                    paymentButton(value)
+                }
+            }
             case None =>
         }
     }
 }
-
 @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
     @getNoPaymentsDueText
 }

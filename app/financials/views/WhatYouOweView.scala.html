@@ -37,9 +37,11 @@
         govukWarningText: GovukWarningText,
         paymentsMadeContent: PaymentsMadeContent,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        suspendedCharges: SuspendedCharges,
         chargesAndSuspendedCharges: ChargesAndSuspendedCharges,
-        earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara
+        earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara,
+        informalSuspendedCharges: InformalSuspendedCharges,
+        formalSuspendedCharges: FormalSuspendedCharges,
+        formalChargesPayingSuspendedTax: FormalChargesPayingSuspendedTax
 )
 @(
         viewModel: WhatYouOweViewModel,
@@ -53,6 +55,31 @@
 )
 
 @import implicitDateFormatter.longDate
+
+@getSuspendedChargesView(viewModel: WhatYouOweViewModel, origin: Option[String], isSelfServeTimeToPayEnabled: Boolean) = {
+    @if(viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty) {
+            @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled)
+
+            @paymentsMadeContent(
+                origin = origin,
+                viewModel = viewModel)
+
+            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+    }else {
+        @if(viewModel.informalChargesList.nonEmpty) {
+            @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+        }
+        @if(viewModel.formalChargesList.nonEmpty) {
+            @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled)
+
+            @paymentsMadeContent(
+                origin = origin,
+                viewModel = viewModel)
+
+            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+        }
+    }
+}
 
 @mainTemplate(
     isAgent = user.isAgent,
@@ -72,7 +99,7 @@
     @if(viewModel.hasNonDunningLockCharges) {
         @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
     } else if(viewModel.hasOnlySuspendedCharges) {
-        @suspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+        @getSuspendedChargesView(viewModel, origin, isSelfServeTimeToPayEnabled)
     } else {
         @paymentsMadeContent(origin, viewModel)
         @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
