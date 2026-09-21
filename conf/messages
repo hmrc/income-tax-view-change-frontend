@@ -2200,6 +2200,8 @@ chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
 chargeSummary.dunning.locks.informal.standover1.banner.note		   = This tax is temporarily suspended for review and HMRC will not collect it while it is suspended.
 chargeSummary.dunning.locks.informal.standover2.banner.note		   = You can still pay the total amount owed as you may be charged interest if not paid by the original due date.
+chargeSummary.dunning.locks.formal.standover1.banner.note		   = HMRC has temporarily suspended collection of this tax because there is an appeal.
+chargeSummary.dunning.locks.formal.standover2.banner.note		   = You will be charged interest if the tax is released for HMRC to collect and it has not been paid by the original due date.
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 

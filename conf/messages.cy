@@ -2185,6 +2185,8 @@ chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
 chargeSummary.dunning.locks.informal.standover1.banner.note		   = Mae’r dreth hon wedi’i gohirio dros dro ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
 chargeSummary.dunning.locks.informal.standover2.banner.note		   = Gallwch dalu’r cyfanswm sy’n ddyledus o hyd, oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn y dyddiad dyledus gwreiddiol.
+chargeSummary.dunning.locks.formal.standover1.banner.note		   = Mae CThEF wedi gohirio casglu’r dreth hon dros dro oherwydd bod apêl ar y gweill.
+chargeSummary.dunning.locks.formal.standover2.banner.note		   = Codir llog arnoch os caiff y dreth ei rhyddhau er mwyn i CThEF ei chasglu ac os nad ydych wedi ei thalu erbyn y dyddiad dyledus gwreiddiol.
 
 
 chargeSummary.nic2TaxYear                                          = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
