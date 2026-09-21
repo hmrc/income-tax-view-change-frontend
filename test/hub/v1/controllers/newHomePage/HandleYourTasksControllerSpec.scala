@@ -16,7 +16,7 @@
 
 package hub.v1.controllers.newHomePage
 
-import common.auth.AuthActions
+import hub.v1.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}

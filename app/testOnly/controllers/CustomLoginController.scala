@@ -57,12 +57,16 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                      ) extends BaseController with I18nSupport with FeatureSwitching with Logging {
 
   def showLogin(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(isNewContextRoot), userRecords))
-    )
+    if (!isNewContextRoot) {
+      Future.successful(Redirect(routes.CustomLoginController.showLogin(true)))
+    } else {
+      userRepository.findAll().map(userRecords =>
+        Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords))
+      )
+    }
   }
 
-  def postLogin(isNewContextRoot: Boolean): Action[AnyContent] =
+  def postLogin(): Action[AnyContent] =
     featureSwitchRetrievalAction.async { implicit request =>
       PostedUser.form.bindFromRequest().fold(
         formWithErrors =>
@@ -76,8 +80,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   val redirectURL = if (postedUser.isAgent) {
                     routes.StubClientDetailsController.submitWithParams(
                       nino = user.nino,
-                      utr = user.utr,
-                      isNewContextRoot = request.newHubContextRootEnabled
+                      utr = user.utr
                     ).url
                   } else {
                     val origin = if (postedUser.usePTANavBar) "PTA" else "BTA"

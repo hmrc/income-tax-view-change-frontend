@@ -87,6 +87,8 @@ object FeatureSwitchName extends Logging {
       JsSuccess(NewHubContextRootEnabled)
     case JsString(HideBusinessName.name) =>
       JsSuccess(HideBusinessName)
+    case JsString(StoodOverCharges.name) =>
+      JsSuccess(StoodOverCharges)
     case invalidName =>
       logger.error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -135,7 +137,8 @@ object FeatureSwitchName extends Logging {
       RevenueAmendments,
       ReturnsFrontend,
       NewHubContextRootEnabled,
-      HideBusinessName
+      HideBusinessName,
+      StoodOverCharges
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -273,4 +276,9 @@ case object NewHubContextRootEnabled extends FeatureSwitchName {
 case object HideBusinessName extends FeatureSwitchName {
   override val name: String = "hide-business-name"
   override val toString: String = "Hide business name when unknown"
+}
+
+case object StoodOverCharges extends FeatureSwitchName {
+  override val name: String = "stood-over-charges"
+  override val toString: String = "Stood Over Charges"
 }
