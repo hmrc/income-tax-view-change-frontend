@@ -16,7 +16,7 @@
 
 package hub.v1.controllers.agent
 
-import common.auth.AuthActions
+import hub.v1.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.models.sessionData.SessionCookieData
@@ -47,7 +47,7 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging {
 
   def show: Action[AnyContent] =
-    authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
+    authActions.asMTDAgentWithUnconfirmedClient() { implicit user =>
       Ok(
         confirmClientUTRView(
           clientName = user.optClientNameAsString,
@@ -60,7 +60,7 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
     }
 
   def submit: Action[AnyContent] =
-    authActions.asMTDAgentWithUnconfirmedClient.async { implicit user =>
+    authActions.asMTDAgentWithUnconfirmedClient(false).async { implicit user =>
 
       val clientName = user.optClientNameAsString.getOrElse("")
       val names = clientName.split(" ")

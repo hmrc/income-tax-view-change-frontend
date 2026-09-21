@@ -16,7 +16,7 @@
 
 package hub.v1.controllers.agent
 
-import common.auth.AuthActions
+import hub.v1.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.utils.sessionUtils.SessionKeys
@@ -45,7 +45,7 @@ class UTRErrorController @Inject()(utrError: UTRErrorView,
     )))
   }
 
-  def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
+  def submit: Action[AnyContent] = authActions.asAgent(checkContextRoot = false).async { implicit user =>
     Future.successful(
       Redirect(routes.EnterClientsUTRController.show().url).removingFromSession(SessionKeys.clientUTR)
     )

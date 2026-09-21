@@ -1375,6 +1375,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
       "display the latest calculation tab when pfa is enabled and the user has an amended latest calculation" in new Setup(calculationWithLatestAmendmentsView(false)) {
         layoutContent.selectHead("""a[href$="#latestCalculation"]""").text shouldBe latestCalculationTab
+        document.getElementById("calculation-panel-heading").text() shouldBe latestCalculationTab
 
         document.getElementById("latest-calculation-overview-description").text() shouldBe latestCalculationDesc
       }

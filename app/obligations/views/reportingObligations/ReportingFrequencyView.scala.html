@@ -39,6 +39,11 @@
 
 @(viewModel: ReportingFrequencyViewModel, nextUpdatesLink: String)(implicit messages: Messages, user: MtdItUser[_], dateService: DateServiceInterface, appConfig: FrontendAppConfig)
 
+@requiredObligationParagraph = {
+     @p(id = Some("required-obligations")) {
+         @messages("reporting.frequency.required.obligation")
+     }
+}
 @itsaStatusTable = {
     @h2(
         msg = "reporting.frequency.table.h2.R17",
@@ -190,10 +195,6 @@
 
         <li id="different-obligations-li2">
             @messages("reporting.frequency.different.obligations.li2")
-        </li>
-
-        <li id="different-obligations-li3">
-            @messages("reporting.frequency.different.obligations.li3")
         </li>
 
     </ul>
@@ -359,6 +360,9 @@
         msg = messages("reporting.frequency.title.R17"),
         id = Some("page-heading")
     )
+
+    @requiredObligationParagraph
+
     @ceasedBusinessWarning
 
     @itsaStatusTable

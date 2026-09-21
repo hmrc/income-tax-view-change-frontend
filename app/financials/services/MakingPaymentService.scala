@@ -56,7 +56,12 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
           hasAllPenaltiesOverdue = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0).forall(_.isOverdue()),
           hasOverdueNonPenaltyCharges = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => !charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0).exists(_.isOverdue()),
           hasNotOverdueLPP = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => charge.isLPP && charge.remainingToPayByChargeOrInterest > 0).exists(!_.isOverdue()),
-          hasSuspendedCharges = financialDetailsModels.flatMap(_.toChargeItem).exists(charge => charge.dunningLock || charge.hasLpiWithDunningLock)
+          hasSuspendedCharges = financialDetailsModels.flatMap(_.toChargeItem).exists(charge => charge.dunningLock || charge.hasLpiWithDunningLock),
+          hasOverdueCharge = financialDetailsModels.flatMap(_.toChargeItem).exists(_.isOverdue()),
+          hasBalanceDueWithin30Days = financialDetailsModels.exists(_.balanceDetails.balanceDueWithin30Days != 0),
+          overDueAmount = balanceDetails.collectFirst{ case bd if bd.overDueAmount != 0 => bd.overDueAmount },
+          balanceDueWithin30daysValue = balanceDetails.collectFirst{ case bd if bd.balanceDueWithin30Days != 0 => bd.balanceDueWithin30Days },
+          balanceNotDuein30daysValue = balanceDetails.collectFirst{ case bd if bd.balanceNotDuein30Days != 0 => bd.balanceNotDuein30Days }
         ))
       }
     }
