@@ -16,7 +16,8 @@
 
 package hub.v1.controllers
 
-import common.auth.{AuthActions, MtdItUser}
+import hub.v1.auth.AuthActions
+import common.auth.MtdItUser
 import common.config.*
 import common.config.featureswitch.*
 import common.models.admin.*

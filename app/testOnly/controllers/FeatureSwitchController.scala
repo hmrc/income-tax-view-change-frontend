@@ -19,7 +19,7 @@ package testOnly.controllers
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
-import common.models.admin.{FeatureSwitchName, InvalidFS, NewHubContextRootEnabled}
+import common.models.admin.{FeatureSwitchName, InvalidFS}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -83,8 +83,6 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
   }
 
-  lazy val newServices: Set[FeatureSwitchName] = Set(NewHubContextRootEnabled)
-
   // TODO: refactor next method
   def submit(): Action[AnyContent] = Action.async { implicit request =>
 
@@ -99,7 +97,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       val subData: Set[String] =
         submittedData match {
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
-          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => (allFeatureSwitches -- newServices).map(_.name)
+          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => allFeatureSwitches.map(_.name)
           case _ => submittedData
         }
       subData.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
@@ -110,7 +108,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     def getDisabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
       val subData: Set[String] =
         submittedData match {
-          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => newServices.map(_.name)
+          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => Set.empty
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => allFeatureSwitches.map(_.name)
           case _ => allFeatureSwitches.map(_.name) diff submittedData
         }
@@ -145,8 +143,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       featureSwitches <- featureSwitchService.getAll()
       _ <- Future.sequence(
         featureSwitches.map { featureSwitch =>
-          val enabled = !newServices.contains(featureSwitch.name)
-          featureSwitchService.set(featureSwitch.name, enabled = enabled)
+          featureSwitchService.set(featureSwitch.name, enabled = true)
         }
       )
     } yield {

@@ -16,7 +16,8 @@
 
 package hub.v1.controllers.newHomePage
 
-import common.auth.{AuthActions, MtdItUser}
+import hub.v1.auth.AuthActions
+import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals, RecentActivity}

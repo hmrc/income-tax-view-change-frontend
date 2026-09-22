@@ -16,7 +16,8 @@
 
 package hub.v1.controllers.agent
 
-import common.auth.{AuthActions, AuthorisedUserRequest, FrontendAuthorisedFunctions}
+import hub.v1.auth.AuthActions
+import common.auth.{AuthorisedUserRequest, FrontendAuthorisedFunctions}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
@@ -66,7 +67,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
   }
 
 
-  def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
+  def submit: Action[AnyContent] = authActions.asAgent(checkContextRoot = false).async { implicit user =>
     ClientsUTRForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(enterClientsUTR(
         clientUTRForm = hasErrors,
