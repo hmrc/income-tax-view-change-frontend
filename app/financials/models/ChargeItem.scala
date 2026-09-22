@@ -318,14 +318,14 @@ object ChargeItem {
       chargeClassification = documentDetail.chargeClassification,
       isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification),
       //fetching only first value since we can have only one Stand over per charge
-      dunningLockValue = financialDetails
-        .filter(_.transactionId.contains(documentDetail.transactionId))
-        .flatMap(_.items
-          .flatMap(_.flatMap(_.dunningLock)
-            .headOption))
-        .headOption,
+      dunningLockValue = getDunningLockValue(documentDetail, financialDetails),
       totalSoAmt = documentDetail.totalSoAmt
     )
   }
 
+  private def getDunningLockValue(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): Option[String] =
+    financialDetails
+      .find(_.transactionId.contains(documentDetail.transactionId))
+      .flatMap(_.items)
+      .flatMap(_.view.flatMap(_.dunningLock).headOption)
 }
