@@ -19,10 +19,11 @@ package common.connectors
 import common.config.FrontendAppConfig
 import common.models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusYearOfMigrationModel}
 import play.api.Logger
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,6 +35,9 @@ class YearOfMigrationConnector @Inject()(val http: HttpClientV2,
   private def getYearOfMigrationUrl(nino: String) = {
     s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/year-of-migration/$nino"
   }
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def getYearOfMigration(nino: String)(implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusResponse, ITSAStatusYearOfMigrationModel]] = {
     val yearOfMigrationUrl = getYearOfMigrationUrl(nino)
@@ -54,7 +58,7 @@ class YearOfMigrationConnector @Inject()(val http: HttpClientV2,
             )
           case NOT_FOUND => Right(ITSAStatusYearOfMigrationModel(None))
           case status =>
-            if (status >= INTERNAL_SERVER_ERROR) {
+            if (isErrorLevelStatus(status)) {
               Logger("application").error(s"[YearOfMigrationConnector][getYearOfMigration] Response status: ${response.status}, body: ${response.body}")
             } else {
               Logger("application").warn(s"[YearOfMigrationConnector][getYearOfMigration] Response status: ${response.status}, body: ${response.body}")

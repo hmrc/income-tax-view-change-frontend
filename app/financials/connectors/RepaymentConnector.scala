@@ -21,7 +21,7 @@ import financials.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErr
 import common.models.core.ViewHistory
 import financials.models.core.{RepaymentJourneyResponseModel, RepaymentRefund}
 import play.api.Logging
-import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, UNAUTHORIZED}
+import play.api.http.Status.{ACCEPTED, BAD_GATEWAY, SERVICE_UNAVAILABLE, UNAUTHORIZED}
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.*
@@ -40,8 +40,10 @@ class RepaymentConnector @Inject()(
   private[connectors] val startRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
   private[connectors] val viewRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/view-history"
 
-  def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY) || status == UNAUTHORIZED
 
+  def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
     val body = Json.toJson[RepaymentRefund](RepaymentRefund(nino, fullAmount))
 
     httpClient
@@ -56,10 +58,7 @@ class RepaymentConnector @Inject()(
             },
             identity
           )
-        case response if response.status == UNAUTHORIZED =>
-          logger.error(s"[start] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
-          RepaymentJourneyErrorResponse(response.status, response.body)
-        case response if response.status >= INTERNAL_SERVER_ERROR =>
+        case response if isErrorLevelStatus(response.status) =>
           logger.error(s"[start] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response =>
@@ -69,7 +68,6 @@ class RepaymentConnector @Inject()(
   }
 
   def view(nino: String)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
-
     val body = Json.toJson[ViewHistory](ViewHistory(nino))
 
     httpClient
@@ -84,10 +82,7 @@ class RepaymentConnector @Inject()(
             },
             identity
           )
-        case response if response.status == UNAUTHORIZED =>
-          logger.error(s"[view] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
-          RepaymentJourneyErrorResponse(response.status, response.body)
-        case response if response.status >= INTERNAL_SERVER_ERROR =>
+        case response if isErrorLevelStatus(response.status) =>
           logger.error(s"[view] Repayment journey start error with response code: ${response.status} and body: ${response.body}")
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response =>
