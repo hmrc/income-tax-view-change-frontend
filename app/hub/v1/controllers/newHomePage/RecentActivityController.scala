@@ -29,7 +29,7 @@ import financials.models.Payment
 import financials.services.{PaymentHistoryService, WhatYouOweService}
 import hub.services.newHomePage.RecentActivityService
 import hub.utils.HomePageUtils
-import hub.v2.controllers.routes as homeRoutes
+import hub.v1.controllers.routes as homeRoutes
 import hub.v1.views.html.newHomePage.*
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

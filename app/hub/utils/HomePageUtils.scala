@@ -123,7 +123,7 @@ trait HomePageUtils extends FeatureSwitching {
     if(isEnabled(NewHubContextRootEnabled)) {
       hub.v2.controllers.routes.HomeController.handleOverview(origin, isAgent).url
     } else {
-      hub.v2.controllers.routes.HomeController.handleOverview(origin, isAgent).url
+      hub.v1.controllers.routes.HomeController.handleOverview(origin, isAgent).url
     }
   }
 
@@ -131,7 +131,7 @@ trait HomePageUtils extends FeatureSwitching {
     if(isEnabled(NewHubContextRootEnabled)) {
       hub.v2.controllers.routes.HomeController.handleHelp(origin, isAgent).url
     } else {
-      hub.v2.controllers.routes.HomeController.handleHelp(origin, isAgent).url
+      hub.v1.controllers.routes.HomeController.handleHelp(origin, isAgent).url
     }
   }
   
