@@ -45,7 +45,8 @@ class WhereMoneyCameFromTableSpec extends TestSupport {
     firstPendingAmountRequested = None,
     secondPendingAmountRequested = None,
     creditRows = List(row),
-    checkRefundStatusLink = "/refund-status"
+    checkRefundStatusLink = "/refund-status",
+    dunningLock = false
   )
 
 
@@ -71,7 +72,7 @@ class WhereMoneyCameFromTableSpec extends TestSupport {
         firstRow.select("td").get(0).text() shouldBe "31 Jan 2024"
 
         val link = firstRow.select("a#where-the-money-came-from-link-0")
-        link.text() shouldBe "Payment you made to HMRC on 29 Jan 2024"
+        link.text() shouldBe "Payment you made to HMRC on 29 January 2024"
         link.attr("href") should include("payment-made-to-hmrc")
 
         firstRow.select("td#tax-year-cell-0").text() shouldBe s"2023 to 2024"

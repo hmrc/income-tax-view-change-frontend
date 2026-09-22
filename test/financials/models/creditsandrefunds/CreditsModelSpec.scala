@@ -50,39 +50,45 @@ class CreditsModelSpec extends UnitSpec {
       |  "transactions" : [ {
       |    "transactionType" : "refund",
       |    "amount" : 5,
-      |    "transactionId" : "REFUND01"
+      |    "transactionId" : "REFUND01",
+      |    "dunningLock" : false
       |  }, {
       |    "transactionType" : "refund",
       |    "amount" : 5,
-      |    "transactionId" : "REFUND02"
+      |    "transactionId" : "REFUND02",
+      |    "dunningLock" : false
       |  }, {
       |    "transactionType" : "cutOver",
       |    "amount" : 1,
       |    "taxYear" : 2023,
       |    "dueDate" : "2023-01-01",
       |    "effectiveDateOfPayment" : "2023-01-01",
-      |    "transactionId" : "CUTOVER01"
+      |    "transactionId" : "CUTOVER01",
+      |    "dunningLock" : false
       |  }, {
       |    "transactionType" : "balancingCharge",
       |    "amount" : 2,
       |    "taxYear" : 2024,
       |    "dueDate" : "2024-01-01",
       |    "effectiveDateOfPayment" : "2024-01-01",
-      |    "transactionId" : "BALANCING01"
+      |    "transactionId" : "BALANCING01",
+      |    "dunningLock" : false
       |  }, {
       |    "transactionType" : "mfa",
       |    "amount" : 3,
       |    "taxYear" : 2021,
       |    "dueDate" : "2021-01-01",
       |    "effectiveDateOfPayment" : "2021-01-01",
-      |    "transactionId" : "MFA01"
+      |    "transactionId" : "MFA01",
+      |    "dunningLock" : false
       |  }, {
       |    "transactionType" : "repaymentInterest",
       |    "amount" : 4,
       |    "taxYear" : 2022,
       |    "dueDate" : "2022-01-01",
       |    "effectiveDateOfPayment" : "2022-01-01",
-      |    "transactionId" : "REPAYMENTINT01"
+      |    "transactionId" : "REPAYMENTINT01",
+      |    "dunningLock" : false
       |  } ]
       |}
       |""".stripMargin
@@ -95,42 +101,48 @@ class CreditsModelSpec extends UnitSpec {
       dueDate = None,
       effectiveDateOfPayment = None,
       documentDate = None,
-      transactionId = "REFUND01"),
+      transactionId = "REFUND01",
+      dunningLock = false),
     Transaction(transactionType = Repayment,
       amount = 5,
       taxYear = None,
       dueDate = None,
       effectiveDateOfPayment = None,
       documentDate = None,
-      transactionId = "REFUND02"),
+      transactionId = "REFUND02",
+      dunningLock = false),
     Transaction(transactionType = CutOverCreditType,
       amount = 1,
       taxYear = Some(TaxYear.forYearEnd(2023)),
       dueDate = Some(dateInYear(2023)),
       documentDate = None,
       effectiveDateOfPayment = Some(dateInYear(2023)),
-      transactionId = "CUTOVER01"),
+      transactionId = "CUTOVER01",
+      dunningLock = false),
     Transaction(transactionType = BalancingChargeCreditType,
       amount = 2,
       taxYear = Some(TaxYear.forYearEnd(2024)),
       dueDate = Some(dateInYear(2024)),
       effectiveDateOfPayment = Some(dateInYear(2024)),
       documentDate = None,
-      transactionId = "BALANCING01"),
+      transactionId = "BALANCING01",
+      dunningLock = false),
     Transaction(transactionType = MfaCreditType,
       amount = 3,
       taxYear = Some(TaxYear.forYearEnd(2021)),
       dueDate = Some(dateInYear(2021)),
       effectiveDateOfPayment = Some(dateInYear(2021)),
       documentDate = None,
-      transactionId = "MFA01"),
+      transactionId = "MFA01",
+      dunningLock = false),
     Transaction(transactionType = RepaymentInterest,
       amount = 4,
       taxYear = Some(TaxYear.forYearEnd(2022)),
       dueDate = Some(dateInYear(2022)),
       effectiveDateOfPayment = Some(dateInYear(2022)),
       documentDate = None,
-      transactionId = "REPAYMENTINT01")
+      transactionId = "REPAYMENTINT01",
+      dunningLock = false)
   ))
 
   "httpParser" when {
@@ -166,6 +178,30 @@ class CreditsModelSpec extends UnitSpec {
     }
   }
 
+  ".dunningLockExists" should {
+    "return true when dunning lock exists on any transaction" in {
+      val creditsModel = CreditsModel(availableCreditForRepayment, allocatedCreditForFutureCharges,
+        unallocatedCredit, totalCredit, Some(firstPendingAmountRequested), Some(secondPendingAmountRequested),
+        allCreditsObj.transactions :+
+          Transaction(transactionType = PoaOneReconciliationCredit,
+            amount = 5,
+            taxYear = None,
+            dueDate = None,
+            effectiveDateOfPayment = None,
+            documentDate = None,
+            transactionId = "POAONE01",
+            dunningLock = true))
+
+      creditsModel.dunningLockExists shouldBe true
+    }
+    "return false when dunning lock doesn't exist on any transaction" in {
+      val creditsModel = CreditsModel(availableCreditForRepayment, allocatedCreditForFutureCharges,
+        unallocatedCredit, totalCredit, Some(firstPendingAmountRequested), Some(secondPendingAmountRequested),
+        allCreditsObj.transactions.map(_.copy(dunningLock = false)))
+
+      creditsModel.dunningLockExists shouldBe false
+    }
+  }
 
   "CreditAndRefundModel" should {
 
@@ -180,7 +216,6 @@ class CreditsModelSpec extends UnitSpec {
         case _ => fail("Model did not validate correctly")
       }
     }
-
 
     "write to JSON correctly" in {
 
@@ -216,7 +251,8 @@ class CreditsModelSpec extends UnitSpec {
           |  "transactions" : [ {
           |    "transactionType" : "invalid credit type",
           |    "amount" : 5,
-          |    "transactionId": "invalid01"
+          |    "transactionId" : "invalid01",
+          |    "dunningLock" : false
           |  } ]
           |}
           |""".stripMargin

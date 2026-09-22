@@ -95,7 +95,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                       messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£2,000.00"),
 
                     elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(2)")(expectedValue =  s"29 Mar $testPreviousTaxYear "+
-                      messagesAPI("money-in-your-account.where-from.payment-row.description", "15 Jan 2021") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£500.00"),
+                      messagesAPI("money-in-your-account.where-from.payment-row.description", "15 January 2021") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£500.00"),
 
                     elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(3)")(expectedValue =  s"15 Apr $testPreviousTaxYear " +
                       messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYear to $testTaxYear " + "£2,000.00"),
@@ -143,7 +143,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                     elementTextBySelectorList("#where-the-money-came-from-table  tbody  tr:nth-child(1)")(expectedValue =  s"29 Mar $testPreviousTaxYear " +
                       messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£2,000.00"),
                     elementTextBySelectorList("#where-the-money-came-from-table  tbody  tr:nth-child(2)")(expectedValue = s"29 Mar $testPreviousTaxYear " +
-                      messagesAPI("money-in-your-account.where-from.payment-row.description", "15 Jan 2021") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£500.00"),
+                      messagesAPI("money-in-your-account.where-from.payment-row.description", "15 January 2021") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£500.00"),
                     pageTitle(mtdUserRole, "money-in-your-account.heading")
                   )
                 }

@@ -52,7 +52,7 @@
             content = HtmlContent(payment.date.toLongDateShort.toNonBreaking.toString)
         ),
         TableRow(
-            content = TableRowDescriptionLink(messages("money-in-your-account.where-from.payment-row.description", payment.effectiveDate.toLongDateShort), payment.descriptionLink(user.isAgent), index),
+            content = TableRowDescriptionLink(messages("money-in-your-account.where-from.payment-row.description", payment.effectiveDate.toLongDate), payment.descriptionLink(user.isAgent), index),
             attributes = Map("id" -> s"payment-$index")
         ),
         TableRow(
