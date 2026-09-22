@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package hub.v1.controllers
+package hub.v2.controllers
 
 import common.auth.MtdItUser
-import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.services.AuditingService
 import hub.audit.models.ChooseTaxYearsRangeSubmittedAuditModel
+import hub.auth.AuthActions
 import hub.forms.{ChooseTaxYearsRangeForm, ChooseTaxYearsRangeOption}
 import hub.models.TaxYearRangeLabels
 import hub.views.html.ChooseTaxYearsRangeView
@@ -28,10 +28,10 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import scala.util.Try
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class ChooseTaxYearsRangeController @Inject()(
@@ -45,7 +45,7 @@ class ChooseTaxYearsRangeController @Inject()(
                                             ) extends FrontendController(mcc) with I18nSupport {
   private val submitCall = {
     val submitRoute = routes.ChooseTaxYearsRangeController.submit()
-    Call(submitRoute.method, appConfig.appUrl(submitRoute.url))
+    Call(submitRoute.method, s"${appConfig.hubBasePath()}${submitRoute.url}")
   }
 
   private def migrationYear(user: MtdItUser[_]): Int =
@@ -57,7 +57,7 @@ class ChooseTaxYearsRangeController @Inject()(
   // yearOfMigration is missing or cannot be parsed as an Int.
   private def safeMigrationYear(user: MtdItUser[_]): Option[Int] =
     Try(migrationYear(user)).toOption
-    
+
   private def taxYearRangeLabels(yearOfMigration: Int): TaxYearRangeLabels =
     TaxYearRangeLabels(
       mtdFromYear = yearOfMigration.toString,
@@ -120,3 +120,4 @@ class ChooseTaxYearsRangeController @Inject()(
     }
   }
 }
+

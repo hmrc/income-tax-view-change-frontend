@@ -232,7 +232,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
             )
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(hub.v1.controllers.routes.HomeController.showAgent().url)
+            redirectLocation(result) shouldBe Some("/manage-self-assessment/agents/client-income-tax")
             if (!appConfig.isSessionDataStorageEnabled) {
               session(result).get(SessionKeys.confirmedClient) shouldBe Some("true")
             }

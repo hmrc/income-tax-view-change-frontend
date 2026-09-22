@@ -9,7 +9,7 @@ GET         /assets/*file                                                 contro
 
 #Home Controller
 
-GET         /                                                             hub.v1.controllers.ChooseTaxYearsRangeController.show()
+GET         /                                                             hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/client-income-tax                                     hub.v1.controllers.HomeController.showAgent()
 GET         /agents                                                       hub.v1.controllers.HomeController.showAgent()
