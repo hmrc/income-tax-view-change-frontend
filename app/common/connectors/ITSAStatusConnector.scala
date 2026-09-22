@@ -19,7 +19,7 @@ package common.connectors
 import common.config.FrontendAppConfig
 import common.models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logging
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -34,6 +34,9 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
   def getITSAStatusDetailUrl(taxableEntityId: String, taxYear: String, futureYears: Boolean, history: Boolean): String = {
     s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/itsa-status/status/$taxableEntityId/$taxYear?futureYears=${futureYears.toString}&history=${history.toString}"
   }
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def getITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)
                          (implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] = {
@@ -57,7 +60,7 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
           logger.debug(s"Get ITSA Status returned NOT_FOUND")
           Right(List())
         case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getITSAStatusDetail Response status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getITSAStatusDetail] Response status: ${response.status}, body: ${response.body}")

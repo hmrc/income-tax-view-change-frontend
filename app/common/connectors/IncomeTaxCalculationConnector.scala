@@ -37,6 +37,9 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: Fronte
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
     s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
+
   def getCalculationResponse(
                               mtditid: String,
                               nino: String,
@@ -61,7 +64,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: Fronte
             valid => valid
           )
         case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getCalculationResponse] Response status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getCalculationResponse] Response status: ${response.status}, body: ${response.body}")
@@ -88,7 +91,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: Fronte
             valid => valid
           )
         case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
+          if (isErrorLevelStatus(status)) {
             logger.error(
               s"[getCalculationResponseByCalcId] Response status: ${response.status}, body: ${response.body}")
           } else {

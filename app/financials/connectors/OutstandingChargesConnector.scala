@@ -21,7 +21,7 @@ import common.connectors.RawResponseReads
 import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
 import play.api.Logging
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_GATEWAY, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -38,6 +38,9 @@ class OutstandingChargesConnector @Inject()(
 
   private[connectors] def getOutstandingChargesUrl(idType: String, idNumber: String, taxYear: String): String =
     baseUrl + s"/out-standing-charges/$idType/$idNumber/$taxYear"
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def getOutstandingCharges(idType: String, idNumber: String, taxYear: String)
                            (implicit headerCarrier: HeaderCarrier): Future[OutstandingChargesResponseModel] = {
@@ -60,7 +63,7 @@ class OutstandingChargesConnector @Inject()(
               },
               valid => valid
             )
-          case status if status >= Status.INTERNAL_SERVER_ERROR =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getOutstandingCharges] Status: ${response.status}, body: ${response.body}")
             OutstandingChargesErrorModel(response.status, response.body)
           case _ =>

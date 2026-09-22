@@ -17,7 +17,7 @@
 package financials.models.chargeHistory
 
 import play.api.Logging
-import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status.{BAD_GATEWAY, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SERVICE_UNAVAILABLE}
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
@@ -40,6 +40,9 @@ object ChargesHistoryResponse extends Logging {
 
   type ChargesHistoryResponse = ChargeHistoryResponseModel
 
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
+
   implicit object ChargesHistoryResponseReads extends HttpReads[ChargesHistoryResponse] {
 
     override def read(method: String, url: String, response: HttpResponse): ChargesHistoryResponse = {
@@ -58,7 +61,7 @@ object ChargesHistoryResponse extends Logging {
             logger.info(s"No charge history found at url: $url - Status: ${response.status}, body: ${response.body}")
             ChargesHistoryModel("", "", "", None)
           } else {
-            if (status >= 500) {
+            if (isErrorLevelStatus(status)) {
               logger.error(s"Status: ${response.status}, body: ${response.body}")
             } else {
               logger.warn(s"Status: ${response.status}, body: ${response.body}")

@@ -23,7 +23,7 @@ import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSource
 import common.services.AuditingService
 import common.utils.sessionUtils.SessionKeys
 import play.api.Logging
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_GATEWAY, OK, SERVICE_UNAVAILABLE}
 import play.api.http.Status
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HttpReads.Implicits.*
@@ -67,6 +67,9 @@ class IncomeSourceConnector @Inject()(
     headerCarrier
   }
   
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
+  
   def getIncomeSources()(implicit headerCarrier: HeaderCarrier, mtdItUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
 
     val url = getIncomeSourcesUrl(mtdItUser.mtditId)
@@ -99,7 +102,7 @@ class IncomeSourceConnector @Inject()(
                 valid
               }
             )
-          case status if (status >= 500) =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getIncomeSources] RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
           case _ =>

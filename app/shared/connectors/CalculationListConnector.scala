@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import common.models.core.Nino
 import play.api.Logging
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
 import shared.models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -36,6 +36,9 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
   def getCalculationListUrl(nino: String, taxYearRange: String): String = {
     s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
   }
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def getCalculationList(nino: Nino, taxYearRange: String, mtditid: String)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
@@ -64,7 +67,7 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
             valid => valid
           )
         case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getCalculationList] Response status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getCalculationList] Response status: ${response.status}, body: ${response.body}")
