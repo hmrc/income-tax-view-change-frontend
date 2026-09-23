@@ -2100,6 +2100,7 @@ whatYouOwe.paying-suspended-tax.p3                              = Os byddwch chi
 whatYouOwe.paying-suspended-tax.p4                              = Gallwch dalu’r swm hwn neu nodi swm gwahanol.
 whatYouOwe.formal.suspended-charges                             = Treth sy’n ddyledus ond nad yw’n cael ei chasglu ar hyn o bryd
 whatYouOwe.formal.suspended-charges.p1                          = Mae’r dreth hon wedi’i gohirio oherwydd bod apêl ar y gweill. Ni fydd CThEF yn casglu’r dreth tra bydd wedi’i gohirio.
+whatYouOwe.formal-informal.suspended-charges.p1                 = Mae’r dreth hon wedi’i gohirio ar gyfer adolygiad neu oherwydd bod apêl ar y gweill. Ni fydd CThEF yn casglu’r dreth tra bydd wedi’i gohirio.
 whatYouOwe.formal.suspended-charges.p2                          = Codir llog arnoch os caiff y dreth ei rhyddhau er mwyn i CThEF ei chasglu ac os nad ydych wedi ei thalu erbyn y dyddiad dyledus gwreiddiol.
 whatYouOwe.formal.suspended-charges.table.th1                   = Due date
 whatYouOwe.formal.suspended-charges.table.th2                   = Tax details

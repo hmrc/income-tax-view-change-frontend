@@ -62,6 +62,26 @@
     @if(viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty) {
             @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled)
 
+        @h2(classes = "govuk-heading-m", msg = messages("whatYouOwe.formal.suspended-charges.paying-tax.header"))
+
+        @p(){
+            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p1")
+        }
+
+        @p(){
+            @messages("whatYouOwe.formal.suspended-charges.paying-tax.list.header")
+        }
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l1")</li>
+            <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l2")</li>
+        </ul>
+
+        @p(){
+            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p2")
+        }
+        @p(){
+            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p3")
+        }
             @paymentsMadeContent(
                 origin = origin,
                 viewModel = viewModel)

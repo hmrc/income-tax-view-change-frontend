@@ -2114,6 +2114,7 @@ whatYouOwe.paying-suspended-tax.p3                                 = If you make
 whatYouOwe.paying-suspended-tax.p4                                 = You can pay this amount or enter a different amount.
 whatYouOwe.formal.suspended-charges                                = Tax owed that is currently not being collected
 whatYouOwe.formal.suspended-charges.p1                             = This tax is suspended because there is an appeal. HMRC will not collect tax while it is suspended.
+whatYouOwe.formal-informal.suspended-charges.p1                    = This tax is suspended for review or because there is an appeal. HMRC will not collect tax while it is suspended.
 whatYouOwe.formal.suspended-charges.p2                             = You will be charged interest if the tax is released for HMRC to collect and it has not been paid by the original due date.
 whatYouOwe.formal.suspended-charges.table.th1                      = Due date
 whatYouOwe.formal.suspended-charges.table.th2                      = Tax details

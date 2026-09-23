@@ -59,7 +59,11 @@
 
 @h2(classes = "govuk-heading-m", msg = messages("whatYouOwe.formal.suspended-charges"))
 
-@p(){@messages("whatYouOwe.formal.suspended-charges.p1")}
+@if(viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty) {
+    @p(){@messages("whatYouOwe.formal-informal.suspended-charges.p1")}
+}else {
+    @p(){@messages("whatYouOwe.formal.suspended-charges.p1")}
+}
 
 @p(){
     @messages("whatYouOwe.formal.suspended-charges.p2")
