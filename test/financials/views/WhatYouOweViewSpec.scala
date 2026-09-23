@@ -108,7 +108,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val poa1CollectedCodedOut: String = messages("whatYouOwe.poa1CodedOut.text")
   val poa2CollectedCodedOut: String = messages("whatYouOwe.poa2CodedOut.text")
   val totalRowLabel: String = messages("whatYouOwe.total-row.label")
-  val totalRowWitNotIncludingAccruingInterestLabel: String = messages("whatYouOwe.total-row.not-including-interest.label")
+  val totalRowWithNotIncludingAccruingInterestLabel: String = messages("whatYouOwe.total-row.not-including-interest.label")
 
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
@@ -1322,7 +1322,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       ) {
         val totalRow: Element = pageDocument.getElementById("what-you-owe-total-row")
         totalRow should not be null
-        totalRow.select(".what-you-owe-total-row__label").text() shouldBe totalRowWitNotIncludingAccruingInterestLabel
+        totalRow.select(".what-you-owe-total-row__label").text() shouldBe totalRowWithNotIncludingAccruingInterestLabel
         totalRow.select(".what-you-owe-total-row__amount").text() shouldBe "£4,282.20"
       }
 
