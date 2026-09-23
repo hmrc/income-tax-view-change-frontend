@@ -24,12 +24,14 @@
 @import common.views.html.components.{h2, p}
 @import returns.views.html.partials.taxYearSummary.GetChargeSummaryMessage
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import shared.enums.ChargeClassificationType
 
 @this(h2: h2,
         p: p,
         govukTable: GovukTable,
         getChargeSummaryMessage: GetChargeSummaryMessage,
         implicitDateFormatter: ImplicitDateFormatterImpl)
+
 @(viewModel: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean, origin: Option[String])(implicit messages: Messages, dateService: DateServiceInterface, appConfig: FrontendAppConfig)
 @import implicitDateFormatter._
 
@@ -98,6 +100,27 @@
     }
 }
 
+@maybeRenderRejectedCorrectionRow(rows: List[Seq[TableRow]]) = @{
+    val rcRow =
+        Seq(
+            TableRow(
+                content = Text(messages("tax-year-summary.payments.hmrcCorrection.text")),
+                classes = "govuk-!-font-weight-regular"
+            ),
+            TableRow(content = Text(messages("tax-year-summary.noData"))),
+            TableRow(
+                content = Text(0.toCurrencyString),
+                classes = "govuk-table__cell--numeric"
+            )
+        )
+
+    if(viewModel.charges.exists(charge => ChargeClassificationType.isCustomerRejection(charge.chargeClassification))) {
+        rows :+ rcRow
+    } else {
+        rows
+    }
+}
+
 @h2(msg = messages("tax-year-summary.charges"), classes = "govuk-heading-l")
 @if(viewModel.charges.isEmpty) {
     @p()(content = Html(messages("tax-year-summary.payments.no-payments")))
@@ -113,6 +136,7 @@
             ),
             HeadCell(
                 content = Text(messages("tax-year-summary.payments.due-date")),
+                classes = "govuk-table__header govuk-!-width-one-quarter",
                 attributes = Map("id" -> "paymentDueDateHeading")
             ),
             HeadCell(
@@ -121,6 +145,6 @@
                 attributes = Map("id" -> "paymentAmountHeading")
             )
         )),
-        rows = tableRows()
+        rows = maybeRenderRejectedCorrectionRow(tableRows())
     ))
 }

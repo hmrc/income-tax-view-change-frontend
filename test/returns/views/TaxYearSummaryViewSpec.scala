@@ -169,6 +169,16 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       dueDate = Some(LocalDate.of(2019, 8, 15)), isLatePaymentInterest = true)
   )
 
+  val testChargesWithCustomerRejectionList: List[TaxYearSummaryChargeItem] = List(
+    TaxYearSummaryChargeItem.fromChargeItem(
+      chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2019, 6, 15)), accruingInterestAmount = Some(100.0)),
+      dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
+    TaxYearSummaryChargeItem.fromChargeItem(
+      chargeItemModel(transactionType = PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), accruingInterestAmount = Some(80.0),
+        latePaymentInterestAmount = Some(80.00), chargeClassification = Some("RC")),
+      dueDate = Some(LocalDate.of(2019, 7, 15)), isLatePaymentInterest = true)
+  )
+
   val testChargesWithoutLpiList: List[TaxYearSummaryChargeItem] = testChargesList.map(_.copy(isAccruingInterest = false))
 
   val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(
@@ -1087,9 +1097,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Aug 2019"
       }
 
-
       "display the Amount in the payments tab" in new Setup(estimateView(chargeItems = testChargesWithoutLpiList)) {
         layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe "£1,400.00"
+      }
+
+      "display the 'Extra amount to pay due to HMRC correction' line item in the Payments tab when there is a customer rejection" in new Setup(estimateView(chargeItems = testChargesWithCustomerRejectionList)) {
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1)").text shouldBe "Extra amount to pay due to HMRC correction"
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "No data"
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(3)").text shouldBe "£0.00"
       }
 
       "display no payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
