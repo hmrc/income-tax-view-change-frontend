@@ -64,7 +64,7 @@
         @if(viewModel.creditRows.length > 0){
             @whereMoneyCameFromTable(viewModel)
         } else {}
-        @if(viewModel.availableCredit > 0) {
+        @if(viewModel.hasAvailableCredit) {
         @ClaimRefundButton()}
 
     } else {
