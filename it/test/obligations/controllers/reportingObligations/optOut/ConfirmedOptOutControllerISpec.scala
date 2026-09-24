@@ -89,14 +89,18 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
               val calcResponseBody =
                 """
                   |{
-                  |  "calculationId": "TEST_ID",
-                  |  "calculationTimestamp": "TEST_STAMP",
-                  |  "calculationType": "TEST_TYPE",
-                  |  "crystallised": false
+                  |  "calculations": [
+                  |    {
+                  |      "calculationId": "TEST_ID",
+                  |      "calculationTimestamp": "TEST_STAMP",
+                  |      "calculationType": "TEST_TYPE",
+                  |      "crystallised": false
+                  |    }
+                  |  ]
                   |}
                   |""".stripMargin
 
-              WiremockHelper.stubGet("/income-tax-calculations/calculation-list/AA123456A/2022", 200, calcResponseBody)
+              WiremockHelper.stubGet("/income-tax-calculation/calculation-list/AA123456A/2022", 200, calcResponseBody)
 
               val responseBody = Json.arr(successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023)
 
