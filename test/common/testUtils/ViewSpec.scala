@@ -125,6 +125,9 @@ trait ViewSpec extends TestSupport {
       element.select(Selectors.id(id)) getOrElse fail(s"element with id $id not found")
     }
 
+    def hasId(id: String): Boolean =
+      element.select(Selectors.id(id)).nonEmpty
+
     def table(nthOfType: Int = 1): Element = {
       element.select(s"${Selectors.table}:nth-of-type($nthOfType)") getOrElse fail("table element not found")
     }

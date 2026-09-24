@@ -115,7 +115,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         document.hasTableWithCaption("Where the money came from")
         document.hasTableWithCorrectSize(1, 4)
         document.hasTableWithCorrectHeadings(List("Date", "Description", "Tax year", "Amount"))
-//        document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
+        document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
       }
       "the user has credit which has all been allocated" in new TestSetup(
         creditAndRefundModel = ANewCreditAndRefundModel()
@@ -134,6 +134,25 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         document.hasTableWithCorrectHeadings(List("Date", "Description", "Tax year", "Amount"))
         document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
       }
+
+      "the user has credit but it is not available" in new TestSetup(
+        creditAndRefundModel = ANewCreditAndRefundModel()
+          .withTotalCredit(200)
+          .withAvailableCredit(0)
+          .withAllocatedFutureCredit(100)
+          .withBalancingChargeCredit(dateInYear(2024), 50)
+          .withPoaOneReconciliationCredit(dateInYear(2023), 50)
+          .get()
+      ) {
+        document.title() shouldBe individualTitle
+        layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
+        document.selectById("credit-explanation").text() shouldBe "This amount has been set aside to pay for upcoming charges. You can still claim it back, but it may be easier to leave it in your account to avoid missing any payment deadlines."
+        document.hasTableWithCaption("Where the money came from")
+        document.hasTableWithCorrectSize(1, 4)
+        document.hasTableWithCorrectHeadings(List("Date", "Description", "Tax year", "Amount"))
+        document.hasId("claim-a-refund-button") shouldBe false
+      }
+
       "the user has credit which has been partially allocated" in new TestSetup(
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withTotalCredit(200)
