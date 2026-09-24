@@ -79,5 +79,5 @@
             )),
             attributes = Map("id" -> "what-you-owe-standover-table"),
         ))
-@totalTableRow(viewModel.totalFormalAndInformal.getOrElse(0))
+@totalTableRow(viewModel.totalFormalAndInformal.getOrElse(0), viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)
 
