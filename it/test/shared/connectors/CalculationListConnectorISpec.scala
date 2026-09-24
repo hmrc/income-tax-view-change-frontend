@@ -34,14 +34,18 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
   "CalculationListConnector" when {
     ".getCalculationList()" when {
       "sending a request" should {
-        "return a successful response" in {
+        "return a successful response (not crystallised)" in {
           val responseBody =
             """
               |{
-              |  "calculationId": "TEST_ID",
-              |  "calculationTimestamp": "TEST_STAMP",
-              |  "calculationType": "TEST_TYPE",
-              |  "crystallised": false
+              |  "calculations": [
+              |    {
+              |      "calculationId": "TEST_ID",
+              |      "calculationTimestamp": "TEST_STAMP",
+              |      "calculationType": "inYear",
+              |      "crystallised": false
+              |    }
+              |  ]
               |}
               |""".stripMargin
 
@@ -50,6 +54,33 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
           val result = connector.getCalculationList(Nino(nino), taxYearEnd, testMtditid).futureValue
 
           result shouldBe CalculationListModel(Some(false))
+          WiremockHelper.verifyGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd")
+        }
+        "return a successful response (crystallised, not the first entry in the calculations list)" in {
+          val responseBody =
+            """
+              |{
+              |  "calculations": [
+              |    {
+              |      "calculationId": "TEST_ID_1",
+              |      "calculationTimestamp": "TEST_STAMP_1",
+              |      "calculationType": "inYear"
+              |    },
+              |    {
+              |      "calculationId": "TEST_ID_2",
+              |      "calculationTimestamp": "TEST_STAMP_2",
+              |      "calculationType": "crystallisation",
+              |      "crystallised": true
+              |    }
+              |  ]
+              |}
+              |""".stripMargin
+
+          WiremockHelper.stubGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd", OK, responseBody)
+
+          val result = connector.getCalculationList(Nino(nino), taxYearEnd, testMtditid).futureValue
+
+          result shouldBe CalculationListModel(Some(true))
           WiremockHelper.verifyGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd")
         }
         "return an error when the request fails" in {
