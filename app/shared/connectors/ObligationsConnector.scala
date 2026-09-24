@@ -23,7 +23,7 @@ import common.models.obligations.{ObligationsErrorModel, ObligationsModel, Oblig
 import common.services.AuditingService
 import play.api.Logging
 import play.api.http.Status
-import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
+import play.api.http.Status.{BAD_GATEWAY, FORBIDDEN, NOT_FOUND, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -48,6 +48,9 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
   private def getFulfilledObligationsUrl(nino: String, fromDate: LocalDate, toDate: LocalDate): String = {
     s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/$nino/fulfilled-obligations/from/$fromDate/to/$toDate"
   }
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def getOpenObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
 
@@ -74,7 +77,7 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
           logger.warn(s"[getOpenObligations] Status: ${response.status}, body: ${response.body}")
           ObligationsModel(Seq.empty)
         case status =>
-          if (status >= 500) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getOpenObligations] RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getOpenObligations] RESPONSE status: ${response.status}, body: ${response.body}")
@@ -110,7 +113,7 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
           logger.warn(s"[getFulfilledObligations] Status: ${response.status}, body: ${response.body}")
           ObligationsModel(Seq.empty)
         case status =>
-          if (status >= 500) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getFulfilledObligations] RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getFulfilledObligations] RESPONSE status: ${response.status}, body: ${response.body}")
@@ -150,7 +153,7 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
           logger.warn(s"[getAllObligationsDateRange] Status: ${response.status}, body: ${response.body}")
           ObligationsModel(Seq.empty)
         case status =>
-          if (status >= 500) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getAllObligationsDateRange] Status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getAllObligationsDateRange] Status: ${response.status}, body: ${response.body}")

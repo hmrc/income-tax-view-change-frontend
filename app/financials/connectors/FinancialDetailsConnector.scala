@@ -30,7 +30,7 @@ import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentD
 import financials.models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logging
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -60,6 +60,9 @@ class FinancialDetailsConnector @Inject()(
   private[connectors] def getPaymentAllocationsUrl(nino: String, paymentLot: String, paymentLotItem: String): String =
     baseUrl + s"/$nino/payment-allocations/$paymentLot/$paymentLotItem"
 
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
+
   def getPaymentAllocations(
                              nino: Nino,
                              paymentLot: String,
@@ -83,7 +86,7 @@ class FinancialDetailsConnector @Inject()(
               },
               valid => valid
             )
-          case status if status >= 500 =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getPaymentAllocations] Status: ${response.status}, body: ${response.body}")
             PaymentAllocationsError(response.status, response.body)
           case _ =>
@@ -167,7 +170,7 @@ class FinancialDetailsConnector @Inject()(
               },
               valid => valid
             )
-          case status if status >= 500 =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getFinancialDetails] Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
           case _ =>
@@ -204,7 +207,7 @@ class FinancialDetailsConnector @Inject()(
               },
               valid => valid
             )
-          case status if status >= 500 =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getFinancialDetailsByTaxYearRange] Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
           case _ =>
@@ -238,7 +241,7 @@ class FinancialDetailsConnector @Inject()(
               },
               valid => Payments(valid)
             )
-          case status if status >= 500 =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getPayments(taxYear)] Status: ${response.status}, body: ${response.body}")
             PaymentsError(status, response.body)
           case status =>
@@ -268,7 +271,7 @@ class FinancialDetailsConnector @Inject()(
               },
               valid => Payments(valid)
             )
-          case status if status >= 500 =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getPayments(taxYearFrom, taxYearTo)] Status: ${response.status}, body: ${response.body}")
             PaymentsError(status, response.body)
           case status =>
@@ -297,7 +300,7 @@ class FinancialDetailsConnector @Inject()(
               },
               valid => valid
             )
-          case status if status >= INTERNAL_SERVER_ERROR =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getFinancialDetailsByDocumentId] Response status: ${response.status}, body: ${response.body}")
             FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
           case _ =>

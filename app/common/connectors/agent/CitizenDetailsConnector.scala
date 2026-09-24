@@ -21,7 +21,7 @@ import common.connectors.RawResponseReads
 import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.api.Logging
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_GATEWAY, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpResponse, StringContextOps}
 
@@ -42,8 +42,10 @@ class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
     request
   }
 
-  def getCitizenDetailsBySaUtr(saUtr: String)(implicit headerCarrier: HeaderCarrier): Future[CitizenDetailsResponseModel] = {
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
+  def getCitizenDetailsBySaUtr(saUtr: String)(implicit headerCarrier: HeaderCarrier): Future[CitizenDetailsResponseModel] = {
     val url = getCitizenDetailsBySaUtrUrl(saUtr)
 
     logger.debug(s"GET $url")
@@ -60,7 +62,7 @@ class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
             valid => valid
           )
         case status =>
-          if (status >= 500) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getCitizenDetailsBySaUtr] RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getCitizenDetailsBySaUtr] RESPONSE status: ${response.status}, body: ${response.body}")
