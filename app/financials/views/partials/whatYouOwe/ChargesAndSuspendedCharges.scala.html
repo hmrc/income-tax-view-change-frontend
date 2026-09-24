@@ -172,7 +172,7 @@
         ))
 
         @viewModel.totalBalance.map { total =>
-            @totalTableRow(total)
+            @totalTableRow(total, viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)
         }
     </div>
 }

@@ -108,6 +108,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val poa1CollectedCodedOut: String = messages("whatYouOwe.poa1CodedOut.text")
   val poa2CollectedCodedOut: String = messages("whatYouOwe.poa2CodedOut.text")
   val totalRowLabel: String = messages("whatYouOwe.total-row.label")
+  val totalRowWithNotIncludingAccruingInterestLabel: String = messages("whatYouOwe.total-row.not-including-interest.label")
 
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
@@ -139,6 +140,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   @unused adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
                   LPP2Url: String = "",
+                  hasOverdueOrAccruingInterestCharges: Boolean = false,
                   totalBalance: Option[BigDecimal] = None
                  ) {
     val individualUser: MtdItUser[_] = defaultMTDITUser(
@@ -150,7 +152,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
-      hasOverdueOrAccruingInterestCharges = false,
+      hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -1315,13 +1317,24 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the what you owe total row" should {
 
-      "display the label and correctly formatted amount when totalBalance is present" in new TestSetup(
+      "display the label and correctly formatted amount when totalBalance is present and has no charges with accruing interest" in new TestSetup(
         charges = whatYouOweDataFullDataWithoutOutstandingCharges(),
-        totalBalance = Some(BigDecimal("4282.20"))
+        totalBalance = Some(BigDecimal("4282.20")),
       ) {
         val totalRow: Element = pageDocument.getElementById("what-you-owe-total-row")
         totalRow should not be null
         totalRow.select(".what-you-owe-total-row__label").text() shouldBe totalRowLabel
+        totalRow.select(".what-you-owe-total-row__amount").text() shouldBe "£4,282.20"
+      }
+
+      "display the label and correctly formatted amount when totalBalance is present and has charges with accruing interest" in new TestSetup(
+        charges = whatYouOwePartialChargesList,
+        totalBalance = Some(BigDecimal("4282.20")),
+        hasOverdueOrAccruingInterestCharges = true
+      ) {
+        val totalRow: Element = pageDocument.getElementById("what-you-owe-total-row")
+        totalRow should not be null
+        totalRow.select(".what-you-owe-total-row__label").text() shouldBe totalRowWithNotIncludingAccruingInterestLabel
         totalRow.select(".what-you-owe-total-row__amount").text() shouldBe "£4,282.20"
       }
 

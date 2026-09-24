@@ -17,18 +17,19 @@
 @import _root_.shared.implicits.ImplicitCurrencyFormatter._
 @import common.views.html.components._
 @import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import financials.models.WhatYouOweViewModel
 
 @this()
 
-@(
-totalAmount: BigDecimal
-)(
-implicit messages: Messages
-)
+@(totalAmount: BigDecimal, hasChargeWithAccruingInterest: Boolean)(implicit messages: Messages)
 
 <div id="what-you-owe-total-row" class="govuk-!-margin-top-0">
     <span class="govuk-body govuk-!-font-weight-bold what-you-owe-total-row__label">
-        @getMessage("total-row.label")
+        @if(hasChargeWithAccruingInterest){
+            @getMessage("total-row.not-including-interest.label")
+        } else {
+            @getMessage("total-row.label")
+        }
     </span>
     <span class="govuk-body govuk-!-font-weight-bold what-you-owe-total-row__amount">
         @totalAmount.toCurrency

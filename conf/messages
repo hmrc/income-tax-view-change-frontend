@@ -2098,7 +2098,8 @@ whatYouOwe.pre-mtd.body                                            = To check if
 whatYouOwe.pre-mtd-link                                            = visit your previous Self Assessment online account
 whatYouOwe.pre-mtd-outstanding-charges                             = Any payment made will be used for outstanding tax for earlier Self Assessment tax years first, and will not be displayed here.
 whatYouOwe.tableRow.na                                             = Not applicable
-whatYouOwe.total-row.label                                         = Total (not including accruing interest):
+whatYouOwe.total-row.not-including-interest.label                  = Total amount (not including accruing interest):
+whatYouOwe.total-row.label                                         = Total amount:
 whatYouOwe.revenueAmendment.label                                  = Extra amount to pay due to HMRC enquiry amendment
 whatYouOwe.standover.formal.label                                  = Appealed: extra amount to pay due to HMRC enquiry amendment
 
