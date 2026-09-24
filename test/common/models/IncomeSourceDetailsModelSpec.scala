@@ -150,6 +150,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
             incomeSourceType = Some("property-unspecified"),
             tradingStartDate = Some(LocalDate.parse("2022-01-01")),
             contextualTaxYear = None,
+            deleted = None,
             cessation = None,
           )
           ))
@@ -234,6 +235,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         incomeSourceType = None,
         tradingStartDate = None,
         contextualTaxYear = None,
+        deleted = None,
         cessation = None,
       )
 

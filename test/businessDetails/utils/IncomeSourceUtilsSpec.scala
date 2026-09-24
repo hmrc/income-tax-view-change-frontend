@@ -51,6 +51,13 @@ class IncomeSourceUtilsSpec extends TestSupport {
 
         result shouldBe None
       }
+      "return an exception when the user has only deleted properties" in {
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoDeletedForeignPropertyBusiness)
+
+        val result = TestIncomeSourcesUtils.getActiveProperty(ForeignProperty)(user = user)
+
+        result shouldBe None
+      }
     }
     "user has income sources" should {
       "return an exception when the user has no active property" in {
@@ -76,6 +83,13 @@ class IncomeSourceUtilsSpec extends TestSupport {
     "user has income sources" should {
       "return an exception when the user has more than one active property" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoActiveUkPropertyBusinesses)
+
+        val result = TestIncomeSourcesUtils.getActiveProperty(UkProperty)(user = user)
+
+        result shouldBe None
+      }
+      "return an exception when the user has only deleted properties" in {
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoDeletedUkPropertyBusinesses)
 
         val result = TestIncomeSourcesUtils.getActiveProperty(UkProperty)(user = user)
 
