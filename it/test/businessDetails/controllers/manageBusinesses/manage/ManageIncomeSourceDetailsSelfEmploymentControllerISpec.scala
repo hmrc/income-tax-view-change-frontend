@@ -98,10 +98,11 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dd")(addressAsString),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
-                elementTextByID("change-link-1")(""),
-                elementTextByID("change-link-2")("")
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade")
               )
+
+              result shouldNot have(elementTextByID("sign-up-link-1")("Sign up"))
+              result shouldNot have(elementTextByID("opt-out-link-2")("Opt out"))
             }
 
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {

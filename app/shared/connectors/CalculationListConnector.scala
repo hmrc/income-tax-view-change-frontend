@@ -52,17 +52,17 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          response.json.validate[CalculationListModel].fold(
-            invalid => {
-              (response.json \ "calculations").validate[Seq[CalculationListModel]].asOpt.flatMap(_.headOption)
-                .getOrElse {
-                logger.error("" +
-                  s"Json validation error parsing calculation list response, error $invalid")
-                CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
-              }
-            },
-            valid => valid
-          )
+          val nestedCrystallised: Option[Boolean] =
+            (response.json \ "calculations").validate[Seq[CalculationListModel]].asOpt
+              .map(_.exists(_.crystallised.contains(true)))
+
+          nestedCrystallised
+            .map(isCrystallised => CalculationListModel(Some(isCrystallised)))
+            .orElse(response.json.validate[CalculationListModel].asOpt)
+            .getOrElse {
+              logger.error("Json validation error parsing calculation list response")
+              CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
+            }
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             logger.error(s"[getCalculationList] Response status: ${response.status}, body: ${response.body}")

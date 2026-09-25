@@ -27,6 +27,42 @@ object CalculationListTestConstants {
       |}
       |""".stripMargin)
 
+  val jsonResponseNestedCrystallised: JsValue = Json.parse(
+    """
+      |{
+      |   "calculations": [
+      |     { "calculationId": "id1", "calculationType": "crystallisation", "crystallised": true }
+      |   ]
+      |}
+      |""".stripMargin)
+
+  val jsonResponseNestedCrystallisedNotFirst: JsValue = Json.parse(
+    """
+      |{
+      |   "calculations": [
+      |     { "calculationId": "id1", "calculationType": "inYear" },
+      |     { "calculationId": "id2", "calculationType": "crystallisation", "crystallised": true }
+      |   ]
+      |}
+      |""".stripMargin)
+
+  val jsonResponseNestedNotCrystallised: JsValue = Json.parse(
+    """
+      |{
+      |   "calculations": [
+      |     { "calculationId": "id1", "calculationType": "inYear", "crystallised": false }
+      |   ]
+      |}
+      |""".stripMargin)
+
+  val jsonResponseNestedNoCrystallisedField: JsValue = Json.parse(
+    """
+      |{
+      |   "calculations": [
+      |     { "calculationId": "id1", "calculationType": "inYear" }
+      |   ]
+      |}
+      |""".stripMargin)
 
   val calculationListFull: CalculationListResponseModel = {
     CalculationListModel(

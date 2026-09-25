@@ -89,10 +89,11 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextByID("change-link-1")(""),
-                elementTextByID("change-link-2")("")
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate)
               )
+
+              result shouldNot have(elementTextByID("opt-out-link-1")(messagesOptOutLinkText))
+              result shouldNot have(elementTextByID("sign-up-link-2")(messagesSignUpLinkText))
             }
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
