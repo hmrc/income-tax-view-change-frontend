@@ -172,7 +172,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(0.00, 2.00, 4.00, 2.00, Some(100), None, None, Some(350), None, None, Some(100)),
+            balanceDetails = BalanceDetails(0.00, 2.00, 4.00, 2.00, Some(100), None, None, Some(350), None, None, Some(100), None),
             chargesList = financialDetailsDueInMoreThan30DaysCi()
           )
         }
@@ -187,7 +187,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None),
             chargesList = financialDetailsBalancingChargesCi
           )
         }
@@ -202,7 +202,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None)
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None)
           )
         }
         "return a success empty response with outstanding amount zero and accruing interest amount zero" in {
@@ -214,7 +214,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None)
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None)
           )
         }
         "return a success POA2 only response with outstanding amount zero and accruing interest amount non-zero" in {
@@ -228,7 +228,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None),
             chargesList = List(poa2))
         }
       }
@@ -256,7 +256,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None),
               codingDetails = List(CodingDetails(Some(2500.00), Some("2021"))),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
@@ -270,7 +270,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             ))))
           TestWhatYouOweService.getWhatYouOweChargesList(isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None),
             chargesList = List(
               balancingChargeNics2.copy(dueDate = Some(LocalDate.parse("2021-08-24")), chargeReference = Some("ABCD1234")),
               balancingChargeCancelled.copy(dueDate = Some(LocalDate.parse("2021-08-25")), chargeReference = Some("ABCD1234"))),
@@ -309,7 +309,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
       "return list including penalties" in {
         testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweLatePaymentPenalties)
-        testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsWithMixedData4Penalties, expectedResult = whatYouOweDataWithMixedData4PenaltiesUnfiltered)
+        testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsWithMixedData4Penalties, expectedResult = whatYouOweDataWithMixedData4PenaltiesUnfiltered2)
       }
       "return list excluding penalties" in {
         testGetWhatYouOweChargesList(penaltiesEnabled = false, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweEmpty)
@@ -360,7 +360,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   "WhatYouOweService.getTotalBalance method" when {
     val chargesListWithPositiveBalance: WhatYouOweChargesList =
       whatYouOweDataWithDataDueInMoreThan30Days()
-        .copy(balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 250.00, None, None, None, None, None, None, None))
+        .copy(balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 250.00, None, None, None, None, None, None, None, None))
 
     val chargesListWithPositiveBalanceAndNoOutstandingCharges: WhatYouOweChargesList =
       chargesListWithPositiveBalance.copy(outstandingChargesModel = None)
@@ -548,7 +548,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           chargeClassification = Some("RC")
         )
         val financialDetailsWithRejection = FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None),
           documentDetails = List(rejectedCorrectionDetail),
           financialDetails = List(
             FinancialDetail("2022", Some("ITSA Return Amendment"), Some("4915"), Some(id1040000124), None, Some("ABCD1234"),

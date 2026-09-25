@@ -259,7 +259,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def   whatYouOweDataWithOverdueInterestData(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueInterestDataCi(accruingInterestAmount),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
     codedOutDetails = Some(balancingCodedOut)
@@ -269,7 +269,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                                                outstandingInterest: List[Option[BigDecimal]],
                                                dunningLock: List[Option[String]] = noDunningLocks,
                                                outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpi(accruingInterestAmount, outstandingInterest, dunningLock, outstandingAmount = outstandingAmount),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
     codedOutDetails = Some(balancingCodedOut)
@@ -278,13 +278,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def whatYouOweDataWithOverdueLpiDunningLock(accruingInterestAmount: Option[BigDecimal],
                                               outstandingInterest: Option[BigDecimal],
                                               lpiWithDunningLock: Option[BigDecimal],
+                                              isRevenueAmendment: List[Boolean] = List(false, false),
+                                              dunningLockValue: List[Option[String]] = List(None, None),
+                                              totalSoAmt: List[Option[BigDecimal]] = List(None, None),
                                               outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpi(
       List(accruingInterestAmount, accruingInterestAmount),
       List(outstandingInterest, outstandingInterest),
       List(None, None),
       List(lpiWithDunningLock, lpiWithDunningLock),
+      isRevenueAmendment,
+      dunningLockValue,
+      totalSoAmt,
       outstandingAmount),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
     codedOutDetails = Some(balancingCodedOut)
@@ -293,21 +299,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def whatYouOweDataWithOverdueLpiDunningLockZero(accruingInterestAmount: Option[BigDecimal],
                                                   interestOutstandingAmount: Option[BigDecimal],
                                                   lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpiDunningLockZeroCi(TaxYear.forYearEnd(fixedDate.getYear), accruingInterestAmount, interestOutstandingAmount, false, lpiWithDunningLock),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
     codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataWithOverdueMixedData2(accruingInterestAmount: List[Option[BigDecimal]], outstandingInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsOverdueWithLpi(accruingInterestAmount, outstandingInterest, dunningLock = noDunningLocks)(1))
       ++ List(financialDetailsWithMixedData3Ci.head),
     codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataTestActiveWithMixedData2(accruingInterestAmount: List[Option[BigDecimal]], outstandingInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsOverdueWithLpi(accruingInterestAmount, outstandingInterest, dunningLock = noDunningLocks)(1))
       ++ List(financialDetailsWithMixedData3Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue),
@@ -352,56 +358,56 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusDays(15).toString, 0.00)
 
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList =
       List(financialDetailsWithMixedData3Ci(1)) ++ List(financialDetailsWithMixedData3Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
   val whatYouOweDataWithWithPaymentsWithin30Days: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 0.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 0.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1Ci(1))
       ++ List(financialDetailsWithMixedData1Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
   val whatYouOweDataWithWithFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 0.00, 4.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 0.00, 4.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1Ci(1))
       ++ List(financialDetailsWithMixedData1Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
   val whatYouOweDataWithCodingOutNics2: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
     codedOutDetails = Some(codedOutDetails)
   )
 
   val whatYouOweDataNoCharges: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(),
     outstandingChargesModel = None,
     codedOutDetails = None
   )
 
   val whatYouOweDataWithCodingOutFullyCollected: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
     codedOutDetails = Some(CodingOutDetails(0.00, TaxYear.forYearEnd(2021)))
   )
 
   val whatYouOweDataWithMFADebits: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsMFADebitsCi.head),
     outstandingChargesModel = None,
     codedOutDetails = None
   )
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
     codedOutDetails = Some(codedOutDetails)
@@ -410,36 +416,36 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDetails = None)
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutCancelledPayeSaCi()),
     outstandingChargesModel = None,
     codedOutDetails = None
   )
 
   val whatYouOweWithPoaOneCollected: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithPoaCodingOutAccepted()),
     outstandingChargesModel = None,
     codedOutDetails = Some(codedOutDetails)
   )
 
   val whatYouOweWithPoaTwoCollected: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithPoaCodingOutAccepted().copy(transactionType = PoaTwoDebit)),
     outstandingChargesModel = None,
     codedOutDetails = Some(codedOutDetails)
   )
 
-  val noChargesButCodedOutModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None), codedOutDetails = Some(balancingCodedOut))
-  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None))
+  val noChargesButCodedOutModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None, None), codedOutDetails = Some(balancingCodedOut))
+  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None, None))
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None, None),
     chargesList =  List(chargeItemWithCodingOutNics2Ci()),
     codedOutDetails = Some(codedOutDetails)
   )
 
-  val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None))
+  val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None, None))
 
   def claimToAdjustLink(isAgent: Boolean): String =
     claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent).url
@@ -789,7 +795,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have overdue payments header, paragraph and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLpiDunningLock(Some(34.56), Some(34.56), Some(100.0), outstandingAmount = List(0.0,0.0))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLpiDunningLock(Some(34.56),
+            Some(34.56), Some(100.0),
+            outstandingAmount = List(0.0,0.0),
+            isRevenueAmendment = List(true, true),
+            dunningLockValue = List(Some("Standover order"), Some("Stand over order")),
+            totalSoAmt = List(Some(BigDecimal(34.56)), Some(BigDecimal(34.56)))
+          )) {
 
             val suspendedChargesTable: Element = pageDocument.getElementById("suspended-charges-table")
             val overdueTableHeader: Element = suspendedChargesTable.select("tr").get(0)
@@ -961,7 +973,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById("pre-mtd-payments-heading") shouldBe None
         }
 
-        "should have payment made paragraph when there is mixed dates" in new TestSetup(charges = whatYouOweDataWithMixedData1(Some(balancingCodedOut))) {
+        "should have payment made paragraph when there is mixed dates" in new TestSetup(charges = whatYouOweDataWithMixedData3(Some(balancingCodedOut))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -1011,17 +1023,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
       }
-      s"have payment data with button with overdue charges" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
+      s"have payment data with button with overdue charges" in new TestSetup(charges = whatYouOweDataWithMixedData3()) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
         pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(200).url
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
-      s"have payment data with button with charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData1().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00))) {
+      s"have payment data with button with charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData3().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00))) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
         pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(100).url
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
-      s"have payment data with button with charges due after 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData1().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(balanceDueWithin30Days = 0.00, overDueAmount = 0.00))) {
+      s"have payment data with button with charges due after 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData3().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(balanceDueWithin30Days = 0.00, overDueAmount = 0.00))) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
         pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(400).url
         findElementById("pre-mtd-payments-heading") shouldBe None
@@ -1385,7 +1397,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "show only the suspended charges table when all charges have a dunning lock" in new TestSetup(
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks, outstandingCharges = None)
+        charges = whatYouOweDataWithDataDueInMoreThan30DaysInformalStandover(dunningLocks = twoDunningLocks, outstandingCharges = None)
       ) {
         findElementById("what-you-owe-payments-due-table") shouldBe None
         findElementById("suspended-charges-in-order-due") should not be None
@@ -1405,18 +1417,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "show both the normal and suspended charges tables when charges have a mix of dunning locks" in new TestSetup(
         charges = WhatYouOweChargesList(
-          balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
           chargesList = List(
             chargeItemModel(TaxYear.forYearEnd(2019), dunningLock = false, lpiWithDunningLock = None,
               interestOutstandingAmount = None, accruingInterestAmount = None, latePaymentInterestAmount = None),
             chargeItemModel(TaxYear.forYearEnd(2020), transactionType = PoaTwoDebit, dunningLock = true,
-              lpiWithDunningLock = None, interestOutstandingAmount = None, accruingInterestAmount = None, latePaymentInterestAmount = None)
+              lpiWithDunningLock = None, interestOutstandingAmount = None, accruingInterestAmount = None, latePaymentInterestAmount = None, isRevenueAmendment = true,
+              dunningLockValue = Some("Stand over order"), totalSoAmt = Some(BigDecimal(353.99)))
 
           )
         )
       ) {
         findElementById("what-you-owe-payments-due-table") should not be None
-        findElementById("suspended-charges") should not be None
+        findElementById("suspended-charges-in-order-due") should not be None
 
         val chargesTable: Element = pageDocument.getElementById("what-you-owe-payments-due-table")
         val chargesTableRow: Element = chargesTable.select("tr").get(1)
@@ -1443,7 +1456,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "show available credit when there are no charges but credit exists" in new TestSetup(
         charges = WhatYouOweChargesList(
-          balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, Some(300.00), None, None, Some(350.00), None, None, None),
+          balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, Some(300.00), None, None, Some(350.00), None, None, None, None),
           chargesList = List.empty
         )
       ) {
@@ -1452,13 +1465,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "display the suspended charges heading when only suspended charges exist" in new TestSetup(
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks)
+        charges = whatYouOweDataWithDataDueInMoreThan30DaysInformalStandover(dunningLocks = twoDunningLocks)
       ) {
         pageDocument.getElementById("suspended-charges-in-order-due").text() shouldBe messages("whatYouOwe.suspended-charges")
       }
 
       "display the informalOnly paragraphs and suspended charges content when only suspended charges exist" in new TestSetup(
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks)
+        charges = whatYouOweDataWithDataDueInMoreThan30DaysInformalStandover(dunningLocks = twoDunningLocks)
       ) {
         pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p1"))
         pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p2"))
@@ -1474,10 +1487,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "display the informal paragraphs when both normal and suspended charges exist" in new TestSetup(
         charges = WhatYouOweChargesList(
-          balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
           chargesList = List(
             chargeItemModel(TaxYear.forYearEnd(2019), dunningLock = false),
-            chargeItemModel(TaxYear.forYearEnd(2020), dunningLock = true)
+            chargeItemModel(TaxYear.forYearEnd(2020), dunningLock = true, isRevenueAmendment = true,
+              dunningLockValue = Some("Stand over order"), totalSoAmt = Some(BigDecimal(353.99)))
           )
         )
       ) {

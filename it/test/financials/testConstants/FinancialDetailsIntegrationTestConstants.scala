@@ -140,7 +140,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
 
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: BigDecimal = 1400.0): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount)),
       financialDetails = List(financialDetail(taxYear))
     )
@@ -223,7 +223,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
                                 accruingInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100))
                                ): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
           None, Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), accruingInterestAmount(0), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head),
@@ -262,7 +262,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
                                                      outstandingAmount: List[BigDecimal],
                                                      taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
           None, Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head),
@@ -461,7 +461,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   )
 
   val financialDetailsWithMFADebits: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(
         taxYear = currentDate.getYear,
@@ -508,14 +508,14 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   val staticDateOutstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.parse("2022-01-01"))
 
 
-  val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+  val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None),
     outstandingChargesModel = Some(outstandingChargesOverdueData))
 
-  val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 4.0, 3.0, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
+  val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 4.0, 3.0, None, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
 
-  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None), List.empty)
+  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None, None), List.empty)
 
-  val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
+  val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None, None),
     outstandingChargesModel = Some(outstandingChargesEmptyBCDModel))
 
   val testInvalidFinancialDetailsJson: JsValue = Json.obj(
@@ -1080,7 +1080,9 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                          interestLocks: List[String] = noInterestLock,
                                          accruingInterestAmount: Option[BigDecimal] = Some(100),
-                                         isClass2Nic: Boolean = false, poaRelevantAmount: Option[BigDecimal] = None
+                                         isClass2Nic: Boolean = false, poaRelevantAmount: Option[BigDecimal] = None,
+                                         chargeClassification: String = "XY",
+                                         totalSoAmt: BigDecimal = BigDecimal(0)
                                         ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -1116,7 +1118,9 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
         "documentDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate,
         "documentDueDate" -> dueDate,
-        "poaRelevantAmount" -> poaRelevantAmount
+        "poaRelevantAmount" -> poaRelevantAmount,
+        "chargeClassification" -> chargeClassification,
+        "totalSoAmt" -> totalSoAmt
       ),
       Json.obj(
         "taxYear" -> taxYear.toInt,

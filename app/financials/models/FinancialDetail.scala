@@ -48,9 +48,12 @@ case class FinancialDetail(taxYear: String,
 
   lazy val isAccruingInterest: Boolean = accruedInterest.exists(_ > 0)
 
+  private val informalStandOver = "Stand over order"
+  private val formalStandOver = "Formal Standover"
+
   lazy val dunningLocks: Seq[SubItem] = {
     items.fold(Seq.empty[SubItem]) { subItems =>
-      subItems.filter(_.dunningLock.contains("Stand over order"))
+      subItems.filter(item => item.dunningLock.contains(informalStandOver) || item.dunningLock.contains(formalStandOver))
     }
   }
 

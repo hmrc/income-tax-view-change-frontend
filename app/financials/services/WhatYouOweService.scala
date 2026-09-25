@@ -73,7 +73,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None))
+          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None, None))
 
         val codingOutDetails: Option[CodingOutDetails] =
           financialDetailsModelList
@@ -195,7 +195,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargeSummaryUrl = chargeSummaryUrl,
           paymentHandOffUrl = paymentHandOffUrl,
           selfServeTimeToPayEnabled = isEnabled(SelfServeTimeToPayR17)(user),
-          totalBalance = optTotalBalance
+          totalBalance = optTotalBalance,
+          totalFormalAndInformal = whatYouOweChargesList.balanceDetails.totalFormalAndInformal
         ))
     }
   }

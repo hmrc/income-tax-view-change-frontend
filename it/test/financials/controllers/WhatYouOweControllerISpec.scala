@@ -216,7 +216,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -315,7 +315,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -338,7 +338,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                 stubAuthorised(mtdUserRole)
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-                val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = oneDunningLock)
+                val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = oneDunningLock,
+                  chargeClassification = "RA", totalSoAmt = BigDecimal(1754.33))
                 val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -357,7 +358,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -379,7 +380,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
               "has multiple dunningLocks against multiple charges which are displayed in the suspended charges table" in {
                 stubAuthorised(mtdUserRole)
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = twoDunningLocks)
+                val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = twoDunningLocks, chargeClassification = "RA", totalSoAmt = BigDecimal(1754.33))
                 val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -396,7 +397,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
                       chargesList = chargeItems)
                   }
                   AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))

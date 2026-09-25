@@ -383,7 +383,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot")),
       DocumentDetail(2025, "123456789", Some("Reconciliation Credit"), Some("documentText"), 1200, 5000, LocalDate.of(2025, 2, 15), None, None, None, None, None, None, None, None, None, None, None, None, None, None)),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYID01"), items = Some(Seq(
@@ -402,7 +402,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   )
 
   val creditsWithBreakdownPages: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
     documentDetails = List(DocumentDetail(2026, "PAYID01", Some("POA 1 Reconciliation Credit"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot")),
       DocumentDetail(2025, "123456789", Some("Reconciliation Credit"), Some("documentText"), 1200, 5000, LocalDate.of(2025, 2, 15), None, None, None, None, None, None, None, None, None, None, None, None, None, None)),
     financialDetails = List(FinancialDetail("2026", transactionId = Some("PAYID01"), mainTransaction = Some("4912"), items = Some(Seq(
@@ -421,7 +421,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   )
 
     val creditsWithoutBreakdownPages: FinancialDetailsModel = FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None, None),
       documentDetails = List(DocumentDetail(2026, "PAYID01", Some("POA 1 Reconciliation Credit"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot")),
         DocumentDetail(2025, "123456789", Some("Reconciliation Credit"), Some("documentText"), 1200, 5000, LocalDate.of(2025, 2, 15), None, None, None, None, None, None, None, None, None, None, None, None, None, None)),
       financialDetails = List(FinancialDetail("2026", transactionId = Some("PAYID01"), mainTransaction = Some("4915"), items = Some(Seq(

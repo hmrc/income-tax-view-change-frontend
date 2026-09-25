@@ -58,7 +58,8 @@ case class DocumentDetail(
                            documentNumberReducedCharge: Option[String] = None,
                            chargeTypeReducedCharge: Option[String] = None,
                            amendmentDateReducedCharge: Option[LocalDate] = None,
-                           taxYearReducedCharge: Option[String] = None
+                           taxYearReducedCharge: Option[String] = None,
+                           totalSoAmt: Option[BigDecimal] = None
                          ) extends Logging {
 
   def findTaxYear: Int = taxYear match {

@@ -40,7 +40,8 @@
         interestOnBalancingCharge: InterestOnBalancingCharge,
         balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
         totalTableRow: TotalTableRow,
-        suspendedCharges: SuspendedCharges,
+        informalSuspendedCharges: InformalSuspendedCharges,
+        formalSuspendedCharges: FormalSuspendedCharges,
         earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara
 )
 
@@ -174,7 +175,7 @@
             @totalTableRow(total, viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)
         }
     </div>
-
+}
 
     @govukInsetText(InsetText(
         attributes = Map("id" -> "payments-processing-note"),
@@ -183,12 +184,36 @@
     @paymentsMadeContent(
         origin = origin,
         viewModel = viewModel)
+
+@if(!viewModel.chargesListAndCodedOutDetailsAreEmpty) {
+    @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.map { taxYear =>
+        @p(id = Some("adjust-poa-content")) {
+            @link(
+                link = viewModel.adjustPoaUrl,
+                messageKey = getMessage("sa-link-1-body-3", taxYear.startYear.toString, taxYear.endYear.toString),
+                id = Some("adjust-poa-link"),
+                rel = Some("noreferrer noopener")
+            )
+        }
+    }
 }
 
-@if(viewModel.suspendedChargesListNonEmpty) {
+@if(viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty) {
     <div id="suspended-charges">
-    @suspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+        @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled)
     </div>
+}else {
+    @if(viewModel.informalChargesList.nonEmpty) {
+    <div id="informal-suspended-charges">
+        @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+    </div>
+    }
+    @if(viewModel.formalChargesList.nonEmpty) {
+    <div id="formal-suspended-charges">
+        @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled)
+    </div>
+    }
 }
 
 @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+
