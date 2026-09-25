@@ -48,7 +48,8 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
         totalCredit = None,
         firstPendingAmountRequested = None,
         secondPendingAmountRequested = None,
-        unallocatedCredit = None
+        unallocatedCredit = None,
+        totalFormalAndInformal = None
       )
     )
 

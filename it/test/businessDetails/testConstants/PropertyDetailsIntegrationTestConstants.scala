@@ -39,6 +39,7 @@ object PropertyDetailsIntegrationTestConstants {
     ukPropertyIncomeType,
     propertyTradingStartDate,
     None,
+    deleted = None,
     None,
   )
 
@@ -52,6 +53,7 @@ object PropertyDetailsIntegrationTestConstants {
     ukPropertyIncomeType,
     None,
     None,
+    deleted = None,
     None,
   )
 
@@ -65,6 +67,7 @@ object PropertyDetailsIntegrationTestConstants {
     foreignPropertyIncomeType,
     propertyTradingStartDate,
     None,
+    deleted = None,
     None,
   )
 
@@ -78,6 +81,7 @@ object PropertyDetailsIntegrationTestConstants {
     foreignPropertyIncomeType,
     None,
     None,
+    deleted = None,
     None,
   )
 
@@ -91,6 +95,7 @@ object PropertyDetailsIntegrationTestConstants {
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)))),
     latencyDetails = Some(testLatencyDetails3)
   )
@@ -105,6 +110,7 @@ object PropertyDetailsIntegrationTestConstants {
     incomeSourceType = ukPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)))),
     latencyDetails = Some(testLatencyDetails3)
   )

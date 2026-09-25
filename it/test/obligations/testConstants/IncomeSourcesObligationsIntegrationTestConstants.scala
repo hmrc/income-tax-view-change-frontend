@@ -104,6 +104,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
     contextualTaxYear = None,
+    deleted = None,
     cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)))),
     latencyDetails = Some(testLatencyDetails3)
   )
@@ -134,6 +135,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
     foreignPropertyIncomeType,
     propertyTradingStartDate,
     None,
+    deleted = None,
     None,
   )
 
@@ -158,6 +160,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
     None,
+    deleted = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails3)
   )

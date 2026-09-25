@@ -38,14 +38,21 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
                                chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
                                paymentHandOffUrl: Long => String,
                                selfServeTimeToPayEnabled: Boolean,
-                               totalBalance: Option[BigDecimal] = None
+                               totalBalance: Option[BigDecimal] = None,
+                               totalFormalAndInformal: Option[BigDecimal] = None
                               )(implicit val dateServiceInterface: DateServiceInterface) {
 
+  private val informalStandOver = "Stand over order"
+  private val formalStandOver = "Formal Standover"
   val chargesListAndCodedOutDetailsAreEmpty: Boolean = whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDetails.isEmpty
 
   val chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero: Boolean = whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero
 
   val suspendedChargesListNonEmpty: Boolean = whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty
+  
+  val informalChargesList: Seq[ChargeItem] = whatYouOweChargesList.sortedChargesListWithDunningLock.filter(_.isRevenueAmendment).filter(x => x.dunningLockValue.contains(informalStandOver))
+  val formalChargesList: Seq[ChargeItem] = whatYouOweChargesList.sortedChargesListWithDunningLock.filter(_.isRevenueAmendment).filter(x => x.dunningLockValue.contains(formalStandOver))
+  val suspendedCharges: Seq[ChargeItem] = informalChargesList ++ formalChargesList
 
   val hasNonDunningLockCharges: Boolean =
     whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty ||

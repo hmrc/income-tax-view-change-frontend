@@ -92,6 +92,8 @@ object UpdateIncomeSourceTestConstants {
   val ukPlusForeignPropertyAndSoleTrader2023WithUnknowns = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(businessWithLatencyAndUnknowns), List(ukPropertyWithLatencyDetailsAndUnknowns, foreignPropertyWithLatencyDetailsAndUnknowns))
   val twoActiveUkPropertyBusinesses = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(), List(ukPropertyDetails2, ukPropertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
+  val twoDeletedUkPropertyBusinesses = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(), List(ukPropertyDetails2.copy(deleted = Some(true)), ukPropertyDetails.copy(deleted = Some(true))))
+  val twoDeletedForeignPropertyBusiness = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, List(foreignPropertyDetails.copy(deleted = Some(true)), foreignPropertyDetails2.copy(deleted = Some(true))))
 
 
   val foreignPropertyIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, List(foreignPropertyDetails))

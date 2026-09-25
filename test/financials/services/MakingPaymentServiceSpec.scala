@@ -57,7 +57,8 @@ class MakingPaymentServiceSpec extends TestSupport {
         totalCredit = None,
         firstPendingAmountRequested = None,
         secondPendingAmountRequested = None,
-        unallocatedCredit = unallocatedCredit
+        unallocatedCredit = unallocatedCredit,
+        totalFormalAndInformal = None
       ),
       documentDetails = documentDetails,
       financialDetails = financialDetails

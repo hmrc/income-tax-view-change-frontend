@@ -2098,8 +2098,10 @@ whatYouOwe.pre-mtd.body                                            = To check if
 whatYouOwe.pre-mtd-link                                            = visit your previous Self Assessment online account
 whatYouOwe.pre-mtd-outstanding-charges                             = Any payment made will be used for outstanding tax for earlier Self Assessment tax years first, and will not be displayed here.
 whatYouOwe.tableRow.na                                             = Not applicable
-whatYouOwe.total-row.label                                         = Total (not including accruing interest):
+whatYouOwe.total-row.not-including-interest.label                  = Total amount (not including accruing interest):
+whatYouOwe.total-row.label                                         = Total amount:
 whatYouOwe.revenueAmendment.label                                  = Extra amount to pay due to HMRC enquiry amendment
+whatYouOwe.standover.formal.label                                  = Appealed: extra amount to pay due to HMRC enquiry amendment
 
 
 whatYouOwe.suspended-charges                                       = Tax owed that is currently not being collected
@@ -2112,6 +2114,22 @@ whatYouOwe.paying-suspended-tax.bullet1                            = your paymen
 whatYouOwe.paying-suspended-tax.bullet2                            = in some cases, we may hold the payment separately so it is not used for other tax
 whatYouOwe.paying-suspended-tax.p3                                 = If you make a payment, we’ll suggest you pay the total amount of suspended tax.
 whatYouOwe.paying-suspended-tax.p4                                 = You can pay this amount or enter a different amount.
+whatYouOwe.formal.suspended-charges                                = Tax owed that is currently not being collected
+whatYouOwe.formal.suspended-charges.p1                             = This tax is suspended because there is an appeal. HMRC will not collect tax while it is suspended.
+whatYouOwe.formal-informal.suspended-charges.p1                    = This tax is suspended for review or because there is an appeal. HMRC will not collect tax while it is suspended.
+whatYouOwe.formal.suspended-charges.p2                             = You will be charged interest if the tax is released for HMRC to collect and it has not been paid by the original due date.
+whatYouOwe.formal.suspended-charges.table.th1                      = Due date
+whatYouOwe.formal.suspended-charges.table.th2                      = Tax details
+whatYouOwe.formal.suspended-charges.table.th3                      = Tax year summary
+whatYouOwe.formal.suspended-charges.table.th4                      = Amount
+whatYouOwe.formal.suspended-charges.table.td1                      = Appealed: extra amount to pay due to HMRC enquiry amendment
+whatYouOwe.formal.suspended-charges.paying-tax.header              = Paying suspended tax
+whatYouOwe.formal.suspended-charges.paying-tax.p1                  = If you do not have tax due or overdue, your payment will be used to pay the suspended tax when it is no longer suspended.
+whatYouOwe.formal.suspended-charges.paying-tax.list.header         = While the tax is suspended:
+whatYouOwe.formal.suspended-charges.paying-tax.list.l1             = your payment may show as a credit
+whatYouOwe.formal.suspended-charges.paying-tax.list.l2             = in some cases, we may hold the payment separately so it is not used for other tax
+whatYouOwe.formal.suspended-charges.paying-tax.p2                  = If you make a payment, we’ll suggest you pay the total amount of suspended tax.
+whatYouOwe.formal.suspended-charges.paying-tax.p3                  = You can pay this amount or enter a different amount.
 
 
 
