@@ -210,7 +210,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
               .filter(_.messageKeyByTypes.isDefined)
               .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
 
-
           chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).flatMap {
             case Right(chargeHistory) =>
               auditChargeSummary(chargeItem, paymentBreakdown,
@@ -230,7 +229,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                       routes.ChargeSummaryController.showAgent(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
                     )
                   else
-                    (routes.ChargeSummaryController.show(poaOneChargeItem.taxYear.endYear, poaOneChargeItem.transactionId).url,
+                    (
+                      routes.ChargeSummaryController.show(poaOneChargeItem.taxYear.endYear, poaOneChargeItem.transactionId).url,
                       routes.ChargeSummaryController.show(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
                     )
                 }
