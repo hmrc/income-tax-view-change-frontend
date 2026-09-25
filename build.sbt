@@ -105,7 +105,8 @@ lazy val microservice = Project(appName, file("."))
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
-      "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
+      "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._",
+      "play.twirl.api.HtmlFormat"
     ),
     RoutesKeys.routesImport := Seq("businessDetails.enums.IncomeSourceJourney._", "common.models.admin._", "common.models.core._"),
   )

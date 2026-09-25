@@ -791,6 +791,12 @@ trait ChargeConstants {
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
 
+  def whatYouOweDataWithOnlyTotalFormalAndInformalCharges(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(0.0, 0.0, 0.0, 0.0, Some(0.0), None, None, None, None, None, None, Some(50.00)),
+    chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
+    outstandingChargesModel = Some(outstandingChargesDueIn30Days)
+  )
+
   val financialDetailsBalancingChargeNotOverdue: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
     transactionTypes = List(BalancingCharge, BalancingCharge),
