@@ -104,7 +104,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends TestSupport {
       ),
       "taxDeductions" -> Json.arr(
         Json.obj(
-          "deductionType" -> "Outstanding debt collected through PAYE",
+          "deductionType" -> "In-year adjustment coded in later tax year",
           "amount" -> 5000.99
         ),
         Json.obj(
