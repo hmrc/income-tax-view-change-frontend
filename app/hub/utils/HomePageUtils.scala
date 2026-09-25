@@ -28,10 +28,20 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import scala.util.Try
 
 trait HomePageUtils extends FeatureSwitching {
   val whatYouOweService: WhatYouOweService
   val dateService: DateServiceInterface
+
+  // Determines whether the user should be shown the ChooseTaxYearsRange page:
+  // they need both an SA UTR (legacy SA enrolment) and a valid, parseable year of migration.
+  // Returns false (rather than throwing) for any missing/invalid data so callers can safely
+  // fall back to the normal your-tasks journey instead of redirecting into a dead end.
+  def isEligibleForChooseTaxYearsRange(user: MtdItUser[_]): Boolean =
+    user.saUtr.isDefined && user.incomeSources.yearOfMigration
+      .flatMap(y => Try(y.toInt).toOption)
+      .exists(_ > 0)
 
   def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
                                         (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[List[OutstandingChargeModel]] =

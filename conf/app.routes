@@ -8,12 +8,14 @@ GET         /assets/*file                                                 contro
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
 #Home Controller
+
 GET         /                                                             hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/client-income-tax                                     hub.v1.controllers.HomeController.showAgent()
 GET         /agents                                                       hub.v1.controllers.HomeController.showAgent()
 GET         /your-tasks                                                   hub.v1.controllers.newHomePage.HandleYourTasksController.show()
 GET         /agents/your-tasks                                            hub.v1.controllers.newHomePage.HandleYourTasksController.showAgent()
+
 
 GET         /recent-activity                                              hub.v1.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/recent-activity                                       hub.v1.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
@@ -22,6 +24,9 @@ GET         /overview                                                     hub.v1
 GET         /help                                                         hub.v1.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)
 GET         /agents/overview                                              hub.v1.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
 GET         /agents/help                                                  hub.v1.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
+
+GET         /manage-self-assessment/choose-tax-years-range                hub.v1.controllers.ChooseTaxYearsRangeController.show()
+POST        /manage-self-assessment/choose-tax-years-range                hub.v1.controllers.ChooseTaxYearsRangeController.submit()
 
 
 

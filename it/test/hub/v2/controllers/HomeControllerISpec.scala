@@ -16,23 +16,22 @@
 
 package hub.v2.controllers
 
-import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import common.auth.MtdItUser
 import common.enums.MTDIndividual
-import common.helpers.servicemocks.MTDIndividualAuthStub
-import common.helpers.servicemocks.YearOfMigrationStub
+import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.{MTDIndividualAuthStub, YearOfMigrationStub}
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.testConstants.BaseIntegrationTestConstants.*
-import hub.testConstants.messages.HomeMessages.*
-import hub.helpers.serviceMocks.PenaltyDetailsStub
 import hub.helpers.NextUpdatesStub
+import hub.helpers.serviceMocks.PenaltyDetailsStub
+import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
+import hub.testConstants.messages.HomeMessages.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
-import common.helpers.GetInsourceDetailsStub
 
 class HomeControllerISpec extends ControllerISpecHelper {
 
@@ -60,7 +59,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
   val testUser: MtdItUser[_] = getTestUser(MTDIndividual, incomeSourceDetailsModel)
 
   val path = "/"
-
 
   "GET /" when {
     "an authenticated user" should {
