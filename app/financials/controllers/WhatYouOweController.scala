@@ -53,7 +53,9 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, appConfig.taxYearSummaryUrl(user.isAgent, _, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend)), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin,isAgent)) map {
+    whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, appConfig.taxYearSummaryUrl(user.isAgent,
+      _, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend)), getAdjustPoaUrl, getChargeSummaryUrl,
+      getInterstitialUrl(origin, isAgent), getPaymentHandoffUrl(origin, isAgent)) map {
       case Some(viewModel) =>
         Ok(whatYouOwe(viewModel, origin, isEnabled(SelfServeTimeToPayR17)))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
@@ -100,10 +102,17 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
     else routes.ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
   }
 
-  private def getPaymentHandOffUrl(origin: Option[String],isAgent: Boolean): Long => String = {
+  private def getInterstitialUrl(origin: Option[String], isAgent: Boolean): Long => String = {
     if(isAgent)
       routes.PaymentController.agentMakingPayment(_).url
     else
       routes.PaymentController.makingPayment(_, origin).url
+  }
+  
+  private def getPaymentHandoffUrl(origin: Option[String], isAgent: Boolean): Long => String = {
+    if (isAgent)
+      routes.PaymentController.agentPaymentHandoff(_).url
+    else
+      routes.PaymentController.paymentHandoff(_, origin).url
   }
 }

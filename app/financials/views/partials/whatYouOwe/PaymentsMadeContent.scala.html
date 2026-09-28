@@ -52,32 +52,25 @@
     ))
 }
 
-@paymentButton(amount: BigDecimal) = {
-    @govukButton(Button(
-        id = Some("payment-button"),
-        content = Text(getMessage("payNow")),
-        href = Some(viewModel.paymentHandOffUrl(amount.toPence))
-    ))
+@paymentButton(href: String) = {
+	@govukButton(Button(
+		id = Some("payment-button"),
+		content = Text(getMessage("payNow")),
+		href = Some(href)
+	))
 }
 
 @if(viewModel.utr.isDefined) {
     @{
-        viewModel.whatYouOweChargesList.getDefaultPaymentAmount match {
-            case Some(value) => {
-                if(viewModel.hasOnlySuspendedCharges){
-                    if(!viewModel.informalChargesList.isEmpty){
-                        paymentButton(value)
-                    }else {
-                        paymentButton(viewModel.totalFormalAndInformal.getOrElse(0))
-                    }
-                }else{
-                    paymentButton(value)
-                }
-            }
-            case None =>
+        (viewModel.whatYouOweChargesList.balanceDetails.totalFormalAndInformal,
+            viewModel.whatYouOweChargesList.getDefaultPaymentAmount) match {
+            case (Some(value), None) => paymentButton(viewModel.paymentHandoffUrl(value.toPence))
+            case (_, Some(value)) => paymentButton(viewModel.interstitialUrl(value.toPence))
+            case _ => HtmlFormat.empty
         }
     }
 }
+
 @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
     @getNoPaymentsDueText
 }

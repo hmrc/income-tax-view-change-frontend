@@ -2585,7 +2585,8 @@ object CreditAndRefundConstants {
                           allocatedCreditOverdue: Option[BigDecimal] = Some(1.00),
                           allocatedCreditFuture: Option[BigDecimal] = Some(2.00),
                           totalCredit: Option[BigDecimal] = Some(4.00),
-                          unallocatedCredit: Option[BigDecimal] = None): BalanceDetails = BalanceDetails(
+                          unallocatedCredit: Option[BigDecimal] = None,
+                          totalFormalAndInformal: Option[BigDecimal] = None): BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
     balanceNotDuein30Days = 0.00,
@@ -2597,7 +2598,7 @@ object CreditAndRefundConstants {
     firstPendingAmountRequested = firstPendingAmountRequested,
     secondPendingAmountRequested = secondPendingAmountRequested,
     unallocatedCredit,
-    totalFormalAndInformal = None
+    totalFormalAndInformal = totalFormalAndInformal
   )
 
   def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: BigDecimal = -1400.0,
