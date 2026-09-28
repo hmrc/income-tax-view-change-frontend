@@ -58,15 +58,15 @@ case class ChargeItem(
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_.isBefore(dateService.getCurrentDate))
 
+  private val informalStandOver = "Stand over order"
   private val formalStandOver = "Formal Standover"
 
+  val isInformalStandoverCharge: Boolean = isRevenueAmendment && dunningLockValue.contains(informalStandOver)
+  val isFormalStandOverCharge: Boolean = isRevenueAmendment && dunningLockValue.contains(formalStandOver)
+
   def getMessageKey: String = {
-    if (isRevenueAmendment) {
-      if(dunningLockValue.contains(formalStandOver)){
+    if (isFormalStandOverCharge) {
         "standover.formal.label"
-      }else {
-        getChargeTypeKey
-      }
     } else {
       getChargeTypeKey
     }
@@ -80,8 +80,7 @@ case class ChargeItem(
     case credit => Some(credit * -1)
   }
 
-  val hasLpiWithDunningLock: Boolean =
-    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
+  val hasLpiWithDunningLock: Boolean = lpiWithDunningLock.exists(_ > 0)
 
   val isAccruingInterest: Boolean = accruingInterestAmount.exists(_ > 0)
 
@@ -317,15 +316,12 @@ object ChargeItem {
       chargeReference = financialDetail.chargeReference,
       chargeClassification = documentDetail.chargeClassification,
       isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification),
-      //fetching only first value since we can have only one Stand over per charge
-      dunningLockValue = getDunningLockValue(documentDetail, financialDetails),
+      dunningLockValue = getDunningLockValue(financialDetail),
       totalSoAmt = documentDetail.totalSoAmt
     )
   }
 
-  private def getDunningLockValue(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): Option[String] =
-    financialDetails
-      .find(_.transactionId.contains(documentDetail.transactionId))
-      .flatMap(_.items)
-      .flatMap(_.view.flatMap(_.dunningLock).headOption)
+  private def getDunningLockValue(financialDetail:FinancialDetail): Option[String] =
+    //fetching only first value since we can have only one Stand over per charge
+    financialDetail.items.flatMap(_.collectFirst{Function.unlift(_.dunningLock)})
 }

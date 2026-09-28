@@ -52,12 +52,12 @@
                 )
             }
             case (true , true) if chargeHistoryEnabled => {
-                @messages("chargeSummary.dunning.locks.informal.standover1.banner.note")
+                @messages("chargeSummary.dunning.locks.informal.standover.banner.note1")
             }
             case (false , true) if chargeHistoryEnabled => {
-                @messages("chargeSummary.dunning.locks.informal.standover1.banner.note")
-                <br></br>
-                @messages("chargeSummary.dunning.locks.informal.standover2.banner.note")
+                @messages("chargeSummary.dunning.locks.informal.standover.banner.note1")
+                <br>
+                @messages("chargeSummary.dunning.locks.informal.standover.banner.note2")
             }
             case _ => {
                 @link(
