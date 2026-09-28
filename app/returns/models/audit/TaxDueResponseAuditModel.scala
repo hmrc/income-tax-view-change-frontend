@@ -251,7 +251,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private def deductionsString(deduction: String): String =
     deduction match {
-      case "inYearAdjustment" => "Outstanding debt collected through PAYE"
+      case "inYearAdjustment" => "In-year adjustment coded in later tax year"
       case "payeEmployments" => "All employments"
       case "ukPensions" => "UK pensions"
       case "stateBenefits" => "State benefits"
