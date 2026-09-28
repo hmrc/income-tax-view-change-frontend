@@ -76,7 +76,7 @@
             index
         }">
             @if(isStoodOverEnabled){
-                viewModel.totalFormalAndInformal.getOrElse(0)
+                @viewModel.totalFormalAndInformal.getOrElse(BigDecimal(0)).toCurrency
             }else {
                 @charge.remainingToPayOnCharge.toCurrency
             }
