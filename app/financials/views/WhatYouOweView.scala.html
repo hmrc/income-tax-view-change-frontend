@@ -48,7 +48,8 @@
 @(
         viewModel: WhatYouOweViewModel,
         origin: Option[String] = None,
-        isSelfServeTimeToPayEnabled: Boolean
+        isSelfServeTimeToPayEnabled: Boolean,
+        isStoodOverEnabled: Boolean
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
@@ -89,7 +90,7 @@
             @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
     }else {
         @if(viewModel.informalChargesList.nonEmpty) {
-            @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+            @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
         }
         @if(viewModel.formalChargesList.nonEmpty) {
             @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled)
@@ -140,7 +141,7 @@
     }
 
     @if(viewModel.hasNonDunningLockCharges) {
-        @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+        @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
     } else if(viewModel.hasOnlySuspendedCharges) {
         @getSuspendedChargesView(viewModel, origin, isSelfServeTimeToPayEnabled)
     } else {

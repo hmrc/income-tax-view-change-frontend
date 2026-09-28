@@ -50,7 +50,7 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
 
   val suspendedChargesListNonEmpty: Boolean = whatYouOweChargesList.sortedChargesListWithDunningLock.nonEmpty
   
-  val informalChargesList: Seq[ChargeItem] = whatYouOweChargesList.sortedChargesListWithDunningLock.filter(_.isRevenueAmendment).filter(x => x.dunningLockValue.contains(informalStandOver))
+  val informalChargesList: Seq[ChargeItem] = whatYouOweChargesList.sortedChargesListWithDunningLock.filter(x => x.dunningLockValue.contains(informalStandOver))
   val formalChargesList: Seq[ChargeItem] = whatYouOweChargesList.sortedChargesListWithDunningLock.filter(_.isRevenueAmendment).filter(x => x.dunningLockValue.contains(formalStandOver))
   val suspendedCharges: Seq[ChargeItem] = informalChargesList ++ formalChargesList
 

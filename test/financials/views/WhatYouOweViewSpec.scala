@@ -172,7 +172,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       totalBalance = totalBalance
     )
 
-    val html: HtmlFormat.Appendable = whatYouOweView(viewModel = wyoViewModel, origin = None, isSelfServeTimeToPayEnabled = true)(FakeRequest(), individualUser, implicitly, dateService)
+    val html: HtmlFormat.Appendable = whatYouOweView(viewModel = wyoViewModel, origin = None, isSelfServeTimeToPayEnabled = true, isStoodOverEnabled = false)(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -231,7 +231,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       totalBalance = totalBalance
     )
 
-    val html: HtmlFormat.Appendable = whatYouOweView(viewModel = wyoViewModelAgent, origin = None, isSelfServeTimeToPayEnabled = true)(FakeRequest(), agentUser, implicitly, dateService)
+    val html: HtmlFormat.Appendable = whatYouOweView(viewModel = wyoViewModelAgent, origin = None, isSelfServeTimeToPayEnabled = true, isStoodOverEnabled = false)(FakeRequest(), agentUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 

@@ -20,7 +20,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.*
 import common.enums.GatewayPage.WhatYouOwePage
-import common.models.admin.{SelfServeTimeToPayR17, ReturnsFrontend}
+import common.models.admin.{ReturnsFrontend, SelfServeTimeToPayR17, StoodOverCharges}
 import common.services.{DateServiceInterface, YearOfMigrationService}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.WhatYouOweService
@@ -55,7 +55,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, appConfig.taxYearSummaryUrl(user.isAgent, _, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend)), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin,isAgent)) map {
       case Some(viewModel) =>
-        Ok(whatYouOwe(viewModel, origin, isEnabled(SelfServeTimeToPayR17)))
+        Ok(whatYouOwe(viewModel, origin, isEnabled(SelfServeTimeToPayR17), isEnabled(StoodOverCharges)))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
       case None =>
         logger.error(s"${if (isAgent) "Agent - " else ""}" + "Failed to create WhatYouOweViewModel")
