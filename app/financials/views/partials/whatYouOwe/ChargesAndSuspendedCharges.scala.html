@@ -48,7 +48,8 @@
 @(
         viewModel: WhatYouOweViewModel,
         origin: Option[String] = None,
-        isSelfServeTimeToPayEnabled: Boolean
+        isSelfServeTimeToPayEnabled: Boolean,
+        isStoodOverEnabled: Boolean
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
@@ -205,7 +206,7 @@
 }else {
     @if(viewModel.informalChargesList.nonEmpty) {
     <div id="informal-suspended-charges">
-        @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled)
+        @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
     </div>
     }
     @if(viewModel.formalChargesList.nonEmpty) {

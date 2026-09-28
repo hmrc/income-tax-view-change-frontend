@@ -38,7 +38,7 @@
         implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(viewModel: WhatYouOweViewModel, origin: Option[String] = None, isSelfServeTimeToPayEnabled: Boolean)(implicit messages: Messages, dateService: DateServiceInterface, user: MtdItUser[_])
+@(viewModel: WhatYouOweViewModel, origin: Option[String] = None, isSelfServeTimeToPayEnabled: Boolean, isStoodOverEnabled: Boolean)(implicit messages: Messages, dateService: DateServiceInterface, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -75,7 +75,11 @@
         <td class="govuk-table__cell govuk-table__cell--numeric" id="susupended-due-charge-amount-due-@{
             index
         }">
-        @charge.remainingToPayOnCharge.toCurrency
+            @if(isStoodOverEnabled){
+                @viewModel.totalFormalAndInformal.getOrElse(BigDecimal(0)).toCurrency
+            }else {
+                @charge.remainingToPayOnCharge.toCurrency
+            }
     </td>
     </tr>
     }
