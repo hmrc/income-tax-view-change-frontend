@@ -3707,7 +3707,7 @@ triggered-migration.check-hmrc-records.bullet2                       = rhoi’r 
 
 triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Eich busnesau cyfredol
 triggered-migration.check-hmrc-records.soleTrader.heading            = Busnesau unig fasnachwr
-triggered-migration.check-hmrc-records.soleTrader.cease.link         = Wedi dod i ben
+triggered-migration.check-hmrc-records.soleTrader.cease.link         = Dod â’r busnes i ben
 triggered-migration.check-hmrc-records.soleTrader.businessName       = Enw’r busnes
 triggered-migration.check-hmrc-records.soleTrader.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.soleTrader.active             = Cyfredol
@@ -3717,11 +3717,11 @@ triggered-migration.check-hmrc-records.soleTrader.unknown            = Anhysbys
 
 triggered-migration.check-hmrc-records.property.heading              = Busnesau eiddo
 triggered-migration.check-hmrc-records.ukProperty.heading            = Eiddo yn y DU
-triggered-migration.check-hmrc-records.ukProperty.cease.link         = Wedi dod i ben
+triggered-migration.check-hmrc-records.ukProperty.cease.link         = Dod â’r busnes i ben
 triggered-migration.check-hmrc-records.ukProperty.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.ukProperty.active             = Cyfredol
 triggered-migration.check-hmrc-records.foreignProperty.heading       = Eiddo Tramor
-triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Wedi dod i ben
+triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Dod â’r busnes i ben
 triggered-migration.check-hmrc-records.foreignProperty.businessState = Statws y busnes
 triggered-migration.check-hmrc-records.foreignProperty.active        = Cyfredol
 triggered-migration.check-hmrc-records.foreignProperty.add.link      = Ychwanegu eiddo busnes tramor
