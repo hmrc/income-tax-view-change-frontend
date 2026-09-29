@@ -1095,6 +1095,7 @@ forecast_taxCalc.capitalGainsTax                                = Capital Gains 
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Forecast Self Assessment tax amount:
 forecast_taxCalc.noForecast.heading                             = No forecast yet
 forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
+forecast_taxCalc.taxRefunded                                    = Tax already refunded in year:
 
 ##Tax Years Overview Submissions Tab##
 submissionsTab.desc                                                  = This is a record of your completed and upcoming submissions for the tax year.
