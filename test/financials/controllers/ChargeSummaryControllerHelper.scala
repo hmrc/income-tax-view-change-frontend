@@ -103,7 +103,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   def successHeadingRAR1Interest = s"${messages("yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading")}"
 
   val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
-  val dunningLocksStandOverBannerHeading: String = s"${messages("chargeSummary.dunning.locks.informal.standover1.banner.note")} ${messages("chargeSummary.dunning.locks.informal.standover2.banner.note")}"
+  val dunningLocksStandOverBannerHeading: String = s"${messages("chargeSummary.dunning.locks.informal.standover.banner.note1")} ${messages("chargeSummary.dunning.locks.informal.standover.banner.note2")}"
   val dunningLocksBannerTitle: String = messages("chargeSummary.dunning.locks.banner.title")
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
   val paymentHistoryHeadingForPOA1Charge: String = messages("chargeSummary.chargeHistory.Poa1heading")
