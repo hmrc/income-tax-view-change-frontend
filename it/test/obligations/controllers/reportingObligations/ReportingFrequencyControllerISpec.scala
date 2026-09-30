@@ -54,17 +54,21 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
     pathStart + "/reporting-frequency"
   }
 
-  def stubCalculationListResponseBody(taxYearEnd: String): StubMapping = {
+  def stubCalculationListResponseBody(taxYearEnd: String, crystallised: Boolean = false): StubMapping = {
     val responseBody =
-      """
+      s"""
         |{
-        |  "calculationId": "TEST_ID",
-        |  "calculationTimestamp": "TEST_STAMP",
-        |  "calculationType": "TEST_TYPE",
-        |  "crystallised": false
+        |  "calculations": [
+        |    {
+        |      "calculationId": "TEST_ID",
+        |      "calculationTimestamp": "TEST_STAMP",
+        |      "calculationType": "TEST_TYPE",
+        |      "crystallised": $crystallised
+        |    }
+        |  ]
         |}
         |""".stripMargin
-    WiremockHelper.stubGet(s"/income-tax-calculations/calculation-list/$testNino/$taxYearEnd", OK, responseBody)
+    WiremockHelper.stubGet(s"/income-tax-calculation/calculation-list/$testNino/$taxYearEnd", OK, responseBody)
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -373,6 +377,33 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
+              }
+
+              "CY-1 is Quarterly and already crystallised (finalised), CY is Quarterly and CY+1 is Annual" in {
+                stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  dateService.getCurrentTaxYear,
+                  Voluntary,
+                  Voluntary,
+                  Annual
+                )
+
+                stubCalculationListResponseBody("2022", crystallised = true)
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                result should have(
+                  pageTitle(mtdUserRole, "Your reporting obligations"),
+                  httpStatus(OK),
+                  elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(optOutForTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(optOutForTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(signUpFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(signUpFromTheNextTaxYear)
+                )
+
+                result shouldNot have(elementTextByID("manage-reporting-obligations-card-heading-0")(optOutFromTheLastTaxYear))
+                result shouldNot have(elementTextByID("manage-reporting-obligations-card-link-0")(optOutFromTheLastTaxYear))
               }
             }
 

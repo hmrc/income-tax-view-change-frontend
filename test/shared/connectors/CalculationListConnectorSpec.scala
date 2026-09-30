@@ -52,16 +52,39 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
   }
 
   ".getCalculationList (API 1896)" should {
-    "return a valid CalculationListResponseModel (including optional field `crystallised`)" in new Setup {
-      
+    "return a valid CalculationListResponseModel from the nested `calculations` list (crystallised = true)" in new Setup {
       val itvc1896Url: String = connector.getCalculationListUrl(testNino, taxYearEnd)
-      val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
+      val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseNestedCrystallised, headers = Map.empty)
       setupMockHttpV2Get(itvc1896Url)(successResponse)
 
       val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), taxYearEnd, testMtditid)
       result.futureValue shouldBe CalculationListTestConstants.calculationListFull
     }
-    "return a valid CalculationListResponseModel (excluding optional field `crystallised`)" in new Setup {
+    "return a valid CalculationListResponseModel from the nested `calculations` list when the crystallised entry is not first" in new Setup {
+      val itvc1896Url: String = connector.getCalculationListUrl(testNino, taxYearEnd)
+      val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseNestedCrystallisedNotFirst, headers = Map.empty)
+      setupMockHttpV2Get(itvc1896Url)(successResponse)
+
+      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), taxYearEnd, testMtditid)
+      result.futureValue shouldBe CalculationListTestConstants.calculationListFull
+    }
+    "return a valid CalculationListResponseModel from the nested `calculations` list (crystallised = false)" in new Setup {
+      val itvc1896Url: String = connector.getCalculationListUrl(testNino, taxYearEnd)
+      val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseNestedNotCrystallised, headers = Map.empty)
+      setupMockHttpV2Get(itvc1896Url)(successResponse)
+
+      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), taxYearEnd, testMtditid)
+      result.futureValue shouldBe CalculationListTestConstants.calculationListFalseFull
+    }
+    "return a valid CalculationListResponseModel from the nested `calculations` list when no entry has `crystallised`" in new Setup {
+      val itvc1896Url: String = connector.getCalculationListUrl(testNino, taxYearEnd)
+      val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseNestedNoCrystallisedField, headers = Map.empty)
+      setupMockHttpV2Get(itvc1896Url)(successResponse)
+
+      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), taxYearEnd, testMtditid)
+      result.futureValue shouldBe CalculationListTestConstants.calculationListFalseFull
+    }
+    "fall back to a top-level `crystallised` field when there is no `calculations` array" in new Setup {
       val itvc1896Url: String = connector.getCalculationListUrl(testNino, taxYearEnd)
       val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
       setupMockHttpV2Get(itvc1896Url)(successResponse)
