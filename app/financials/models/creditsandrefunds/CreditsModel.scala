@@ -31,9 +31,11 @@ case class CreditsModel(availableCreditForRepayment: BigDecimal,
                         totalCredit: BigDecimal,
                         firstPendingAmountRequested: Option[BigDecimal],
                         secondPendingAmountRequested: Option[BigDecimal],
-                        transactions: List[Transaction] ) extends SuccessModel {
+                        transactions: List[Transaction]) extends SuccessModel {
   
   val availableCreditInAccount: Boolean = if(availableCreditForRepayment > 0) true else false
+
+  val dunningLockExists: Boolean = transactions.exists(_.dunningLock)
 }
 
 object CreditsModel {
@@ -53,6 +55,7 @@ case class Transaction(transactionType: CreditType,
                        documentDate: Option[LocalDate],
                        effectiveDateOfPayment: Option[LocalDate],
                        transactionId: String,
+                       dunningLock: Boolean,
                        chargeClassification: Option[String] = None) {
 
   def isRevenueAmendment: Boolean =
