@@ -61,7 +61,7 @@ case class ChargeItem(
   private val informalStandOver = "Stand over order"
   private val formalStandOver = "Formal Standover"
 
-  val isInformalStandoverCharge: Boolean = isRevenueAmendment && dunningLockValue.contains(informalStandOver)
+  val isInformalStandoverCharge: Boolean = dunningLockValue.contains(informalStandOver)
   val isFormalStandOverCharge: Boolean = isRevenueAmendment && dunningLockValue.contains(formalStandOver)
 
   def getMessageKey: String = {
