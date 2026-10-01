@@ -21,7 +21,7 @@ import common.connectors.RawResponseReads
 import common.models.core.Nino
 import financials.models.repaymentHistory.*
 import play.api.Logging
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -40,6 +40,9 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
   def getRepaymentHistoryByIdUrl(nino: String, repaymentId: String): String = {
     s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId"
   }
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def getRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)
                                       (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
@@ -65,7 +68,7 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
               valid => valid
             )
         case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
+          if (isErrorLevelStatus(status)) {
             logger.error(
               s"[getRepaymentHistoryByRepaymentId] Response status: ${response.status}, body: ${response.body}")
           } else {
@@ -102,7 +105,7 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
               valid => valid
             )
         case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getRepaymentHistoryByNino] Response status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getRepaymentHistoryByNino] Response status: ${response.status}, body: ${response.body}")

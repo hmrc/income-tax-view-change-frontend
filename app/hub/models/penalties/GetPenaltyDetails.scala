@@ -58,7 +58,11 @@ object GetPenaltyDetailsParser {
               logger.warn(s"[GetPenaltyDetailsReads][read] failed to read penalty details")
               Left(GetPenaltyDetailsMalformed)
           }
-        case status@(BAD_REQUEST | CONFLICT | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE) => {
+        case status@(BAD_GATEWAY | SERVICE_UNAVAILABLE | 499) => {
+          logger.warn(s"[GetPenaltyDetailsReads][read] Received timeout response $status when trying to call GetPenaltyDetails")
+          Left(GetPenaltyDetailsFailureResponse(status))
+        }
+        case status@(BAD_REQUEST | CONFLICT | INTERNAL_SERVER_ERROR) => {
           logger.error(s"[GetPenaltyDetailsReads][read] Received $status when trying to call GetPenaltyDetails")
           Left(GetPenaltyDetailsFailureResponse(status))
         }
