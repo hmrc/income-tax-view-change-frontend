@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logging
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_GATEWAY, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -37,7 +37,7 @@ class BusinessDetailsConnector @Inject()(
   private[connectors] def getBusinessDetailsUrl(nino: String): String = {
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/get-business-details/nino/$nino"
   }
-  
+
   private[connectors] def getIncomeSourcesUrl(mtditid: String): String = {
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/income-sources/$mtditid"
   }
@@ -45,6 +45,9 @@ class BusinessDetailsConnector @Inject()(
   private[connectors] def getNinoLookupUrl(mtdRef: String): String = {
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/nino-lookup/$mtdRef"
   }
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
     val url = getBusinessDetailsUrl(nino)
@@ -64,7 +67,7 @@ class BusinessDetailsConnector @Inject()(
               },
               valid => valid
             )
-          case status if status >= 500 =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"[getBusinessDetails] RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
           case _ =>
