@@ -151,7 +151,7 @@
           }
       }
 
-      @if(viewModel.chargeItem.hasInterest) {
+      @if(viewModel.chargeItem.hasInterest && !viewModel.chargeItem.isFormalStandOverCharge) {
         @if(viewModel.chargeItem.outstandingAmount == 0) {
             @h2(
                 msg = getMessage("interestOnCharge.heading"),
@@ -169,7 +169,7 @@
             }
 
         } else {
-            @if((viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) && !viewModel.chargeItem.isFormalStandOverCharge) {
+            @if((viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit)) {
                 @interestOnChargeRARPoaSection(viewModel)
             } else {
                 @interestOnYourChargeSection(viewModel.chargeItem)

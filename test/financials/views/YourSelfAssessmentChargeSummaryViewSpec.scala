@@ -264,7 +264,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe formalDunningLocksBannerHeading
         document.getElementById("charge-amount-heading").text().split("£").head.trim shouldBe chargeAmountHeading
         document.getElementById("charge-history-heading").text() shouldBe firstPaymentOnAccountHeading
-        document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
+        document.doesNotHave("govuk-warning-text__text")
         document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
         document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
         document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe createdYourFirstPaymentOnAccountText
