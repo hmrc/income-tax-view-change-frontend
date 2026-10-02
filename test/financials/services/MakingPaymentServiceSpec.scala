@@ -44,7 +44,8 @@ class MakingPaymentServiceSpec extends TestSupport {
                                     documentDetails: List[DocumentDetail] = List.empty,
                                     financialDetails: List[FinancialDetail] = List.empty,
                                     balanceDueWithin30Days: BigDecimal = 0,
-                                    balanceNotDuein30Days: BigDecimal = 0): FinancialDetailsModel =
+                                    balanceNotDuein30Days: BigDecimal = 0,
+                                    totalFormalAndInformal: Option[BigDecimal] = None): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(
         balanceDueWithin30Days = balanceDueWithin30Days,
@@ -58,7 +59,7 @@ class MakingPaymentServiceSpec extends TestSupport {
         firstPendingAmountRequested = None,
         secondPendingAmountRequested = None,
         unallocatedCredit = unallocatedCredit,
-        totalFormalAndInformal = None
+        totalFormalAndInformal = totalFormalAndInformal
       ),
       documentDetails = documentDetails,
       financialDetails = financialDetails

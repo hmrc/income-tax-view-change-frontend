@@ -33,9 +33,10 @@ class ClaimARefundAuditModelSpec extends TestSupport {
   val auditType: String = "ClaimARefundResponse"
   val balanceDetailsFull: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, balanceNotDuein30Days = 0, totalBalance = 0,
     totalCreditAvailableForRepayment = Some(-7600.00), allocatedCredit = Some(0), allocatedCreditForFutureCharges = Some(0), totalCredit = Some(2.00),
-    firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None, None)
+    firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None, totalFormalAndInformal = None)
   val balanceDetailsMin: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, balanceNotDuein30Days = 0, totalBalance = 0,
-    totalCreditAvailableForRepayment = None, allocatedCredit = None, allocatedCreditForFutureCharges = None, totalCredit = None, firstPendingAmountRequested = None, secondPendingAmountRequested = None, None, None)
+    totalCreditAvailableForRepayment = None, allocatedCredit = None, allocatedCreditForFutureCharges = None, totalCredit = None,
+    firstPendingAmountRequested = None, secondPendingAmountRequested = None, None, totalFormalAndInformal = None)
 
   val creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-100), originalAmount = BigDecimal(-100), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
