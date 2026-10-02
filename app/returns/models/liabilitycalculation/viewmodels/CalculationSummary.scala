@@ -59,11 +59,14 @@ case class CalculationSummary(
 object CalculationSummary extends ImplicitDateParser {
   
   private def getEstimatedTotalTax(calc: LiabilityCalculationResponse): Option[BigDecimal] = {
+    val totalTaxAndNicsAmount: Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalTaxAndNicsAmount))
     val incomeTaxNicAndCgtAmount: Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount))
     val incomeTaxNicAmount: Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAmount))
-    incomeTaxNicAndCgtAmount match {
-      case Some(x) => Some(x)
-      case None => incomeTaxNicAmount
+
+    (totalTaxAndNicsAmount, incomeTaxNicAndCgtAmount) match {
+      case (Some(_),_) => totalTaxAndNicsAmount
+      case (None, Some(_)) => incomeTaxNicAndCgtAmount
+      case _ => incomeTaxNicAmount
     }
   }
 

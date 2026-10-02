@@ -35,7 +35,7 @@
     }
 }
 
-@dataItem2(message: String, value: Option[BigDecimal], value2: Option[BigDecimal], bold: Boolean) = {
+@dataItem3(message: String, value: Option[BigDecimal], value2: Option[BigDecimal], value3: Option[BigDecimal], bold: Boolean) = {
     @if(value.isDefined){
         @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
             @{messages(s"forecast_taxCalc.$message")}
@@ -45,6 +45,11 @@
         @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
             @{messages(s"forecast_taxCalc.$message")}
             <strong class="bold no-wrap">@{value2.get.toCurrency}</strong>
+        </p>
+    }else if(value3.isDefined){
+        @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
+            @{messages(s"forecast_taxCalc.$message")}
+            <strong class="bold no-wrap">@{value3.get.toCurrency}</strong>
         </p>
     }
 }
@@ -87,6 +92,6 @@
     @dataItem("totalTaxDeducted", endOfYearEstimateModel.totalTaxDeducted, bold = true)
     @dataItem("incomeTaxAndNicsDue", endOfYearEstimateModel.incomeTaxNicAmount, bold = true)
     @dataItem("capitalGainsTax", endOfYearEstimateModel.cgtAmount)
-    @dataItem2("incomeTaxNicsCgtDue", endOfYearEstimateModel.incomeTaxNicAndCgtAmount, endOfYearEstimateModel.incomeTaxNicAmount, bold = true)
-
+    @dataItem("taxRefunded", endOfYearEstimateModel.taxRefundedOrSetOffAmount)
+    @dataItem3("incomeTaxNicsCgtDue", endOfYearEstimateModel.totalTaxAndNicsAmount, endOfYearEstimateModel.incomeTaxNicAndCgtAmount, endOfYearEstimateModel.incomeTaxNicAmount, bold = true)
 }

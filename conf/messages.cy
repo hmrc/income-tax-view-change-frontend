@@ -1090,6 +1090,7 @@ forecast_taxCalc.capitalGainsTax                                = Treth Enillion
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Rhagolwg o swm y dreth Hunanasesiad:
 forecast_taxCalc.noForecast.heading                             = Dim rhagolwg eto
 forecast_taxCalc.noForecast.text                                = Byddwch yn gallu gweld eich rhagolwg ar gyfer y flwyddyn gyfan unwaith y byddwch wedi anfon diweddariad.
+forecast_taxCalc.taxRefunded                                    = Treth a ad-dalwyd eisoes yn ystod y flwyddynl:
 
 ## Tax Years Overview Update Tab ##
 submissionsTab.desc                                                  = Dyma gofnod o’r hyn rydych wedi’i gyflwyno, a’r hyn sydd eto i’w gyflwyno, ar gyfer y flwyddyn dreth.
