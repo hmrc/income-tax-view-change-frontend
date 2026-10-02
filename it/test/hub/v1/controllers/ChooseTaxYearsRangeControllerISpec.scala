@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 
 class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
 
-  private val path = "/manage-self-assessment/choose-tax-years-range"
+  private val path = "/choose-tax-years-range"
 
   private def stubIncomeSourceDetails(): Unit =
     GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)

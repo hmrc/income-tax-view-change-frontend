@@ -25,8 +25,8 @@ GET         /help                                                         hub.v1
 GET         /agents/overview                                              hub.v1.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
 GET         /agents/help                                                  hub.v1.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
 
-GET         /manage-self-assessment/choose-tax-years-range                hub.v1.controllers.ChooseTaxYearsRangeController.show()
-POST        /manage-self-assessment/choose-tax-years-range                hub.v1.controllers.ChooseTaxYearsRangeController.submit()
+GET         /choose-tax-years-range                                       hub.v1.controllers.ChooseTaxYearsRangeController.show()
+POST        /choose-tax-years-range                                       hub.v1.controllers.ChooseTaxYearsRangeController.submit()
 
 
 
