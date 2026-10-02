@@ -1,6 +1,9 @@
 #Home Controller
 GET         /                                                             hub.v2.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   hub.v2.controllers.HomeController.show(origin: Option[String] ?= None)
+
+GET         /choose-tax-years-range                                      hub.v2.controllers.ChooseTaxYearsRangeController.show()
+POST        /choose-tax-years-range                                      hub.v2.controllers.ChooseTaxYearsRangeController.submit()
 GET         /agents/client-income-tax                                     hub.v2.controllers.HomeController.showAgent()
 GET         /agents                                                       hub.v2.controllers.HomeController.showAgent()
 GET         /your-tasks                                                   hub.v2.controllers.newHomePage.HandleYourTasksController.show()
