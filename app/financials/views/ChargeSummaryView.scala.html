@@ -48,12 +48,12 @@
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
     chargeSummaryCodingOut: ChargeSummaryCodingOut,
-    chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
     govukInsetText : GovukInsetText,
     govukDetails : GovukDetails,
-    govukTable: GovukTable
+    govukTable: GovukTable,
+    notificationBanner: ChargeSummaryNotificationBanner
 )
 
 @(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig, dateService: DateServiceInterface)
@@ -322,8 +322,8 @@
 @mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage, btaAndPtaServiceNavigation = viewModel.serviceNavigationPartial) {
 
-    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock  || viewModel.chargeHasDunningLock) {
-        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig, viewModel.chargeHistoryEnabled)
+    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock){
+        @notificationBanner(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig, viewModel.chargeHistoryEnabled)
     }
 
     @h1WithCaption(
@@ -331,7 +331,7 @@
         captionMsg = messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
     )
 
-    @if(Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
+    @if(Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge && !viewModel.chargeItem.isFormalStandOverCharge) {
         @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
     }
 

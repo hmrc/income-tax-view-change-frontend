@@ -655,7 +655,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 document.select("h1").text() shouldBe successHeadingForPOA1
-                document.select("#dunningLocksBanner").size() shouldBe 1
+                document.select("#govuk-notification-banner-title").size() shouldBe 1
                 document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe s"$dunningLocksBannerHeading"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
               }
@@ -673,7 +673,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 document.select("h1").text() shouldBe lateInterestSuccessHeading
-                document.select("#dunningLocksBanner").size() shouldBe 0
+                document.select("#govuk-notification-banner-title").size() shouldBe 0
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
               }
             }
@@ -818,7 +818,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.select("#dunningLocksBanner").size() shouldBe 0
+                document.select("#govuk-notification-banner-title").size() shouldBe 0
                 document.select("#heading-payment-breakdown").size() shouldBe 0
               }
 
@@ -833,7 +833,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
+                document.select("#govuk-notification-banner-title").text() shouldBe dunningLocksBannerHeading
               }
 
               "allocations present" in new Setup(

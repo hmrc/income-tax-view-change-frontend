@@ -1110,7 +1110,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeItem = chargeItemModel().copy(lpiWithDunningLock = None),
         paymentBreakdown = paymentBreakdown
       ) {
-        document.doesNotHave(Selectors.id("dunningLocksBanner"))
+        document.doesNotHave(Selectors.id("govuk-notification-banner-title"))
       }
 
       "display a notification banner when there are dunning locks" which {
@@ -1119,15 +1119,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           chargeItem = chargeItemModel(),
           paymentBreakdown = paymentBreakdownWithDunningLocks
         ) {
-          document.selectById("dunningLocksBanner")
-            .select(Selectors.h2).text() shouldBe dunningLockBannerHeader
+          document.selectById("govuk-notification-banner-title").text() shouldBe dunningLockBannerHeader
         }
 
         "has the link for Payment under review which opens in new tab" in new TestSetup(
           chargeItem = chargeItemModel(),
           paymentBreakdown = paymentBreakdownWithDunningLocks
         ) {
-          val link: Elements = document.selectById("dunningLocksBanner").select(Selectors.link)
+          val link: Elements = document.select(".govuk-notification-banner").select(Selectors.link)
 
           link.text() shouldBe dunningLockBannerLink
           link.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
@@ -1139,16 +1138,16 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             chargeItem = chargeItemModel(outstandingAmount = 1600),
             paymentBreakdown = paymentBreakdownWithDunningLocks
           ) {
-            document.selectById("dunningLocksBanner")
-              .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£1,600.00", "15 May 2019")
+            document.select(".govuk-notification-banner")
+              .select(".govuk-notification-banner__content").text() shouldBe dunningLockBannerText("£1,600.00", "15 May 2019")
           }
 
           "display 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new TestSetup(
             chargeItem = chargeItemModel().copy(outstandingAmount = 0),
             paymentBreakdown = paymentBreakdownWithDunningLocks
           ) {
-            document.selectById("dunningLocksBanner")
-              .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£0.00", "15 May 2019")
+            document.select(".govuk-notification-banner")
+              .select(".govuk-notification-banner__content").text() shouldBe dunningLockBannerText("£0.00", "15 May 2019")
           }
         }
       }
@@ -1506,7 +1505,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeItem = chargeItemModel(),
         paymentBreakdown = paymentBreakdownWithDunningLocks
       ) {
-        document.selectById("dunningLocksBanner")
+        document.selectById("govuk-notification-banner-title")
           .select(Selectors.h2).text() shouldBe dunningLockBannerHeader
       }
     }
@@ -1694,7 +1693,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeItem = chargeItemModel(),
         paymentBreakdown = paymentBreakdownWithDunningLocks
       ) {
-        document.selectById("dunningLocksBanner")
+        document.selectById("govuk-notification-banner-title")
           .select(Selectors.h2).text() shouldBe dunningLockBannerHeader
       }
     }
