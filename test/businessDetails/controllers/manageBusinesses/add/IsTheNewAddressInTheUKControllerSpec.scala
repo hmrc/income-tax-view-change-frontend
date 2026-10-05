@@ -40,7 +40,7 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future
@@ -93,9 +93,8 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
-
                 val result = action(fakeRequest)
 
                 val document: Document = Jsoup.parse(contentAsString(result))
@@ -111,9 +110,8 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
-
                 val result = action(fakeRequest)
 
                 val document: Document = Jsoup.parse(contentAsString(result))
@@ -126,10 +124,9 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(invalidUKAddressNoPostCode)))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(invalidUKAddressNoPostCode)))))
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
-
 
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
@@ -141,7 +138,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(foreignAddress)))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(foreignAddress)))))
                 setupMockCreateSession(true)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
                 val result = action(fakeRequest)
 
@@ -158,7 +155,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
               val result = action(fakeRequest)
 
