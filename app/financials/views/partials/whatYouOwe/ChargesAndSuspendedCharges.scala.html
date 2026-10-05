@@ -42,6 +42,7 @@
         totalTableRow: TotalTableRow,
         informalSuspendedCharges: InformalSuspendedCharges,
         formalSuspendedCharges: FormalSuspendedCharges,
+        partialSuspendedCharges: PartialSuspendedCharges,
         earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara
 )
 
@@ -60,6 +61,7 @@
 @import implicitDateFormatter.longDate
 
 @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero || viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.nonEmpty) {
+
     <div id="table-sync-container">
         @govukTable(Table(
             head = Some(Seq(
@@ -97,6 +99,9 @@
                         Some(TableRow(
                             attributes = Map("id" -> "balancing-charge-amount-due-0"),
                             content = HtmlContent(viewModel.whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency),
+                            /*content = if (isStoodOverEnabled) {
+                                HtmlContent(viewModel.whatYouOweChargesList.chargesList.filter(_.collectableAmt.exists(_ > 0)).head.collectableAmt.getOrElse(BigDecimal(0)).toCurrency)
+                            } else {HtmlContent(viewModel.whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency)},*/
                             format = Some("numeric")
                         ))
                     ).flatten
@@ -123,6 +128,9 @@
                         Some(TableRow(
                             attributes = Map("id" -> "balancing-charge-amount-due-1"),
                             content = HtmlContent(viewModel.whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency),
+                            /* content = if (isStoodOverEnabled) {
+                                 HtmlContent(viewModel.whatYouOweChargesList.chargesList.filter(_.collectableAmt.exists(_ > 0)).head.collectableAmt.getOrElse(BigDecimal(0)).toCurrency)
+                             } else {HtmlContent(viewModel.whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency)},*/
                             format = Some("numeric")
                         ))
                     ).flatten
@@ -165,7 +173,49 @@
                             ))
                         ).flatten)
                     ).flatten
-                }
+                },
+                if(isStoodOverEnabled) {
+                    viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.filter(_.isPartialStoodOver).zipWithIndex.flatMap { case (charge, index) =>
+                        Seq(
+                            Some(Seq[IterableOnce[TableRow]](
+                                Some(TableRow(
+                                    attributes = Map("id" -> s"due-charge-due-date-$index"),
+                                    content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNonBreaking)
+                                )),
+                                Some(TableRow(
+                                    attributes = Map("id" -> s"due-$index"),
+                                    content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), showLabel = false))
+                                )),
+                                Some(TableRow(
+                                    attributes = Map("id" -> s"due-charge-tax-year-$index"),
+                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
+                                )),
+                                Option.when(charge.isAccruingInterest)(
+                                    TableRow(
+                                        attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
+                                        content = HtmlContent(charge.accruingInterestAmount.get.toCurrency),
+                                        format = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) Some("numeric") else None
+                                    )
+                                ).orElse(
+                                    if(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
+                                        Some(TableRow(
+                                            attributes = Map("id" -> s"fallback-$index"),
+                                            content = HtmlContent(getMessage("tableRow.na"))))
+                                    } else {
+                                        None
+                                    }
+
+                                ),
+                                Some(TableRow(
+                                    attributes = Map("id" -> s"due-charge-amount-due-$index"),
+                                    content = HtmlContent(charge.collectableAmt.getOrElse(BigDecimal(0)).toCurrency),
+                                    //                                    content = HtmlContent(viewModel.whatYouOweChargesList.chargesList.filter(_.collectableAmt.exists(_ > 0)).head.collectableAmt.getOrElse(BigDecimal(0)).toCurrency),
+                                    format = Some("numeric")
+                                ))
+                            ).flatten)
+                        ).flatten
+                    }
+                } else Seq.empty
             ).flatten,
             caption = Some(getMessage("payments-due")),
             attributes = Map("id" -> "what-you-owe-payments-due-table"),
@@ -178,13 +228,13 @@
     </div>
 }
 
-    @govukInsetText(InsetText(
-        attributes = Map("id" -> "payments-processing-note"),
-        content = Text(getMessage("payments-processing-note"))
-    ))
-    @paymentsMadeContent(
-        origin = origin,
-        viewModel = viewModel)
+@govukInsetText(InsetText(
+    attributes = Map("id" -> "payments-processing-note"),
+    content = Text(getMessage("payments-processing-note"))
+))
+@paymentsMadeContent(
+    origin = origin,
+    viewModel = viewModel)
 
 @if(!viewModel.chargesListAndCodedOutDetailsAreEmpty) {
     @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.map { taxYear =>
@@ -199,20 +249,61 @@
     }
 }
 
+@* @{
+(isStoodOverEnabled, viewModel.informalChargesList.nonEmpty, viewModel.formalChargesList.nonEmpty, viewModel.suspendedCharges.exists(_.isPartialStoodOver)) match {
+case (true, _, _, true) => {
+<p>PartialSuspendedCharges (true, _, _, true) - viewModel.suspendedCharges.exists(_.isPartialStoodOver)</p>
+<div id="suspended-charges">
+@partialSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+</div>
+}
+
+case (_, true, true, false) => {
+<div id="suspended-charges">
+@formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+</div>
+}
+
+case (_, true, false, false) => {
+<div id="informal-suspended-charges">
+@informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+</div>
+}
+
+case (_, false, true, false) => {
+<div id="formal-suspended-charges">
+@formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+</div>
+}
+
+case _ => Empty
+}
+} *@
+
+
+
+@* TODO this is how it wired on What You Owe Page - rewrite with pattern match for clarity and readability *@
+@* @if(viewModel.suspendedCharges.exists(_.isPartialStoodOver)) {
+    <div id="suspended-charges">
+    @partialSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+    </div>
+} *@
+
+
 @if(viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty) {
     <div id="suspended-charges">
-        @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled)
+    @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
     </div>
 }else {
     @if(viewModel.informalChargesList.nonEmpty) {
-    <div id="informal-suspended-charges">
+        <div id="informal-suspended-charges">
         @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
-    </div>
+        </div>
     }
     @if(viewModel.formalChargesList.nonEmpty) {
-    <div id="formal-suspended-charges">
-        @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled)
-    </div>
+        <div id="formal-suspended-charges">
+        @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+        </div>
     }
 }
 

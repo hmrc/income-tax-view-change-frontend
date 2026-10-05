@@ -103,6 +103,7 @@ trait ChargeConstants {
                                               isRevenueAmendment: List[Boolean] = List(false, false),
                                               dunningLockValue: List[Option[String]] = List(None, None),
                                               totalSoAmt: List[Option[BigDecimal]] = List(None, None),
+                                              collectableAmt: List[Option[BigDecimal]] = List(None, None),
                                               chargeReference: List[Option[String]] = List(Some("ABCD1234"), Some("ABCD1234"))): List[ChargeItem] = {
 
     List(
@@ -130,6 +131,7 @@ trait ChargeConstants {
         chargeReference = chargeReference.head,
         isRevenueAmendment = isRevenueAmendment(0),
         totalSoAmt = totalSoAmt(0),
+        collectableAmt = collectableAmt(0),
         dunningLockValue = dunningLockValue(0)
       ),
       ChargeItem(transactionId = transactionId(1),
@@ -156,6 +158,7 @@ trait ChargeConstants {
         chargeReference = chargeReference(1),
         isRevenueAmendment = isRevenueAmendment(1),
         totalSoAmt = totalSoAmt(1),
+        collectableAmt = collectableAmt(1),
         dunningLockValue = dunningLockValue(1)
       )
     )
@@ -1220,6 +1223,42 @@ trait ChargeConstants {
       isRevenueAmendment = List(true, true),
       dunningLockValue = List(Some("Standover order"), Some("Stand over order")),
       totalSoAmt = List(Some(BigDecimal(34.56)), Some(BigDecimal(34.56)))
+    ),
+    outstandingChargesModel = outstandingCharges,
+    codedOutDetails = codedOutDetails
+  )
+
+  def whatYouOweDataWithDataDueInMoreThan30DaysPartialStandover(dunningLocks: List[Option[String]] = noDunningLocks,
+                                                                dueDates: List[Option[LocalDate]] = dueDateMoreThan30Days,
+                                                                codedOutDetails: Option[CodingOutDetails] = None,
+                                                                outstandingCharges: Option[OutstandingChargesModel] = Some(outstandingChargesDueInMoreThan30Days),
+                                                                dunningLockValue: List[Option[String]] = List(Some("Standover order"), None),
+                                                                totalSoAmt: List[Option[BigDecimal]] = List(Some(BigDecimal(100.25)), None),
+                                                                collectableAmt: List[Option[BigDecimal]] = List(Some(BigDecimal(250.50)), None)): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(
+      0.00,
+      2.00,
+      4.00,
+      2.00,
+      Some(BigDecimal(100.00)),
+      None,
+      None,
+      Some(BigDecimal(350.00)),
+      None,
+      None,
+      Some(BigDecimal(100.00)),
+      None
+    ),
+    chargesList = testFinancialDetailsChargeItems(
+      dueDate = dueDates,
+      dunningLock = dunningLocks,
+      interestEndDate = List(None, None),
+      interestFromDate = List(None, None),
+      dueDateForFinancialDetail = List(LocalDate.parse("2024-01-29"), LocalDate.parse("2024-02-03")),
+      isRevenueAmendment = List(true, true),
+      dunningLockValue = dunningLockValue,
+      totalSoAmt = totalSoAmt,
+      collectableAmt = collectableAmt
     ),
     outstandingChargesModel = outstandingCharges,
     codedOutDetails = codedOutDetails

@@ -52,7 +52,8 @@ case class ChargeItem(
                        chargeClassification: Option[String] = None,
                        isRevenueAmendment: Boolean = false,
                        dunningLockValue: Option[String] = None,
-                       totalSoAmt: Option[BigDecimal] = None
+                       totalSoAmt: Option[BigDecimal] = None,
+                       collectableAmt: Option[BigDecimal] = None
                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
@@ -64,6 +65,8 @@ case class ChargeItem(
     if (isRevenueAmendment) {
       if(dunningLockValue.contains(formalStandOver)){
         "standover.formal.label"
+//        TODO this needs to be fixed
+//        "enquiryAmendment.text"
       }else {
         getChargeTypeKey
       }
@@ -234,6 +237,8 @@ case class ChargeItem(
     case PoaTwoDebit => poaTwoReconciliationDebit
     case _ => "no valid case"
   }
+
+  def isPartialStoodOver: Boolean =  totalSoAmt.exists(_ > 0) && collectableAmt.exists(_ > 0)
 }
 
 object ChargeItem {
@@ -319,7 +324,8 @@ object ChargeItem {
       isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification),
       //fetching only first value since we can have only one Stand over per charge
       dunningLockValue = getDunningLockValue(documentDetail, financialDetails),
-      totalSoAmt = documentDetail.totalSoAmt
+      totalSoAmt = documentDetail.totalSoAmt,
+      collectableAmt = documentDetail.collectableAmt
     )
   }
 

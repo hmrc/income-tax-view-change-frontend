@@ -43,7 +43,8 @@
         earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara,
         informalSuspendedCharges: InformalSuspendedCharges,
         formalSuspendedCharges: FormalSuspendedCharges,
-        formalChargesPayingSuspendedTax: FormalChargesPayingSuspendedTax
+        formalChargesPayingSuspendedTax: FormalChargesPayingSuspendedTax,
+        partialSuspendedCharges: PartialSuspendedCharges,
 )
 @(
         viewModel: WhatYouOweViewModel,
@@ -59,70 +60,78 @@
 
 @import implicitDateFormatter.longDate
 
+
+@formalSuspendedChargesContent = {
+@h2(classes = "govuk-heading-m", msg = messages("whatYouOwe.formal.suspended-charges.paying-tax.header"))
+
+@p(){
+    @messages("whatYouOwe.formal.suspended-charges.paying-tax.p1")
+}
+
+@p(){
+    @messages("whatYouOwe.formal.suspended-charges.paying-tax.list.header")
+}
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l1")</li>
+        <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l2")</li>
+    </ul>
+
+@p(){
+    @messages("whatYouOwe.formal.suspended-charges.paying-tax.p2")
+}
+@p(){
+    @messages("whatYouOwe.formal.suspended-charges.paying-tax.p3")
+}
+@paymentsMadeContent(
+    origin = origin,
+    viewModel = viewModel)
+
+@earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+}
+
 @getSuspendedChargesView(viewModel: WhatYouOweViewModel, origin: Option[String], isSelfServeTimeToPayEnabled: Boolean) = {
-    @if(viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty) {
-            @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled)
+    @* Rewrite with pattern match - add a case with Partial Stood Over by using formalSuspendedCharges *@
 
-        @h2(classes = "govuk-heading-m", msg = messages("whatYouOwe.formal.suspended-charges.paying-tax.header"))
-
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p1")
-        }
-
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.list.header")
-        }
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l1")</li>
-            <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l2")</li>
-        </ul>
-
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p2")
-        }
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p3")
-        }
-            @paymentsMadeContent(
-                origin = origin,
-                viewModel = viewModel)
-
-            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
-    }else {
-        @if(viewModel.informalChargesList.nonEmpty) {
-            @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
-        }
-        @if(viewModel.formalChargesList.nonEmpty) {
-            @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled)
-
-        @h2(classes = "govuk-heading-m", msg = messages("whatYouOwe.formal.suspended-charges.paying-tax.header"))
-
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p1")
-        }
-
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.list.header")
-        }
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l1")</li>
-            <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l2")</li>
-        </ul>
-
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p2")
-        }
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p3")
-        }
-
-            @paymentsMadeContent(
-                origin = origin,
-                viewModel = viewModel)
-
-            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
-        }
+@(viewModel.informalChargesList.nonEmpty, viewModel.formalChargesList.nonEmpty, viewModel.suspendedCharges.exists(_.isPartialStoodOver)) match {
+    case (_, _, true) => {
+        @partialSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+        @formalSuspendedChargesContent
     }
+
+    case (true, true, false) => {
+        @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+        @formalSuspendedChargesContent
+    }
+    case (true, false, false) => {
+        @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+    }
+    case (false, true, false) => {
+        @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+        @formalSuspendedChargesContent
+    }
+
+    case _ => {
+        Empty
+    }
+}
+
+@* TODO check it or remove *@
+    @* @if(viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty) {
+    <h2>WHAT!!!!!</h2>
+    <p>WOW View option 1   -  viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty</p>
+    @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+    @formalSuspendedChargesContent
+    } else {
+    @if(viewModel.informalChargesList.nonEmpty) {
+    <p>WOW option 2    -  viewModel.informalChargesList.nonEmpty </p>
+    @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+    }
+    @if(viewModel.formalChargesList.nonEmpty) {
+    <p>WOW option 3    -  viewModel.formalChargesList.nonEmpty </p>
+    @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+    @formalSuspendedChargesContent
+    }
+    } *@
 }
 
 @mainTemplate(
@@ -143,9 +152,9 @@
     @if(viewModel.hasNonDunningLockCharges) {
         @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
     } else if(viewModel.hasOnlySuspendedCharges) {
-        @getSuspendedChargesView(viewModel, origin, isSelfServeTimeToPayEnabled)
+    @getSuspendedChargesView(viewModel, origin, isSelfServeTimeToPayEnabled)
     } else {
-        @paymentsMadeContent(origin, viewModel)
-        @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+    @paymentsMadeContent(origin, viewModel)
+    @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
     }
 }
