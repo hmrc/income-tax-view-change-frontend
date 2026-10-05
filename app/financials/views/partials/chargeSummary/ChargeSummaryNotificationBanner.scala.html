@@ -42,15 +42,13 @@
 
 
 @html = {
-    <p class="govuk-notification-banner__heading">
-        @{(latePaymentInterestCharge, chargeItem.dunningLock, chargeItem.isFormalStandOverCharge) match {
-            case (_, _, true) => FormalSoContent()
-            case (false , true, _) if chargeHistoryEnabled => PaymentInformalSoContent()
-            case (true , true, _) if chargeHistoryEnabled => LpiInformalSoContent()
-            case (true, false, _) => LpiContent()
-            case _ => DefaultContent()
-        }}
-    </p>
+    @{(latePaymentInterestCharge, chargeItem.dunningLock, chargeItem.isFormalStandOverCharge) match {
+        case (_, _, true) => FormalSoContent()
+        case (false , true, _) if chargeHistoryEnabled => PaymentInformalSoContent()
+        case (true , true, _) if chargeHistoryEnabled => LpiInformalSoContent()
+        case (true, false, _) => LpiContent()
+        case _ => DefaultContent()
+    }}
 }
 
 @govukNotificationBanner(NotificationBanner(
@@ -61,39 +59,41 @@
 
 
 @FormalSoContent() = {
-    @messages("chargeSummary.dunning.locks.formal.standover.banner.note1")
-    <br><br>
-    @messages("chargeSummary.dunning.locks.formal.standover.banner.note2")
+    <p class="govuk-notification-banner__heading">@messages("chargeSummary.dunning.locks.formal.standover.banner.note1")</p>
+    <p class="govuk-notification-banner__heading">@messages("chargeSummary.dunning.locks.formal.standover.banner.note2")</p>
 }
 
 @PaymentInformalSoContent() = {
-    @messages("chargeSummary.dunning.locks.informal.standover.banner.note1")
-    <br>
-    @messages("chargeSummary.dunning.locks.informal.standover.banner.note2")
+    <p class="govuk-notification-banner__heading">@messages("chargeSummary.dunning.locks.informal.standover.banner.note1")</p>
+    <p class="govuk-notification-banner__heading">@messages("chargeSummary.dunning.locks.informal.standover.banner.note2")</p>
 }
 
 @LpiInformalSoContent() = {
-    @messages("chargeSummary.dunning.locks.informal.standover.banner.note1")
+    <p class="govuk-notification-banner__heading">@messages("chargeSummary.dunning.locks.informal.standover.banner.note1")</p>
 }
 
 @LpiContent() = {
-    @link(
-        classes="govuk-notification-banner__link govuk-notification-banner__heading",
-        link=appConfig.taxAppealsUrl,
-        rel=Some("noreferrer noopener"),
-        target = Some("_blank"),
-        messageKey = "chargeSummary.dunning.locks.banner.linkText"
-    )
+    <p class="govuk-notification-banner__heading">
+        @link(
+            classes="govuk-notification-banner__link govuk-notification-banner__heading",
+            link=appConfig.taxAppealsUrl,
+            rel=Some("noreferrer noopener"),
+            target = Some("_blank"),
+            messageKey = "chargeSummary.dunning.locks.banner.linkText"
+        )
+    </p>
 }
 
 @DefaultContent() = {
-    @link(
-        classes="govuk-notification-banner__link",
-        link=appConfig.taxAppealsUrl,
-        rel=Some("noreferrer noopener"),
-        target = Some("_blank"),
-        messageKey = "chargeSummary.dunning.locks.banner.linkText",
-        additionalOpenTabMessage = Some(".")
-    )
-    @messages("chargeSummary.dunning.locks.banner.note", chargeItem.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
+    <p class="govuk-notification-banner__heading">
+        @link(
+            classes="govuk-notification-banner__link",
+            link=appConfig.taxAppealsUrl,
+            rel=Some("noreferrer noopener"),
+            target = Some("_blank"),
+            messageKey = "chargeSummary.dunning.locks.banner.linkText",
+            additionalOpenTabMessage = Some(".")
+        )
+        @messages("chargeSummary.dunning.locks.banner.note", chargeItem.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
+    </p>
 }
