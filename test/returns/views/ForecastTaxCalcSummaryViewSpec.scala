@@ -103,7 +103,6 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
           s"has the dataItem: '$dataItem' with the correct amount value: $formattedAmount" in new Setup(view) {
             val paragraphs: Elements = layoutContent.getElementsByClass("govuk-body-l")
             val para: Element = paragraphs.get(paraNo)
-            println(layoutContent)
             para.text shouldBe s"$dataItem $formattedAmount"
           }
         }
