@@ -230,7 +230,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(6).text() shouldBe "View all tax years"
           document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref("/tax-years")
 
-          document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
+          document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear} to ${testTaxYear.endYear} tax calculation and forecast"
           document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/tax-year-summary/${testTaxYear.endYear}")
 
           document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Proof of your income (SA302)"
@@ -306,7 +306,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(5).text() shouldBe "View all tax years"
           document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/tax-years")
 
-          document.select(".govuk-summary-card-no-border").get(6).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
+          document.select(".govuk-summary-card-no-border").get(6).text() shouldBe s"View your ${testTaxYear.startYear} to ${testTaxYear.endYear} tax calculation and forecast"
           document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref(s"/tax-year-summary/${testTaxYear.endYear}")
 
           document.select(".govuk-summary-card-no-border").get(7).text() shouldBe "Proof of your income (SA302)"
@@ -351,7 +351,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
-        linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
+        linkText = s"View your ${testTaxYear.startYear} to ${testTaxYear.endYear} tax calculation and forecast",
         linkHref = s"/tax-year-summary/${testTaxYear.endYear}"
       )
       taxYearSection.hasCorrectOverviewCardLink(
@@ -370,7 +370,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
-        linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
+        linkText = s"View your ${testTaxYear.startYear} to ${testTaxYear.endYear} tax calculation and forecast",
         linkHref = s"/tax-year-summary/${testTaxYear.endYear}"
       )
       taxYearSection.text() should not include "Proof of your income (SA302)"
@@ -530,7 +530,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(6).text() shouldBe "View all tax years"
           document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref("/agents/tax-years")
 
-          document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
+          document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear} to ${testTaxYear.endYear} tax calculation and forecast"
           document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/agents/tax-year-summary/${testTaxYear.endYear}")
 
           document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Proof of your income (SA302)"
@@ -605,7 +605,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(5).text() shouldBe "View all tax years"
           document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/agents/tax-years")
 
-          document.select(".govuk-summary-card-no-border").get(6).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
+          document.select(".govuk-summary-card-no-border").get(6).text() shouldBe s"View your ${testTaxYear.startYear} to ${testTaxYear.endYear} tax calculation and forecast"
           document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref(s"/agents/tax-year-summary/${testTaxYear.endYear}")
 
           document.select(".govuk-summary-card-no-border").get(7).text() shouldBe "Proof of your income (SA302)"
@@ -651,7 +651,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
-        linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
+        linkText = s"View your ${testTaxYear.startYear} to ${testTaxYear.endYear} tax calculation and forecast",
         linkHref = s"/agents/tax-year-summary/${testTaxYear.endYear}"
       )
       taxYearSection.hasCorrectOverviewCardLink(
@@ -670,7 +670,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
-        linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
+        linkText = s"View your ${testTaxYear.startYear} to ${testTaxYear.endYear} tax calculation and forecast",
         linkHref = s"/agents/tax-year-summary/${testTaxYear.endYear}"
       )
       taxYearSection.text() should not include "Proof of your income (SA302)"
