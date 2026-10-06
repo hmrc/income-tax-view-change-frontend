@@ -72,11 +72,11 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
     val noActivityText = "You have no recent activity."
 
     val annualSubmissionLinkText = "View 2023 to 2024 tax year summary"
-    val annualSubmissionContent = "You made an annual tax return submission."
+    val annualSubmissionContent = "You submitted your tax return."
     val annualDateContent = "Sent 6 March 2023"
 
     val quarterlySubmissionLinkText = "View your tax year summary"
-    val quarterlySubmissionContent = "You submitted a quarterly update."
+    val quarterlySubmissionContent = "You sent a quarterly update."
     val quarterlyDateContent = "Sent 6 March 2023"
   }
 

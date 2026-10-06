@@ -343,17 +343,17 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty poin
 new.home.navigation.tabs.yourTasks                              = Your tasks
 
 new.home.yourTasks.updates-and-deadlines                        = View submission deadlines
-new.home.yourTasks.upcoming-annual-updates-body                  = You have an upcoming annual submission deadline.
+new.home.yourTasks.upcoming-annual-updates-body                  = You have an upcoming tax return deadline.
 new.home.yourTasks.upcoming-annual-updates-label                 = Due {0}
-new.home.yourTasks.upcoming-quarterly-updates-body               = You have an upcoming quarterly submission deadline.
+new.home.yourTasks.upcoming-quarterly-updates-body               = You have an upcoming quarterly update deadline.
 new.home.yourTasks.upcoming-quarterly-updates-label              = Due {0}
-new.home.yourTasks.overdue-annual-submission-single-body            = You have an overdue annual submission.
+new.home.yourTasks.overdue-annual-submission-single-body            = You have an overdue tax return.
 new.home.yourTasks.overdue-annual-submission-single-label           = Due {0}
-new.home.yourTasks.overdue-annual-submission-multiple-body          = You have {0} overdue annual submissions.
+new.home.yourTasks.overdue-annual-submission-multiple-body          = You have {0} overdue tax returns.
 new.home.yourTasks.overdue-annual-submission-multiple-label         = Oldest due {0}
-new.home.yourTasks.overdue-quarterly-submission-single-body            = You have an overdue quarterly submission.
+new.home.yourTasks.overdue-quarterly-submission-single-body            = You have an overdue quarterly update.
 new.home.yourTasks.overdue-quarterly-submission-single-label           = Due {0}
-new.home.yourTasks.overdue-quarterly-submission-multiple-body          = You have {0} overdue quarterly submissions.
+new.home.yourTasks.overdue-quarterly-submission-multiple-body          = You have {0} overdue quarterly updates.
 new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Oldest due {0}
 
 ### Overview Tab
@@ -415,11 +415,11 @@ new.home.navigation.tabs.recentActivity                         = Recent activit
 new.home.recentActivity.noActivity                              = You have no recent activity.
 
 new.home.recentActivity.submissions.annual.link.text            = View {0} to {1} tax year summary
-new.home.recentActivity.submissions.annual.content.text         = You made an annual tax return submission.
+new.home.recentActivity.submissions.annual.content.text         = You submitted your tax return.
 new.home.recentActivity.submissions.annual.date.content.text    = Sent {0}
 
 new.home.recentActivity.submissions.quarterly.link.text         = View your tax year summary
-new.home.recentActivity.submissions.quarterly.content.text      = You submitted a quarterly update.
+new.home.recentActivity.submissions.quarterly.content.text      = You sent a quarterly update.
 new.home.recentActivity.submissions.quarterly.date.content.text = Sent {0}
 
 new.home.recentActivity.payments.link.text                      = View payment history
@@ -2803,7 +2803,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.hmrcCorrection.caption.text       
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
 
-yourSelfAssessmentChargeSummary.correction.p1.1                                     = HMRC corrected your tax return. This changed your 
+yourSelfAssessmentChargeSummary.correction.p1.1                                     = HMRC corrected your tax return. This changed your
 yourSelfAssessmentChargeSummary.correction.p1.link-text                             = tax calculation for {0} to {1}
 yourSelfAssessmentChargeSummary.correction.p1.2                                     = resulting in a credit being added to your account.
 

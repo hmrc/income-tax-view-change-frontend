@@ -116,27 +116,27 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val upcomingChargeTag = "Due 29 Mar 2100"
 
     val overdueAnnualSubmissionHeading = "View submission deadlines"
-    val overdueAnnualSubmissionContent = "You have an overdue annual submission."
+    val overdueAnnualSubmissionContent = "You have an overdue tax return."
     val overdueAnnualSubmissionTag = "Due 5 Apr 2021"
 
     val multipleOverdueAnnualSubmissionsHeading = "View submission deadlines"
-    val multipleOverdueAnnualSubmissionsContent = "You have 2 overdue annual submissions."
+    val multipleOverdueAnnualSubmissionsContent = "You have 2 overdue tax returns."
     val multipleOverdueAnnualSubmissionsTag = "Oldest due 5 Apr 2021"
 
     val overdueQuarterlySubmissionHeading = "View submission deadlines"
-    val overdueQuarterlySubmissionContent = "You have an overdue quarterly submission."
+    val overdueQuarterlySubmissionContent = "You have an overdue quarterly update."
     val overdueQuarterlySubmissionTag = "Due 5 Apr 2021"
 
     val multipleOverdueQuarterlySubmissionsHeading = "View submission deadlines"
-    val multipleOverdueQuarterlySubmissionsContent = "You have 2 overdue quarterly submissions."
+    val multipleOverdueQuarterlySubmissionsContent = "You have 2 overdue quarterly updates."
     val multipleOverdueQuarterlySubmissionsTag = "Oldest due 5 Apr 2021"
 
     val upcomingAnnualSubmissionHeading = "View submission deadlines"
-    val upcomingAnnualSubmissionContent = "You have an upcoming annual submission deadline."
+    val upcomingAnnualSubmissionContent = "You have an upcoming tax return deadline."
     val upcomingAnnualSubmissionTag = "Due 5 Apr 2123"
 
     val upcomingQuarterlySubmissionHeading = "View submission deadlines"
-    val upcomingQuarterlySubmissionContent = "You have an upcoming quarterly submission deadline."
+    val upcomingQuarterlySubmissionContent = "You have an upcoming quarterly update deadline."
     val upcomingQuarterlySubmissionTag = "Due 5 Apr 2123"
 
     val moneyInYourAccountHeading = "Check for money in your account and claim a refund"
