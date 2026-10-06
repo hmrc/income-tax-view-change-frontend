@@ -47,4 +47,6 @@
 
 }
 
-@govUkWarningText(WarningText(content = Text(getMessage("itsaReturnAmendment.warning"))))
+@if(!viewModel.chargeItem.isFormalStandOverCharge){
+    @govUkWarningText(WarningText(content = Text(getMessage("itsaReturnAmendment.warning"))))
+}

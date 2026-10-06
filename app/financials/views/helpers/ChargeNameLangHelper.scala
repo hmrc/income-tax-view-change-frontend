@@ -24,7 +24,10 @@ object ChargeNameLangHelper {
 
   def getHeading(chargeItem: ChargeItem, isInterestCharge: Boolean)(implicit messages: Messages): String = {
     val messagePrefix = if (isInterestCharge) "lpi." else ""
-    messages(s"yourSelfAssessmentChargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}.heading")
+    if(chargeItem.isFormalStandOverCharge)
+      messages("chargeSummary.dunning.locks.formal.standover.heading")
+    else
+      messages(s"yourSelfAssessmentChargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}.heading")
   }
 
   def chargeHistoryCaption(chargeItem: ChargeItem)(implicit messages: Messages): String = {
