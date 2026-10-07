@@ -33,6 +33,7 @@
     index: Int,
     chargeSummaryUrl: String,
     showLabel: Boolean = true,
+    isPartialFormalCollectable: Boolean = false
 )(
     implicit messages: Messages,
     user: MtdItUser[_],
@@ -58,5 +59,6 @@
     isOverduePayment = charge.isOverdue(),
     rowId = rowId2,
     index = index,
-    chargeSummaryUrl = chargeSummaryUrl
+    chargeSummaryUrl = chargeSummaryUrl,
+    isPartialFormalCollectable = isPartialFormalCollectable
 )

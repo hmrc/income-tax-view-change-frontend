@@ -167,7 +167,7 @@
                             ).flatten)
                         ).flatten
                     },
-                    if(isStoodOverEnabled && viewModel.whatYouOweChargesList.isPartialStoodOverCharge) {
+                    if(viewModel.whatYouOweChargesList.isPartialStoodOverCharge) {
                         viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.filter(_.isPartialStoodOver).zipWithIndex.flatMap { case (charge, index) =>
                             Seq(
                                 Some(Seq[IterableOnce[TableRow]](
@@ -177,7 +177,7 @@
                                     )),
                                     Some(TableRow(
                                         attributes = Map("id" -> s"due-$index"),
-                                        content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), showLabel = false))
+                                        content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), showLabel = false, isPartialFormalCollectable = true))
                                     )),
                                     Some(TableRow(
                                         attributes = Map("id" -> s"due-charge-tax-year-$index"),
