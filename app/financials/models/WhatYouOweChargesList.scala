@@ -45,6 +45,8 @@ case class WhatYouOweChargesList(
       && outstandingChargesModel.get.bcdChargeType.get.chargeAmount > 0) true
     else false
 
+  def isPartialStoodOverCharge: Boolean = sortedChargesListWithDunningLock.exists(_.isPartialStoodOver) 
+
   def isChargesListEmpty: Boolean = chargesList.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)

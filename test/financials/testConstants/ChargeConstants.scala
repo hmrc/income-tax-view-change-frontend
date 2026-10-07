@@ -1630,4 +1630,19 @@ trait ChargeConstants {
     taxYear = dateService.getCurrentDate.getYear.toString
   )
 
+  def financialDetailsPartialStoodOverCharge(
+                                              dunningLocks: List[Option[String]] = oneDunningLock, 
+                                              totalSoAmt: List[Option[BigDecimal]] = List(Some(BigDecimal(1300.00)), None),
+                                              collectableAmt: List[Option[BigDecimal]] = List(Some(BigDecimal(1500.00)), None)
+                                            ): List[ChargeItem] = testFinancialDetailsChargeItems(
+    dueDate = dueDateMoreThan30Days,
+    dunningLock = dunningLocks,
+    interestFromDate = List(None, None),
+    interestEndDate = List(None, None),
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = List(LocalDate.parse("2024-01-29"), LocalDate.parse("2024-02-03")),
+    totalSoAmt = totalSoAmt,
+    collectableAmt = collectableAmt 
+  )
+
 }

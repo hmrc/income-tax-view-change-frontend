@@ -814,7 +814,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             val overduePaymentsTableRow1: Element = suspendedChargesTable.select("tr").get(1)
             overduePaymentsTableRow1.select("td").get(1).text() shouldBe latePoa1Text + s" 1"
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
-            overduePaymentsTableRow1.select("td").last().text() shouldBe "£150.77"
+            overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
@@ -1407,13 +1407,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         chargesTableRow.select("td").get(0).text() shouldBe "29 Jan 2024"
         chargesTableRow.select("td").get(1).text() shouldBe "First payment on account 1"
         chargesTableRow.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
-        chargesTableRow.select("td").get(3).text() shouldBe "£150.77"
+        chargesTableRow.select("td").get(3).text() shouldBe "£50.00"
 
         val chargesTableRow2: Element = pageDocument.select("tr").get(2)
         chargesTableRow2.select("td").get(0).text() shouldBe "3 Feb 2024"
         chargesTableRow2.select("td").get(1).text() shouldBe "Second payment on account 2"
         chargesTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
-        chargesTableRow2.select("td").get(3).text() shouldBe "£150.77"
+        chargesTableRow2.select("td").get(3).text() shouldBe "£75.00"
       }
 
       "show both the normal and suspended charges tables when charges have a mix of dunning locks" in new TestSetup(
@@ -1444,6 +1444,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         chargesTableRow2.select("td").get(0).text() shouldBe "15 May 2019"
         chargesTableRow2.select("td").get(1).text() shouldBe "Second payment on account 1"
         chargesTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText("2019", "2020")
+//        TODO check if this correct
         chargesTableRow2.select("td").get(3).text() shouldBe "£150.77"
       }
 
@@ -1502,19 +1503,53 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "display collectable debt when part of a charge is stood over and the portion of the charge that is under suspension for an informal stood over" in new TestSetup(
         charges = whatYouOweDataWithDataDueInMoreThan30DaysPartialStandover(
-          dunningLocks = oneDunningLock
+          dunningLocks = List(Some("Stand over order"), None),
+          dunningLockValue = List(Some("Stand over order"), None)
         )
       ) {
+        pageDocument.getElementsByClass("govuk-heading-m").get(0).text() shouldBe messages("whatYouOwe.formal.suspended-charges")
+
+        val whatYouOwePaymentsDueTable: Element = pageDocument.getElementById("what-you-owe-payments-due-table")
+        whatYouOwePaymentsDueTable.select(".govuk-table thead th").get(0).text() shouldBe messages("whatYouOwe.formal.suspended-charges.table.th1")
+        whatYouOwePaymentsDueTable.select(".govuk-table thead th").get(1).text() shouldBe messages("whatYouOwe.formal.suspended-charges.table.th2")
+        whatYouOwePaymentsDueTable.select(".govuk-table thead th").get(2).text() shouldBe messages("whatYouOwe.formal.suspended-charges.table.th3")
+        whatYouOwePaymentsDueTable.select(".govuk-table thead th").get(3).text() shouldBe messages("whatYouOwe.formal.suspended-charges.table.th4")
+
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "19 Jan 2024"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe "Balancing payment (Pre-Making Tax Digital)"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(3)").text() shouldBe "2021 to 2022"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(4)").text() shouldBe "£123,456.67"
+
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "3 Feb 2024"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe "Second payment on account 1"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "2022 to 2023 Tax year"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(2) > td:nth-child(4)").text() shouldBe "£75.00"
+
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(3) > td:nth-child(1)").text() shouldBe "29 Jan 2024"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(3) > td:nth-child(2)").text() shouldBe "First payment on account 1"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(3) > td:nth-child(3)").text() shouldBe "2022 to 2023 Tax year"
+        whatYouOwePaymentsDueTable.select(".govuk-table > tbody > tr:nth-child(3) > td:nth-child(4)").text() shouldBe "£250.50"
+
+        val inFormalSuspendedCharges: Element = pageDocument.getElementById("informal-suspended-charges")
+        inFormalSuspendedCharges.getElementsByTag("h2").text() shouldBe messages("whatYouOwe.suspended-charges")
+        inFormalSuspendedCharges.getElementsByClass("govuk-body").get(0).text() shouldBe messages("whatYouOwe.suspended-charges-informalOnly.p1")
+        inFormalSuspendedCharges.getElementsByClass("govuk-body").get(1).text() shouldBe messages("whatYouOwe.suspended-charges-informalOnly.p2")
+
+        inFormalSuspendedCharges.select(".govuk-table thead th").get(0).text() shouldBe messages("whatYouOwe.formal.suspended-charges.table.th1")
+        inFormalSuspendedCharges.select(".govuk-table thead th").get(1).text() shouldBe messages("whatYouOwe.formal.suspended-charges.table.th2")
+        inFormalSuspendedCharges.select(".govuk-table thead th").get(2).text() shouldBe messages("whatYouOwe.formal.suspended-charges.table.th3")
+        inFormalSuspendedCharges.select(".govuk-table thead th").get(3).text() shouldBe messages("whatYouOwe.formal.suspended-charges.table.th4")
+
+        inFormalSuspendedCharges.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "29 Jan 2024"
+        inFormalSuspendedCharges.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe "First payment on account 1"
+        inFormalSuspendedCharges.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(3)").text() shouldBe "2022 to 2023 Tax year"
+        inFormalSuspendedCharges.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(4)").text() shouldBe "£100.25"
+
+        pageDocument.getElementById("what-you-owe-total-row").select("span").get(0).text() shouldBe messages("whatYouOwe.total-row.label")
+        pageDocument.getElementById("what-you-owe-total-row").select("span").get(1).text() shouldBe "£150.77"
+
         pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p1"))
         pageDocument.body().text() should include(messages("whatYouOwe.suspended-charges-informalOnly.p2"))
-
-        pageDocument.getElementById("paying-suspended-tax.heading").text() shouldBe messages("whatYouOwe.paying-suspended-tax.heading")
-        pageDocument.getElementById("paying-suspended-tax.p1").text() shouldBe messages("whatYouOwe.paying-suspended-tax.p1")
-        pageDocument.getElementById("paying-suspended-tax.p2").text() shouldBe messages("whatYouOwe.paying-suspended-tax.p2")
-        pageDocument.getElementById("paying-suspended-tax.list").select("li").get(0).text() shouldBe messages("whatYouOwe.paying-suspended-tax.bullet1")
-        pageDocument.getElementById("paying-suspended-tax.list").select("li").get(1).text() shouldBe messages("whatYouOwe.paying-suspended-tax.bullet2")
-        pageDocument.getElementById("paying-suspended-tax.p3").text() shouldBe messages("whatYouOwe.paying-suspended-tax.p3")
-        pageDocument.getElementById("paying-suspended-tax.p4").text() shouldBe messages("whatYouOwe.paying-suspended-tax.p4")
       }
 
       "display collectable debt when part of a charge is stood over and the portion of the charge that is under suspension for a partial formal stood over" in new TestSetup(
@@ -1556,7 +1591,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         whatYouOweStandOverTableSuspended.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "29 Jan 2024"
         whatYouOweStandOverTableSuspended.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe "Appealed: extra amount to pay due to HMRC enquiry amendment 1"
         whatYouOweStandOverTableSuspended.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(3)").text() shouldBe "2022 to 2023 Tax year"
-        whatYouOweStandOverTableSuspended.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(4)").text() shouldBe "£250.50"
+        whatYouOweStandOverTableSuspended.select(".govuk-table > tbody > tr:nth-child(1) > td:nth-child(4)").text() shouldBe "£100.25"
 
         pageDocument.getElementById("what-you-owe-total-row").select("span").get(0).text() shouldBe messages("whatYouOwe.total-row.label")
         pageDocument.getElementById("what-you-owe-total-row").select("span").get(1).text() shouldBe "£150.77"
