@@ -23,7 +23,7 @@ import common.utils.Headers.checkAndAddTestHeader
 import returns.models.*
 import play.api.Logging
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_GATEWAY, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -40,6 +40,9 @@ class GetFinancialDetailsConnector @Inject()(
 
   private[connectors] def getChargesUrl(nino: String, from: String, to: String): String =
     baseUrl + s"/$nino/financial-details/charges/from/$from/to/$to"
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def getFinancialDetails(taxYear: Int, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
@@ -67,7 +70,7 @@ class GetFinancialDetailsConnector @Inject()(
               },
               valid => valid
             )
-          case status if status >= 500 =>
+          case status if isErrorLevelStatus(status) =>
             logger.error(s"Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
           case _ =>

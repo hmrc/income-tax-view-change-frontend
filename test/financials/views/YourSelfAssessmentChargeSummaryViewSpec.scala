@@ -47,8 +47,10 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
   val firstPaymentOnAccountHeading: String = messages("chargeSummary.chargeHistory.heading")
   val createdYourFirstPaymentOnAccountText: String = messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")
   val createdFirstLatePaymentPenaltyStoodOverText: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenaltyStoodOver.text")
+  val formalStandoverChargeHistoryText: String = messages("chargeSummary.dunning.locks.formal.standover.history")
   val dunningLocksBannerTitle: String = messages("chargeSummary.dunning.locks.banner.title")
-  val dunningLocksBannerHeading: String = s"${messages("chargeSummary.dunning.locks.informal.standover1.banner.note")} ${messages("chargeSummary.dunning.locks.informal.standover2.banner.note")}"
+  val dunningLocksBannerHeading: String = s"${messages("chargeSummary.dunning.locks.informal.standover.banner.note1")} ${messages("chargeSummary.dunning.locks.informal.standover.banner.note2")}"
+  val formalDunningLocksBannerHeading: String = s"${messages("chargeSummary.dunning.locks.formal.standover.banner.note1")} ${messages("chargeSummary.dunning.locks.formal.standover.banner.note2")}"
   val itsaEnquiryAmendmentCreditHeading: String = "Credit from HMRC enquiry amendment"
   val chargeAmountHeading: String = messages("yourSelfAssessmentChargeSummary.stoodOverFullCharge")
   val firstLatePaymentPenaltyText: String = messages("chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text")
@@ -190,7 +192,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
           )
       ) {
 
-        document.select("#dunningLocksBanner").size() shouldBe 1
+        document.select("#govuk-notification-banner-title").size() shouldBe 1
         document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
         document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe dunningLocksBannerHeading
         document.getElementById("charge-amount-heading").text().split("£").head.trim shouldBe chargeAmountHeading
@@ -208,7 +210,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
       "display the correct content when first lpp with dunningLock" in new TestSetup(
         chargeItem = financialDetailsLatePaymentPenalties.head.copy(dunningLock = true)
       ) {
-        document.select("#dunningLocksBanner").size() shouldBe 1
+        document.select("#govuk-notification-banner-title").size() shouldBe 1
         document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
         document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe dunningLocksBannerHeading
         document.getElementById("charge-amount-heading").text().split("£").head.trim shouldBe chargeAmountHeading
@@ -221,6 +223,55 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
         document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe chargeSummaryNoDataText
         document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe createdFirstLatePaymentPenaltyStoodOverText
         document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£43.21"
+      }
+    }
+
+    "charge is suspended with dunning lock 'Formal Standover'" should {
+      "display the correct content" in new TestSetup(
+        chargeItem = chargeItemModel(dunningLock = true, isRevenueAmendment = true, chargeClassification = Some("RA"), dunningLockValue = Some("Formal Standover"), totalSoAmt = Some(BigDecimal("1400.00"))),
+        paymentBreakdown =
+          List(
+            FinancialDetail(
+              TaxYear.forYearEnd(2018).shortenTaxYearEnd,
+              Some("ITSA Return Amendment Debit"),
+              Some("4915"),
+              Some(id1040000123),
+              Some(LocalDate.parse("2018-08-16")),
+              Some("POA1"),
+              Some("ITSA Return Amendment Debit"),
+              Some(1400.00),
+              Some(1400.00),
+              Some(1400.00),
+              Some(0),
+              Some(ITSA_ENGLAND_AND_NI),
+              None,
+              Some(
+                Seq(
+                  SubItem(
+                    dueDate = Some(LocalDate.of(2019, 5, 15)),
+                    subItemId = Some("001"),
+                    amount = Some(BigDecimal("1400.00")),
+                    dunningLock = Some("Formal Standover")
+                  )
+                )
+              )
+            )
+          )
+      ) {
+
+        document.select("#govuk-notification-banner-title").size() shouldBe 1
+        document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe dunningLocksBannerTitle
+        document.getElementsByClass("govuk-notification-banner__content").first.text() shouldBe formalDunningLocksBannerHeading
+        document.getElementById("charge-amount-heading").text().split("£").head.trim shouldBe chargeAmountHeading
+        document.getElementById("charge-history-heading").text() shouldBe firstPaymentOnAccountHeading
+        document.doesNotHave("govuk-warning-text__text")
+        document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(1)").text() shouldBe "29 Mar 2018"
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(2)").text() shouldBe createdYourFirstPaymentOnAccountText
+        document.select("#payment-history-table > tbody > tr:nth-child(1) > td:nth-child(3)").text() shouldBe "£1,400.00"
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(1)").text() shouldBe "15 May 2019"
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(2)").text() shouldBe formalStandoverChargeHistoryText
+        document.select("#payment-history-table > tbody > tr:nth-child(2) > td:nth-child(3)").text() shouldBe "£1,400.00"
       }
     }
   }

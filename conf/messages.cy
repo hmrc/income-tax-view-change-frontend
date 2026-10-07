@@ -343,17 +343,17 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 new.home.navigation.tabs.yourTasks                              = Eich tasgau
 new.home.yourTasks.updates-and-deadlines                        = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
-new.home.yourTasks.upcoming-annual-updates-body            = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad blynyddol.
+new.home.yourTasks.upcoming-annual-updates-body            = Mae dyddiad cau eich Ffurflen Dreth yn nesáu.
 new.home.yourTasks.upcoming-annual-updates-label           = Dyledus erbyn {0}
-new.home.yourTasks.upcoming-quarterly-updates-body         = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad chwarterol.
+new.home.yourTasks.upcoming-quarterly-updates-body         = Mae dyddiad cau eich diweddariad chwarterol yn nesáu.
 new.home.yourTasks.upcoming-quarterly-updates-label        = Dyledus erbyn {0}
-new.home.yourTasks.overdue-annual-submission-single-body            = Mae gennych gyflwyniad blynyddol sy’n hwyr.
+new.home.yourTasks.overdue-annual-submission-single-body            = Mae gennych Ffurflen Dreth sy’n hwyr.
 new.home.yourTasks.overdue-annual-submission-single-label           = Dyddiad Dyledus {0}
-new.home.yourTasks.overdue-annual-submission-multiple-body          = Mae gennych {0} o gyflwyniadau blynyddol sy’n hwyr.
+new.home.yourTasks.overdue-annual-submission-multiple-body          = Mae gennych {0} o Ffurflenni Treth sy’n hwyr.
 new.home.yourTasks.overdue-annual-submission-multiple-label         = Dyddiad Dyledus yr hynaf {0}
-new.home.yourTasks.overdue-quarterly-submission-single-body            = Mae gennych gyflwyniad chwarterol sy’n hwyr.
+new.home.yourTasks.overdue-quarterly-submission-single-body            = Mae gennych ddiweddariad chwarterol sy’n hwyr.
 new.home.yourTasks.overdue-quarterly-submission-single-label           = Dyddiad Dyledus {0}
-new.home.yourTasks.overdue-quarterly-submission-multiple-body          = Mae gennych {0} o gyflwyniadau chwarterol sy’n hwyr.
+new.home.yourTasks.overdue-quarterly-submission-multiple-body          = Mae gennych {0} o ddiweddariadau chwarterol sy’n hwyr.
 new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Dyddiad Dyledus yr hynaf {0}
 
 ### Overview Tab
@@ -414,11 +414,11 @@ new.home.navigation.tabs.recentActivity                         = Gweithgarwch d
 new.home.recentActivity.noActivity                              = Nid oes gennych unrhyw weithgarwch diweddar.
 
 new.home.recentActivity.submissions.annual.link.text            = Gweld crynodeb o flwyddyn dreth {0} i {1}
-new.home.recentActivity.submissions.annual.content.text         = Gwnaethoch gyflwyniad blynyddol o ran Ffurflen Dreth.
+new.home.recentActivity.submissions.annual.content.text         = Gwnaethoch gyflwyno’ch Ffurflen Dreth.
 new.home.recentActivity.submissions.annual.date.content.text    = Anfonwyd ar {0}
 
 new.home.recentActivity.submissions.quarterly.link.text         = Gweld eich crynodeb o’r flwyddyn dreth
-new.home.recentActivity.submissions.quarterly.content.text      = Gwnaethoch gyflwyno diweddariad chwarterol.
+new.home.recentActivity.submissions.quarterly.content.text      = Gwnaethoch anfon diweddariad chwarterol.
 new.home.recentActivity.submissions.quarterly.date.content.text = Anfonwyd ar {0}
 
 new.home.recentActivity.payments.link.text                      = Gweld hanes taliadau
@@ -1090,6 +1090,7 @@ forecast_taxCalc.capitalGainsTax                                = Treth Enillion
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Rhagolwg o swm y dreth Hunanasesiad:
 forecast_taxCalc.noForecast.heading                             = Dim rhagolwg eto
 forecast_taxCalc.noForecast.text                                = Byddwch yn gallu gweld eich rhagolwg ar gyfer y flwyddyn gyfan unwaith y byddwch wedi anfon diweddariad.
+forecast_taxCalc.taxRefunded                                    = Treth a ad-dalwyd eisoes yn ystod y flwyddynl:
 
 ## Tax Years Overview Update Tab ##
 submissionsTab.desc                                                  = Dyma gofnod o’r hyn rydych wedi’i gyflwyno, a’r hyn sydd eto i’w gyflwyno, ar gyfer y flwyddyn dreth.
@@ -2089,6 +2090,7 @@ whatYouOwe.pre-mtd-link                                         = cyfrif Hunanas
 whatYouOwe.pre-mtd-outstanding-charges                          = Bydd unrhyw daliad a wneir yn cael ei ddefnyddio ar gyfer treth sydd heb eu talu ar gyfer blynyddoedd treth Hunanasesiad blaenorol yn gyntaf, ac ni fydd yn cael ei arddangos yma.
 whatYouOwe.revenueAmendment.label                               = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 
+
 whatYouOwe.suspended-charges                                    = Treth sy’n ddyledus ond nad yw’n cael ei chasglu ar hyn o bryd
 whatYouOwe.suspended-charges-informalOnly.p1                    = Mae’r dreth hon wedi’i gohirio ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
 whatYouOwe.suspended-charges-informalOnly.p2                    = Gallwch dalu’r hyn sy’n ddyledus gennych o hyd, oherwydd efallai y codir llog arnoch os caiff y dreth ei rhyddhau er mwyn i CThEF ei chasglu ac os nad ydych wedi ei thalu erbyn y dyddiad dyledus gwreiddiol.
@@ -2200,8 +2202,13 @@ chargeSummary.description                                          = Disgrifiad
 chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
-chargeSummary.dunning.locks.informal.standover1.banner.note		   = Mae’r dreth hon wedi’i gohirio dros dro ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
-chargeSummary.dunning.locks.informal.standover2.banner.note		   = Gallwch dalu’r cyfanswm sy’n ddyledus o hyd, oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn y dyddiad dyledus gwreiddiol.
+chargeSummary.dunning.locks.informal.standover.banner.note1	       = Mae’r dreth hon wedi’i gohirio dros dro ar gyfer adolygiad, ac ni fydd CThEF yn ei chasglu tra bydd wedi’i gohirio.
+chargeSummary.dunning.locks.informal.standover.banner.note2	       = Gallwch dalu’r cyfanswm sy’n ddyledus o hyd, oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn y dyddiad dyledus gwreiddiol.
+chargeSummary.dunning.locks.formal.standover.banner.note1		   = Mae CThEF wedi gohirio casglu’r dreth hon dros dro oherwydd bod apêl ar y gweill.
+chargeSummary.dunning.locks.formal.standover.banner.note2		   = Codir llog arnoch os caiff y dreth ei rhyddhau er mwyn i CThEF ei chasglu ac os nad ydych wedi ei thalu erbyn y dyddiad dyledus gwreiddiol.
+chargeSummary.dunning.locks.formal.standover.heading               = Wedi apelio: swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
+chargeSummary.dunning.locks.formal.standover.p1                    = Swm wedi’i ohirio:
+chargeSummary.dunning.locks.formal.standover.history               = Swm wedi’i ohirio yn ystod apêl
 
 
 chargeSummary.nic2TaxYear                                          = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
@@ -3714,7 +3721,7 @@ triggered-migration.check-hmrc-records.bullet2                       = rhoi’r 
 
 triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Eich busnesau cyfredol
 triggered-migration.check-hmrc-records.soleTrader.heading            = Busnesau unig fasnachwr
-triggered-migration.check-hmrc-records.soleTrader.cease.link         = Wedi dod i ben
+triggered-migration.check-hmrc-records.soleTrader.cease.link         = Dod â’r busnes i ben
 triggered-migration.check-hmrc-records.soleTrader.businessName       = Enw’r busnes
 triggered-migration.check-hmrc-records.soleTrader.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.soleTrader.active             = Cyfredol
@@ -3724,11 +3731,11 @@ triggered-migration.check-hmrc-records.soleTrader.unknown            = Anhysbys
 
 triggered-migration.check-hmrc-records.property.heading              = Busnesau eiddo
 triggered-migration.check-hmrc-records.ukProperty.heading            = Eiddo yn y DU
-triggered-migration.check-hmrc-records.ukProperty.cease.link         = Wedi dod i ben
+triggered-migration.check-hmrc-records.ukProperty.cease.link         = Dod â’r busnes i ben
 triggered-migration.check-hmrc-records.ukProperty.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.ukProperty.active             = Cyfredol
 triggered-migration.check-hmrc-records.foreignProperty.heading       = Eiddo Tramor
-triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Wedi dod i ben
+triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Dod â’r busnes i ben
 triggered-migration.check-hmrc-records.foreignProperty.businessState = Statws y busnes
 triggered-migration.check-hmrc-records.foreignProperty.active        = Cyfredol
 triggered-migration.check-hmrc-records.foreignProperty.add.link      = Ychwanegu eiddo busnes tramor
@@ -3755,6 +3762,24 @@ triggered-migration.checkComplete.whatNext.p1                                   
 triggered-migration.checkComplete.whatNext.p2                                           = Bydd unrhyw ddiweddariadau, dyddiadau cau, neu gamau gweithredu sydd mewn perthynas â chyfnodau pan oedd eich ffynonellau incwm yn weithredol yn cael eu dangos yn eich cyfrif ar-lein CThEF.
 triggered-migration.checkComplete.whatNext.p3                                           = Gallwch wirio a oes unrhyw ddiweddariadau, dyddiadau cau, neu gamau gweithredu sy’n berthnasol i chi.
 
+triggered-migration.checkComplete.whatNext.ul.li1                                       = defnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+triggered-migration.checkComplete.whatNext.ul.li2                                       = cael gwybod yr hyn sy’n ddyledus a chyflwyno’ch diweddariad(au) hwyr
+triggered-migration.checkComplete.gettingSoftware.heading                               = Cael meddalwedd
+triggered-migration.checkComplete.gettingSoftware.p1                                    = Er mwyn cyflwyno’ch diweddariadau chwarterol, mae’n rhaid i chi, neu’ch asiant, ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Mae sawl meddalwedd ar gael i chi, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+triggered-migration.checkComplete.gettingSoftware.linkText                              = Dysgwch ragor am feddalwedd sy’n cydweddu
+triggered-migration.checkComplete.submitUpdates.heading                                 = Cyflwyno’ch diweddariad(au)
+triggered-migration.checkComplete.submitUpdates.p1                                      = Mae’r diweddariadau chwarterol sy’n ddyledus, a’r wybodaeth y mae angen i chi ei darparu, i’w gweld yn eich cyfrif. Wedyn, bydd yn rhaid i chi ddefnyddio’ch meddalwedd sy’n cydweddu i wneud y canlynol:
+triggered-migration.checkComplete.submitUpdates.ul.li1                                  = creu cofnod digidol o’ch incwm o eiddo a’ch incwm o fod yn unig fasnachwr, a’r treuliau cysylltiedig
+triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad(au) chwarterol at CThEF
+triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich dyddiadau cau diweddaraf ar gyfer cyflwyno
+
+# Choose tax years range page
+chooseTaxYearsRange.heading = Pa flynyddoedd treth ydych am eu gweld a’u rheoli?
+chooseTaxYearsRange.hint = Mae’r flwyddyn dreth yn rhedeg o 6 Ebrill i 5 Ebrill
+chooseTaxYearsRange.option.mtd = {0} i {1} ymlaen
+chooseTaxYearsRange.option.sa = {0} i {1} a chyn hynny
+chooseTaxYearsRange.error.empty = Dewiswch pa flynyddoedd treth rydych am eu gweld a’u rheoli
+
 # Triggered migration - Complete steps page
 triggered-migration.completeSteps.heading                                                  = Mae angen i chi gwblhau rhai camau cyn i chi gyflwyno’ch Ffurflen Dreth
 triggered-migration.completeSteps.p1                                                       = Rydych wedi cael eich symud yn awtomatig i’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am eich bod yn bodloni’r gofynion i ymuno.
@@ -3763,3 +3788,4 @@ triggered-migration.completeSteps.p2                                            
 triggered-migration.completeSteps.ul.li1                                                   = cadarnhau eich ffynonellau incwm
 triggered-migration.completeSteps.ul.li2                                                   = cael meddalwedd sy’n cydweddu
 triggered-migration.completeSteps.ul.li3                                                   = anfon eich diweddariad chwarterol mwyaf diweddar
+

@@ -343,17 +343,17 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty poin
 new.home.navigation.tabs.yourTasks                              = Your tasks
 
 new.home.yourTasks.updates-and-deadlines                        = View submission deadlines
-new.home.yourTasks.upcoming-annual-updates-body                  = You have an upcoming annual submission deadline.
+new.home.yourTasks.upcoming-annual-updates-body                  = You have an upcoming tax return deadline.
 new.home.yourTasks.upcoming-annual-updates-label                 = Due {0}
-new.home.yourTasks.upcoming-quarterly-updates-body               = You have an upcoming quarterly submission deadline.
+new.home.yourTasks.upcoming-quarterly-updates-body               = You have an upcoming quarterly update deadline.
 new.home.yourTasks.upcoming-quarterly-updates-label              = Due {0}
-new.home.yourTasks.overdue-annual-submission-single-body            = You have an overdue annual submission.
+new.home.yourTasks.overdue-annual-submission-single-body            = You have an overdue tax return.
 new.home.yourTasks.overdue-annual-submission-single-label           = Due {0}
-new.home.yourTasks.overdue-annual-submission-multiple-body          = You have {0} overdue annual submissions.
+new.home.yourTasks.overdue-annual-submission-multiple-body          = You have {0} overdue tax returns.
 new.home.yourTasks.overdue-annual-submission-multiple-label         = Oldest due {0}
-new.home.yourTasks.overdue-quarterly-submission-single-body            = You have an overdue quarterly submission.
+new.home.yourTasks.overdue-quarterly-submission-single-body            = You have an overdue quarterly update.
 new.home.yourTasks.overdue-quarterly-submission-single-label           = Due {0}
-new.home.yourTasks.overdue-quarterly-submission-multiple-body          = You have {0} overdue quarterly submissions.
+new.home.yourTasks.overdue-quarterly-submission-multiple-body          = You have {0} overdue quarterly updates.
 new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Oldest due {0}
 
 ### Overview Tab
@@ -415,11 +415,11 @@ new.home.navigation.tabs.recentActivity                         = Recent activit
 new.home.recentActivity.noActivity                              = You have no recent activity.
 
 new.home.recentActivity.submissions.annual.link.text            = View {0} to {1} tax year summary
-new.home.recentActivity.submissions.annual.content.text         = You made an annual tax return submission.
+new.home.recentActivity.submissions.annual.content.text         = You submitted your tax return.
 new.home.recentActivity.submissions.annual.date.content.text    = Sent {0}
 
 new.home.recentActivity.submissions.quarterly.link.text         = View your tax year summary
-new.home.recentActivity.submissions.quarterly.content.text      = You submitted a quarterly update.
+new.home.recentActivity.submissions.quarterly.content.text      = You sent a quarterly update.
 new.home.recentActivity.submissions.quarterly.date.content.text = Sent {0}
 
 new.home.recentActivity.payments.link.text                      = View payment history
@@ -1095,6 +1095,7 @@ forecast_taxCalc.capitalGainsTax                                = Capital Gains 
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Forecast Self Assessment tax amount:
 forecast_taxCalc.noForecast.heading                             = No forecast yet
 forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
+forecast_taxCalc.taxRefunded                                    = Tax already refunded in year:
 
 ##Tax Years Overview Submissions Tab##
 submissionsTab.desc                                                  = This is a record of your completed and upcoming submissions for the tax year.
@@ -2103,6 +2104,7 @@ whatYouOwe.total-row.label                                         = Total amoun
 whatYouOwe.revenueAmendment.label                                  = Extra amount to pay due to HMRC enquiry amendment
 whatYouOwe.standover.formal.label                                  = Appealed: extra amount to pay due to HMRC enquiry amendment
 
+
 whatYouOwe.suspended-charges                                       = Tax owed that is currently not being collected
 whatYouOwe.suspended-charges-informalOnly.p1                       = This tax is suspended for review and HMRC will not collect it while it is suspended.
 whatYouOwe.suspended-charges-informalOnly.p2                       = You can still pay what you owe as you may be charged interest if the tax is released for HMRC to collect and it has not been paid by the original due date.
@@ -2216,8 +2218,14 @@ chargeSummary.taxYear.text                                         = Tax year
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
-chargeSummary.dunning.locks.informal.standover1.banner.note		   = This tax is temporarily suspended for review and HMRC will not collect it while it is suspended.
-chargeSummary.dunning.locks.informal.standover2.banner.note		   = You can still pay the total amount owed as you may be charged interest if not paid by the original due date.
+chargeSummary.dunning.locks.informal.standover.banner.note1	       = This tax is temporarily suspended for review and HMRC will not collect it while it is suspended.
+chargeSummary.dunning.locks.informal.standover.banner.note2	       = You can still pay the total amount owed as you may be charged interest if not paid by the original due date.
+chargeSummary.dunning.locks.formal.standover.banner.note1		   = HMRC has temporarily suspended collection of this tax because there is an appeal.
+chargeSummary.dunning.locks.formal.standover.banner.note2		   = You will be charged interest if the tax is released for HMRC to collect and it has not been paid by the original due date.
+chargeSummary.dunning.locks.formal.standover.heading               = Appealed: extra amount to pay due to HMRC enquiry amendment
+chargeSummary.dunning.locks.formal.standover.p1                    = Amount suspended:
+chargeSummary.dunning.locks.formal.standover.history               = Amount suspended during an appeal
+
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
@@ -2802,7 +2810,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.hmrcCorrection.caption.text       
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
 
-yourSelfAssessmentChargeSummary.correction.p1.1                                     = HMRC corrected your tax return. This changed your 
+yourSelfAssessmentChargeSummary.correction.p1.1                                     = HMRC corrected your tax return. This changed your
 yourSelfAssessmentChargeSummary.correction.p1.link-text                             = tax calculation for {0} to {1}
 yourSelfAssessmentChargeSummary.correction.p1.2                                     = resulting in a credit being added to your account.
 
@@ -3771,6 +3779,23 @@ triggered-migration.checkComplete.whatNext.heading                              
 triggered-migration.checkComplete.whatNext.p1                                           = We will use the information you have provided to update our records.
 triggered-migration.checkComplete.whatNext.p2                                           = Any updates, deadlines or actions relating to periods when your income sources were active will be shown in your HMRC online account.
 triggered-migration.checkComplete.whatNext.p3                                           = You can check whether there are any updates, deadlines or actions that apply to you.
+triggered-migration.checkComplete.whatNext.ul.li1                                       = get software that works with Making Tax Digital for Income Tax
+triggered-migration.checkComplete.whatNext.ul.li2                                       = find out what is due and submit your late update(s)
+triggered-migration.checkComplete.gettingSoftware.heading                               = Getting software
+triggered-migration.checkComplete.gettingSoftware.p1                                    = To submit your quarterly updates, you or your agent must have software compatible with Making Tax Digital for Income Tax. There are both paid and free options to choose from.
+triggered-migration.checkComplete.gettingSoftware.linkText                              = Find out about compatible software
+triggered-migration.checkComplete.submitUpdates.heading                                 = Submitting your update(s)
+triggered-migration.checkComplete.submitUpdates.p1                                      = In your account you can see which quarterly updates are due and what information you need to provide. Then you must use your compatible software to:
+triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
+triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send your quarterly update(s) to HMRC
+triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest submission deadlines
+
+# Choose tax years range page
+chooseTaxYearsRange.heading = Which tax years do you want to view and manage?
+chooseTaxYearsRange.hint = The tax year runs from 6 April to 5 April
+chooseTaxYearsRange.option.mtd = {0} to {1} onwards
+chooseTaxYearsRange.option.sa = {0} to {1} and earlier
+chooseTaxYearsRange.error.empty = Select which tax years you want to view and manage
 
 # Triggered migration - Complete steps page
 triggered-migration.completeSteps.heading                                                  = You need to complete some steps before you can submit your tax return

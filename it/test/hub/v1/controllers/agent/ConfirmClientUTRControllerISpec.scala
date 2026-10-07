@@ -102,7 +102,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(hub.v1.controllers.routes.HomeController.showAgent().url)
+            redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
           )
           AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = Some(testArn),
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))
@@ -157,7 +157,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(hub.v1.controllers.routes.HomeController.showAgent().url)
+            redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
           )
           AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = Some(testArn),
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))

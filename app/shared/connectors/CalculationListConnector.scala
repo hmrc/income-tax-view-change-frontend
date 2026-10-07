@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import common.models.core.Nino
 import play.api.Logging
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
 import shared.models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -37,6 +37,9 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
     s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
   }
 
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
+
   def getCalculationList(nino: Nino, taxYearRange: String, mtditid: String)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
@@ -52,19 +55,19 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          response.json.validate[CalculationListModel].fold(
-            invalid => {
-              (response.json \ "calculations").validate[Seq[CalculationListModel]].asOpt.flatMap(_.headOption)
-                .getOrElse {
-                logger.error("" +
-                  s"Json validation error parsing calculation list response, error $invalid")
-                CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
-              }
-            },
-            valid => valid
-          )
+          val nestedCrystallised: Option[Boolean] =
+            (response.json \ "calculations").validate[Seq[CalculationListModel]].asOpt
+              .map(_.exists(_.crystallised.contains(true)))
+
+          nestedCrystallised
+            .map(isCrystallised => CalculationListModel(Some(isCrystallised)))
+            .orElse(response.json.validate[CalculationListModel].asOpt)
+            .getOrElse {
+              logger.error("Json validation error parsing calculation list response")
+              CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
+            }
         case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
+          if (isErrorLevelStatus(status)) {
             logger.error(s"[getCalculationList] Response status: ${response.status}, body: ${response.body}")
           } else {
             logger.warn(s"[getCalculationList] Response status: ${response.status}, body: ${response.body}")

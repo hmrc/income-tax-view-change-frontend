@@ -47,7 +47,6 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
   )
 
   def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[SelfServeTimeToPayJourneyResponse] = {
-
     val body = bodyWYO
 
     http

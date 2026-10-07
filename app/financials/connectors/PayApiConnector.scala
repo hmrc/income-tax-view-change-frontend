@@ -34,13 +34,14 @@ class PayApiConnector @Inject()(http: HttpClientV2,
                                 val appConfig: FrontendAppConfig)(implicit ec: ExecutionContext)
   extends FeatureSwitching with Logging {
 
-  val startUrlJourney: String = appConfig.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
+  private val startUrlJourney: String = appConfig.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
 
   def startPaymentJourney(saUtr: String, amountInPence: BigDecimal, isAgent: Boolean)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
-
     def paymentRedirectUrl: String = if (isAgent) appConfig.agentPaymentRedirectUrl else appConfig.paymentRedirectUrl
-
-
+    
     val body = Json.parse(
       s"""
          |{
@@ -65,7 +66,8 @@ class PayApiConnector @Inject()(http: HttpClientV2,
             },
             valid => valid
           )
-        case response => if (response.status >= 500) {
+        case response => 
+          if (isErrorLevelStatus(response.status)) {
             logger.error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
           } else {
             logger.warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
