@@ -67,7 +67,6 @@ case class ChargeItem(
 
   def getMessageKey: String = {
     if (isFormalStandOverCharge) {
-      //        TODO this needs to be fixed
         "standover.formal.label"
     } else {
       getChargeTypeKey
