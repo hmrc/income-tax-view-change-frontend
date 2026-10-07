@@ -90,7 +90,11 @@
                     @taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl, suspendedCharge = true)
                 </td>
                 <td class="govuk-table__cell govuk-table__cell--numeric" id="susupended-due-charge-amount-due-@{index}">
-                    @charge.remainingToPayOnCharge.toCurrency
+                    @if(isStoodOverEnabled){
+                        @viewModel.totalFormalAndInformal.getOrElse(BigDecimal(0)).toCurrency
+                    }else {
+                        @charge.remainingToPayOnCharge.toCurrency
+                    }
                 </td>
             </tr>
         }

@@ -814,7 +814,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             val overduePaymentsTableRow1: Element = suspendedChargesTable.select("tr").get(1)
             overduePaymentsTableRow1.select("td").get(1).text() shouldBe latePoa1Text + s" 1"
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
-            overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
+            overduePaymentsTableRow1.select("td").last().text() shouldBe "£150.77"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
@@ -1407,13 +1407,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         chargesTableRow.select("td").get(0).text() shouldBe "29 Jan 2024"
         chargesTableRow.select("td").get(1).text() shouldBe "First payment on account 1"
         chargesTableRow.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
-        chargesTableRow.select("td").get(3).text() shouldBe "£50.00"
+        chargesTableRow.select("td").get(3).text() shouldBe "£150.77"
 
         val chargesTableRow2: Element = pageDocument.select("tr").get(2)
         chargesTableRow2.select("td").get(0).text() shouldBe "3 Feb 2024"
         chargesTableRow2.select("td").get(1).text() shouldBe "Second payment on account 2"
         chargesTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
-        chargesTableRow2.select("td").get(3).text() shouldBe "£75.00"
+        chargesTableRow2.select("td").get(3).text() shouldBe "£150.77"
       }
 
       "show both the normal and suspended charges tables when charges have a mix of dunning locks" in new TestSetup(
@@ -1444,7 +1444,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         chargesTableRow2.select("td").get(0).text() shouldBe "15 May 2019"
         chargesTableRow2.select("td").get(1).text() shouldBe "Second payment on account 1"
         chargesTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText("2019", "2020")
-//        TODO check if this correct
         chargesTableRow2.select("td").get(3).text() shouldBe "£150.77"
       }
 
