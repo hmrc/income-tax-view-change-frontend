@@ -20,6 +20,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.admin.{FeatureSwitch, NewHubContextRootEnabled}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
+import play.api.Logging
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.govukfrontend.views.Aliases.ServiceNavigation
@@ -32,7 +33,10 @@ case class MtdItUser[A](mtditid: String,
                         incomeSources: IncomeSourceDetailsModel,
                         serviceNavigationPartial: Option[ServiceNavigation] = None,
                         featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
-                       )(implicit request: Request[A]) extends WrappedRequest[A](request) {
+                       )(implicit request: Request[A]) extends WrappedRequest[A](request) with Logging {
+
+  private val ninoRegex = "^(?!BG|GB|KN|NK|NT|TN|ZZ)[A-Z&&[^DFIQUV]][A-Z&&[^DFIQUVO]][0-9]{6}[A-D]$".r
+  if (!ninoRegex.matches(nino)) logger.warn(s"INVALID_NINO: $nino")
 
   val saUtr: Option[String] = if (clientDetails.isDefined) clientDetails.map(_.utr)
   else authUserDetails.saUtr
