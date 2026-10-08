@@ -93,23 +93,19 @@
 
     @(viewModel.informalChargesList.nonEmpty, viewModel.formalChargesList.nonEmpty, viewModel.suspendedCharges.exists(_.isPartialStoodOver)) match {
         case (_, _, true) => {
-            @p(){<p>First</p>}
             @partialSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
             @formalSuspendedChargesContent
         }
 
         case (true, true, false) => {
-            @p(){<p>Second</p>}
             @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
             @formalSuspendedChargesContent
         }
 
         case (true, false, false) => {
-            @p(){<p>Third</p>}
             @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
         }
         case (false, true, false) => {
-            @p(){<p>Fourth</p>}
             @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
             @formalSuspendedChargesContent
         }
