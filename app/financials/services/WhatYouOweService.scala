@@ -160,7 +160,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                 taxYearSummaryUrl: Int => String,
                                 adjustPoaUrl: String,
                                 chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
-                                paymentHandOffUrl: Long => String)
+                                interstitialUrl: Long => String,
+                                paymentHandoffUrl: Long => String)
                                (implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
     for {
       whatYouOweChargesList <- getWhatYouOweChargesList(isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
@@ -193,7 +194,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           lpp2Url = lpp2Url,
           adjustPoaUrl = adjustPoaUrl,
           chargeSummaryUrl = chargeSummaryUrl,
-          paymentHandOffUrl = paymentHandOffUrl,
+          interstitialUrl = interstitialUrl,
+          paymentHandoffUrl = paymentHandoffUrl,
           selfServeTimeToPayEnabled = isEnabled(SelfServeTimeToPayR17)(user),
           totalBalance = optTotalBalance,
           totalFormalAndInformal = whatYouOweChargesList.balanceDetails.totalFormalAndInformal
