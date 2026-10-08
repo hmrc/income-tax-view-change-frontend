@@ -158,7 +158,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
       ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
     else
       ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
-    paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
+    interstitialUrl = PaymentController.agentMakingPayment(_).url,
+    paymentHandoffUrl = PaymentController.agentPaymentHandoff(_).url,
     selfServeTimeToPayEnabled = true)
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
@@ -195,7 +196,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
                 when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
                 when(mockDateServiceInjected.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
@@ -213,7 +214,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
                 when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
                   .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
@@ -234,7 +235,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, whatYouOweWithAvailableCredits, moneyInYourAccountUrlOpt = Some("testMoneyInYourAccountUrl")))))
                 when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
                   .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
@@ -258,7 +259,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, whatYouOweWithAvailableCredits, moneyInYourAccountUrlOpt = Some("testMoneyInYourAccountUrl")))))
                 when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
                   .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(None)))
@@ -284,7 +285,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, whatYouOweWithZeroAvailableCredits))))
 
 
@@ -306,7 +307,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, claimToAdjustViewModel = Some(poaModel)))))
 
 
@@ -320,7 +321,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
 
 
@@ -338,7 +339,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithReviewReconcile))))
 
                 val result = action(fakeRequest)
@@ -355,7 +356,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockItsaStatusRetrievalAction()
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true))))
 
                 val result = action(fakeRequest)
@@ -370,7 +371,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockItsaStatusRetrievalAction()
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true))))
 
                 val result = action(fakeRequest)
@@ -387,7 +388,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockItsaStatusRetrievalAction()
                 when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
-                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithBalancingChargeNotOverdue))))
 
                 val result = action(fakeRequest)
@@ -403,7 +404,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
-              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithLpp2))))
 
               val result = action(fakeRequest)
@@ -418,7 +419,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
-              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(None))
 
 
@@ -433,7 +434,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
-              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(None))
 
               val result = action(fakeRequest)
@@ -447,7 +448,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
-              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(None))
 
               val result = action(fakeRequest)
