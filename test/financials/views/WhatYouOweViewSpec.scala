@@ -167,7 +167,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = false).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         financialsRoutes.ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
-      paymentHandOffUrl = financialsRoutes.PaymentController.makingPayment(_, None).url,
+      interstitialUrl = financialsRoutes.PaymentController.makingPayment(_, None).url,
+      paymentHandoffUrl = financialsRoutes.PaymentController.paymentHandoff(_).url,
       selfServeTimeToPayEnabled = true,
       totalBalance = totalBalance,
       totalFormalAndInformal = Some(BigDecimal(150.77))
@@ -227,7 +228,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = true).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         financialsRoutes.ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
-      paymentHandOffUrl = financialsRoutes.PaymentController.agentMakingPayment(_).url,
+      interstitialUrl = financialsRoutes.PaymentController.agentMakingPayment(_).url,
+      paymentHandoffUrl = financialsRoutes.PaymentController.agentPaymentHandoff(_).url,
       selfServeTimeToPayEnabled = true,
       totalBalance = totalBalance
     )
@@ -958,6 +960,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(200).url
           findElementById("overdue-inset-migrated-1") shouldBe None
           findElementById("overdue-inset-migrated-2") shouldBe None
+        }
+        "have payments data with button with only stood over charges" in new TestSetup(charges = whatYouOweDataWithOnlyTotalFormalAndInformalCharges()) {
+          pageDocument.getElementById("payment-button").text shouldBe payNow
+          pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(5000).url
         }
 
         "not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
