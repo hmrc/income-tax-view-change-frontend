@@ -63,12 +63,14 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
           submit(nrsSubmission, remainingAttempts = remainingAttempts - 1)
 
         case response =>
-          logger.info(s"NRS submission failed with status: ${response.status}")
+          logger.error(s"NRS submission failed with status: ${response.status}")
+          logger.error("NRS SUBMISSION FAILED")
           Future.successful(Left(NrsErrorResponse(response.status)))
       }
       .recover {
         case NonFatal(e) =>
-          logger.info(s"NRS submission failed with exception: $e")
+          logger.error(s"NRS submission failed with exception: $e")
+          logger.error("NRS SUBMISSION FAILED")
           Left(NrsExceptionThrown)
       }
   }
