@@ -38,7 +38,6 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import shared.enums.CannotGoBackPage
 import shared.models.UIJourneySessionData
-import common.models.admin.ObligationsFrontend
 import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,
@@ -121,8 +120,8 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
             Ok(obligationsView(
               source = incomeSourceCeasedObligationsViewModel,
               viewAllBusinessLink = viewAllBusinessLink(isAgent),
-              viewUpcomingUpdatesLink = appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend)),
-              reportingObligationsLink = appConfig.obligationsReportingFrequencyUrl(isAgent, isEnabled(ObligationsFrontend))
+              viewUpcomingUpdatesLink = appConfig.obligationsNextUpdatesUrl(isAgent),
+              reportingObligationsLink = appConfig.obligationsReportingFrequencyUrl(isAgent)
             )))
         case (Some(_), None) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
