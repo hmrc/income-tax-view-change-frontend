@@ -52,7 +52,8 @@ case class ChargeItem(
                        chargeClassification: Option[String] = None,
                        isRevenueAmendment: Boolean = false,
                        dunningLockValue: Option[String] = None,
-                       totalSoAmt: Option[BigDecimal] = None
+                       totalSoAmt: Option[BigDecimal] = None,
+                       collectableAmt: Option[BigDecimal] = None
                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
@@ -233,6 +234,8 @@ case class ChargeItem(
     case PoaTwoDebit => poaTwoReconciliationDebit
     case _ => "no valid case"
   }
+
+  def isPartialStoodOver: Boolean =  totalSoAmt.exists(_ > 0) && collectableAmt.exists(_ > 0)
 }
 
 object ChargeItem {
@@ -317,7 +320,8 @@ object ChargeItem {
       chargeClassification = documentDetail.chargeClassification,
       isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification),
       dunningLockValue = getDunningLockValue(financialDetail),
-      totalSoAmt = documentDetail.totalSoAmt
+      totalSoAmt = documentDetail.totalSoAmt,
+      collectableAmt = documentDetail.collectableAmt
     )
   }
 

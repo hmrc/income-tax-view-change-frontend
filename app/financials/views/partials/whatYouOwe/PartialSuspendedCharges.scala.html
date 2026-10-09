@@ -49,11 +49,11 @@
 
 @tableRows = @{
     chargesList.zipWithIndex.map{ case (charge: ChargeItem, index: Int) =>
-          Seq(
+        Seq(
             TableRow(content = Text(charge.dueDate.getOrElse(charge.documentDate).toLongDateShort), classes = "govuk-table__cell no-wrap"),
-            TableRow(content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-${index}", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false)), classes = "govuk-table__cell"),
-            TableRow(content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl, suspendedCharge = true)), classes = "govuk-table__cell"),
-            TableRow(content = Text(charge.totalSoAmt.getOrElse(BigDecimal(0)).toCurrencyString), classes = "govuk-table__cell, govuk-!-text-align-right"))
+            TableRow(content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false)), classes = "govuk-table__cell"),
+            TableRow(content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl, suspendedCharge = true)), classes = "govuk-table__cell"), TableRow(content = Text(charge.totalSoAmt.getOrElse(BigDecimal(0)).toCurrencyString), classes = "govuk-table__cell")
+        )
     }
 }
 
@@ -70,14 +70,13 @@
 }
 
 @govukTable(Table(
-            rows = tableRows,
-            head = Some(Seq(
-                HeadCell(content = Text(messages("whatYouOwe.formal.suspended-charges.table.th1"))),
-                HeadCell(content = Text(messages("whatYouOwe.formal.suspended-charges.table.th2"))),
-                HeadCell(content = Text(messages("whatYouOwe.formal.suspended-charges.table.th3"))),
-                HeadCell(content = Text(messages("whatYouOwe.formal.suspended-charges.table.th4")),
-                            classes = "govuk-!-text-align-right")
-            )),
-            attributes = Map("id" -> "what-you-owe-standover-table"),
-        ))
+    rows = tableRows,
+    head = Some(Seq(
+        HeadCell(content = Text(messages("whatYouOwe.formal.suspended-charges.table.th1"))),
+        HeadCell(content = Text(messages("whatYouOwe.formal.suspended-charges.table.th2"))),
+        HeadCell(content = Text(messages("whatYouOwe.formal.suspended-charges.table.th3"))),
+        HeadCell(content = Text(messages("whatYouOwe.formal.suspended-charges.table.th4")))
+    )),
+    attributes = Map("id" -> "what-you-owe-standover-table"),
+))
 @totalTableRow(viewModel.totalFormalAndInformal.getOrElse(0), hasChargeWithAccruingInterest = false)

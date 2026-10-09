@@ -21,14 +21,14 @@ import common.exceptions.MissingFieldException
 import common.services.{DateService, DateServiceInterface}
 import common.testConstants.BaseTestConstants.app
 import common.testUtils.UnitSpec
-import shared.enums.CodingOutType.CODING_OUT_CLASS2_NICS
 import financials.models.ChargeItem.filterAllowedCharges
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
+import shared.enums.CodingOutType.CODING_OUT_CLASS2_NICS
 
 import java.time.LocalDate
 
-class ChargeItemSpec extends UnitSpec with ChargeConstants  {
+class ChargeItemSpec extends UnitSpec with ChargeConstants {
 
   val dueDate = LocalDate.of(2024, 1, 1)
   val originalAmount: BigDecimal = 100.0
@@ -61,13 +61,14 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   val balancingAcceptedFinancialDetails = financialDetail(mainTransaction = "4910", codedOutStatus = Some("I"))
 
-  val balancingCancelledFinancialDetails = financialDetail(mainTransaction = "4910",codedOutStatus = Some("C"))
+  val balancingCancelledFinancialDetails = financialDetail(mainTransaction = "4910", codedOutStatus = Some("C"))
 
   val mfaFinancialDetails = financialDetail(mainTransaction = "4003")
 
 
   implicit val dateService: DateServiceInterface = dateService(LocalDate.of(2000, 1, 1))
-  def dateService(currentDate: LocalDate): DateService = new DateService()(app.injector.instanceOf[FrontendAppConfig]){
+
+  def dateService(currentDate: LocalDate): DateService = new DateService()(app.injector.instanceOf[FrontendAppConfig]) {
     override def getCurrentDate: LocalDate = currentDate
   }
 
@@ -377,66 +378,66 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   "fromDocumentPair" when {
 
-      "from Payment on Account 1" in {
+    "from Payment on Account 1" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails))
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails,
+        financialDetails = List(poa1FinancialDetails))
 
-        chargeItem.transactionType shouldBe PoaOneDebit
-        chargeItem.codedOutStatus shouldBe None
-      }
+      chargeItem.transactionType shouldBe PoaOneDebit
+      chargeItem.codedOutStatus shouldBe None
+    }
 
-      "from Payment on Account 2" in {
+    "from Payment on Account 2" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa2FinancialDetails))
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails,
+        financialDetails = List(poa2FinancialDetails))
 
-        chargeItem.transactionType shouldBe PoaTwoDebit
-        chargeItem.codedOutStatus shouldBe None
-      }
+      chargeItem.transactionType shouldBe PoaTwoDebit
+      chargeItem.codedOutStatus shouldBe None
+    }
 
-      "from Balancing Payment Nics2" in {
+    "from Balancing Payment Nics2" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingNics2DocumentDetails,
-          financialDetails = List(balancingNics2FinancialDetails))
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = balancingNics2DocumentDetails,
+        financialDetails = List(balancingNics2FinancialDetails))
 
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.codedOutStatus shouldBe Some(Nics2)
-      }
+      chargeItem.transactionType shouldBe BalancingCharge
+      chargeItem.codedOutStatus shouldBe Some(Nics2)
+    }
 
-      "from Balancing Payment Accepted" in {
+    "from Balancing Payment Accepted" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(balancingAcceptedFinancialDetails))
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails,
+        financialDetails = List(balancingAcceptedFinancialDetails))
 
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.codedOutStatus shouldBe Some(Accepted)
-      }
+      chargeItem.transactionType shouldBe BalancingCharge
+      chargeItem.codedOutStatus shouldBe Some(Accepted)
+    }
 
-      "from Balancing Payment Cancelled" in {
+    "from Balancing Payment Cancelled" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(balancingCancelledFinancialDetails))
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails,
+        financialDetails = List(balancingCancelledFinancialDetails))
 
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.codedOutStatus shouldBe Some(Cancelled)
-      }
+      chargeItem.transactionType shouldBe BalancingCharge
+      chargeItem.codedOutStatus shouldBe Some(Cancelled)
+    }
 
-      "from MFA" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(mfaFinancialDetails))
+    "from MFA" in {
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails,
+        financialDetails = List(mfaFinancialDetails))
 
-        chargeItem.transactionType shouldBe MfaDebitCharge
-        chargeItem.codedOutStatus shouldBe None
-      }
+      chargeItem.transactionType shouldBe MfaDebitCharge
+      chargeItem.codedOutStatus shouldBe None
+    }
 
-      "isOverdue calculated correctly" when {
+    "isOverdue calculated correctly" when {
 
       "date is before due date" in {
 
@@ -473,65 +474,65 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     }
   }
 
-    "getChargeKey" when {
+  "getChargeKey" when {
 
-        "charge is a POA 1" in {
-          val poa1 = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = None)
-          val key = poa1.getChargeTypeKey
-          key shouldBe "paymentOnAccount1.text"
-        }
-
-        "charge is a POA 2" in {
-          val poa1 = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = None)
-          val key = poa1.getChargeTypeKey
-          key shouldBe "paymentOnAccount2.text"
-        }
-
-
-        "charge is a HMRC adjustment" in {
-          val poa1 = chargeItemModel(transactionType = MfaDebitCharge, codedOutStatus = None)
-          val key = poa1.getChargeTypeKey
-          key shouldBe "hmrcAdjustment.text"
-        }
-
-        "charge is a Class 2 National Insurance Balancing Charge" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2))
-          val key = poa1.getChargeTypeKey
-          key shouldBe "class2Nic.text"
-        }
-
-        "charge is a PAYE payment" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted))
-          val key = poa1.getChargeTypeKey
-          key shouldBe "codingOut.text"
-        }
-
-        "charge is a cancelled PAYE SA payment" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled))
-          val key = poa1.getChargeTypeKey
-          key shouldBe "cancelledPayeSelfAssessment.text"
-        }
-
-        "charge is a balancing charge" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = None)
-          val key = poa1.getChargeTypeKey
-          key shouldBe "balancingCharge.text"
-        }        
-        "charge is an ITSAReturnAmendment correction" in {
-          val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = Some("AC"))
-          charge.getChargeTypeKey shouldBe "hmrcCorrection.text"
-        }
-
-        "charge is an ITSAReturnAmendment revenue amendment" in {
-         val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = Some("RA"))
-          charge.getChargeTypeKey shouldBe "enquiryAmendment.text"
-        }
-
-        "charge is an ITSAReturnAmendment with no classification" in {
-          val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = None)
-          charge.getChargeTypeKey shouldBe "itsaReturnAmendment.text"
-        }
+    "charge is a POA 1" in {
+      val poa1 = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = None)
+      val key = poa1.getChargeTypeKey
+      key shouldBe "paymentOnAccount1.text"
     }
+
+    "charge is a POA 2" in {
+      val poa1 = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = None)
+      val key = poa1.getChargeTypeKey
+      key shouldBe "paymentOnAccount2.text"
+    }
+
+
+    "charge is a HMRC adjustment" in {
+      val poa1 = chargeItemModel(transactionType = MfaDebitCharge, codedOutStatus = None)
+      val key = poa1.getChargeTypeKey
+      key shouldBe "hmrcAdjustment.text"
+    }
+
+    "charge is a Class 2 National Insurance Balancing Charge" in {
+      val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2))
+      val key = poa1.getChargeTypeKey
+      key shouldBe "class2Nic.text"
+    }
+
+    "charge is a PAYE payment" in {
+      val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted))
+      val key = poa1.getChargeTypeKey
+      key shouldBe "codingOut.text"
+    }
+
+    "charge is a cancelled PAYE SA payment" in {
+      val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled))
+      val key = poa1.getChargeTypeKey
+      key shouldBe "cancelledPayeSelfAssessment.text"
+    }
+
+    "charge is a balancing charge" in {
+      val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = None)
+      val key = poa1.getChargeTypeKey
+      key shouldBe "balancingCharge.text"
+    }
+    "charge is an ITSAReturnAmendment correction" in {
+      val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = Some("AC"))
+      charge.getChargeTypeKey shouldBe "hmrcCorrection.text"
+    }
+
+    "charge is an ITSAReturnAmendment revenue amendment" in {
+      val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = Some("RA"))
+      charge.getChargeTypeKey shouldBe "enquiryAmendment.text"
+    }
+
+    "charge is an ITSAReturnAmendment with no classification" in {
+      val charge = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = None)
+      charge.getChargeTypeKey shouldBe "itsaReturnAmendment.text"
+    }
+  }
 
   "filterAllowedCharges" should {
     "filter out FS related charges" when {
@@ -588,6 +589,64 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItemModelPositiveAmount = chargeItemModel().copy(originalAmount = 20.89)
         originalAmountIsNotZeroOrNegative(chargeItemModelPositiveAmount) shouldBe true
       }
+    }
+  }
+
+  "isPartialStoodOver" should {
+    "return true when collectableAmt and totalSoAmt fields are present and not zero" in {
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails.copy(totalSoAmt = Some(BigDecimal(500.00)), collectableAmt = Some(BigDecimal(220.00))),
+        financialDetails = List(poa1FinancialDetails))
+
+      chargeItem.isPartialStoodOver shouldBe true
+    }
+
+    "return false when collectableAmt is not present but totalSoAmt fields present and not zero" in {
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails.copy(totalSoAmt = Some(BigDecimal(500.00)), collectableAmt = None),
+        financialDetails = List(poa1FinancialDetails)).copy(dunningLock = true)
+
+      chargeItem.isPartialStoodOver shouldBe false
+    }
+
+    "return false when collectableAmt present with 0 value and totalSoAmt fields present and not zero" in {
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails.copy(totalSoAmt = Some(BigDecimal(500.00)), collectableAmt = Some(BigDecimal(0.00))),
+        financialDetails = List(poa1FinancialDetails)).copy(dunningLock = true)
+
+      chargeItem.isPartialStoodOver shouldBe false
+    }
+
+    "return false when totalSoAmt is not present and collectableAmt is present and not zero" in {
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails.copy(totalSoAmt = None, collectableAmt = Some(BigDecimal(220.00))),
+        financialDetails = List(poa1FinancialDetails)).copy(dunningLock = true)
+
+      chargeItem.isPartialStoodOver shouldBe false
+    }
+
+    "return false when totalSoAmt present with 0 value and collectableAmt is present and not zero" in {
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails.copy(totalSoAmt = Some(BigDecimal(0.00)), collectableAmt = Some(BigDecimal(220.00))),
+        financialDetails = List(poa1FinancialDetails)).copy(dunningLock = true)
+
+      chargeItem.isPartialStoodOver shouldBe false
+    }
+
+    "return false when totalSoAmt and collectableAmt are present with 0 values" in {
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails.copy(totalSoAmt = Some(BigDecimal(0.00)), collectableAmt = Some(BigDecimal(0.00))),
+        financialDetails = List(poa1FinancialDetails)).copy(dunningLock = true)
+
+      chargeItem.isPartialStoodOver shouldBe false
+    }
+
+    "return false when totalSoAmt and collectableAmt are not present" in {
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = defaultDocDetails.copy(totalSoAmt = None, collectableAmt = None),
+        financialDetails = List(poa1FinancialDetails)).copy(dunningLock = true)
+
+      chargeItem.isPartialStoodOver shouldBe false
     }
   }
 }
