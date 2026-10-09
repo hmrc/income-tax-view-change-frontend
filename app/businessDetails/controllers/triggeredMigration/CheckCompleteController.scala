@@ -25,7 +25,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
-import common.models.admin.ObligationsFrontend
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -58,7 +57,7 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
   def submit(isAgent: Boolean): Action[AnyContent] =
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withTriggeredMigrationFS {
-        Future.successful(Redirect(appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend))))
+        Future.successful(Redirect(appConfig.obligationsNextUpdatesUrl(isAgent)))
       }
     }
 }

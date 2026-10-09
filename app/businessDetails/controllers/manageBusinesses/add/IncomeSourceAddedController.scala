@@ -42,7 +42,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import businessDetails.services.NextUpdatesService
 import shared.models.UIJourneySessionData
-import common.models.admin.ObligationsFrontend
 import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 
 
@@ -198,8 +197,8 @@ class IncomeSourceAddedController @Inject()(
               isBusinessHistoric = isBusinessHistoric,
               reportingMethod = viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2),
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = appConfig.obligationsReportingFrequencyUrl(isAgent, isEnabled(ObligationsFrontend)),
-              getNextUpdatesUrl = appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend)),
+              getReportingFrequencyUrl = appConfig.obligationsReportingFrequencyUrl(isAgent),
+              getNextUpdatesUrl = appConfig.obligationsNextUpdatesUrl(isAgent),
               getManageBusinessUrl = getManageBusinessUrl(isAgent),
               scenario = signedUpForMTD
             )
