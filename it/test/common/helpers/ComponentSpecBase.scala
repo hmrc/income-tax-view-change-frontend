@@ -85,11 +85,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with SessionCookieBaker {
-  
+
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
   val basePath: String = WiremockHelper.basePath
+  val obligationsBaseUrl: String = WiremockHelper.obligationsBaseUrl
   val hubBasePath: String = WiremockHelper.hubBasePath
   val hubBaseUrl: String = WiremockHelper.hubBaseUrl
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
