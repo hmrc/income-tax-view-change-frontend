@@ -36,7 +36,7 @@ case class MtdItUser[A](mtditid: String,
                        )(implicit request: Request[A]) extends WrappedRequest[A](request) with Logging {
 
   private val ninoRegex = "^(?!BG|GB|KN|NK|NT|TN|ZZ)[A-Z&&[^DFIQUV]][A-Z&&[^DFIQUVO]][0-9]{6}[A-D]$".r
-  if (!ninoRegex.matches(nino)) logger.warn(s"INVALID_NINO: $nino")
+  if (!ninoRegex.matches(nino)) logger.warn(s"MALFORMED_NINO: Nino fails regex validation")
 
   val saUtr: Option[String] = if (clientDetails.isDefined) clientDetails.map(_.utr)
   else authUserDetails.saUtr
