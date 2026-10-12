@@ -43,7 +43,8 @@
         earlierSelfAssessmentChargesPara: EarlierSelfAssessmentChargesPara,
         informalSuspendedCharges: InformalSuspendedCharges,
         formalSuspendedCharges: FormalSuspendedCharges,
-        formalChargesPayingSuspendedTax: FormalChargesPayingSuspendedTax
+        formalChargesPayingSuspendedTax: FormalChargesPayingSuspendedTax,
+        partialSuspendedCharges: PartialSuspendedCharges,
 )
 @(
         viewModel: WhatYouOweViewModel,
@@ -59,68 +60,58 @@
 
 @import implicitDateFormatter.longDate
 
-@getSuspendedChargesView(viewModel: WhatYouOweViewModel, origin: Option[String], isSelfServeTimeToPayEnabled: Boolean) = {
-    @if(viewModel.informalChargesList.nonEmpty && viewModel.formalChargesList.nonEmpty) {
-            @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled)
 
-        @h2(classes = "govuk-heading-m", msg = messages("whatYouOwe.formal.suspended-charges.paying-tax.header"))
+@formalSuspendedChargesContent = {
+    @h2(classes = "govuk-heading-m", msg = messages("whatYouOwe.formal.suspended-charges.paying-tax.header"))
 
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p1")
-        }
+    @p(){
+        @messages("whatYouOwe.formal.suspended-charges.paying-tax.p1")
+    }
 
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.list.header")
-        }
+    @p(){
+        @messages("whatYouOwe.formal.suspended-charges.paying-tax.list.header")
+    }
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l1")</li>
             <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l2")</li>
         </ul>
 
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p2")
-        }
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p3")
-        }
-            @paymentsMadeContent(
-                origin = origin,
-                viewModel = viewModel)
+    @p(){
+        @messages("whatYouOwe.formal.suspended-charges.paying-tax.p2")
+    }
+    @p(){
+        @messages("whatYouOwe.formal.suspended-charges.paying-tax.p3")
+    }
+    @paymentsMadeContent(
+        origin = origin,
+        viewModel = viewModel)
 
-            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
-    }else {
-        @if(viewModel.informalChargesList.nonEmpty) {
+    @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+}
+
+@getSuspendedChargesView(viewModel: WhatYouOweViewModel, origin: Option[String], isSelfServeTimeToPayEnabled: Boolean) = {
+
+    @(viewModel.informalChargesList.nonEmpty, viewModel.formalChargesList.nonEmpty, viewModel.suspendedCharges.exists(_.isPartialStoodOver)) match {
+        case (_, _, true) => {
+            @partialSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+            @formalSuspendedChargesContent
+        }
+
+        case (true, true, false) => {
+            @formalSuspendedCharges(viewModel.suspendedCharges, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+            @formalSuspendedChargesContent
+        }
+
+        case (true, false, false) => {
             @informalSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
         }
-        @if(viewModel.formalChargesList.nonEmpty) {
-            @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled)
-
-        @h2(classes = "govuk-heading-m", msg = messages("whatYouOwe.formal.suspended-charges.paying-tax.header"))
-
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p1")
+        case (false, true, false) => {
+            @formalSuspendedCharges(viewModel.formalChargesList, viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+            @formalSuspendedChargesContent
         }
 
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.list.header")
-        }
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l1")</li>
-            <li>@messages("whatYouOwe.formal.suspended-charges.paying-tax.list.l2")</li>
-        </ul>
-
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p2")
-        }
-        @p(){
-            @messages("whatYouOwe.formal.suspended-charges.paying-tax.p3")
-        }
-
-            @paymentsMadeContent(
-                origin = origin,
-                viewModel = viewModel)
-
-            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+        case _ => {
+            Empty
         }
     }
 }
@@ -140,12 +131,22 @@
         ))
     }
 
-    @if(viewModel.hasNonDunningLockCharges) {
-        @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
-    } else if(viewModel.hasOnlySuspendedCharges) {
-        @getSuspendedChargesView(viewModel, origin, isSelfServeTimeToPayEnabled)
-    } else {
-        @paymentsMadeContent(origin, viewModel)
-        @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+    @(viewModel.hasNonDunningLockCharges, viewModel.hasOnlySuspendedCharges, viewModel.suspendedCharges.exists(_.isPartialStoodOver)) match {
+        case (true, false, false) => {
+            @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+        }
+
+        case (_, _, true) => {
+            @chargesAndSuspendedCharges(viewModel, origin, isSelfServeTimeToPayEnabled, isStoodOverEnabled)
+        }
+
+        case (false, true, false) => {
+            @getSuspendedChargesView(viewModel, origin, isSelfServeTimeToPayEnabled)
+        }
+
+        case _ => {
+            @paymentsMadeContent(origin, viewModel)
+            @earlierSelfAssessmentChargesPara(viewModel, origin, isSelfServeTimeToPayEnabled)
+        }
     }
 }

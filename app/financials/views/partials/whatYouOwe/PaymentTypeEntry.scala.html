@@ -35,15 +35,16 @@
     rowId: String,
     isOverduePayment: Boolean,
     index: Int,
-    chargeSummaryUrl: String
+    chargeSummaryUrl: String,
+    isPartialFormalCollectable: Boolean
 )(
     implicit messages: Messages,
     user: MtdItUser[_]
 )
 
-@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean, linkSuffix: String, isMFADebit: Boolean, index: Int) = @{
+@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean, linkSuffix: String, isMFADebit: Boolean, index: Int, isPartialFormalCollectable: Boolean) = @{
     
-    val chargeTypeKey = chargeItem.getMessageKey
+    val chargeTypeKey = if (isPartialFormalCollectable && chargeItem.getMessageKey == "standover.formal.label") "revenueAmendment.label" else chargeItem.getMessageKey
     val lpi = if(isInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
@@ -76,5 +77,5 @@
     }
 
     paymentTypeEntry(chargeItem, rowId, isInterest = isInterest,
-        linkSuffix = getLinkSuffix(), isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
+        linkSuffix = getLinkSuffix(), isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index, isPartialFormalCollectable: Boolean)
 }

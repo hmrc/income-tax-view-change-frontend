@@ -30,7 +30,7 @@ import java.time.LocalDate
 class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeConstants {
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
-  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
+  lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
 
   val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusMonths(13))
 
@@ -56,6 +56,12 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
       ++ financialDetailsOverdueDataCi(dunningLock)
   )
 
+  def whatYouOweFinancialDataWithPartialStoodOverCharge(
+                                                         dunningLock: List[Option[String]] = noDunningLocks,
+                                                         chargesList: List[ChargeItem] = financialDetailsPartialStoodOverCharge()): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 5000.00, None, None, None, None, None, None, None, Some(BigDecimal(2900.00))),
+    chargesList = chargesList
+  )
 
   "The WhatYouOweChargesList model" when {
 
@@ -172,6 +178,37 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
       "getDefaultPaymentAmount should have correct values" in {
         whatYouOweFinancialDataWithoutOutstandingCharges().getDefaultPaymentAmount shouldBe Some(1.0)
         whatYouOweFinancialDataWithChargesInMoreThan30Days().getDefaultPaymentAmount shouldBe Some(4.0)
+      }
+    }
+
+    "isPartialStoodOverCharge" should {
+      "return true when Partial Stood Over charge exists" in {
+        whatYouOweFinancialDataWithPartialStoodOverCharge(oneDunningLock).isPartialStoodOverCharge shouldBe true
+      }
+
+      "return true when multiple Partial Stood Over charges exists" in {
+        whatYouOweFinancialDataWithPartialStoodOverCharge(
+          twoDunningLocks,
+          financialDetailsPartialStoodOverCharge(
+            twoDunningLocks,
+            List(Some(BigDecimal(1300.00)), Some(BigDecimal(1500))),
+            List(Some(BigDecimal(1500.00)), Some(BigDecimal(600))))
+        ).isPartialStoodOverCharge shouldBe true
+      }
+
+      "return false when both totalSoAmt and collectableAmt do not exist" in {
+        whatYouOweFinancialDataWithPartialStoodOverCharge(
+          chargesList = financialDetailsPartialStoodOverCharge(totalSoAmt = List(None, None), collectableAmt = List(None, None))).isPartialStoodOverCharge shouldBe false
+      }
+
+      "return false when totalSoAmt filed present but collectableAmt does not exist" in {
+        whatYouOweFinancialDataWithPartialStoodOverCharge(
+          chargesList = financialDetailsPartialStoodOverCharge(collectableAmt = List(None, None))).isPartialStoodOverCharge shouldBe false
+      }
+
+      "return false when collectableAmt filed present but totalSoAmt does not exist" in {
+        whatYouOweFinancialDataWithPartialStoodOverCharge(
+          chargesList = financialDetailsPartialStoodOverCharge(totalSoAmt = List(None, None))).isPartialStoodOverCharge shouldBe false
       }
     }
   }
