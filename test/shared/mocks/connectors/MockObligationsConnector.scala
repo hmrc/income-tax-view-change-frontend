@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package obligations.mocks.connectors
+package shared.mocks.connectors
 
 import common.models.obligations.ObligationsResponseModel
 import common.testUtils.UnitSpec
