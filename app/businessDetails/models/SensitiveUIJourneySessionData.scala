@@ -18,8 +18,6 @@ package businessDetails.models
 
 import businessDetails.models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceReportingFrequencySourceData, ManageIncomeSourceData, SensitiveAddIncomeSourceData}
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
-import obligations.models.reportingObligations.optOut.OptOutSessionData
-import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.libs.json.*
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
@@ -34,8 +32,6 @@ case class SensitiveUIJourneySessionData(
                                           addIncomeSourceData: Option[SensitiveAddIncomeSourceData] = None,
                                           manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                           ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
-                                          optOutSessionData: Option[OptOutSessionData] = None,
-                                          signUpSessionData: Option[SignUpSessionData] = None,
                                           incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
                                           triggeredMigrationData: Option[TriggeredMigrationSessionData] = None,
                                           lastUpdated: Instant = Instant.now,
@@ -49,8 +45,6 @@ case class SensitiveUIJourneySessionData(
       uiJourneySessionData.addIncomeSourceData.map(_.encrypted),
       uiJourneySessionData.manageIncomeSourceData,
       uiJourneySessionData.ceaseIncomeSourceData,
-      uiJourneySessionData.optOutSessionData,
-      uiJourneySessionData.signUpSessionData,
       uiJourneySessionData.incomeSourceReportingFrequencyData,
       uiJourneySessionData.triggeredMigrationData,
       uiJourneySessionData.lastUpdated,
@@ -65,8 +59,6 @@ case class SensitiveUIJourneySessionData(
       addIncomeSourceData.map(_.decrypted),
       manageIncomeSourceData,
       ceaseIncomeSourceData,
-      optOutSessionData,
-      signUpSessionData,
       incomeSourceReportingFrequencyData,
       triggeredMigrationData,
       lastUpdated,

@@ -36,7 +36,6 @@ import financials.enums.ChargeType.ITSA_NI
 import financials.models.creditsandrefunds.CreditsModel
 import hub.helpers.{FinancialDetailsStub, NextUpdatesStub}
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
-import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import play.api.libs.ws.WSResponse

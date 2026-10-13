@@ -29,7 +29,6 @@ import common.models.obligations.{GroupedObligationsModel, ObligationsModel, Sin
 import common.testConstants.BaseIntegrationTestConstants.*
 import hub.helpers.NextUpdatesStub
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
-import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.{OK, SEE_OTHER}
 
 import java.time.LocalDate

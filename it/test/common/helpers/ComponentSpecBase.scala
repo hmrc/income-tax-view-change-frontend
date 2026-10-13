@@ -25,7 +25,6 @@ import common.implicits.ImplicitDateFormatterImpl
 import common.models.admin.{FeatureSwitch, NewHubContextRootEnabled}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
-import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -105,7 +104,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
-  implicit val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
   implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
