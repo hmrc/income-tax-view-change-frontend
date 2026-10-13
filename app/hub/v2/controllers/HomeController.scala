@@ -28,8 +28,6 @@ import hub.auth.AuthActions
 import hub.services.{NextUpdatesService, PenaltyDetailsService}
 import hub.utils.HomePageUtils
 import hub.v2.views.html.newHomePage.*
-import obligations.services.reportingObligations.optOut.OptOutService
-import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -50,9 +48,7 @@ class HomeController @Inject()(val newHomeRecentActivityView: NewHomeRecentActiv
                                val whatYouOweService: WhatYouOweService,
                                val ITSAStatusService: ITSAStatusService,
                                val penaltyDetailsService: PenaltyDetailsService,
-                               val creditService: CreditService,
-                               val signUpService: SignUpService,
-                               val optOutService: OptOutService)
+                               val creditService: CreditService)
                               (implicit
                                val ec: ExecutionContext,
                                val itvcErrorHandler: ItvcErrorHandler,

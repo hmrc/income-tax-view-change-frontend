@@ -38,8 +38,6 @@ import hub.models.newHomePage.YourTasksCard.UpcomingTaskCard
 import hub.services.NextUpdatesService
 import hub.services.newHomePage.HandleYourTasksService
 import hub.v1.views.html.newHomePage.NewHomeYourTasksView
-import obligations.services.reportingObligations.optOut.OptOutService
-import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -72,8 +70,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService)
     ).build()
 
-  given mockedSignUpService: SignUpService = mock(classOf[SignUpService])
-  given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
   given mockedCreditService: CreditService = mock(classOf[CreditService])
   given mockedHandleYourTasksService: HandleYourTasksService = mock(classOf[HandleYourTasksService])
   given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
@@ -95,8 +91,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
     val controller: HandleYourTasksController = HandleYourTasksController(
       authActions,
       view,
-      mockedSignUpService,
-      mockedOptOutService,
       mockITSAStatusService,
       mockWhatYouOweService,
       mockedCreditService,
@@ -175,10 +169,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
         setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
         setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
         setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
-        when(mockedSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
-          .thenReturn(Future.successful(true))
-        when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
-          .thenReturn(Future.successful(true))
         when(mockedCreditService.getAllCredits(any(), any()))
           .thenReturn(Future.successful(
             ANewCreditAndRefundModel()

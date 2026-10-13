@@ -35,8 +35,6 @@ import hub.services.NextUpdatesService
 import hub.services.newHomePage.HandleYourTasksService
 import hub.utils.HomePageUtils
 import hub.v2.views.html.newHomePage.NewHomeYourTasksView
-import obligations.services.reportingObligations.optOut.OptOutService
-import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -50,8 +48,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                           val handleYourTasksView: NewHomeYourTasksView,
-                                          val signUpService: SignUpService,
-                                          val optOutService: OptOutService,
                                           val ITSAStatusService: ITSAStatusService,
                                           val whatYouOweService: WhatYouOweService,
                                           val creditService: CreditService,
@@ -90,9 +86,6 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     for {
       credits: CreditsModel <- creditService.getAllCredits
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
-
-      _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
-      _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       chargeItemList = getChargeList(unpaidCharges, isEnabled(PenaltiesAndAppeals))
       
