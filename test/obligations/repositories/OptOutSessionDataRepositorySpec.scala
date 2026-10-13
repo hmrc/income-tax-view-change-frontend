@@ -21,10 +21,7 @@ import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.testUtils.UnitSpec
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
-import obligations.mocks.connectors.MockITSAStatusUpdateConnector
 import obligations.models.reportingObligations.optOut.OptOutSessionData
-import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import obligations.services.reportingObligations.optOut.OptOutTestSupport.buildOneYearOptOutPropositionForPreviousYear
 import org.mockito.ArgumentMatchers.any
@@ -45,13 +42,10 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
   with MockITSAStatusService
   with MockCalculationListService
   with MockDateService
-  with OneInstancePerTest
-  with MockITSAStatusUpdateConnector {
+  with OneInstancePerTest {
 
   implicit val defaultPatience: PatienceConfig = PatienceConfig(timeout = Span(10, Seconds), interval = Span(5, Millis))
 
-  val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
-  val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])

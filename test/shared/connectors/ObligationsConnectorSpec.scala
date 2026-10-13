@@ -30,20 +30,19 @@
  * limitations under the License.
  */
 
-package obligations.connectors
+package shared.connectors
 
 import common.config.FrontendAppConfig
 import common.mocks.MockHttpV2
 import common.mocks.services.MockAuditingService
 import common.models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
-import shared.testConstants.NextUpdatesTestConstants.*
+import common.testConstants.BaseTestConstants.*
+import common.testUtils.TestSupport
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import common.testConstants.BaseTestConstants.*
-import common.testUtils.TestSupport
-import shared.connectors.ObligationsConnector
+import shared.testConstants.NextUpdatesTestConstants.*
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

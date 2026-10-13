@@ -21,9 +21,6 @@ import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import common.testUtils.UnitSpec
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
-import obligations.mocks.connectors.MockITSAStatusUpdateConnector
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService
@@ -41,10 +38,8 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
   with BeforeAndAfter
   with MockITSAStatusService
   with MockCalculationListService
-  with MockDateService
-  with MockITSAStatusUpdateConnector {
+  with MockDateService {
 
-  val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
 
@@ -57,7 +52,7 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
   val sessionIdValue = "123"
 
   before {
-    reset(optOutConnector, nextUpdatesService, repository, user, hc)
+    reset(nextUpdatesService, repository, user, hc)
   }
 
   "OptOutService.nextUpdatesPageOptouCheck" when {
@@ -85,11 +80,7 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
-
-        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          ITSAStatusUpdateResponseSuccess()
-        ))
-
+        
         val (nextUpdatesQuarterlyReportingContentChecks, optOutProp) = service.nextUpdatesPageChecksAndProposition().futureValue
 
         nextUpdatesQuarterlyReportingContentChecks shouldBe NextUpdatesQuarterlyReportingContentChecks(true, true, false)
@@ -127,10 +118,6 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.initialiseOptOutJourney(any(), any())(any(), any())).thenReturn(Future.successful(true))
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
-
-        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          ITSAStatusUpdateResponseSuccess()
-        ))
 
         val (nextUpdatesQuarterlyReportingContentChecks, optOutProp) = service.nextUpdatesPageChecksAndProposition().futureValue
 

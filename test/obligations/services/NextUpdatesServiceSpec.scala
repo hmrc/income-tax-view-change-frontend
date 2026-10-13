@@ -19,12 +19,12 @@ package obligations.services
 import common.config.featureswitch.FeatureSwitching
 import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testUtils.TestSupport
-import obligations.mocks.connectors.MockObligationsConnector
 import obligations.models.*
 import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.optOut.OptOutTestSupport
 import shared.testConstants.NextUpdatesTestConstants.*
 import play.api.http.Status.INTERNAL_SERVER_ERROR
+import shared.mocks.connectors.MockObligationsConnector
 import shared.testConstants.NextUpdatesTestConstants.obligationsDataSuccessModel as _
 
 import java.time.LocalDate
