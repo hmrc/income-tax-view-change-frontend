@@ -16,13 +16,13 @@
 
 package obligations.controllers
 
-import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{BusinessDetailsFrontend, OptOutFs, PenaltiesAndAppeals, ReturnsFrontend}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.models.admin.{OptOutFs, PenaltiesAndAppeals, ReturnsFrontend}
 import common.models.obligations.ObligationsModel
 import common.services.AuditingService
+import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
@@ -95,8 +95,7 @@ class NextUpdatesController @Inject()(
                     origin = origin,
                     taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status),
                     isReturnsEnabled = isEnabled(ReturnsFrontend),
-                    penaltyAndAppealEnabled = isEnabled(PenaltiesAndAppeals),
-                    isBusinessDetailsEnabled = isEnabled(BusinessDetailsFrontend)
+                    penaltyAndAppealEnabled = isEnabled(PenaltiesAndAppeals)
                   )
                 )
               }

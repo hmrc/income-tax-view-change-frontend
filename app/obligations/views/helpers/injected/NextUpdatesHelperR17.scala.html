@@ -45,7 +45,7 @@
         implicitDateFormatter: ImplicitDateFormatterImpl,
         appConfig: FrontendAppConfig
 )
-@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled: Boolean, penaltyAndAppealEnabled: Boolean, isBusinessDetailsEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
+@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled: Boolean, penaltyAndAppealEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -176,9 +176,9 @@
                             Html(getMessage("businessMayNotBeShown.detail.link.prefix")),
                             link(
                                 link =
-                                    if(user.incomeSources.channel != Channel.CustomerLed.getValue) appConfig.triggeredMigrationCheckHMRCRecordsUrl(user.isAgent, isBusinessDetailsEnabled)
+                                    if(user.incomeSources.channel != Channel.CustomerLed.getValue) appConfig.triggeredMigrationCheckHMRCRecordsUrl(user.isAgent)
                                     else {
-                                        appConfig.manageBusinessesUrl(user.isAgent, isBusinessDetailsEnabled)
+                                        appConfig.manageBusinessesUrl(user.isAgent)
                                     },
                                 messageKey = getMessage("businessMayNotBeShown.detail.link.text"),
                                 id = Some("business-may-not-be-shown-detail-link-text"),

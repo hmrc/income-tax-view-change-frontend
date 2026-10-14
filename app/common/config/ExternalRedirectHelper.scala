@@ -16,8 +16,6 @@
 
 package common.config
 
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
 import hub.v1.controllers.agent.routes as hubV1AgentRoutes
@@ -114,41 +112,17 @@ trait ExternalRedirectHelper {
   lazy val businessDetailsBaseUrl: String = servicesConfig.getString("income-tax-business-details-frontend.baseUrl")
   lazy val businessDetailsAgentBaseUrl: String = s"$businessDetailsBaseUrl/agents"
 
-  lazy val businessDetailsManageBusinessesIndividualUrl: Boolean => String = businessDetailsFrontendEnabled =>
-    if (businessDetailsFrontendEnabled)
-      s"$businessDetailsBaseUrl/manage-your-businesses"
-    else
-      manageBusinessRoutes.ManageYourBusinessesController.show().url
+  def manageBusinessesUrl(isAgent: Boolean): String =
+    val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
+    s"$baseUri/manage-your-businesses"
+    
+  def triggeredMigrationCompleteStepsUrl(isAgent: Boolean): String =
+    val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
+    s"$baseUri/complete-steps"
 
-  lazy val businessDetailsManageBusinessesAgentUrl: Boolean => String = businessDetailsFrontendEnabled =>
-    if (businessDetailsFrontendEnabled)
-      s"$businessDetailsAgentBaseUrl/manage-your-businesses"
-    else
-      manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
-
-  def manageBusinessesUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String =
-    if (isAgent)
-      businessDetailsManageBusinessesAgentUrl(businessDetailsFrontendEnabled)
-    else
-      businessDetailsManageBusinessesIndividualUrl(businessDetailsFrontendEnabled)
-
-  def triggeredMigrationCompleteStepsUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String = {
-    if (businessDetailsFrontendEnabled) {
-      val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
-      s"$baseUri/complete-steps"
-    } else {
-      triggeredMigrationRoutes.CompleteStepsController.show(isAgent).url
-    }
-  }
-
-  def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String = {
-    if (businessDetailsFrontendEnabled) {
-      val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
-      s"$baseUri/check-your-active-businesses/hmrc-record"
-    } else {
-      triggeredMigrationRoutes.CheckHmrcRecordsController.show(isAgent).url
-    }
-  }
+  def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean): String =
+    val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
+    s"$baseUri/check-your-active-businesses/hmrc-record"
 
   //Financials routes
 

@@ -53,7 +53,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       nextYearItsaStatus = nextYearStatus
     )
 
-    val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus), isReturnsEnabled = isEnabled(ReturnsFrontend), penaltyAndAppealEnabled = true, isBusinessDetailsEnabled = true)
+    val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus), isReturnsEnabled = isEnabled(ReturnsFrontend), penaltyAndAppealEnabled = true)
 
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
@@ -357,11 +357,11 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       }
       "display the 'find out why business may not be shown' dropdown your businesses link" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
         pageDocument.getElementById("business-may-not-be-shown-detail-link").text() shouldBe "You can do this at any time in the your businesses section."
-        pageDocument.getElementById("business-may-not-be-shown-detail-link-text").attr("href") shouldBe appConfig.manageBusinessesUrl(false, true)
+        pageDocument.getElementById("business-may-not-be-shown-detail-link-text").attr("href") shouldBe appConfig.manageBusinessesUrl(false)
       }
       "display the 'find out why business may not be shown' dropdown your businesses link - trig mig user" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary, useTrigMigUser = true) {
         pageDocument.getElementById("business-may-not-be-shown-detail-link").text() shouldBe "You can do this at any time in the your businesses section."
-        pageDocument.getElementById("business-may-not-be-shown-detail-link-text").attr("href") shouldBe appConfig.triggeredMigrationCheckHMRCRecordsUrl(false, true)
+        pageDocument.getElementById("business-may-not-be-shown-detail-link-text").attr("href") shouldBe appConfig.triggeredMigrationCheckHMRCRecordsUrl(false)
       }
 
       //upcoming deadlines section
