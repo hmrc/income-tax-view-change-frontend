@@ -18,7 +18,7 @@ package hub.v2.controllers
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import common.services.AuditingService
+import common.services.{AuditingService, YearOfMigrationService}
 import hub.audit.models.ChooseTaxYearsRangeSubmittedAuditModel
 import hub.auth.AuthActions
 import hub.forms.{ChooseTaxYearsRangeForm, ChooseTaxYearsRangeOption}
@@ -27,17 +27,18 @@ import hub.views.html.ChooseTaxYearsRangeView
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 @Singleton
 class ChooseTaxYearsRangeController @Inject()(
                                               authActions: AuthActions,
                                               view: ChooseTaxYearsRangeView,
-                                              auditingService: AuditingService
+                                              auditingService: AuditingService,
+                                              yearOfMigrationService: YearOfMigrationService
                                             )(
                                               implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
@@ -48,16 +49,13 @@ class ChooseTaxYearsRangeController @Inject()(
     Call(submitRoute.method, s"${appConfig.hubBasePath()}${submitRoute.url}")
   }
 
-  private def migrationYear(user: MtdItUser[_]): Int =
-    user.incomeSources.yearOfMigration
-      .map(_.toInt)
-      .getOrElse(throw new IllegalStateException("Year of migration is missing for ChooseTaxYearsRange journey"))
-
-  // Safe wrapper around migrationYear: returns None (instead of throwing) when
-  // yearOfMigration is missing or cannot be parsed as an Int.
-  private def safeMigrationYear(user: MtdItUser[_]): Option[Int] =
-    Try(migrationYear(user)).toOption
-
+  private def migrationYear(user: MtdItUser[_])(implicit hc: HeaderCarrier): Future[Int] =
+    yearOfMigrationService.getYearOfMigration(user.nino)
+      .map{
+        _.yearOfMigrationEndYear.map(_.toInt)
+        .getOrElse(throw new IllegalStateException("Year of migration is missing for ChooseTaxYearsRange journey"))
+      }
+    
   private def taxYearRangeLabels(yearOfMigration: Int): TaxYearRangeLabels =
     TaxYearRangeLabels(
       mtdFromYear = yearOfMigration.toString,
@@ -84,12 +82,12 @@ class ChooseTaxYearsRangeController @Inject()(
     )
 
   def show(): Action[AnyContent] = authActions.asMTDIndividualWithIncomeSources().async { implicit user =>
-    (user.saUtr, safeMigrationYear(user)) match {
-      case (Some(_), Some(yearOfMigration)) =>
-        val labels = taxYearRangeLabels(yearOfMigration)
-        Future.successful(Ok(renderView(ChooseTaxYearsRangeForm(), labels)))
-      case _ =>
-        Future.successful(Redirect(appConfig.homePageUrl(isAgent = false)))
+    migrationYear(user).map {
+      year =>
+        if user.saUtr.isDefined then
+          Ok(renderView(ChooseTaxYearsRangeForm(), taxYearRangeLabels(year)))
+        else 
+          Redirect(appConfig.homePageUrl(isAgent = false))
     }
   }
 
@@ -97,26 +95,27 @@ class ChooseTaxYearsRangeController @Inject()(
     if (user.saUtr.isEmpty) {
       Future.successful(Redirect(appConfig.homePageUrl(isAgent = false)))
     } else {
-      val labels = taxYearRangeLabels(migrationYear(user))
+      migrationYear(user).map { year =>
 
-      ChooseTaxYearsRangeForm().bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(renderView(formWithErrors, labels))),
-        form => form.selection match {
-          case Some(ChooseTaxYearsRangeForm.mtdOption) =>
-            auditSubmission(labels, ChooseTaxYearsRangeForm.mtdOption)
-            Future.successful(Redirect(newHomePage.routes.HandleYourTasksController.show()))
+        ChooseTaxYearsRangeForm().bindFromRequest().fold(
+          formWithErrors => BadRequest(renderView(formWithErrors, taxYearRangeLabels(year))),
+          form => form.selection match {
+            case Some(ChooseTaxYearsRangeForm.mtdOption) =>
+              auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.mtdOption)
+              Redirect(newHomePage.routes.HandleYourTasksController.show())
 
-          case Some(ChooseTaxYearsRangeForm.legacyOption) =>
-            auditSubmission(labels, ChooseTaxYearsRangeForm.legacyOption)
-            val utr = user.saUtr.getOrElse(
-              throw new IllegalStateException("SA UTR is missing for legacy SA redirect")
-            )
-            Future.successful(Redirect(appConfig.saViewLandPService(utr)))
+            case Some(ChooseTaxYearsRangeForm.legacyOption) =>
+              auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.legacyOption)
+              val utr = user.saUtr.getOrElse(
+                throw new IllegalStateException("SA UTR is missing for legacy SA redirect")
+              )
+              Redirect(appConfig.saViewLandPService(utr))
 
-          case Some(other) => throw new IllegalStateException(s"Unexpected tax years range selection: $other")
-          case None => throw new IllegalStateException("Missing tax years range selection after successful form bind")
-        }
-      )
+            case Some(other) => throw new IllegalStateException(s"Unexpected tax years range selection: $other")
+            case None => throw new IllegalStateException("Missing tax years range selection after successful form bind")
+          }
+        )
+      }
     }
   }
 }
