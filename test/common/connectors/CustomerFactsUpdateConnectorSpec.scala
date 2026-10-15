@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package businessDetails.connectors
+package common.connectors
 
 import common.config.FrontendAppConfig
-import common.connectors.CustomerFactsUpdateConnector
 import common.mocks.MockHttpV2
 import common.mocks.services.MockAuditingService
 import common.testUtils.TestSupport

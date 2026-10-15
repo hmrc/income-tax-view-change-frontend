@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package businessDetails.models
+package common.models
 
-import businessDetails.testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, propertyDetails}
+import common.models.core.CessationModel
+import common.testConstants.BaseTestConstants.propertyDetails
 import common.testUtils.UnitSpec
+
+import java.time.LocalDate
 
 class PropertyDetailsModelSpec extends UnitSpec {
 
   "The PropertyDetailsModel" when {
     "A property is ceased, the isCeased method" should {
       "return true" in {
+        val ceasedPropertyDetails = propertyDetails.copy(cessation = Some(CessationModel(date = Some(LocalDate.of(2022, 1, 1)))))
         ceasedPropertyDetails.isCeased shouldBe true
       }
     }
