@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package businessDetails.services
+package common.services
 
 import common.connectors.CustomerFactsUpdateConnector
-import common.services.CustomerFactsUpdateService
 import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, verify, when}
