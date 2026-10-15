@@ -89,6 +89,8 @@ object FeatureSwitchName extends Logging {
       JsSuccess(HideBusinessName)
     case JsString(StoodOverCharges.name) =>
       JsSuccess(StoodOverCharges)
+    case JsString(InterstitialPage.name) =>
+      JsSuccess(InterstitialPage)
     case invalidName =>
       logger.error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -138,7 +140,8 @@ object FeatureSwitchName extends Logging {
       ReturnsFrontend,
       NewHubContextRootEnabled,
       HideBusinessName,
-      StoodOverCharges
+      StoodOverCharges,
+      InterstitialPage
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)

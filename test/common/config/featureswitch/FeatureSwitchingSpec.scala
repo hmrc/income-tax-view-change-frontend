@@ -67,7 +67,8 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     ReturnsFrontend,
     NewHubContextRootEnabled,
     HideBusinessName,
-    StoodOverCharges
+    StoodOverCharges,
+    InterstitialPage
   )
 
   "FeatureSwitchName" when {
