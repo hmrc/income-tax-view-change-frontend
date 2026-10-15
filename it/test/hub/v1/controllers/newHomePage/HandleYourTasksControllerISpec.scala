@@ -16,7 +16,7 @@
 
 package hub.v1.controllers.newHomePage
 
-import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.controllers.ControllerISpecHelper
 import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
