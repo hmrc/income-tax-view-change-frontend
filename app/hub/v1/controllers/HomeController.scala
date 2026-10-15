@@ -84,7 +84,7 @@ class HomeController @Inject()(val newHomeRecentActivityView: NewHomeRecentActiv
                              (implicit user: MtdItUser[_]): Future[Result] = {
     if(isAgent){
       Future.successful(Redirect(newHomePage.routes.HandleYourTasksController.showAgent()))
-    }else if (isEligibleForChooseTaxYearsRange(user)) {
+    }else if (isEligibleForChooseTaxYearsRange(user) && isEnabled(InterstitialPage)) {
       Future.successful(Redirect(routes.ChooseTaxYearsRangeController.show()))
     }else {
       Future.successful(Redirect(newHomePage.routes.HandleYourTasksController.show()))

@@ -282,3 +282,8 @@ case object StoodOverCharges extends FeatureSwitchName {
   override val name: String = "stood-over-charges"
   override val toString: String = "Stood Over Charges"
 }
+
+case object InterstitialPage extends FeatureSwitchName {
+  override val name: String = "interstitial-page"
+  override val toString: String = "Interstitial Page"
+}
