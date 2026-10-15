@@ -83,8 +83,6 @@ object FeatureSwitchName extends Logging {
       JsSuccess(RevenueAmendments)
     case JsString(ReturnsFrontend.name) =>
       JsSuccess(ReturnsFrontend)
-    case JsString(NewHubContextRootEnabled.name) =>
-      JsSuccess(NewHubContextRootEnabled)
     case JsString(HideBusinessName.name) =>
       JsSuccess(HideBusinessName)
     case JsString(StoodOverCharges.name) =>
@@ -136,7 +134,6 @@ object FeatureSwitchName extends Logging {
       FinancialsFrontend,
       RevenueAmendments,
       ReturnsFrontend,
-      NewHubContextRootEnabled,
       HideBusinessName,
       StoodOverCharges
     )
@@ -266,11 +263,6 @@ case object RevenueAmendments extends FeatureSwitchName {
 case object ReturnsFrontend extends FeatureSwitchName {
   override val name: String = "returns-frontend"
   override val toString: String = "Returns Frontend"
-}
-
-case object NewHubContextRootEnabled extends FeatureSwitchName {
-  override val name: String = "new-hub-context-root"
-  override val toString: String = "New Hub Context-root Enabled"
 }
 
 case object HideBusinessName extends FeatureSwitchName {

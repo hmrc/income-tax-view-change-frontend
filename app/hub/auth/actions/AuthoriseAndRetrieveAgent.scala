@@ -106,6 +106,6 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
     implicit @unused request: RequestWithFeatureSwitches[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
       logger.error(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(appConfig.individualHomeUrl(request.newHubContextRootEnabled))))
+      Future.successful(Left(Redirect(appConfig.individualHomeUrl)))
   }
 }

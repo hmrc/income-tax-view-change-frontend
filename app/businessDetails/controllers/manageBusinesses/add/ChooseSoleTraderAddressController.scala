@@ -57,7 +57,7 @@ class ChooseSoleTraderAddressController @Inject()(
     else itvcErrorHandler
 
   private def backUrl(isAgent: Boolean)(implicit user: MtdItUser[_]): String =
-    appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled)
+    appConfig.homePageUrl(isAgent)
 
   private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty
 
@@ -171,7 +171,7 @@ class ChooseSoleTraderAddressController @Inject()(
         )
       )
     } else {
-      Future(Redirect(appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled)))
+      Future(Redirect(appConfig.homePageUrl(isAgent)))
     }
   }
 

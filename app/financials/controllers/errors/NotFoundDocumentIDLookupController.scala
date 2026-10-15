@@ -29,7 +29,7 @@ import scala.concurrent.Future
 class NotFoundDocumentIDLookupController @Inject()(authActions: AuthActions,
                                                     customNotFoundError: CustomNotFoundErrorView)
                                                   (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
-  val show: Action[AnyContent] = authActions.retrieveFeatureSwitches.async { implicit request =>
-    Future.successful(Ok(customNotFoundError(request.newHubContextRootEnabled)))
+  val show: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(customNotFoundError()))
   }
 }

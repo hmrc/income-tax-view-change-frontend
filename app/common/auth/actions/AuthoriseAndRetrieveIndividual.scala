@@ -17,7 +17,7 @@
 package common.auth.actions
 
 import com.google.inject.Singleton
-import common.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest, Constants, FrontendAuthorisedFunctions, RequestWithFeatureSwitches}
+import common.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest, Constants, FrontendAuthorisedFunctions}
 import common.config.FrontendAppConfig
 import common.enums.MTDIndividual
 import common.models.audit.IvUpliftRequiredAuditModel
@@ -46,17 +46,17 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
                                                val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val auditingService: AuditingService)
-  extends AuthoriseHelper with ActionRefiner[RequestWithFeatureSwitches, AuthorisedAndEnrolledRequest] {
+  extends AuthoriseHelper with ActionRefiner[Request, AuthorisedAndEnrolledRequest] {
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
   lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
-  override protected def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+  override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    implicit val req: RequestWithFeatureSwitches[A] = request
+    implicit val req: Request[A] = request
 
     // authorise on HMRC-MTD-IT enrolment and Individual / Organisation affinity group
     val predicate: Predicate =
@@ -71,7 +71,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   }
 
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
-  def ivUpliftRedirectUrl[A](implicit request: RequestWithFeatureSwitches[A]):String = {
+  def ivUpliftRedirectUrl[A](implicit request: Request[A]):String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.baseUrl
     @unused val origin = request.getQueryString(ORIGIN)
     val completionUrl: String = s"$host${InternalUrlHelper.upliftSuccessUrl}"
@@ -80,7 +80,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   }
 
   private def redirectIfInsufficientConfidence[A]()(
-    implicit request: RequestWithFeatureSwitches[A],
+    implicit request: Request[A],
     hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
 
     case _ ~ _ ~ _ ~ ag ~ confidenceLevel
@@ -90,7 +90,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   }
 
   private def constructAuthorisedAndEnrolledUser[A]()(
-    implicit request: RequestWithFeatureSwitches[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case enrolments ~ userName ~ credentials ~ affinityGroup ~ _ =>
       lazy val optMtdId: Option[String] =
         enrolments.getEnrolment(Constants.mtdEnrolmentName)
@@ -111,8 +111,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
                 mtditId = mtdItId,
                 MTDIndividual,
                 authUserDetails = authUserDetails,
-                clientDetails = None,
-                featureSwitches = request.featureSwitches
+                clientDetails = None
               )
             )
           )

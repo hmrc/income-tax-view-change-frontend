@@ -16,7 +16,6 @@
 
 package hub.auth.actions
 
-import common.auth.RequestWithFeatureSwitches
 import common.config.FrontendAppConfig
 import play.api.Logging
 import play.api.mvc.*
@@ -28,15 +27,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CorrectHubContextRootAction @Inject()(appConfig: FrontendAppConfig)
                                            (implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[RequestWithFeatureSwitches, RequestWithFeatureSwitches] with Logging {
+  extends ActionRefiner[Request, Request] with Logging {
 
-  override def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, RequestWithFeatureSwitches[A]]] = {
-
-    if(request.newHubContextRootEnabled) {
+  override def refine[A](request: Request[A]): Future[Either[Result, Request[A]]] = {
       Future.successful(Right(request))
-    } else {
-      logger.warn("Incorrect Hub Context Root.")
-      Future.successful(Left(Redirect(appConfig.hubBaseUrl(request.newHubContextRootEnabled))))
-    }
   }
 }

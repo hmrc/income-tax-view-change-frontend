@@ -16,7 +16,7 @@
 
 package common.viewUtils
 
-import common.auth.{AuthorisedAgentWithClientDetailsRequest, MtdItUser, RequestWithFeatureSwitches}
+import common.auth.{AuthorisedAgentWithClientDetailsRequest, MtdItUser}
 import common.config.FrontendAppConfig
 import common.controllers.routes as appRoutes
 import common.controllers.agent.routes as agentRoutes
@@ -32,122 +32,44 @@ import hub.v2.controllers.feedback.routes as hubFeedbackRoutes
 import hub.v2.controllers.agent.errors.routes as hubAgentErrorRoutes
 object InternalUrlHelper {
 
-  def signinCall(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubAppRoutes.SignInController.signIn()
-    else
-      appRoutes.SignInController.signIn()
-  }
-  def signinUrl(implicit appConfig: FrontendAppConfig) = signinCall.url
-  
-  def signoutUrl(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubAppRoutes.SignOutController.signOut().url
-    else
-      appRoutes.SignOutController.signOut().url
-  }
+  val signinCall = hubAppRoutes.SignInController.signIn()
 
-  def switchItvcLangToEnglishCall(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubAppRoutes.ItvcLanguageController.switchToEnglish(None)
-    else
-      appRoutes.ItvcLanguageController.switchToEnglish(None)
-  }
+  val signinUrl = signinCall.url
   
-  def switchItvcLangToWelshCall(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubAppRoutes.ItvcLanguageController.switchToWelsh(None)
-    else
-      appRoutes.ItvcLanguageController.switchToWelsh(None)
-  }
-  
-  def switchLocaleToWelshUrl(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubAppRoutes.LocalLanguageController.switchToLanguage("cymraeg").url
-    else
-      appRoutes.LocalLanguageController.switchToLanguage("cymraeg").url
-  }
-  def switchLocaleToEnglishUrl(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubAppRoutes.LocalLanguageController.switchToLanguage("english").url
-    else
-      appRoutes.LocalLanguageController.switchToLanguage("english").url
-  }
-  def keepAliveUrl(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubTimeoutRoutes.SessionTimeoutController.keepAlive().url
-    else
-      timeoutRoutes.SessionTimeoutController.keepAlive().url
-  }
+  val signoutUrl = hubAppRoutes.SignOutController.signOut().url
 
-  def timeoutCall(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubTimeoutRoutes.SessionTimeoutController.timeout()
-    else
-      timeoutRoutes.SessionTimeoutController.timeout()
-  }
+  val switchItvcLangToEnglishCall= hubAppRoutes.ItvcLanguageController.switchToEnglish(None)
+  
+  val switchItvcLangToWelshCall= hubAppRoutes.ItvcLanguageController.switchToWelsh(None)
+  
+  val switchLocaleToWelshUrl = hubAppRoutes.LocalLanguageController.switchToLanguage("cymraeg").url
 
-  def timeoutUrl(implicit appConfig: FrontendAppConfig) = timeoutCall.url
+  val switchLocaleToEnglishUrl = hubAppRoutes.LocalLanguageController.switchToLanguage("english").url
+
+  val keepAliveUrl = hubTimeoutRoutes.SessionTimeoutController.keepAlive().url
+
+  val timeoutCall = hubTimeoutRoutes.SessionTimeoutController.timeout()
+
+  val timeoutUrl = timeoutCall.url
   
-  def feedbackUrl(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubFeedbackRoutes.FeedbackController.show().url
-    else
-      feedbackRoutes.FeedbackController.show().url
-  }
-  def agentFeedbackUrl(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubFeedbackRoutes.FeedbackController.showAgent().url
-    else
-      feedbackRoutes.FeedbackController.showAgent().url
-  }
-  def agentErrorCall(implicit appConfig: FrontendAppConfig) = {
-    if (appConfig.hubContextRootEnabledConfig)
-      hubAgentErrorRoutes.AgentErrorController.show()
-    else
-      agentErrorRoutes.AgentErrorController.show()
-  }
+  val feedbackUrl = hubFeedbackRoutes.FeedbackController.show().url
+
+  val agentFeedbackUrl = hubFeedbackRoutes.FeedbackController.showAgent().url
+
+  val agentErrorCall = hubAgentErrorRoutes.AgentErrorController.show()
   
-  def noIncomeSourceUrl(isAgent: Boolean)(implicit user: MtdItUser[_]) = {
-    if (user.newHubContextRootEnabled)
+  def noIncomeSourceUrl(isAgent: Boolean) = {
       hubAppRoutes.NoIncomeSourcesController.show(isAgent)
-    else
-      appRoutes.NoIncomeSourcesController.show(isAgent)
   }
 
-  def upliftSuccessUrl(implicit user: RequestWithFeatureSwitches[_]) = {
-    if (user.newHubContextRootEnabled)
-      hubAppRoutes.UpliftSuccessController.success().url
-    else
-      appRoutes.UpliftSuccessController.success().url
-  }
+  val upliftSuccessUrl = hubAppRoutes.UpliftSuccessController.success().url
 
-  def upliftFailureUrl(implicit user: RequestWithFeatureSwitches[_]) = {
-    if (user.newHubContextRootEnabled)
-      hubErrorRoutes.UpliftFailedController.show().url
-    else
-      errorRoutes.UpliftFailedController.show().url
-  }
+  val upliftFailureUrl = hubErrorRoutes.UpliftFailedController.show().url
 
-  def clientRelationshipFailureCall(implicit user: AuthorisedAgentWithClientDetailsRequest[_]) = {
-    if (user.newHubContextRootEnabled)
-      hubAgentRoutes.ClientRelationshipFailureController.show()
-    else
-      agentRoutes.ClientRelationshipFailureController.show()
-  }
+  val clientRelationshipFailureCall = hubAgentRoutes.ClientRelationshipFailureController.show()
 
-  def noAssignmentCall(implicit user: AuthorisedAgentWithClientDetailsRequest[_]) = {
-    if (user.newHubContextRootEnabled)
-      hubAgentRoutes.NoAssignmentController.show().url
-    else
-      agentRoutes.NoAssignmentController.show().url
-  }
+  val noAssignmentCall = hubAgentRoutes.NoAssignmentController.show().url
 
-  def notEnrolledCall(implicit user: RequestWithFeatureSwitches[_]) = {
-    if (user.newHubContextRootEnabled)
-      hubErrorRoutes.NotEnrolledController.show()
-    else
-      errorRoutes.NotEnrolledController.show()
-  }
+  val notEnrolledCall = hubErrorRoutes.NotEnrolledController.show().url
 
 }

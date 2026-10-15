@@ -40,7 +40,7 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
   private val bodyWYO: MtdItUser[_] => JsValue = user => Json.parse(
     s"""
        {
-        "returnUrl": "${config.homePageUrl(false, user.newHubContextRootEnabled)}",
+        "returnUrl": "${config.homePageUrl(false)}",
         "backUrl": "${financialsRoutes.WhatYouOweController.show().path}"
        }
       """.stripMargin

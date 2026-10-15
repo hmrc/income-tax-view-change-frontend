@@ -58,9 +58,9 @@
 
 @homeUrl = @{
     if(isAgent){
-        appConfig.agentHomeUrl(user.newHubContextRootEnabled)
+        appConfig.agentHomeUrl
     } else {
-        appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin)
+        appConfig.individualHomeUrlWithOrigin(origin)
     }
 }
     

@@ -56,18 +56,14 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       dateService: DateServiceInterface
                                      ) extends BaseController with I18nSupport with FeatureSwitching with Logging {
 
-  def showLogin(isNewContextRoot: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    if (!isNewContextRoot) {
-      Future.successful(Redirect(routes.CustomLoginController.showLogin(true)))
-    } else {
+  def showLogin(): Action[AnyContent] = Action.async { implicit request =>
       userRepository.findAll().map(userRecords =>
         Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords))
       )
-    }
   }
 
   def postLogin(): Action[AnyContent] =
-    featureSwitchRetrievalAction.async { implicit request =>
+    Action.async { implicit request =>
       PostedUser.form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
@@ -84,7 +80,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     ).url
                   } else {
                     val origin = if (postedUser.usePTANavBar) "PTA" else "BTA"
-                    appConfig.individualHomeUrlWithOrigin(request.newHubContextRootEnabled, Some(origin))
+                    appConfig.individualHomeUrlWithOrigin(Some(origin))
                   }
                   val homePage = s"$redirectURL"
 

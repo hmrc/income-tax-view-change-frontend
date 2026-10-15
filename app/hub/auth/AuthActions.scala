@@ -18,7 +18,7 @@ package hub.auth
 
 import common.auth.actions.{AgentHasConfirmedClientAction, FeatureSwitchRetrievalAction, IncomeSourceRetrievalAction, NavBarRetrievalAction}
 import common.auth.actions.{RedirectIfNoIncomeSourcesAction, RetrieveClientData, TriggeredMigrationRetrievalAction}
-import common.auth.{AuthorisedUserRequest, MtdItUser, RequestWithFeatureSwitches}
+import common.auth.{AuthorisedUserRequest, MtdItUser}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import hub.auth.actions.*
@@ -114,17 +114,7 @@ class AuthActions @Inject()(
     }
   }
 
-  def asAuthorisedUser(checkContextRoot: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] = {
-    retrieveFeatureSwitchesAndCheckContextRootIfReq(checkContextRoot) andThen
+  def asAuthorisedUser(): ActionBuilder[AuthorisedUserRequest, AnyContent] = {
     checkSessionTimeout andThen authoriseAndRetrieve
   }
-  
-  def retrieveFeatureSwitchesAndCheckContextRootIfReq(checkContextRoot: Boolean = true): ActionBuilder[RequestWithFeatureSwitches, AnyContent] = {
-    if (checkContextRoot) {
-      retrieveFeatureSwitches andThen correctHubContextRootAction
-    } else {
-      retrieveFeatureSwitches
-    }
-  }
 }
-

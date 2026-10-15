@@ -46,64 +46,64 @@ class AuthActions @Inject()(
   override val appConfig: FrontendAppConfig = frontendAppConfig
 
   def asMTDIndividual(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       retrieveNavBar andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
   def asMTDIndividualForNrs: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveIndividualForNrs andThen
       incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       retrieveNavBar
   }
 
   def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
-    retrieveFeatureSwitches andThen checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
+    checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
       incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise(useCookies = true) andThen
       authoriseAndRetrieveMtdAgent andThen
-      incomeSourceRetrievalAction
+      incomeSourceRetrievalAction andThen
+    retrieveFeatureSwitches
   }
 
   def asMTDPrimaryAgent(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
   
   def asMTDPrimaryAgentForNrs: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgentForNrs.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
-      incomeSourceRetrievalAction
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches
   }
 
   def asMTDIndividualWithIncomeSources(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] =
@@ -116,16 +116,14 @@ class AuthActions @Inject()(
     asMTDPrimaryAgent(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
 
   def asMTDIndividualForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
       retrieveNavBar
   }
 
   def asMTDAgentWithConfirmedClientForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
@@ -158,7 +156,6 @@ class AuthActions @Inject()(
   }
 
   def asAuthorisedUser: ActionBuilder[AuthorisedUserRequest, AnyContent] = {
-    retrieveFeatureSwitches andThen
       checkSessionTimeout andThen authoriseAndRetrieve
   }
 }

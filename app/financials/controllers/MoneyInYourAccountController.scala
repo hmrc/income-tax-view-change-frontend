@@ -19,7 +19,7 @@ package financials.controllers
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.models.admin.{CreditsRefundsRepay, NewHubContextRootEnabled}
+import common.models.admin.CreditsRefundsRepay
 import common.services.AuditingService
 import common.views.html.errorPages.CustomNotFoundErrorView
 import financials.controllers.routes as financialsRoutes
@@ -59,7 +59,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
-          backUrl = appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin),
+          backUrl = appConfig.individualHomeUrlWithOrigin(origin),
           financialsRoutes.WhatYouOweController.show(origin).url
         ) recover logAndRedirect
     }
@@ -68,7 +68,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
-        Ok(customNotFoundErrorView(isEnabled(NewHubContextRootEnabled)))
+        Ok(customNotFoundErrorView())
       case creditsModel: CreditsModel =>
         val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel, appConfig.repaymentsUrl)
         auditClaimARefund(creditsModel)
@@ -81,7 +81,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent() async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = appConfig.homePageUrl(isAgent = true, mtdItUser.newHubContextRootEnabled),
+          backUrl = appConfig.homePageUrl(isAgent = true),
           financialsRoutes.WhatYouOweController.showAgent().url
         ) recover logAndRedirect
     }
@@ -96,7 +96,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
             isAgent = false
           ) recover logAndRedirect
         } else {
-          Future.successful(Ok(customNotFoundErrorView(user.newHubContextRootEnabled)(user, user.messages)))
+          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
         }
     }
 
@@ -109,7 +109,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
             isAgent = true
           ) recover logAndRedirect
         } else {
-          Future.successful(Ok(customNotFoundErrorView(user.newHubContextRootEnabled)(user, user.messages)))
+          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
         }
     }
 
@@ -117,7 +117,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits flatMap {
       case _ if !isEnabled(CreditsRefundsRepay) =>
-        Future.successful(Ok(customNotFoundErrorView(user.newHubContextRootEnabled)(user, messages)))
+        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
       case creditsModel: CreditsModel =>
         repaymentService.start(user.nino, Some(creditsModel.availableCreditForRepayment)) map {
           case Right(nextUrl) =>

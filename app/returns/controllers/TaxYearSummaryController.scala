@@ -553,7 +553,7 @@ class TaxYearSummaryController @Inject()(
     referer.map(URI.create(_).getPath.equals(taxYearsUrl(origin))) match {
       case Some(true) => taxYearsUrl(origin)
       case Some(false) if referer.map(URI.create(_).getPath.equals(whatYouOweUrl(origin))).get => whatYouOweUrl(origin)
-      case _ => appConfig.individualHomeUrlWithOrigin(mtdItUser.newHubContextRootEnabled, origin)
+      case _ => appConfig.individualHomeUrlWithOrigin(origin)
     }
   }
 
@@ -561,7 +561,7 @@ class TaxYearSummaryController @Inject()(
     referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
       case Some(true) => agentTaxYearsUrl
       case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get => agentWhatYouOweUrl(mtdItUser)
-      case _ => appConfig.agentHomeUrl(mtdItUser.newHubContextRootEnabled)
+      case _ => appConfig.agentHomeUrl
     }
   }
 

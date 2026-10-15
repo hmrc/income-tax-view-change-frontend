@@ -59,13 +59,13 @@ trait AuthoriseHelper extends FeatureSwitching with Logging {
     implicit request: RequestWithFeatureSwitches[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
       logger.error(s"Agent on endpoint for individuals")
-      Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl(request.newHubContextRootEnabled))))
+      Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl())))
   }
 
   def redirectIfNotAgent[A]()(
     implicit request: RequestWithFeatureSwitches[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
       logger.error(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(appConfig.individualHomeUrl(request.newHubContextRootEnabled))))
+      Future.successful(Left(Redirect(appConfig.individualHomeUrl)))
   }
 }
