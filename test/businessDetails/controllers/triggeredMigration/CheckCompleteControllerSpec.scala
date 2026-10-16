@@ -63,7 +63,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
 
-    @unused val homeUrl = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
+    @unused val homeUrl = appConfig.homePageUrl(isAgent)
 
     s"show(isAgent = $isAgent)" when {
       val action = controller.show(isAgent)
@@ -90,7 +90,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
 
           val result = action(fakeRequest)
           status(result) shouldBe 303
-          redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
+          redirectLocation(result).get should include(appConfig.homePageUrl(isAgent))
         }
       }
 

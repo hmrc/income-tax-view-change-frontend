@@ -17,8 +17,8 @@
 package hub.v1.controllers.agent
 
 import common.connectors.ITSAStatusConnector
-import common.controllers.agent.errors.routes as agentErrorRoutes
-import common.controllers.agent.routes as agentRoutes
+import hub.v2.controllers.agent.errors.routes as agentErrorRoutes
+import hub.v2.controllers.agent.routes as agentRoutes
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockITSAStatusService
 import common.models.sessionData.SessionDataModel
@@ -45,8 +45,6 @@ import scala.concurrent.Future
 class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmClient with MockITSAStatusService {
   
   lazy val mockPostSessionDataConnector = mock(classOf[PostSessionDataConnector])
-
-  override val newHubContextRootEnabled: Boolean = false
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -108,7 +106,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(hub.v1.controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectLocation(result) shouldBe Some(hub.v2.controllers.agent.routes.EnterClientsUTRController.show().url)
         }
       }
 
@@ -192,7 +190,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(hub.v1.controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectLocation(result) shouldBe Some(hub.v2.controllers.agent.routes.EnterClientsUTRController.show().url)
         }
       }
 

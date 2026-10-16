@@ -16,7 +16,7 @@
 
 package hub.v1.controllers.agent
 
-import common.controllers.agent.errors.routes as agentErrorRoutes
+import hub.v2.controllers.agent.errors.routes as agentErrorRoutes
 import common.mocks.auth.MockAuthActions
 import common.testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 import common.utils.sessionUtils.SessionKeys
@@ -31,8 +31,6 @@ import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 
 class UTRErrorControllerSpec extends MockAuthActions
   with MockUTRError {
-
-  override val newHubContextRootEnabled: Boolean = false
   
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(

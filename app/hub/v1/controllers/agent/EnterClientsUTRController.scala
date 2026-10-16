@@ -67,7 +67,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
   }
 
 
-  def submit: Action[AnyContent] = authActions.asAgent(checkContextRoot = false).async { implicit user =>
+  def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     ClientsUTRForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(enterClientsUTR(
         clientUTRForm = hasErrors,

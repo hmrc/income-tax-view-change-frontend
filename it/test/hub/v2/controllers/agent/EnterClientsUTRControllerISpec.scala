@@ -36,7 +36,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   s"GET $path" should {
     s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubUnauthorised()
 
         val result = buildGETMTDClient(path).futureValue
@@ -49,7 +49,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
     }
     s"redirect ($SEE_OTHER) to ${agentErrorRoutes.AgentErrorController.show().url}" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
         val result = buildGETMTDClient(path).futureValue
 
@@ -60,7 +60,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       }
     }
     s"return $OK with the enter client utr page" in {
-      stubGetFeatureSwitches(List(), true)
+      stubGetFeatureSwitches(List())
       MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
       val result = buildGETMTDClient(path).futureValue
 
@@ -74,7 +74,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   s"POST ${hub.v2.controllers.agent.routes.EnterClientsUTRController.submit().url}" should {
     s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubUnauthorised()
 
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
@@ -88,7 +88,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
     s"redirect to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
 
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
@@ -102,7 +102,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
     s"return $BAD_REQUEST" when {
       "no utr is submitted" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
@@ -114,7 +114,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
       "an empty utr string is submitted" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(""))).futureValue
@@ -125,7 +125,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
       "a utr containing non-digits is submitted" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq("abc"))).futureValue
@@ -136,7 +136,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
       "a utr which has less than 10 digits is submitted" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq("123456789"))).futureValue
@@ -147,7 +147,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
       "a utr which has more than 10 digits is submitted" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq("12345678901"))).futureValue
@@ -162,7 +162,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
     s"redirect ($SEE_OTHER) to the next page" when {
       "the utr is submitted by a primary agent is valid" in {
         val validUTR: String = "1234567890"
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(false)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
@@ -189,7 +189,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
       "the utr submitted by a secondary agent is valid" in {
         val validUTR: String = "1234567890"
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(true)
 
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
@@ -221,7 +221,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(false)
 
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
@@ -252,7 +252,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         val validUTR: String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(true)
 
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
@@ -283,7 +283,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       "the client details could not be found" in {
         val validUTR: String = "1234567890"
 
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = NOT_FOUND,
@@ -302,7 +302,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       "the business details could not be found" in {
         val validUTR: String = "1234567890"
 
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,
@@ -329,7 +329,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       "the primary or secondary agent enrolment is not present" in {
         val validUTR: String = "1234567890"
 
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedButNotMTDEnrolled()
         CitizenDetailsStub.stubGetCitizenDetails(validUTR,
           status = OK,

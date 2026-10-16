@@ -39,7 +39,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         "render the confirm client utr page with an empty black banner" in {
-          stubGetFeatureSwitches(List(), true)
+          stubGetFeatureSwitches(List())
           stubAuthorised(MTDPrimaryAgent)
           GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -65,7 +65,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment" should {
         "render the confirm client utr page with an empty black banner" in {
-          stubGetFeatureSwitches(List(), true)
+          stubGetFeatureSwitches(List())
           stubAuthorised(MTDSupportingAgent)
           GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -96,7 +96,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment and session data service post returns an OK response" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
-          stubGetFeatureSwitches(List(), true)
+          stubGetFeatureSwitches(List())
           stubAuthorised(MTDPrimaryAgent)
           GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
           Then(s"I stub the session-data service call to return status $OK")
@@ -116,7 +116,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       if (appConfig.isSessionDataStorageEnabled) {
         "is authenticated, with a valid agent but the income tax session data post call returned an error" should {
           "redirect to an error page" in {
-            stubGetFeatureSwitches(List(), true)
+            stubGetFeatureSwitches(List())
             stubAuthorised(MTDPrimaryAgent)
             GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
             Then(s"I stub the session-data service call to return status $INTERNAL_SERVER_ERROR")
@@ -132,7 +132,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
         }
         "is authenticated, with a valid agent but the income tax session data post call returned no response" should {
           "redirect to an error page" in {
-            stubGetFeatureSwitches(List(), true)
+            stubGetFeatureSwitches(List())
             stubAuthorised(MTDPrimaryAgent)
             GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -154,7 +154,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
       "is authenticated, with a valid agent and client delegated enrolment and session data service post returns an OK response" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
-          stubGetFeatureSwitches(List(), true)
+          stubGetFeatureSwitches(List())
           stubAuthorised(MTDSupportingAgent)
           GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
           Then(s"I stub the session-data service call to return status $OK")

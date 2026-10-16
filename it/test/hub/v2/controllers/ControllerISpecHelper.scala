@@ -39,10 +39,10 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
   override val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  def homeUrl(mtdUserRole: MTDUserRole): String = appConfig.homePageUrl(mtdUserRole.isAgent, true)
+  def homeUrl(mtdUserRole: MTDUserRole): String = appConfig.homePageUrl(mtdUserRole.isAgent)
 
   def stubAuthorised(mtdRole: MTDUserRole, featureSwitches: List[FeatureSwitchName] = List()): Unit = {
-    stubGetFeatureSwitches(featureSwitches, true)
+    stubGetFeatureSwitches(featureSwitches)
     if(mtdRole != MTDIndividual) {
       SessionDataStub.stubGetSessionDataResponseSuccess()
       stubGetCitizenDetails()
@@ -67,21 +67,21 @@ trait ControllerISpecHelper extends ComponentSpecBase {
   def testNoClientDataFailure(requestPath: String, optBody: Option[Map[String, Seq[String]]] = None, featureSwitches: List[FeatureSwitchName] = List()): Unit = {
     "the user does not have client session data" should {
       s"redirect ($SEE_OTHER) to ${appConfig.enterClientsUTRUrl}" in {
-        stubGetFeatureSwitches(featureSwitches, true)
+        stubGetFeatureSwitches(featureSwitches)
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         SessionDataStub.stubGetSessionDataResponseNotFound()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(appConfig.enterClientsUTRUrl(true))
+          redirectURI(appConfig.enterClientsUTRUrl())
         )
       }
     }
 
     "the user has client session data but citizen details not found" should {
       s"redirect ($SEE_OTHER) to ${appConfig.enterClientsUTRUrl}" in {
-        stubGetFeatureSwitches(featureSwitches, true)
+        stubGetFeatureSwitches(featureSwitches)
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         SessionDataStub.stubGetSessionDataResponseSuccess()
         stubGetCitizenDetails(status = 404)
@@ -89,7 +89,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(appConfig.enterClientsUTRUrl(true))
+          redirectURI(appConfig.enterClientsUTRUrl())
         )
       }
     }
@@ -107,7 +107,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     if(mtdUserRole != MTDSupportingAgent) {
       "does not have a valid session" should {
         s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" in {
-          stubGetFeatureSwitches(featureSwitches, true)
+          stubGetFeatureSwitches(featureSwitches)
           if (mtdUserRole != MTDIndividual) {
             SessionDataStub.stubGetSessionDataResponseSuccess()
             stubGetCitizenDetails()
@@ -125,7 +125,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
       "has an expired bearerToken" should {
         s"redirect ($SEE_OTHER) to ${InternalUrlHelper.timeoutUrl}" in {
-          stubGetFeatureSwitches(featureSwitches, true)
+          stubGetFeatureSwitches(featureSwitches)
           if (mtdUserRole != MTDIndividual) {
             SessionDataStub.stubGetSessionDataResponseSuccess()
             stubGetCitizenDetails()
@@ -154,7 +154,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
                                  featureSwitches: List[FeatureSwitchName] = List()): Unit = {
     "does not have HMRC-MTD-IT enrolment" should {
       s"redirect ($SEE_OTHER) to ${errorRoutes.NotEnrolledController.show().url}" in {
-        stubGetFeatureSwitches(featureSwitches, true)
+        stubGetFeatureSwitches(featureSwitches)
         MTDIndividualAuthStub.stubInsufficientEnrolments()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
@@ -167,7 +167,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     "does not have the required confidence level" should {
       s"redirect ($SEE_OTHER) to IV uplift" in {
-        stubGetFeatureSwitches(featureSwitches, true)
+        stubGetFeatureSwitches(featureSwitches)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled(Some(50))
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
@@ -178,14 +178,14 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     "is an agent" should {
       "redirect to the Enter clients UTR controller" in {
-        stubGetFeatureSwitches(featureSwitches, true)
+        stubGetFeatureSwitches(featureSwitches)
         MTDIndividualAuthStub.stubAuthorisedButAgent()
 
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(appConfig.enterClientsUTRUrl(true))
+          redirectURI(appConfig.enterClientsUTRUrl())
         )
       }
     }
@@ -200,7 +200,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     if (mtdUserRole == MTDPrimaryAgent) {
       "does not have arn enrolment" should {
         s"redirect ($SEE_OTHER) to ${agentErrorRoutes.AgentErrorController.show().url}" in {
-          stubGetFeatureSwitches(featureSwitches, true)
+          stubGetFeatureSwitches(featureSwitches)
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
           stubGetBusinessDetails()()
@@ -217,7 +217,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
       "is not an agent" should {
         "redirect to the home controller" in {
-          stubGetFeatureSwitches(featureSwitches, true)
+          stubGetFeatureSwitches(featureSwitches)
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
           stubGetBusinessDetails()()
@@ -227,7 +227,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(appConfig.individualHomeUrl(true))
+            redirectURI(appConfig.individualHomeUrl)
           )
         }
       }
@@ -237,7 +237,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     } else {
       "does not have a valid delegated MTD enrolment" should {
         s"redirect ($SEE_OTHER) to ${agentRoutes.ClientRelationshipFailureController.show().url}" in {
-          stubGetFeatureSwitches(featureSwitches, true)
+          stubGetFeatureSwitches(featureSwitches)
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
           stubGetBusinessDetails()()
@@ -258,7 +258,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
                                       optBody: Option[Map[String, Seq[String]]] = None,
                                       featureSwitches: List[FeatureSwitchName] = List()): Unit = {
     "render the supporting agent unauthorised page" in {
-      stubGetFeatureSwitches(featureSwitches, true)
+      stubGetFeatureSwitches(featureSwitches)
       stubAuthorised(MTDSupportingAgent)
 
       whenReady(buildMTDClient(requestPath, additionalCookies, optBody)) { result =>
@@ -268,7 +268,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
         )
         AuditStub.verifyAuditEvent(AccessDeniedForSupportingAgentAuditModel(
           getAuthorisedAndEnrolledUser(
-            MTDSupportingAgent, featureSwitchesResponse(featureSwitches, true)))
+            MTDSupportingAgent, featureSwitchesResponse(featureSwitches)))
         )
       }
     }

@@ -66,7 +66,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
       s"is a authenticated for a client" should {
         "render the home page" which {
           "retrieving the income sources was unsuccessful" in {
-            stubGetFeatureSwitches(List(), true)
+            stubGetFeatureSwitches(List())
             stubAuthorised(mtdUserRole)
 
             GetInsourceDetailsStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

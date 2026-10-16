@@ -16,7 +16,7 @@
 
 package common.auth.actions
 
-import common.auth.RequestWithFeatureSwitches
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.services.admin.FeatureSwitchService
 import play.api.i18n.MessagesApi
@@ -28,22 +28,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchRetrievalAction @Inject()(val parser: BodyParsers.Default,
+class FeatureSwitchRetrievalAction @Inject()(
                                              val featureSwitchService: FeatureSwitchService
                                             )
                                             (
                                               implicit val appConfig: FrontendAppConfig,
                                               val executionContext: ExecutionContext,
                                               val messagesApi: MessagesApi
-                                            ) extends ActionRefiner[Request, RequestWithFeatureSwitches] with ActionBuilder[RequestWithFeatureSwitches, AnyContent] {
+                                            ) extends ActionRefiner[MtdItUser, MtdItUser] {
 
-  override protected def refine[A](request: Request[A]): Future[Either[Result, RequestWithFeatureSwitches[A]]] = {
+  override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
 
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequest(request)
 
     featureSwitchService.getAll().map(fs =>
-      Right(RequestWithFeatureSwitches(fs)(request))
+      Right(request.addFeatureSwitches(fs))
     )
   }
 }

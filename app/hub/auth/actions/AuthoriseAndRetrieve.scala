@@ -34,13 +34,13 @@
 package hub.auth.actions
 
 import com.google.inject.Singleton
-import common.auth.{AuthUserDetails, AuthorisedUserRequest, FrontendAuthorisedFunctions, RequestWithFeatureSwitches}
+import common.auth.{AuthUserDetails, AuthorisedUserRequest, FrontendAuthorisedFunctions}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import hub.v2.viewUtils.InternalUrlHelper
 import play.api.Logging
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result, Request}
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
@@ -59,11 +59,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val appConfig: FrontendAppConfig,
                                      mcc: MessagesControllerComponents)
-  extends FeatureSwitching with ActionRefiner[RequestWithFeatureSwitches, AuthorisedUserRequest] with Logging {
+  extends FeatureSwitching with ActionRefiner[Request, AuthorisedUserRequest] with Logging {
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
-  override protected def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {
+  override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
@@ -93,7 +93,7 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
 
   private def constructAuthorisedUser[A]()(
-    implicit request: RequestWithFeatureSwitches[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
+    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
       val authUserDetails = AuthUserDetails(
         enrolments = enrolments,
@@ -102,7 +102,7 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
         name = name
       )
       Future.successful(
-        Right(AuthorisedUserRequest(authUserDetails, request.featureSwitches))
+        Right(AuthorisedUserRequest(authUserDetails))
       )
   }
 }

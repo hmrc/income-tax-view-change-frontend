@@ -41,8 +41,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val contactFormServiceIdentifier: String = "ITVC"
   lazy val contactFrontendBaseUrl: String = s"$contactFrontendService"
   lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrl = s"${hubBasePath()}/feedback"
-  lazy val agentBetaFeedbackUrl = s"${agentHubBasePath()}/feedback"
+  lazy val betaFeedbackUrl = s"$hubBasePath/feedback"
+  lazy val agentBetaFeedbackUrl = s"$agentHubBasePath/feedback"
   lazy val noIncomeSourcesContactUrl: String = s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier"
 
   //Income tax obligations service
@@ -71,7 +71,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   def sa302Agent:String = s"$agentBaseFullUrl/mortgage-evidence/proof-of-income"
 
   //GG Sign In via BAS Gateway
-  lazy val signInUrl: String = s"${hubBaseUrl()}/sign-in"
+  lazy val signInUrl: String = s"$hubBaseUrl/sign-in"
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
 
   //Exit Survey

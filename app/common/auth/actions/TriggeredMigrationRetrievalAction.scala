@@ -60,7 +60,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
         lazy val authAction: Future[Either[Result, MtdItUser[A]]] = {
           (request.incomeSources.isConfirmedUser, isTriggeredMigrationPage) match {
             case (true, false) => Future(Right(req))
-            case (true, true) => Future(Left(redirectToHome(req.isAgent, req.newHubContextRootEnabled)))
+            case (true, true) => Future(Left(redirectToHome(req.isAgent)))
             case (false, _) =>
               isItsaStatusVoluntaryOrMandated().flatMap {
                 case Right(false) => confirmIneligibleUser(req, isTriggeredMigrationPage)
@@ -120,7 +120,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   private def isItsaStatusVoluntaryOrMandated()(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Result, Boolean]] = {
     def redirectBasedOnUser: Future[Either[Result, Boolean]] =
-      Future(Left(Redirect(appConfig.homePageUrl(user.isAgent, user.newHubContextRootEnabled))))
+      Future(Left(Redirect(appConfig.homePageUrl(user.isAgent))))
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
       itsaStatusList =>
@@ -146,14 +146,14 @@ class TriggeredMigrationRetrievalAction @Inject()(
     }
   }
 
-  private def redirectToHome[A](isAgent: Boolean, newHubContextRootEnabled: Boolean): Result = Redirect(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
+  private def redirectToHome[A](isAgent: Boolean): Result = Redirect(appConfig.homePageUrl(isAgent))
 
   private def confirmIneligibleUser[A](req: MtdItUser[A], isTriggeredMigrationPage: Boolean)
                                       (implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
     customerFactsUpdateService.updateCustomerFacts(req.mtditid).map {
       _ =>
         if (isTriggeredMigrationPage) {
-          Left(redirectToHome(req.isAgent, req.newHubContextRootEnabled))
+          Left(redirectToHome(req.isAgent))
         } else {
           Right(req)
         }

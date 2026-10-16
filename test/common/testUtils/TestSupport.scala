@@ -56,7 +56,6 @@ import scala.concurrent.{ExecutionContext, Future}
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
   
   implicit val actorSystem: ActorSystem = app.actorSystem
-  val newHubContextRootEnabled = true
 
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {

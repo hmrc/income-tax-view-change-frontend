@@ -92,8 +92,7 @@ trait MockAuthActions
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
         api.inject.bind[FeatureSwitchService].toInstance(mockFeatureSwitchService)
       )
-      .configure(Map("feature-switches.read-from-mongo" -> true,
-        "feature-switch.enable-new-hub-context-root" -> newHubContextRootEnabled))
+      .configure(Map("feature-switches.read-from-mongo" -> true))
   }
 
   def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false, enabledFeatures: List[FeatureSwitchName] = List()): Unit = {

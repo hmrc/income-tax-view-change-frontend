@@ -29,7 +29,7 @@
 @(isAgent: Boolean = false)(implicit request : Request[_], messages: Messages)
 
 @homeUrl = @{
-    appConfig.homePageUrl(isAgent, true)
+    appConfig.homePageUrl(isAgent)
 }
 
 @mainTemplate(pageTitle = messages("error.custom.heading"), isAgent = isAgent) {

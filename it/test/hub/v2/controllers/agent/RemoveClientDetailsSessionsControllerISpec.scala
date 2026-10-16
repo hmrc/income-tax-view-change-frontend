@@ -34,7 +34,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
       "Removing the client details session keys" should {
         "redirect to client UTR page" in {
-          stubGetFeatureSwitches(List(), true)
+          stubGetFeatureSwitches(List())
           stubAuthorised(MTDPrimaryAgent)
           GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -68,7 +68,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
       "Removing the client details session keys" should {
         "redirect to client UTR page" in {
-          stubGetFeatureSwitches(List(), true)
+          stubGetFeatureSwitches(List())
           stubAuthorised(MTDSupportingAgent)
           GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 

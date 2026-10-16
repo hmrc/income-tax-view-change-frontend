@@ -74,7 +74,7 @@
         <li id="links-section-home-page-link">
             @link(
                 id=Some("links-section-home-page-link"),
-                link = appConfig.homePageUrl(user.isAgent, user.newHubContextRootEnabled),
+                link = appConfig.homePageUrl(user.isAgent),
                 messageKey = getMessages("linkText2")
             )
         </li>

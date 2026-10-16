@@ -29,7 +29,7 @@ class AgentErrorControllerISpec extends ControllerISpecHelper {
 
     "user is authorised" should {
       "respond with the correct page" in {
-        stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubNoAgentEnrolmentRequiredSuccess()
 
         val res = buildGETMTDClient(agentErrorUri).futureValue

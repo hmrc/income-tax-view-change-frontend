@@ -89,8 +89,7 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
           mtditId = clientMtdItId,
           mtdUserRole,
           authUserDetails = request.authUserDetails,
-          clientDetails = Some(request.clientDetails),
-          featureSwitches = request.featureSwitches
+          clientDetails = Some(request.clientDetails)
         )
       )
     )

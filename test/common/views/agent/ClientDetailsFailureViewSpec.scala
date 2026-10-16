@@ -24,7 +24,7 @@ import play.twirl.api.Html
 
 class ClientDetailsFailureViewSpec extends ViewSpec {
 
-  lazy val enterClientUTRUrl: String = appConfig.enterClientsUTRUrl(newHubContextRootEnabled)
+  lazy val enterClientUTRUrl: String = appConfig.enterClientsUTRUrl()
 
   val clientRelationshipFailure: ClientRelationshipFailure = app.injector.instanceOf[ClientRelationshipFailure]
 

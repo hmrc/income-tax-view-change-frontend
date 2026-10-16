@@ -157,7 +157,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             val result = action(fakeRequest)
 
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
+            redirectLocation(result).get should include(appConfig.homePageUrl(isAgent))
           }
         }
       }
@@ -243,7 +243,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             val result = action(fakeRequest)
 
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
+            redirectLocation(result).get should include(appConfig.homePageUrl(isAgent))
           }
         }
       }
