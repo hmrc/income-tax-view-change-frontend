@@ -64,7 +64,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
     val homePageUrl: String = appConfig.homePageUrl(mtdRole.isAgent, newHubContextRootEnabled)
-    val submissionsDeadlinesUrl: String = appConfig.obligationsNextUpdatesUrl(mtdRole.isAgent, false)
+    val submissionsDeadlinesUrl: String = appConfig.obligationsNextUpdatesUrl(mtdRole.isAgent)
 
     s"GET $path" when {
       s"user is $mtdRole" should {

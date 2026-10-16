@@ -22,8 +22,6 @@ import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
 import hub.v1.controllers.agent.routes as hubV1AgentRoutes
 import hub.v2.controllers.agent.routes as hubV2AgentRoutes
-import obligations.controllers.reportingObligations.routes as reportingObligationRoutes
-import obligations.controllers.routes as obligationsRoutes
 import play.api.Configuration
 import returns.controllers.routes as returnsRoutes
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -93,22 +91,13 @@ trait ExternalRedirectHelper {
   lazy val obligationsBaseUrl: String = servicesConfig.getString("income-tax-obligations-frontend.baseUrl")
   lazy val obligationsAgentBaseUrl: String = s"$obligationsBaseUrl/agents"
 
-  def obligationsNextUpdatesUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String =
-    val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
-    val oldUrl: String = if isAgent 
-      then obligationsRoutes.NextUpdatesController.showAgent().url
-      else obligationsRoutes.NextUpdatesController.show().url
-    
-    if newObligationsEnabled 
-    then s"$newBaseUrl/submission-deadlines"
-    else oldUrl
+  def obligationsNextUpdatesUrl(isAgent: Boolean): String =
+    val baseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
+    s"$baseUrl/submission-deadlines"
 
-  def obligationsReportingFrequencyUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String =
-    val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
-    
-    if newObligationsEnabled 
-    then s"$newBaseUrl/reporting-frequency"
-    else reportingObligationRoutes.ReportingFrequencyPageController.show(isAgent).url
+  def obligationsReportingFrequencyUrl(isAgent: Boolean): String =
+    val baseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
+    s"$baseUrl/reporting-frequency"
 
   //Business Details routes
   lazy val businessDetailsBaseUrl: String = servicesConfig.getString("income-tax-business-details-frontend.baseUrl")

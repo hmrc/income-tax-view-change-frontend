@@ -18,8 +18,6 @@ package shared.models
 
 import businessDetails.models.incomeSourceDetails.*
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
-import obligations.models.reportingObligations.optOut.OptOutSessionData
-import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.libs.json.*
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -32,8 +30,6 @@ case class UIJourneySessionData(
                                  addIncomeSourceData: Option[AddIncomeSourceData] = None,
                                  manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                  ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
-                                 optOutSessionData: Option[OptOutSessionData] = None,
-                                 signUpSessionData: Option[SignUpSessionData] = None,
                                  incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
                                  triggeredMigrationData: Option[TriggeredMigrationSessionData] = None,
                                  lastUpdated: Instant = Instant.now,
