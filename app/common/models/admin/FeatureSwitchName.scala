@@ -75,8 +75,6 @@ object FeatureSwitchName extends Logging {
       JsSuccess(IdempotencyKeyForCreateIncomeSource)
     case JsString(NoIncomeSourcesRedirect.name) =>
       JsSuccess(NoIncomeSourcesRedirect)
-    case JsString(BusinessDetailsFrontend.name) =>
-      JsSuccess(BusinessDetailsFrontend)
     case JsString(FinancialsFrontend.name) =>
       JsSuccess(FinancialsFrontend)
     case JsString(RevenueAmendments.name) =>
@@ -133,7 +131,6 @@ object FeatureSwitchName extends Logging {
       MortgageEvidence,
       IdempotencyKeyForCreateIncomeSource,
       NoIncomeSourcesRedirect,
-      BusinessDetailsFrontend,
       ObligationsFrontend,
       FinancialsFrontend,
       RevenueAmendments,
@@ -249,11 +246,6 @@ case object IdempotencyKeyForCreateIncomeSource extends FeatureSwitchName {
 case object NoIncomeSourcesRedirect extends FeatureSwitchName {
   override val name: String = "no-income-sources-redirect"
   override val toString: String = "No Income Sources Redirect"
-}
-
-case object BusinessDetailsFrontend extends FeatureSwitchName {
-  override val name: String = "business-details-frontend"
-  override val toString: String = "Business Details Frontend"
 }
 
 case object FinancialsFrontend extends FeatureSwitchName {

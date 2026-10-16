@@ -16,7 +16,6 @@
 
 package hub.v1.controllers
 
-import hub.v1.auth.AuthActions
 import common.auth.MtdItUser
 import common.config.*
 import common.config.featureswitch.*
@@ -27,6 +26,7 @@ import financials.models.*
 import financials.services.*
 import hub.services.{NextUpdatesService, PenaltyDetailsService}
 import hub.utils.HomePageUtils
+import hub.v1.auth.AuthActions
 import hub.v1.views.html.newHomePage.*
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
@@ -104,7 +104,7 @@ class HomeController @Inject()(val newHomeRecentActivityView: NewHomeRecentActiv
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
           isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence),
-          isEnabled(BusinessDetailsFrontend), isEnabled(ObligationsFrontend), isEnabled(FinancialsFrontend), isEnabled(ReturnsFrontend)))
+          isEnabled(ObligationsFrontend), isEnabled(FinancialsFrontend), isEnabled(ReturnsFrontend)))
       }
     }
   }

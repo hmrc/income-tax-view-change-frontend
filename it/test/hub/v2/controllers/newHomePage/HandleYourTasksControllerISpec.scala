@@ -17,7 +17,7 @@
 package hub.v2.controllers.newHomePage
 
 import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
-import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import hub.v2.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.{GetInsourceDetailsStub, WiremockHelper}
@@ -715,7 +715,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
-          val trigMigUrl: String = if(mtdUserRole.isAgent) "/report-quarterly/income-and-expenses/view/agents/complete-steps" else "/report-quarterly/income-and-expenses/view/complete-steps"
+          val trigMigUrl: String = if(mtdUserRole.isAgent) "http://localhost:9088/manage-self-assessment/businesses/agents/complete-steps" else "http://localhost:9088/manage-self-assessment/businesses/complete-steps"
 
           val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
 

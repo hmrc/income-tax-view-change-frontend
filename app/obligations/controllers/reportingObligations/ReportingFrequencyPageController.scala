@@ -19,20 +19,20 @@ package obligations.controllers.reportingObligations
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{BusinessDetailsFrontend, OptOutFs, SignUpFs}
+import common.models.admin.{OptOutFs, SignUpFs}
 import common.services.DateServiceInterface
+import common.views.html.errorPages.templates.ErrorTemplate
 import obligations.controllers.routes as obligationsRoutes
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
 import obligations.services.reportingObligations.ReportingObligationsAuditService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.viewUtils.ReportingFrequencyViewUtils
+import obligations.views.html.reportingObligations.ReportingFrequencyView
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import common.views.html.errorPages.templates.ErrorTemplate
-import obligations.views.html.reportingObligations.ReportingFrequencyView
 import shared.utils.MtdConstants
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -73,8 +73,7 @@ class ReportingFrequencyPageController @Inject()(
             mtdThreshold = getMtdThreshold(),
             proposition = optOutProposition,
             isSignUpEnabled = isEnabled(SignUpFs),
-            isOptOutEnabled = isEnabled(OptOutFs),
-            isBusinessDetailsEnabled = isEnabled(BusinessDetailsFrontend)
+            isOptOutEnabled = isEnabled(OptOutFs)
           )
         nextUpdatesLink =
           if (isAgent) obligationsRoutes.NextUpdatesController.showAgent().url

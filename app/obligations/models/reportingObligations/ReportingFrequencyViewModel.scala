@@ -17,8 +17,8 @@
 package obligations.models.reportingObligations
 
 import common.models.incomeSourceDetails.TaxYear
-import common.services.DateServiceInterface
 import common.models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary, isExemptionStatus, isNonExemptStatus}
+import common.services.DateServiceInterface
 import obligations.controllers.reportingObligations.optOut.routes as optOutRoutes
 import obligations.controllers.reportingObligations.signUp.routes as signUpRoutes
 import obligations.enums.ReportingObligations.ReportingObligationSummaryCardState
@@ -35,8 +35,7 @@ case class ReportingFrequencyViewModel(
                                         mtdThreshold: String,
                                         proposition: OptOutProposition,
                                         isSignUpEnabled: Boolean,
-                                        isOptOutEnabled: Boolean,
-                                        isBusinessDetailsEnabled: Boolean
+                                        isOptOutEnabled: Boolean
                                       )(implicit dateService: DateServiceInterface) {
 
   private val currentTaxYear: TaxYear = dateService.getCurrentTaxYear

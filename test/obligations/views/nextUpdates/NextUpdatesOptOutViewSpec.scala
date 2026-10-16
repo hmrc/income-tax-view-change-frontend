@@ -106,8 +106,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           isSupportingAgent = isSupportingAgent,
           taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status),
           isReturnsEnabled = isEnabled(ReturnsFrontend),
-          penaltyAndAppealEnabled = true,
-          isBusinessDetailsEnabled = true
+          penaltyAndAppealEnabled = true
         )(implicitly, user)
       ))
   }
