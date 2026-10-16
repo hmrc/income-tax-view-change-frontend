@@ -56,7 +56,7 @@ class ChooseSoleTraderAddressController @Inject()(
     if (isAgent) itvcErrorHandlerAgent
     else itvcErrorHandler
 
-  private def backUrl(isAgent: Boolean)(implicit user: MtdItUser[_]): String =
+  private def backUrl(isAgent: Boolean): String =
     appConfig.homePageUrl(isAgent)
 
   private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty

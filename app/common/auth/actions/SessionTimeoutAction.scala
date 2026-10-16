@@ -16,11 +16,10 @@
 
 package common.auth.actions
 
-import common.config.FrontendAppConfig
 import common.viewUtils.InternalUrlHelper
 import play.api.Logging
-import play.api.mvc.Results.Redirect
 import play.api.mvc.*
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.SessionKeys
 
 import javax.inject.{Inject, Singleton}

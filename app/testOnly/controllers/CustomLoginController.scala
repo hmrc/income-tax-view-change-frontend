@@ -16,7 +16,6 @@
 
 package testOnly.controllers
 
-import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.controllers.BaseController
@@ -39,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                      featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
                                       val testOnlyAppConfig: TestOnlyAppConfig,
                                       val mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext,

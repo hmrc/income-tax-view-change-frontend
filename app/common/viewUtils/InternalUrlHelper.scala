@@ -16,20 +16,12 @@
 
 package common.viewUtils
 
-import common.auth.{AuthorisedAgentWithClientDetailsRequest, MtdItUser}
-import common.config.FrontendAppConfig
-import common.controllers.routes as appRoutes
-import common.controllers.agent.routes as agentRoutes
-import common.controllers.errors.routes as errorRoutes
-import common.controllers.timeout.routes as timeoutRoutes
-import common.controllers.feedback.routes as feedbackRoutes
-import common.controllers.agent.errors.routes as agentErrorRoutes
-import hub.v2.controllers.routes as hubAppRoutes
+import hub.v2.controllers.agent.errors.routes as hubAgentErrorRoutes
 import hub.v2.controllers.agent.routes as hubAgentRoutes
 import hub.v2.controllers.errors.routes as hubErrorRoutes
-import hub.v2.controllers.timeout.routes as hubTimeoutRoutes
 import hub.v2.controllers.feedback.routes as hubFeedbackRoutes
-import hub.v2.controllers.agent.errors.routes as hubAgentErrorRoutes
+import hub.v2.controllers.routes as hubAppRoutes
+import hub.v2.controllers.timeout.routes as hubTimeoutRoutes
 object InternalUrlHelper {
 
   val signinCall = hubAppRoutes.SignInController.signIn()

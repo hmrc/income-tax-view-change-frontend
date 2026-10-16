@@ -41,41 +41,36 @@ class AuthActions @Inject()(
                              val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
                              val redirectIfNoIncomeSourcesAction: RedirectIfNoIncomeSourcesAction,
                              val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction,
-                             val correctHubContextRootAction: CorrectHubContextRootAction
                            ) extends FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
 
   def asMTDIndividual(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      correctHubContextRootAction andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       retrieveNavBar andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
-  def asAgent(arnRequired: Boolean = true, checkContextRoot: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
-    retrieveFeatureSwitchesAndCheckContextRootIfReq(checkContextRoot) andThen
+  def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
       checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      correctHubContextRootAction andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
-      incomeSourceRetrievalAction andThen
+      incomeSourceRetrievalAction andThen 
+      retrieveFeatureSwitches andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
-  def asMTDAgentWithUnconfirmedClient(checkContextRoot: Boolean = true): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitchesAndCheckContextRootIfReq(checkContextRoot) andThen
-      checkSessionTimeout andThen
+  def asMTDAgentWithUnconfirmedClient(): ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise(useCookies = true) andThen
       authoriseAndRetrieveMtdAgent andThen
@@ -89,16 +84,14 @@ class AuthActions @Inject()(
     asMTDAgentWithConfirmedClient(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
 
   def asMTDIndividualForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
       retrieveNavBar
   }
 
   def asMTDAgentWithConfirmedClientForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen

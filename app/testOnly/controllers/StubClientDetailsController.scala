@@ -16,7 +16,6 @@
 
 package testOnly.controllers
 
-import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.FrontendAppConfig
 import play.api.Logging
 import play.api.data.Form
@@ -31,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubClientDetailsController @Inject()(featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
+class StubClientDetailsController @Inject()(
                                             stubClientDetails: StubClientDetails,
                                             matchingStubConnector: MatchingStubConnector)
                                            (implicit mcc: MessagesControllerComponents,

@@ -16,17 +16,14 @@
 
 package hub.auth.actions
 
-import common.config.FrontendAppConfig
 import play.api.Logging
 import play.api.mvc.*
-import play.api.mvc.Results.Redirect
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CorrectHubContextRootAction @Inject()(appConfig: FrontendAppConfig)
-                                           (implicit val executionContext: ExecutionContext)
+class CorrectHubContextRootAction @Inject()()(implicit val executionContext: ExecutionContext)
   extends ActionRefiner[Request, Request] with Logging {
 
   override def refine[A](request: Request[A]): Future[Either[Result, Request[A]]] = {

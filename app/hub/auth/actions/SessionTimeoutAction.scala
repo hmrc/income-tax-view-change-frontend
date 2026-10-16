@@ -16,7 +16,6 @@
 
 package hub.auth.actions
 
-import common.auth.RequestWithFeatureSwitches
 import hub.v2.viewUtils.InternalUrlHelper
 import play.api.Logging
 import play.api.mvc.*
@@ -27,10 +26,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionTimeoutAction @Inject()()(implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[RequestWithFeatureSwitches, RequestWithFeatureSwitches] with Logging {
+class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
+  extends ActionRefiner[Request, Request] with ActionBuilder[Request, AnyContent] with Logging {
 
-  override def refine[A](request: RequestWithFeatureSwitches[A]): Future[Either[Result, RequestWithFeatureSwitches[A]]] = {
+  override protected def refine[A](request: Request[A]): Future[Either[Result, Request[A]]] = {
 
     val updatedHeaders = request.session.get("Gov-Test-Scenario") match {
       case Some(data) => request.headers.add(("Gov-Test-Scenario", data))
@@ -44,7 +43,7 @@ class SessionTimeoutAction @Inject()()(implicit val executionContext: ExecutionC
         Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
       case (_, _) =>
         val mtdItUserWithUpdatedHeaders = request.withHeaders(updatedHeaders)
-        Future.successful(Right(RequestWithFeatureSwitches(request.featureSwitches)(mtdItUserWithUpdatedHeaders)))
+        Future.successful(Right(mtdItUserWithUpdatedHeaders))
     }
   }
 

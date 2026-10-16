@@ -20,7 +20,6 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
-import hub.v1.controllers.agent.routes as hubV1AgentRoutes
 import hub.v2.controllers.agent.routes as hubV2AgentRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationRoutes
 import obligations.controllers.routes as obligationsRoutes
