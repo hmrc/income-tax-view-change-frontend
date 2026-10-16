@@ -30,8 +30,6 @@ import uk.gov.hmrc.auth.core.BearerTokenExpired
 
 class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
   with MockEnterClientsUTR {
-
-  override val newHubContextRootEnabled: Boolean = false
   
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(

@@ -16,7 +16,7 @@
 
 package hub.v1.controllers.agent
 
-import common.controllers.agent.errors.routes as agentErrorRoutes
+import hub.v2.controllers.agent.errors.routes as agentErrorRoutes
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import common.services.agent.ClientDetailsService.*
@@ -40,8 +40,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
   with MockClientDetailsService
   with MockITSAStatusService {
 
-  override val newHubContextRootEnabled: Boolean = false
-  
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[EnterClientsUTRView].toInstance(enterClientsUTR)

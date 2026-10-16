@@ -165,7 +165,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             val result = action(fakeRequest)
 
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
+            redirectLocation(result).get should include(appConfig.homePageUrl(isAgent))
           }
         }
       }

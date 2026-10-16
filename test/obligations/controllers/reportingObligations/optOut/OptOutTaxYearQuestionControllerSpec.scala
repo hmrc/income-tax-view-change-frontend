@@ -129,7 +129,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val result = action(fakeRequest)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result).get should include(appConfig.homePageUrl(isAgent, newHubContextRootEnabled))
+          redirectLocation(result).get should include(appConfig.homePageUrl(isAgent))
         }
       }
     }

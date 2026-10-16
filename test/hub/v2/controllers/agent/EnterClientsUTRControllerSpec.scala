@@ -40,8 +40,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
   with MockClientDetailsService
   with MockITSAStatusService {
 
-  override val newHubContextRootEnabled: Boolean = true
-
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[EnterClientsUTRView].toInstance(enterClientsUTR)
