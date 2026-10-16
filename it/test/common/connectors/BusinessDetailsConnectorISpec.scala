@@ -168,8 +168,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               mtditId = testMtditid,
               mtdUserRole = MTDIndividual,
               authUserDetails = defaultAuthUserDetails(MTDIndividual),
-              None,
-              featureSwitches = List()
+              None
             )(FakeRequest())
 
           val result = incomeSourceConnector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
@@ -192,8 +191,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               mtditId = testMtditid,
               mtdUserRole = MTDIndividual,
               authUserDetails = defaultAuthUserDetails(MTDIndividual),
-              None,
-              featureSwitches = List()
+              None
             )(FakeRequest())
 
           val responseBody =

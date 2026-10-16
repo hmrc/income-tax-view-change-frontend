@@ -45,10 +45,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "${appConfig.hubBaseUrl()}/session-timeout",
-      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl()}/keep-alive"
+      |      "timeoutUrl": "${appConfig.hubBaseUrl}/session-timeout",
+      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl}/keep-alive"
       |    },
-      |    "signOutHref": "${appConfig.hubBaseUrl()}/sign-out",
+      |    "signOutHref": "${appConfig.hubBaseUrl}/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -68,7 +68,7 @@ object AddressLookupTestConstants {
       |      "showSearchAgainLink": true,
       |      "showConfirmChangeText": true
       |    },
-      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl()}/feedback",
+      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl}/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": true
@@ -119,10 +119,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/agents/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "${appConfig.hubBaseUrl()}/session-timeout",
-      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl()}/keep-alive"
+      |      "timeoutUrl": "${appConfig.hubBaseUrl}/session-timeout",
+      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl}/keep-alive"
       |    },
-      |    "signOutHref": "${appConfig.hubBaseUrl()}/sign-out",
+      |    "signOutHref": "${appConfig.hubBaseUrl}/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -142,7 +142,7 @@ object AddressLookupTestConstants {
       |      "showSearchAgainLink": true,
       |      "showConfirmChangeText": true
       |    },
-      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl()}/agents/feedback",
+      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl}/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": true
@@ -194,10 +194,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "${appConfig.hubBaseUrl()}/session-timeout",
-      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl()}/keep-alive"
+      |      "timeoutUrl": "${appConfig.hubBaseUrl}/session-timeout",
+      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl}/keep-alive"
       |    },
-      |    "signOutHref": "${appConfig.hubBaseUrl()}/sign-out",
+      |    "signOutHref": "${appConfig.hubBaseUrl}/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -218,7 +218,7 @@ object AddressLookupTestConstants {
       |      "line3MaxLength": 35,
       |      "townMaxLength": 35
       |    },
-      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl()}/feedback",
+      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl}/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": false
@@ -282,10 +282,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/agents/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "${appConfig.hubBaseUrl()}/session-timeout",
-      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl()}/keep-alive"
+      |      "timeoutUrl": "${appConfig.hubBaseUrl}/session-timeout",
+      |      "timeoutKeepAliveUrl": "${appConfig.hubBaseUrl}/keep-alive"
       |    },
-      |    "signOutHref": "${appConfig.hubBaseUrl()}/sign-out",
+      |    "signOutHref": "${appConfig.hubBaseUrl}/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -306,7 +306,7 @@ object AddressLookupTestConstants {
       |      "line3MaxLength": 35,
       |      "townMaxLength": 35
       |    },
-      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl()}/agents/feedback",
+      |    "phaseFeedbackLink": "${appConfig.hubBaseUrl}/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": false

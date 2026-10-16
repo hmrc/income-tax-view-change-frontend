@@ -28,7 +28,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
   s"GET $path" should {
     s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
-        stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildGETMTDClient(path).futureValue
 
@@ -41,7 +41,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
 
     s"return $SEE_OTHER with Agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
         val result = buildGETMTDClient(path).futureValue
 
@@ -55,7 +55,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
 
     s"return $OK with the UTR Error page" when {
       "without checking whether the UTR is in session" in {
-        stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildGETMTDClient(path).futureValue
@@ -72,7 +72,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
   s"POST $path" should {
     s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
-        stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
@@ -85,7 +85,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
 
     s"return $SEE_OTHER to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 

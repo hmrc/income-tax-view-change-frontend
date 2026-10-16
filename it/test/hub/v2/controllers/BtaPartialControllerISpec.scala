@@ -29,7 +29,7 @@ class BtaPartialControllerISpec extends ControllerISpecHelper {
   s"GET $path" when {
     "the user is an authenticated individual" should {
       "display the bta partial with the correct information" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         stubAuthorised(MTDIndividual)
         GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 

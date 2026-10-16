@@ -122,8 +122,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       testMtditid,
       mtdUserRole,
       defaultAuthUserDetails(mtdUserRole),
-      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails),
-      featureSwitches
+      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails)
     )(FakeRequest())
   }
 
