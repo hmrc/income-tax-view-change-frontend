@@ -47,8 +47,7 @@
         changeTo: String,
         isAgent: Boolean,
         postAction: Call,
-        isCurrentTaxYear: Boolean,
-        newObligationsEnabled: Boolean
+        isCurrentTaxYear: Boolean
 )(implicit messages: Messages, user: MtdItUser[_], appConfig: FrontendAppConfig)
 
 @import implicitDateFormatter.longDate
@@ -106,7 +105,7 @@ s"${getMessage("table.heading.1")} ${quarterly.head.inboundCorrespondenceFrom.ge
 }
 
 @nextUpdatesControllerURL = @{
-    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled)
+    appConfig.obligationsNextUpdatesUrl(isAgent)
 }
 
 

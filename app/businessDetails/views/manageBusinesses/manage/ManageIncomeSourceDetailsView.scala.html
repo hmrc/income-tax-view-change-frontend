@@ -51,8 +51,7 @@
         viewModel: ManageIncomeSourceDetailsViewModel,
         isAgent: Boolean,
         showStartDate: Boolean,
-        backUrl: String,
-        newObligationsEnabled: Boolean
+        backUrl: String
 )(implicit messages: Messages, user: MtdItUser[_], appConfig: FrontendAppConfig)
 
 @import implicitDateFormatter.longDate
@@ -279,7 +278,7 @@ val rows = {
 }
 
 @reportingFrequencyURL(isAgent: Boolean) = @{
-    appConfig.obligationsReportingFrequencyUrl(isAgent, newObligationsEnabled)
+    appConfig.obligationsReportingFrequencyUrl(isAgent)
 }
 
 @getQuarterlyType = @{

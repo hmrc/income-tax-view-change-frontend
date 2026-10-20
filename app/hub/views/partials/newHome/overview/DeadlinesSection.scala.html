@@ -21,11 +21,11 @@
 
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean, obligationsEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
+@(isAgent: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
-@viewUpdatesUrl: String = @{appConfig.obligationsNextUpdatesUrl(isAgent, obligationsEnabled)}
+@viewUpdatesUrl: String = @{appConfig.obligationsNextUpdatesUrl(isAgent)}
 
-@reportingFreqUrl: String = @{appConfig.obligationsReportingFrequencyUrl(isAgent, obligationsEnabled)}
+@reportingFreqUrl: String = @{appConfig.obligationsReportingFrequencyUrl(isAgent)}
 
 
 

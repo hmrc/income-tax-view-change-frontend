@@ -30,7 +30,6 @@ import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewMode
 import businessDetails.views.constants.IncomeSourceAddedObligationsConstants.*
 import common.testUtils.ViewSpec
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.ObligationsFrontend
 
 
 import java.time.LocalDate
@@ -39,8 +38,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec with FeatureSwitchin
 
   val view: IncomeSourceAddedObligationsView = app.injector.instanceOf[IncomeSourceAddedObligationsView]
 
-  val nextUpdatesUrl: String = appConfig.obligationsNextUpdatesUrl(false, isEnabled(ObligationsFrontend))
-  val getReportingFrequencyUrl = appConfig.obligationsReportingFrequencyUrl(false, isEnabled(ObligationsFrontend))
+  val nextUpdatesUrl: String = appConfig.obligationsNextUpdatesUrl(false)
+  val getReportingFrequencyUrl = appConfig.obligationsReportingFrequencyUrl(false)
   
   val getManageBusinessUrl = manageBusinessRoutes.ManageYourBusinessesController.show().url
   object IdSelectors {

@@ -19,7 +19,7 @@ package hub.services.newHomePage
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{FinancialsFrontend, ObligationsFrontend}
+import common.models.admin.FinancialsFrontend
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
@@ -77,7 +77,7 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
   }
 
   private def getSubmissionTasks(viewModel: SubmissionDeadlinesViewModel, isAgent: Boolean, isQuarterly: Boolean)(using MtdItUser[_]): Seq[YourTasksCard] = {
-    val submissionsLink = appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend))
+    val submissionsLink = appConfig.obligationsNextUpdatesUrl(isAgent)
 
     val submissionsLinkTextKey = "new.home.yourTasks.updates-and-deadlines"
 

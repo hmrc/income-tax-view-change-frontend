@@ -63,8 +63,6 @@ object FeatureSwitchName extends Logging {
       JsSuccess(SubmitClaimToAdjustToNrs)
     case JsString(PostFinalisationAmendmentsR18.name) =>
       JsSuccess(PostFinalisationAmendmentsR18)
-    case JsString(ObligationsFrontend.name) =>
-      JsSuccess(ObligationsFrontend)
     case JsString(OverseasBusinessAddress.name) =>
       JsSuccess(OverseasBusinessAddress)
     case JsString(RecentActivity.name) =>
@@ -129,7 +127,6 @@ object FeatureSwitchName extends Logging {
       MortgageEvidence,
       IdempotencyKeyForCreateIncomeSource,
       NoIncomeSourcesRedirect,
-      ObligationsFrontend,
       FinancialsFrontend,
       RevenueAmendments,
       ReturnsFrontend,
@@ -163,11 +160,6 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
   override val name = "payment-history-refunds"
 
   override def toString: String = "Payment History Refunds"
-}
-
-case object ObligationsFrontend extends FeatureSwitchName {
-  override val name: String = "obligations-frontend"
-  override def toString: String = "Obligations Frontend"
 }
 
 case object OptOutFs extends FeatureSwitchName {

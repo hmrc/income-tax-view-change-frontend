@@ -60,7 +60,6 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     MortgageEvidence,
     IdempotencyKeyForCreateIncomeSource,
     NoIncomeSourcesRedirect,
-    ObligationsFrontend,
     FinancialsFrontend,
     RevenueAmendments,
     ReturnsFrontend,

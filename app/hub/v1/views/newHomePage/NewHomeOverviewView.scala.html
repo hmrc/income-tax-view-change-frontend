@@ -53,7 +53,6 @@
         isRecentActivityEnabled: Boolean,
         creditsRefundsRepayEnabled: Boolean,
         mortgageEvidenceEnabled: Boolean,
-        obligationsFrontendEnabled: Boolean,
         financialsFrontendEnabled: Boolean, 
         returnsFrontendEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_]
@@ -121,7 +120,7 @@
     @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled, financialsFrontendEnabled)
     @SectionBreak
 
-    @deadlinesSection(isAgent = false, obligationsFrontendEnabled)
+    @deadlinesSection(isAgent = false)
     @SectionBreak
 
     @incomeSection(isAgent = false)
@@ -143,7 +142,7 @@
     @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled, financialsFrontendEnabled)
     @SectionBreak
 
-    @deadlinesSection(isAgent = true, obligationsFrontendEnabled)
+    @deadlinesSection(isAgent = true)
     @SectionBreak
 
     @incomeSection(isAgent = true)
@@ -159,7 +158,7 @@
 
 @SupportingAgentSections() = {
 
-    @deadlinesSection(isAgent = true, obligationsFrontendEnabled)
+    @deadlinesSection(isAgent = true)
     @SectionBreak
 
     @incomeSection(isAgent = true)

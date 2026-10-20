@@ -36,7 +36,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   val manageIncomeSourceDetailsView: ManageIncomeSourceDetailsView = app.injector.instanceOf[ManageIncomeSourceDetailsView]
 
   def reportingFrequencyLink(isAgent: Boolean): String =
-    appConfig.obligationsReportingFrequencyUrl(isAgent, true)
+    appConfig.obligationsReportingFrequencyUrl(isAgent)
 
   def backUrl(isAgent: Boolean): String = if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
 
@@ -63,8 +63,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModel.copy(hideUnknownBusinessName = hideBusinessName),
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = true
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -83,8 +82,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelWithUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -103,8 +101,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -119,8 +116,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelCYUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -139,8 +135,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -158,8 +153,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukViewModelUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -177,8 +171,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukPropertyViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -193,8 +186,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukPropertyViewModelCYUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -213,8 +205,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -232,8 +223,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignViewModelUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -251,8 +241,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignPropertyViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -267,8 +256,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignPropertyLatencyYearTwoUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -282,8 +270,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled,
-        newObligationsEnabled = true
+        showStartDate = startDateEnabled
       )(messages, implicitly, implicitly)
     }
 
@@ -416,8 +403,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         testViewModel,
         isAgent = false,
         showStartDate = true,
-        backUrl = backUrl(false),
-        newObligationsEnabled = false
+        backUrl = backUrl(false)
       )(messages, implicitly, implicitly)
 
       implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -457,8 +443,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         testViewModel,
         isAgent = false,
         showStartDate = true,
-        backUrl = backUrl(false),
-        newObligationsEnabled = false
+        backUrl = backUrl(false)
       )(messages, implicitly, implicitly)
 
       val parsedDocument: Document = Jsoup.parse(contentAsString(view))
@@ -489,8 +474,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false),
-          newObligationsEnabled = false
+          backUrl = backUrl(false)
         )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
@@ -512,8 +496,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false),
-          newObligationsEnabled = false
+          backUrl = backUrl(false)
         )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
@@ -536,8 +519,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false),
-          newObligationsEnabled = false
+          backUrl = backUrl(false)
         )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
@@ -558,8 +540,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false),
-          newObligationsEnabled = false
+          backUrl = backUrl(false)
         )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
@@ -581,8 +562,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false),
-          newObligationsEnabled = false
+          backUrl = backUrl(false)
         )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
@@ -604,8 +584,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false),
-          newObligationsEnabled = false
+          backUrl = backUrl(false)
         )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
@@ -627,8 +606,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false),
-          newObligationsEnabled = false
+          backUrl = backUrl(false)
         )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
@@ -650,8 +628,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false),
-          newObligationsEnabled = false
+          backUrl = backUrl(false)
         )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
