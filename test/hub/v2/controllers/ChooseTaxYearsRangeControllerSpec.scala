@@ -34,8 +34,6 @@ import scala.concurrent.Future
 
 class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfMigrationService {
 
-  override val newHubContextRootEnabled: Boolean = true
-
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
