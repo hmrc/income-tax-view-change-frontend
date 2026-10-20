@@ -20,8 +20,9 @@ import common.controllers.ControllerISpecHelper
 import common.enums.MTDIndividual
 import common.helpers.GetInsourceDetailsStub
 import common.helpers.servicemocks.AuditStub
+import common.helpers.servicemocks.YearOfMigrationStub.stubGetYearOfMigration
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSaUtr}
-import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeNoYearOfMigration
 import hub.forms.ChooseTaxYearsRangeForm
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -31,12 +32,13 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
   private val path = "/choose-tax-years-range"
 
   private def stubIncomeSourceDetails(): Unit =
-    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeNoYearOfMigration)
 
   s"GET $path" should {
     "render the page for an authorised individual" in {
       stubAuthorised(MTDIndividual)
       stubIncomeSourceDetails()
+      stubGetYearOfMigration("2020")
 
       val result = buildGETMTDClient(path).futureValue
 
@@ -53,6 +55,7 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
     "redirect to your-tasks when MTD option is selected" in {
       stubAuthorised(MTDIndividual)
       stubIncomeSourceDetails()
+      stubGetYearOfMigration("2017")
 
       val result = buildPOSTMTDPostClient(
         path = path,
@@ -75,6 +78,7 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
     "redirect to classic SA when legacy option is selected" in {
       stubAuthorised(MTDIndividual)
       stubIncomeSourceDetails()
+      stubGetYearOfMigration("2020")
 
       val result = buildPOSTMTDPostClient(
         path = path,
@@ -90,6 +94,7 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
     "return BadRequest when no option is selected" in {
       stubAuthorised(MTDIndividual)
       stubIncomeSourceDetails()
+      stubGetYearOfMigration("2020")
 
       val result = buildPOSTMTDPostClient(path = path, body = Map.empty).futureValue
 

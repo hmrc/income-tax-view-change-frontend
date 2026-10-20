@@ -19,8 +19,10 @@ package hub.v1.controllers
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.connectors.ITSAStatusConnector
-import common.services.DateServiceInterface
-import common.testConstants.BaseTestConstants.{businessesAndPropertyIncome, testSaUtr}
+import common.mocks.services.MockYearOfMigrationService
+import common.models.itsaStatus.ITSAStatusYearOfMigrationModel
+import common.services.{DateServiceInterface, YearOfMigrationService}
+import common.testConstants.BaseTestConstants.{businessesAndPropertyIncome, testNino, testSaUtr}
 import hub.audit.models.ChooseTaxYearsRangeSubmittedAuditModel
 import hub.forms.ChooseTaxYearsRangeForm
 import play.api
@@ -28,13 +30,16 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 
-class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
+import scala.concurrent.Future
+
+class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfMigrationService {
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+        api.inject.bind[YearOfMigrationService].toInstance(mockYearOfMigrationService)
       ).build()
 
   private lazy val controller = app.injector.instanceOf[ChooseTaxYearsRangeController]
@@ -44,6 +49,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
 
       val result = controller.show()(fakeGetRequestBasedOnMTDUserType(MTDIndividual))
 
@@ -54,6 +60,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
       setupMockUserAuthNoSAUtr
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
 
       val result = controller.show()(fakeGetRequestBasedOnMTDUserType(MTDIndividual))
 
@@ -69,6 +76,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2018"))))
 
       val result = controller.submit()(
         fakePostRequestBasedOnMTDUserType(MTDIndividual)
@@ -87,7 +95,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
       val result = controller.submit()(
         fakePostRequestBasedOnMTDUserType(MTDIndividual)
           .withFormUrlEncodedBody(ChooseTaxYearsRangeForm.response -> ChooseTaxYearsRangeForm.legacyOption)
@@ -115,6 +123,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
 
       val result = controller.submit()(fakePostRequestBasedOnMTDUserType(MTDIndividual))
 
