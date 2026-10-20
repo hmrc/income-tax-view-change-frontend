@@ -104,7 +104,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
     }
   }
 
-  def getCancelLinkUrl(isAgent: Boolean): String = appConfig.homePageUrl(isAgent, newHubContextRootEnabled)
+  def getCancelLinkUrl(isAgent: Boolean): String = appConfig.homePageUrl(isAgent)
 
   executeTest(isAgent = true)
   executeTest(isAgent = false)

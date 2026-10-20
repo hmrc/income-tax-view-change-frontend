@@ -49,18 +49,18 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       if (isEnabled(MortgageEvidence)) {
-        handleRequest(appConfig.individualHomeUrlWithOrigin(user.newHubContextRootEnabled, origin), false)
+        handleRequest(appConfig.individualHomeUrlWithOrigin(origin), false)
       } else {
-        Future.successful(Redirect(appConfig.individualYourTasksUrl(user.newHubContextRootEnabled)))
+        Future.successful(Redirect(appConfig.individualYourTasksUrl))
       }
   }
 
   def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async {
     implicit mtdItUser =>
       if (isEnabled(MortgageEvidence)) {
-        handleRequest(appConfig.agentHomeUrl(mtdItUser.newHubContextRootEnabled), true)
+        handleRequest(appConfig.agentHomeUrl, true)
       } else {
-        Future.successful(Redirect(appConfig.agentYourTasksUrl(mtdItUser.newHubContextRootEnabled)))
+        Future.successful(Redirect(appConfig.agentYourTasksUrl))
       }
   }
 

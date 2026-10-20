@@ -38,7 +38,7 @@ class SignInControllerSpec extends MockAuthActions {
     }
 
     "Redirect to GG Sign In on Company Auth Frontend" in {
-      val redirectUrl = URLEncoder.encode(appConfig.individualHomeUrl(newHubContextRootEnabled), "UTF-8")
+      val redirectUrl = URLEncoder.encode(appConfig.individualHomeUrl, "UTF-8")
       redirectLocation(result) shouldBe Some(
         appConfig.ggSignInUrl + "?continue_url=" + redirectUrl + "&origin=" + appConfig.appName
       )

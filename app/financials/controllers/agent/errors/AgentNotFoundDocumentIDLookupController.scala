@@ -30,6 +30,6 @@ class AgentNotFoundDocumentIDLookupController @Inject()(val authActions: AuthAct
                                                         ) extends FrontendController(mcc) with I18nSupport {
 
   val show: Action[AnyContent] = authActions.asAgent(false) {implicit user =>
-      Ok(customNotFoundError(user.newHubContextRootEnabled, isAgent = true))
+      Ok(customNotFoundError(isAgent = true))
   }
 }

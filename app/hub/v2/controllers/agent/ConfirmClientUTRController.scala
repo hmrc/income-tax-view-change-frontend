@@ -60,7 +60,7 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
     }
 
   def submit: Action[AnyContent] =
-    authActions.asMTDAgentWithUnconfirmedClient(false).async { implicit user =>
+    authActions.asMTDAgentWithUnconfirmedClient().async { implicit user =>
 
       val clientName = user.optClientNameAsString.getOrElse("")
       val names = clientName.split(" ")

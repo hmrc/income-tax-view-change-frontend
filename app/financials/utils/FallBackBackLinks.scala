@@ -33,10 +33,10 @@ trait FallBackBackLinks {
     (gatewayPageOpt, taxYearOpt) match
       case (Some(TaxYearSummaryPage), Some(taxYear)) =>
         appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"), isReturnsFrontendEnabled)
-      case (Some(TaxYearSummaryPage), None) => appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled, origin)
+      case (Some(TaxYearSummaryPage), None) => appConfig.homePageUrl(isAgent, origin)
       case (Some(WhatYouOwePage), _) => whatYouOweUrl(isAgent, origin)
       case (Some(PaymentHistoryPage), _) => paymentHistoryUrl(isAgent, origin)
-      case _ => appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled, origin)
+      case _ => appConfig.homePageUrl(isAgent, origin)
 
   def getChargeSummaryBackUrl(isAgent: Boolean, gatewayPageOpt: Option[GatewayPage],
                               taxYear: Int, origin: Option[String], isReturnsFrontendEnabled: Boolean = false)
@@ -46,7 +46,7 @@ trait FallBackBackLinks {
         appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"), isReturnsFrontendEnabled)
       case Some(WhatYouOwePage) => whatYouOweUrl(isAgent, origin)
       case Some(PaymentHistoryPage) => paymentHistoryUrl(isAgent, origin)
-      case _ => appConfig.homePageUrl(isAgent, user.newHubContextRootEnabled, origin)
+      case _ => appConfig.homePageUrl(isAgent, origin)
 
   private def whatYouOweUrl(isAgent: Boolean, origin: Option[String]): String =
     if isAgent then financialsRoutes.WhatYouOweController.showAgent().path

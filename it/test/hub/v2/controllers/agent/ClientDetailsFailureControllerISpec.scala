@@ -32,7 +32,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
   s"GET ${agentRoutes.ClientRelationshipFailureController.show().url}" should {
     s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubUnauthorised()
 
         val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
@@ -45,7 +45,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
     }
     s"redirect to agent error page" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
-        stubGetFeatureSwitches(List(), true)
+        stubGetFeatureSwitches(List())
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
 
         val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue
@@ -58,7 +58,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
       }
     }
     s"return $OK with the enter client utr page" in {
-      stubGetFeatureSwitches(List(), true)
+      stubGetFeatureSwitches(List())
       MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
       val result: WSResponse = buildGETMTDClient(path, Map.empty).futureValue

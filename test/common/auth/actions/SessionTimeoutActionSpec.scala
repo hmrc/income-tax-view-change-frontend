@@ -16,7 +16,6 @@
 
 package common.auth.actions
 
-import common.auth.RequestWithFeatureSwitches
 import org.scalatest.Assertion
 import play.api.Application
 import play.api.http.HeaderNames
@@ -25,7 +24,6 @@ import play.api.mvc.{Request, Result, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.http.SessionKeys
-import AuthActionsTestData.requestWithFeatureSwitches
 
 import scala.concurrent.Future
 
@@ -37,8 +35,8 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: RequestWithFeatureSwitches[_] => Assertion
-                      ): RequestWithFeatureSwitches[_] => Future[Result] = testRequest => {
+                        requestTestCase: Request[_] => Assertion
+                      ): Request[_] => Future[Result] = testRequest => {
     requestTestCase(testRequest)
     Future.successful(Results.Ok("Successful"))
   }
@@ -61,10 +59,10 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
             "Gov-Test-Scenario" -> "testData"
           )
         "contains an auth token and lastRequestTimestamp" in {
-          val request = requestWithFeatureSwitches(fakeGovTestRequest.withSession(
+          val request = fakeGovTestRequest.withSession(
             SessionKeys.authToken -> "Bearer Token",
             SessionKeys.lastRequestTimestamp -> "1498236506662"
-          ))
+          )
 
           val result = action.invokeBlock(
             request,
@@ -76,9 +74,9 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
         }
 
         "contains an auth token and no lastRequestTimestamp" in {
-          val request = requestWithFeatureSwitches(fakeGovTestRequest.withSession(
+          val request = fakeGovTestRequest.withSession(
             SessionKeys.authToken -> "Bearer Token"
-          ))
+          )
 
           val result = action.invokeBlock(
             request,
@@ -91,7 +89,7 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
 
         "does not contain an auth token or lastRequestTimestamp" in {
           val result = action.invokeBlock(
-            requestWithFeatureSwitches(fakeGovTestRequest),
+            fakeGovTestRequest,
             defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")
             ))
 
@@ -104,10 +102,10 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
         val fakeGovTestRequest = fakeRequest
           .withHeaders("Gov-Test-Scenario" -> "testData")
         "contains an auth token and lastRequestTimestamp" in {
-          val request = requestWithFeatureSwitches(fakeGovTestRequest.withSession(
+          val request = fakeGovTestRequest.withSession(
             SessionKeys.authToken -> "Bearer Token",
             SessionKeys.lastRequestTimestamp -> "1498236506662"
-          ))
+          )
 
           val result = action.invokeBlock(
             request,
@@ -119,9 +117,9 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
         }
 
         "contains an auth token and no lastRequestTimestamp" in {
-          val request = requestWithFeatureSwitches(fakeGovTestRequest.withSession(
+          val request = fakeGovTestRequest.withSession(
             SessionKeys.authToken -> "Bearer Token"
-          ))
+          )
 
           val result = action.invokeBlock(
             request,
@@ -134,7 +132,7 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
 
         "does not contain an auth token or lastRequestTimestamp" in {
           val result = action.invokeBlock(
-            requestWithFeatureSwitches(fakeGovTestRequest),
+            fakeGovTestRequest,
             defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")
             ))
 
@@ -151,9 +149,9 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
             "Gov-Test-Scenario" -> "testData"
           )
         "has a lastRequestTimestamp but no auth token" in {
-          val request = requestWithFeatureSwitches(fakeGovTestRequest.withSession(
+          val request = fakeGovTestRequest.withSession(
             SessionKeys.lastRequestTimestamp -> "1498236506662"
-          ))
+          )
 
           val result = action.invokeBlock(
             request,

@@ -41,7 +41,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
     s"calling GET $feedbackPath" should {
       "render the Feedback page" when {
         s"User is an authorised $role" in {
-          stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+          stubGetFeatureSwitches(List())
           authStub.stubAuthorisedWhenNoChecks()
           val result = buildGETMTDClient(feedbackPath, Map.empty).futureValue
 
@@ -56,7 +56,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
     s"POST $feedbackPath" should {
       "redirect to thankyou page" when {
         s"user is an authorised $role and all fields filled in" in {
-          stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+          stubGetFeatureSwitches(List())
           authStub.stubAuthorisedWhenNoChecks()
           FeedbackConnectorStub.stubPostFeedback(OK)
 
@@ -89,7 +89,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
       "return an error" when {
 
         s"user is an authorised $role and missing form data" in {
-          stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+          stubGetFeatureSwitches(List())
           authStub.stubAuthorisedWhenNoChecks()
 
           FeedbackConnectorStub.stubPostFeedback(OK)
@@ -118,7 +118,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
     s"GET $thankyouPath" should {
       "render the Thankyou page" when {
         s"user is an authorised $role" in {
-          stubGetFeatureSwitches(List(), newHubContextRootEnabled)
+          stubGetFeatureSwitches(List())
           authStub.stubAuthorisedWhenNoChecks()
           FeedbackConnectorStub.stubPostThankyou(OK)
 

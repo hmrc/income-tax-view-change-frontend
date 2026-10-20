@@ -22,7 +22,7 @@ import common.views.html.errorPages.CustomNotFoundErrorView
 
 class CustomNotFoundErrorViewSpec extends ViewSpec {
 
-  def customNotFoundErrorView: Html = app.injector.instanceOf[CustomNotFoundErrorView].apply(newHubContextRootEnabled)
+  def customNotFoundErrorView: Html = app.injector.instanceOf[CustomNotFoundErrorView].apply()
 
   "The Agent Error page" should {
 
@@ -40,7 +40,7 @@ class CustomNotFoundErrorViewSpec extends ViewSpec {
 
     s"have a link in to the homepage" in new Setup(customNotFoundErrorView) {
       layoutContent.select(Selectors.link).first().text shouldBe messages("error.custom.link")
-      layoutContent.select(Selectors.link).first().attr("href") shouldBe appConfig.individualHomeUrl(newHubContextRootEnabled)
+      layoutContent.select(Selectors.link).first().attr("href") shouldBe appConfig.individualHomeUrl
     }
   }
 }

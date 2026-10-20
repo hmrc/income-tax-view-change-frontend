@@ -16,8 +16,7 @@
 
 package hub.v1.auth
 
-import common.auth.{AuthorisedUserRequest, MtdItUser, RequestWithFeatureSwitches}
-import actions.CorrectHubContextRootAction
+import common.auth.{AuthorisedUserRequest, MtdItUser}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.auth.actions.*
@@ -39,42 +38,37 @@ class AuthActions @Inject()(
                              val retrieveClientData: RetrieveClientData,
                              val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
                              val redirectIfNoIncomeSourcesAction: RedirectIfNoIncomeSourcesAction,
-                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction,
-                             val correctHubContextRootAction: CorrectHubContextRootAction
+                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction
                            ) extends FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
 
   def asMTDIndividual(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      correctHubContextRootAction andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       retrieveNavBar andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
-  def asAgent(arnRequired: Boolean = true, checkContextRoot: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
-    retrieveFeatureSwitchesAndCheckContextRootIfReq(checkContextRoot) andThen
-      checkSessionTimeout andThen
+  def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      correctHubContextRootAction andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
       incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
-  def asMTDAgentWithUnconfirmedClient(checkContextRoot: Boolean = true): ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitchesAndCheckContextRootIfReq(checkContextRoot) andThen
-      checkSessionTimeout andThen
+  def asMTDAgentWithUnconfirmedClient(): ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise(useCookies = true) andThen
       authoriseAndRetrieveMtdAgent andThen
@@ -88,16 +82,14 @@ class AuthActions @Inject()(
     asMTDAgentWithConfirmedClient(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
 
   def asMTDIndividualForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
       retrieveNavBar
   }
 
   def asMTDAgentWithConfirmedClientForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
-    retrieveFeatureSwitches andThen
-      checkSessionTimeout andThen
+    checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
@@ -113,17 +105,8 @@ class AuthActions @Inject()(
     }
   }
 
-  def asAuthorisedUser(checkContextRoot: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] = {
-    retrieveFeatureSwitchesAndCheckContextRootIfReq(checkContextRoot) andThen
+  def asAuthorisedUser(): ActionBuilder[AuthorisedUserRequest, AnyContent] = {
     checkSessionTimeout andThen authoriseAndRetrieve
-  }
-  
-  def retrieveFeatureSwitchesAndCheckContextRootIfReq(checkContextRoot: Boolean = true): ActionBuilder[RequestWithFeatureSwitches, AnyContent] = {
-    if (checkContextRoot) {
-      retrieveFeatureSwitches andThen correctHubContextRootAction
-    } else {
-      retrieveFeatureSwitches
-    }
   }
 }
 

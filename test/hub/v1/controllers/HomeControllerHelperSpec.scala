@@ -56,8 +56,6 @@ trait HomeControllerHelperSpec extends MockAuthActions
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
   
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
-
-  override val newHubContextRootEnabled: Boolean = false
   
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(

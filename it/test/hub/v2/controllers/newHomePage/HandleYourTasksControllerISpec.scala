@@ -741,7 +741,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
     val url = s"/income-tax-financial-details/$testNino/financial-details/credits/from/2022-04-06/to/2023-04-05"
 
-    stubGetFeatureSwitches(List(), true)
+    stubGetFeatureSwitches(List())
     stubAuthorised(mtdUserRole, featureSwitches)
     GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourcesModel)
     WiremockHelper.stubGet(url, OK, response)

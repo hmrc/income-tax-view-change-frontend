@@ -16,7 +16,6 @@
 
 package testOnly.controllers
 
-import common.auth.actions.FeatureSwitchRetrievalAction
 import common.config.FrontendAppConfig
 import play.api.Logging
 import play.api.data.Form
@@ -31,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubClientDetailsController @Inject()(featureSwitchRetrievalAction: FeatureSwitchRetrievalAction,
+class StubClientDetailsController @Inject()(
                                             stubClientDetails: StubClientDetails,
                                             matchingStubConnector: MatchingStubConnector)
                                            (implicit mcc: MessagesControllerComponents,
@@ -55,18 +54,15 @@ class StubClientDetailsController @Inject()(featureSwitchRetrievalAction: Featur
   }
 
   def submitWithParams(nino: String, utr: String): Action[AnyContent] =
-    featureSwitchRetrievalAction.async { implicit request =>
+    Action.async { implicit request =>
       matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)).map { _ =>
-        val redirectUrl = if (request.newHubContextRootEnabled)
-          hub.v2.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr)
-        else
-          hub.v1.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr)
+        val redirectUrl = hub.v2.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr)
         Redirect(redirectUrl)
       }
     }
 
   def submit(): Action[AnyContent] =
-    featureSwitchRetrievalAction.async { implicit request =>
+    Action.async { implicit request =>
       StubClientDetailsForm.clientDetailsForm.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(stubClientDetails(
           clientDetailsForm = hasErrors,
@@ -74,10 +70,7 @@ class StubClientDetailsController @Inject()(featureSwitchRetrievalAction: Featur
         ))), { data =>
           matchingStubConnector.stubClient(data).map { response =>
             logger.info(s"[submit] matching stub, status: ${response.status}, body: ${response.body}")
-            val redirectUrl = if (request.newHubContextRootEnabled)
-              hub.v2.controllers.agent.routes.EnterClientsUTRController.show()
-            else
-              hub.v1.controllers.agent.routes.EnterClientsUTRController.show()
+            val redirectUrl = hub.v2.controllers.agent.routes.EnterClientsUTRController.show()
             Redirect(redirectUrl)
           }
         }

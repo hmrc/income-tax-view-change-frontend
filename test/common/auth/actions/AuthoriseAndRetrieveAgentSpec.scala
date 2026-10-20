@@ -71,7 +71,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise().invokeBlock(
-              requestWithFeatureSwitches(fakeRequestWithActiveSession),
+              fakeRequestWithActiveSession,
               defaultAsyncBody(_ shouldBe expectedResponse))
 
             status(result) shouldBe OK
@@ -89,7 +89,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise().invokeBlock(
-              requestWithFeatureSwitches(fakeRequestWithActiveSession),
+              fakeRequestWithActiveSession,
               defaultAsyncBody(_ shouldBe expectedResponse))
 
             status(result) shouldBe OK
@@ -106,7 +106,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise().invokeBlock(
-            requestWithFeatureSwitches(fakeRequestWithActiveSession),
+            fakeRequestWithActiveSession,
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
@@ -124,11 +124,11 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise().invokeBlock(
-              requestWithFeatureSwitches(fakeRequestWithActiveSession),
+              fakeRequestWithActiveSession,
               defaultAsync)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result).get shouldBe appConfig.individualHomeUrl(newHubContextRootEnabled)
+            redirectLocation(result).get shouldBe appConfig.individualHomeUrl
           }
         }
       }
@@ -141,7 +141,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise().invokeBlock(
-            requestWithFeatureSwitches(fakeRequestWithActiveSession),
+            fakeRequestWithActiveSession,
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
@@ -157,7 +157,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise().invokeBlock(
-            requestWithFeatureSwitches(fakeRequestWithActiveSession),
+            fakeRequestWithActiveSession,
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
@@ -180,7 +180,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              requestWithFeatureSwitches(fakeRequestWithActiveSession),
+              fakeRequestWithActiveSession,
               defaultAsyncBody(_ shouldBe expectedResponse))
 
             status(result) shouldBe OK
@@ -198,7 +198,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              requestWithFeatureSwitches(fakeRequestWithActiveSession),
+              fakeRequestWithActiveSession,
               defaultAsyncBody(_ shouldBe expectedResponse))
 
             status(result) shouldBe OK
@@ -214,7 +214,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise(false).invokeBlock(
-            requestWithFeatureSwitches(fakeRequestWithActiveSession),
+            fakeRequestWithActiveSession,
             defaultAsync)
 
           status(result) shouldBe OK
@@ -232,11 +232,11 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
             )
 
             val result = authAction.authorise(false).invokeBlock(
-              requestWithFeatureSwitches(fakeRequestWithActiveSession),
+              fakeRequestWithActiveSession,
               defaultAsync)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result).get should include(appConfig.individualHomeUrl(newHubContextRootEnabled))
+            redirectLocation(result).get should include(appConfig.individualHomeUrl)
           }
         }
       }
@@ -249,7 +249,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise(false).invokeBlock(
-            requestWithFeatureSwitches(fakeRequestWithActiveSession),
+            fakeRequestWithActiveSession,
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
@@ -265,7 +265,7 @@ class AuthoriseAndRetrieveAgentSpec extends AuthActionsSpecHelper {
           )
 
           val result = authAction.authorise(false).invokeBlock(
-            requestWithFeatureSwitches(fakeRequestWithActiveSession),
+            fakeRequestWithActiveSession,
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER

@@ -31,7 +31,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
-  lazy val testCancelUrl: String = appConfig.individualHomeUrl(newHubContextRootEnabled)
+  lazy val testCancelUrl: String = appConfig.individualHomeUrl
   val testOpenUrlInNewTab: String =
     "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 

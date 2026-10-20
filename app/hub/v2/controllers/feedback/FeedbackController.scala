@@ -58,7 +58,7 @@ class FeedbackController @Inject()(val authActions: AuthActions,
         }
   }
 
-  def submit: Action[AnyContent] = authActions.asAuthorisedUser(false).async {
+  def submit: Action[AnyContent] = authActions.asAuthorisedUser().async {
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
@@ -77,7 +77,7 @@ class FeedbackController @Inject()(val authActions: AuthActions,
         }
   }
 
-  def submitAgent: Action[AnyContent] = authActions.asAuthorisedUser(false).async {
+  def submitAgent: Action[AnyContent] = authActions.asAuthorisedUser().async {
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,

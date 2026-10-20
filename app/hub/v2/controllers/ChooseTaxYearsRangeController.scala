@@ -46,7 +46,7 @@ class ChooseTaxYearsRangeController @Inject()(
                                             ) extends FrontendController(mcc) with I18nSupport {
   private val submitCall = {
     val submitRoute = routes.ChooseTaxYearsRangeController.submit()
-    Call(submitRoute.method, s"${appConfig.hubBasePath()}${submitRoute.url}")
+    Call(submitRoute.method, s"${appConfig.hubBasePath}${submitRoute.url}")
   }
 
   private def migrationYear(user: MtdItUser[_])(implicit hc: HeaderCarrier): Future[Int] =

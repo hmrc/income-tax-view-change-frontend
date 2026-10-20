@@ -59,8 +59,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   with MockITSAStatusService
   with MockWhatYouOweService
   with MockNextUpdatesService {
-
-  override val newHubContextRootEnabled: Boolean = false
   
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
