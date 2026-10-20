@@ -21,10 +21,10 @@
 @this(overviewCard: OverviewCard)
 
 
-@(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
+@(isAgent: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @manageBusinessUrl = @{
-    appConfig.manageBusinessesUrl(isAgent, businessDetailsFrontendEnabled)
+    appConfig.manageBusinessesUrl(isAgent)
 }
 
 <div id="income-overview-section">

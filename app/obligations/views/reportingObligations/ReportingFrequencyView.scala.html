@@ -137,7 +137,7 @@
                 <span class="govuk-visually-hidden">Warning</span>
                 @messages("reporting.frequency.ceasedBusiness.warning.text.1")
                 @linkComponent(
-                    url = appConfig.manageBusinessesUrl(viewModel.isAgent, viewModel.isBusinessDetailsEnabled),
+                    url = appConfig.manageBusinessesUrl(viewModel.isAgent),
                     message = messages("reporting.frequency.ceasedBusiness.warning.link"),
                     rel=Some("noreferrer noopener"),
                     id = Some("ceased-business-link"),
@@ -175,7 +175,7 @@
         @messages("reporting.frequency.latency.details.section.text.para3.text.1")
         @linkComponent(
             id = Some("your-businesses-link"),
-            url = appConfig.manageBusinessesUrl(viewModel.isAgent, viewModel.isBusinessDetailsEnabled),
+            url = appConfig.manageBusinessesUrl(viewModel.isAgent),
             message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
         )
         @messages("reporting.frequency.latency.details.section.text.para3.text.2")
@@ -317,7 +317,7 @@
         @messages("reporting.frequency.latency.details.section.text.para3.text.1.updateR17")
         @linkComponent(
             id = Some("your-businesses-link"),
-            url = appConfig.manageBusinessesUrl(viewModel.isAgent, viewModel.isBusinessDetailsEnabled),
+            url = appConfig.manageBusinessesUrl(viewModel.isAgent),
             message = messages("reporting.frequency.latency.details.section.text.para3.link.text.updateR17"),
             additionalMessage = if(messages.lang.code == "en") None else Some(messages("base.fullstop"))
         )

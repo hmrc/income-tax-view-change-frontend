@@ -35,8 +35,7 @@ case class ReportingFrequencyViewModel(
                                         mtdThreshold: String,
                                         proposition: OptOutProposition,
                                         isSignUpEnabled: Boolean,
-                                        isOptOutEnabled: Boolean,
-                                        isBusinessDetailsEnabled: Boolean
+                                        isOptOutEnabled: Boolean
                                       )(implicit dateService: DateServiceInterface) {
 
   private val currentTaxYear: TaxYear = dateService.getCurrentTaxYear

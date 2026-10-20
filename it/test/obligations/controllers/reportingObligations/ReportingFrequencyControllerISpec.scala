@@ -21,7 +21,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import common.models.admin.{BusinessDetailsFrontend, OptOutFs, SignUpFs}
+import common.models.admin.{OptOutFs, SignUpFs}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
@@ -679,7 +679,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
               Seq(("sole trader", businessWithLatency), ("property", propertyWithLatency), ("all", allBusinessesWithLatency)).foreach { response =>
 
                 s"${response._1} business is latent" in {
-                  stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs, BusinessDetailsFrontend))
+                  stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, response._2)
                   ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                     dateService.getCurrentTaxYear,

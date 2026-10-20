@@ -708,7 +708,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
-          val trigMigUrl: String = if(mtdUserRole.isAgent) "/report-quarterly/income-and-expenses/view/agents/complete-steps" else "/report-quarterly/income-and-expenses/view/complete-steps"
+          val trigMigUrl: String = if(mtdUserRole.isAgent) "http://localhost:9088/manage-self-assessment/businesses/agents/complete-steps" else "http://localhost:9088/manage-self-assessment/businesses/complete-steps"
 
           val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
 
