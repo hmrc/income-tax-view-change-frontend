@@ -20,8 +20,8 @@ import common.models.obligations.ObligationWithIncomeType
 import java.time.LocalDate
 
 case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel],
-                                missedDeadlines: Seq[DeadlineViewModel] = Seq.empty,
-                                isFinancialsEnabled: Boolean)
+                                missedDeadlines: Seq[DeadlineViewModel] = Seq.empty
+                                )
 
 case class DeadlineViewModel(obligationType: ObligationType,
                              standardAndCalendar: Boolean,

@@ -19,7 +19,6 @@ package hub.services.newHomePage
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.FinancialsFrontend
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
@@ -146,10 +145,10 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
                                 credits: CreditsModel,
                                 creditsRefundsRepayEnabled: Boolean,
                                 isAgent: Boolean,
-                                penaltiesAndAppealsEnabled: Boolean)(implicit user: MtdItUser[_]): Seq[YourTasksCard] = {
+                                penaltiesAndAppealsEnabled: Boolean): Seq[YourTasksCard] = {
 
     val redirectLinkMoneyInYourAccount = {
-      appConfig.financialsMoneyInAccountUrl(isAgent, isEnabled(FinancialsFrontend))
+      appConfig.financialsMoneyInAccountUrl(isAgent)
     }
 
     val datelessTasks = if (creditsRefundsRepayEnabled) getMoneyInAccount(credits, redirectLinkMoneyInYourAccount) else Seq.empty
@@ -171,8 +170,7 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
 
   private def getPaymentsCard(chargeItemList: List[ChargeItem],
                               isAgent: Boolean,
-                              penaltiesAndAppealsEnabled: Boolean)
-                             (implicit user: MtdItUser[_]): Seq[YourTasksCard] = {
+                              penaltiesAndAppealsEnabled: Boolean): Seq[YourTasksCard] = {
 
     val dueChargesList: List[ChargeItem] = dueChargesByTypes(chargeItemList, chargesSet)
     val dueLppsList: List[ChargeItem]    = dueChargesByTypes(chargeItemList, lppSet)
@@ -185,10 +183,9 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
     chargeTask ++ lppTask ++ lspTask
   }
 
-  private def getChargesCard(chargeList: List[ChargeItem], isAgent: Boolean)
-                            (implicit user: MtdItUser[_]) = {
+  private def getChargesCard(chargeList: List[ChargeItem], isAgent: Boolean) = {
     val linkText = "newHome.yourTasks.selfAssessment"
-    val redirectLink = appConfig.financialsWhatYouOweUrl(isAgent, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
+    val redirectLink = appConfig.financialsWhatYouOweUrl(isAgent)
     
     val oldestCharge = oldestTransaction(chargeList)
     val overdueCharges = chargeList.filter(charge => chargesSet.contains(charge.transactionType) && charge.dueDate.exists(_.isBefore(LocalDate.now())))
@@ -223,8 +220,7 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
     }
   }
 
-  private def getLppCard(latePaymentPenaltyList: List[ChargeItem], isAgent: Boolean)
-                        (implicit user: MtdItUser[_]) = {
+  private def getLppCard(latePaymentPenaltyList: List[ChargeItem], isAgent: Boolean) = {
     val oldestLpp = oldestTransaction(latePaymentPenaltyList)
 
     val linkText = if(latePaymentPenaltyList.size > 1) "newHome.yourTasks.selfAssessment.lpp.multiple.link" else "newHome.yourTasks.selfAssessment.lpp.single.link"
@@ -236,10 +232,10 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
       }
     } else if (isAgent) {
       appConfig.financialsChargeSummaryAgentUrl(latePaymentPenaltyList.head.taxYear.endYear,
-        latePaymentPenaltyList.head.transactionId, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
+        latePaymentPenaltyList.head.transactionId)
     } else {
       appConfig.financialsChargeSummaryIndividualUrl(latePaymentPenaltyList.head.taxYear.endYear,
-        latePaymentPenaltyList.head.transactionId, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
+        latePaymentPenaltyList.head.transactionId)
     }
 
     val contentDescription = if(latePaymentPenaltyList.size > 1) {
@@ -263,8 +259,7 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
     }
   }
 
-  private def getLspCard(lateSubmissionPenaltyList: List[ChargeItem], isAgent: Boolean)
-                        (implicit user: MtdItUser[_]) = {
+  private def getLspCard(lateSubmissionPenaltyList: List[ChargeItem], isAgent: Boolean) = {
     val oldestLsp = oldestTransaction(lateSubmissionPenaltyList)
 
     val linkText = if(lateSubmissionPenaltyList.size > 1) "newHome.yourTasks.selfAssessment.lsp.multiple.link" else "newHome.yourTasks.selfAssessment.lsp.single.link"
@@ -275,9 +270,9 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
         case _ => ""
       }
     } else if (isAgent) {
-      appConfig.financialsChargeSummaryAgentUrl(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
+      appConfig.financialsChargeSummaryAgentUrl(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId)
     } else {
-      appConfig.financialsChargeSummaryIndividualUrl(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
+      appConfig.financialsChargeSummaryIndividualUrl(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId)
     }
 
     val contentDescription = if (lateSubmissionPenaltyList.size > 1) {

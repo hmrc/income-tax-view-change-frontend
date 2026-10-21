@@ -19,7 +19,7 @@ package obligations.services
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{FinancialsFrontend, HideBusinessName}
+import common.models.admin.HideBusinessName
 import common.services.DateServiceInterface
 import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import common.models.obligations.{ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
@@ -64,8 +64,7 @@ class NextUpdatesService @Inject()(
 
     val (missedDeadlines, remainingDeadlines) = allDeadlines.partition(_.deadline.isBefore(dateService.getCurrentDate))
 
-    val isFinancialsEnabled = isEnabled(FinancialsFrontend) 
-    NextUpdatesViewModel(remainingDeadlines, missedDeadlines, isFinancialsEnabled)
+    NextUpdatesViewModel(remainingDeadlines, missedDeadlines)
   }
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {

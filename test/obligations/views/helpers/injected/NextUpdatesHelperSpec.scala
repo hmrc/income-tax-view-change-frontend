@@ -43,13 +43,13 @@ class  NextUpdatesHelperSpec extends TestSupport {
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
   ))).obligationsByDate(false).map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)}, isFinancialsEnabled = true)
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   lazy val crystallisedObligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     List(crystallisedObligation)
   ))).obligationsByDate(false).map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)}, isFinancialsEnabled = true)
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   "Next updates helper" should {
 

@@ -85,7 +85,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         standardAndCalendar = false,
         missedDeadlinesTestYear,
         Seq(ObligationWithIncomeType("uk-property", SingleObligationModel(start = missedDeadlinesTestYear, end = missedDeadlinesTestYear, due = missedDeadlinesTestYear, obligationType = "Quarterly", dateReceived = None, periodKey = StatusFulfilled.toString, status = StatusFulfilled))),
-        Seq.empty)), isFinancialsEnabled = true)
+        Seq.empty)))
 
     lazy val obligationsModel: NextUpdatesViewModel =
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
@@ -93,7 +93,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         twoObligationsSuccessModel.obligations
       ))).obligationsByDate(false)(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-      }, isFinancialsEnabled = true)
+      })
 
     def nextUpdatesDocument: Document =
       Jsoup.parse(contentAsString(

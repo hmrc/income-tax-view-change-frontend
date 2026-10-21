@@ -63,8 +63,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
   ))).obligationsByDate(false).map{
     case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-  }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("Quarter", quarterlyBusinessObligation)), Seq.empty)),
-    isFinancialsEnabled = true)
+  }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("Quarter", quarterlyBusinessObligation)), Seq.empty)))
 
   lazy val obligationsModelWithUnknown: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.copy(tradingName = None).incomeSourceId,
@@ -72,8 +71,8 @@ class NextUpdatesHelperR17Spec extends TestSupport {
   ))).obligationsByDate(true).map {
     case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
       DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-  }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("", quarterlyBusinessObligation)), Seq.empty)),
-    isFinancialsEnabled = true)
+  }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("", quarterlyBusinessObligation)), Seq.empty)))
+
 
 
   "Next updates helper for Release 17" when {

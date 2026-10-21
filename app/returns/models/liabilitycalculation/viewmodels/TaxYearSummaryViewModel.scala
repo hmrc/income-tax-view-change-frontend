@@ -34,7 +34,6 @@ case class TaxYearSummaryViewModel(
                                     ctaViewModel: TYSClaimToAdjustViewModel,
                                     LPP2Url: String,
                                     pfaEnabled: Boolean,
-                                    financialsFrontendEnabled: Boolean,
                                     hideUnknownBusinessName: Boolean
                                   ) {
 
@@ -104,9 +103,9 @@ case class TaxYearSummaryViewModel(
       LPP2Url
     } else {
       if (isAgent) {
-        appConfig.financialsChargeSummaryAgentUrl(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, financialsFrontendEnabled)
+        appConfig.financialsChargeSummaryAgentUrl(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest)
       } else {
-        appConfig.financialsChargeSummaryIndividualUrl(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin, financialsFrontendEnabled)
+        appConfig.financialsChargeSummaryIndividualUrl(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin)
       }
     }
   }

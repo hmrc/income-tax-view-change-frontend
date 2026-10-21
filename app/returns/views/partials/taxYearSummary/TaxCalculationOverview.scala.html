@@ -52,8 +52,7 @@
         showNoTaxCalc: Boolean,
         viewTaxCalcLink: Option[String],
         selfAssessmentLink: String,
-        contactHmrcLink: String,
-        financialsFrontendEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
+        contactHmrcLink: String)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @yourTaxCalculationCannotBeDisplayed = {
 
@@ -221,7 +220,7 @@
 
         @if(taxYearViewScenarios == MtdSoftwareShowCalc) {
 
-            @calculationSummaryModel.map(model => breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest, financialsFrontendEnabled = financialsFrontendEnabled))
+            @calculationSummaryModel.map(model => breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest))
 
             @if(!calculationSummaryModel.exists(_.crystallised) && !isLatest && !isPrevious) {
                 @govukInsetText(InsetText(content = HtmlContent(

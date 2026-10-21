@@ -20,7 +20,6 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.implicits.ImplicitDateFormatter
-import common.models.admin.FinancialsFrontend
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.{AuditingService, DateServiceInterface}
 import returns.forms.utils.SessionKeys.calcPagesBackPage
@@ -78,7 +77,7 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
         auditingService.audit(auditModel)
 
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-        Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp, serviceNavigationPartial = user.serviceNavigationPartial, financialsFrontendEnabled = isEnabled(FinancialsFrontend)))
+        Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp, serviceNavigationPartial = user.serviceNavigationPartial))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         logger.info("No calculation data returned from downstream.")

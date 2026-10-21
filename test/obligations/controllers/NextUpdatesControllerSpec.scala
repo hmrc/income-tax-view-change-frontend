@@ -71,7 +71,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
     GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#002", StatusFulfilled)))
   )).obligationsByDate(false).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-  }, isFinancialsEnabled = true)
+  })
 
   val contentChecks = NextUpdatesQuarterlyReportingContentChecks(
     currentYearItsaStatus = true,
