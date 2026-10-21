@@ -7,6 +7,9 @@ GET         /assets/*file                                                 contro
 # Assets
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
+GET         /agents/*path                                                 hub.v1.controllers.NewServiceRedirectController.showAgent(path: String)
+GET         /*path                                                        hub.v1.controllers.NewServiceRedirectController.show(path: String)
+
 #Home Controller
 
 GET         /                                                             hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
