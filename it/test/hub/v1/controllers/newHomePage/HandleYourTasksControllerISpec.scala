@@ -77,11 +77,11 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
   def taskLink(id: String) = s"#$id > a"
 
   def submissionsLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"http://localhost:9075/manage-self-assessment/obligations/agents/submission-deadlines" else s"http://localhost:9075/manage-self-assessment/obligations/submission-deadlines"
-  def whatYouOweLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"$basePath/agents/what-you-owe" else s"$basePath/what-you-owe"
-  def lspAndLppLink(mtdUserRole: MTDUserRole, chargeId: String = "1040000123") = if(mtdUserRole != MTDIndividual) s"$basePath/agents/tax-years/2018/charge?id=$chargeId" else s"$basePath/tax-years/2018/charge?id=$chargeId"
+  def whatYouOweLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"http://localhost:9092/manage-self-assessment/financials/agents/what-you-owe" else s"http://localhost:9092/manage-self-assessment/financials/what-you-owe"
+  def lspAndLppLink(mtdUserRole: MTDUserRole, chargeId: String = "1040000123") = if(mtdUserRole != MTDIndividual) s"http://localhost:9092/manage-self-assessment/financials/agents/tax-years/2018/charge?id=$chargeId&isInterestCharge=false" else s"http://localhost:9092/manage-self-assessment/financials/tax-years/2018/charge?id=$chargeId&isInterestCharge=false"
   def lspTabLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "http://localhost:9185/view-penalty/self-assessment/agent#lspTab" else "http://localhost:9185/view-penalty/self-assessment#lspTab"
   def lppTabLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "http://localhost:9185/view-penalty/self-assessment/agent#lppTab" else "http://localhost:9185/view-penalty/self-assessment#lppTab"
-  def moneyInYourAccountLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"$basePath/agents/money-in-your-account" else s"$basePath/money-in-your-account"
+  def moneyInYourAccountLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"http://localhost:9092/manage-self-assessment/financials/agents/money-in-your-account" else s"http://localhost:9092/manage-self-assessment/financials/money-in-your-account"
 
   object YourTasksViewMessages {
     val noTasksContent = "You have no tasks to complete at the moment."
