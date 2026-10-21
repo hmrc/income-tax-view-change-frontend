@@ -22,14 +22,14 @@
     overviewCard: OverviewCard
 )
 
-@(isAgent: Boolean, taxYear: TaxYear, mortgageEvidenceEnabled: Boolean, returnsFrontendEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
+@(isAgent: Boolean, taxYear: TaxYear, mortgageEvidenceEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 
-@allTaxYearsUrl = @{appConfig.returnsTaxYearsUrl(isAgent, returnsFrontendEnabled)}
+@allTaxYearsUrl = @{appConfig.returnsTaxYearsUrl(isAgent)}
 
-@yearToYearTaxYearsUrl = @{appConfig.taxYearSummaryUrl(isAgent, taxYear.endYear, returnsEnabled=returnsFrontendEnabled)}
+@yearToYearTaxYearsUrl = @{appConfig.taxYearSummaryUrl(isAgent, taxYear.endYear)}
 
-@proofOfIncomeUrl = @{appConfig.proofOfIncomeUrl(isAgent, returnsFrontendEnabled)}
+@proofOfIncomeUrl = @{appConfig.proofOfIncomeUrl(isAgent)}
 
 <div id="tax-year-overview-section">
     <h2 class="govuk-heading-m">@messages("new.home.overview.tax-year.sub-heading")</h2>

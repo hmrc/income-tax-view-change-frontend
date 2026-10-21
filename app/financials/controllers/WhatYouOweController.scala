@@ -20,7 +20,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.*
 import common.enums.GatewayPage.WhatYouOwePage
-import common.models.admin.{ReturnsFrontend, SelfServeTimeToPayR17, StoodOverCharges}
+import common.models.admin.{SelfServeTimeToPayR17, StoodOverCharges}
 import common.services.{DateServiceInterface, YearOfMigrationService}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.WhatYouOweService
@@ -54,7 +54,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, appConfig.taxYearSummaryUrl(user.isAgent,
-      _, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend)), getAdjustPoaUrl, getChargeSummaryUrl,
+      _, origin = origin), getAdjustPoaUrl, getChargeSummaryUrl,
       getInterstitialUrl(origin, isAgent), getPaymentHandoffUrl(origin, isAgent)) map {
       case Some(viewModel) =>
         Ok(whatYouOwe(viewModel, origin, isEnabled(SelfServeTimeToPayR17), isEnabled(StoodOverCharges)))

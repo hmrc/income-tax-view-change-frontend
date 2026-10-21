@@ -20,7 +20,6 @@ import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
 import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
-import common.models.admin.ReturnsFrontend
 import common.testUtils.TestSupport
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
@@ -53,7 +52,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       nextYearItsaStatus = nextYearStatus
     )
 
-    val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus), isReturnsEnabled = isEnabled(ReturnsFrontend), penaltyAndAppealEnabled = true)
+    val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus), penaltyAndAppealEnabled = true)
 
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }

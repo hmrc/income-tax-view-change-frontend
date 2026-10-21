@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{FinancialsFrontend, ReturnsFrontend}
+import common.models.admin.FinancialsFrontend
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import common.models.obligations.{ObligationsModel, ObligationsResponseModel, SingleObligationModel}
@@ -117,7 +117,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       obligation.dateReceived.map { date =>
         RecentActivityCard(
           linkContentText = "new.home.recentActivity.submissions.annual.link.text",
-          linkUrl = appConfig.taxYearSummaryUrl(mtdUser.isAgent, TaxYear.getTaxYear(obligation.start).endYear, returnsEnabled=isEnabled(ReturnsFrontend)),
+          linkUrl = appConfig.taxYearSummaryUrl(mtdUser.isAgent, TaxYear.getTaxYear(obligation.start).endYear),
           contentText = "new.home.recentActivity.submissions.annual.content.text",
           dateContentText = "new.home.recentActivity.submissions.annual.date.content.text",
           cardDate = date,
@@ -130,7 +130,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       obligation.dateReceived.map { date =>
         RecentActivityCard(
           linkContentText = "new.home.recentActivity.submissions.quarterly.link.text",
-          linkUrl = appConfig.taxYearSummaryUrl(mtdUser.isAgent, getTaxYearIncludingCalendar(obligation.start), returnsEnabled=isEnabled(ReturnsFrontend)),
+          linkUrl = appConfig.taxYearSummaryUrl(mtdUser.isAgent, getTaxYearIncludingCalendar(obligation.start)),
           contentText = "new.home.recentActivity.submissions.quarterly.content.text",
           dateContentText = "new.home.recentActivity.submissions.quarterly.date.content.text",
           cardDate = date

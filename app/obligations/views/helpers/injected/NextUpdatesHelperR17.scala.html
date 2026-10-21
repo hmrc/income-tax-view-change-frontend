@@ -45,7 +45,7 @@
         implicitDateFormatter: ImplicitDateFormatterImpl,
         appConfig: FrontendAppConfig
 )
-@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled: Boolean, penaltyAndAppealEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
+@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), penaltyAndAppealEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -371,7 +371,7 @@
     Html(obligations.map(obl => messages(obl.incomeType)).map(msg => s"<div>$msg</div>").mkString)
 }
 
-@taxYearSummaryLink = @{appConfig.returnsTaxYearsUrl(user.isAgent, isReturnsEnabled)}
+@taxYearSummaryLink = @{appConfig.returnsTaxYearsUrl(user.isAgent)}
 
 @missedDeadlinesText = @{
     if(optOutProposition.currentTaxYear.canOptOut) {

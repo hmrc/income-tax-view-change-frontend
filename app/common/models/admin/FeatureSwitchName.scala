@@ -77,8 +77,6 @@ object FeatureSwitchName extends Logging {
       JsSuccess(FinancialsFrontend)
     case JsString(RevenueAmendments.name) =>
       JsSuccess(RevenueAmendments)
-    case JsString(ReturnsFrontend.name) =>
-      JsSuccess(ReturnsFrontend)
     case JsString(HideBusinessName.name) =>
       JsSuccess(HideBusinessName)
     case JsString(StoodOverCharges.name) =>
@@ -129,7 +127,6 @@ object FeatureSwitchName extends Logging {
       NoIncomeSourcesRedirect,
       FinancialsFrontend,
       RevenueAmendments,
-      ReturnsFrontend,
       HideBusinessName,
       StoodOverCharges,
       InterstitialPage
@@ -245,11 +242,6 @@ case object FinancialsFrontend extends FeatureSwitchName {
 case object RevenueAmendments extends FeatureSwitchName {
   override val name: String = "revenue-amendments"
   override val toString: String = "Revenue Amendments"
-}
-
-case object ReturnsFrontend extends FeatureSwitchName {
-  override val name: String = "returns-frontend"
-  override val toString: String = "Returns Frontend"
 }
 
 case object HideBusinessName extends FeatureSwitchName {

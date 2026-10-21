@@ -20,7 +20,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.*
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.GatewayPage
-import common.models.admin.{ChargeHistory, CreditsRefundsRepay, PenaltiesAndAppeals, ReturnsFrontend}
+import common.models.admin.{ChargeHistory, CreditsRefundsRepay, PenaltiesAndAppeals}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateServiceInterface}
@@ -249,7 +249,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                     ChargeSummaryViewModel(
                       currentDate = dateService.getCurrentDate,
                       chargeItem = chargeItem,
-                      backUrl = getChargeSummaryBackUrl(user.isAgent, sessionGatewayPage, taxYear, origin, isEnabled(ReturnsFrontend)),
+                      backUrl = getChargeSummaryBackUrl(user.isAgent, sessionGatewayPage, taxYear, origin),
                       gatewayPage = sessionGatewayPage,
                       paymentBreakdown = paymentBreakdown,
                       paymentAllocations = paymentAllocations,
@@ -267,7 +267,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                       poaTwoChargeUrl = poaTwoChargeUrl,
                       LSPUrl = LSPUrl,
                       LPPUrl = LPPUrl,
-                      taxYearSummaryUrl = appConfig.taxYearSummaryUrl(isAgent, _, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend))
+                      taxYearSummaryUrl = appConfig.taxYearSummaryUrl(isAgent, _, origin = origin)
                     )
                   }
 

@@ -49,7 +49,6 @@
     isSupportingAgent: Boolean = false,
     origin: Option[String] = None,
     taxYearStatusesCyNy: (ITSAStatus, ITSAStatus),
-    isReturnsEnabled: Boolean,
     penaltyAndAppealEnabled: Boolean
 )(implicit messages: Messages, user: MtdItUser[_])
 
@@ -64,7 +63,7 @@
 
     @whatTheUserCanDo
 
-    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled, penaltyAndAppealEnabled)
+    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), penaltyAndAppealEnabled)
 }
 
 @whatTheUserCanDo = {

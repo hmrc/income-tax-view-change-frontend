@@ -20,7 +20,6 @@ import cats.data.EitherT
 import common.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.models.admin.ReturnsFrontend
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.{ClaimToAdjustService, RecalculatePoaHelper}
 import financials.utils.claimToAdjust.WithSessionAndPoa
@@ -47,7 +46,7 @@ class YouCannotGoBackController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
-        EitherT.rightT(Ok(view(poa.taxYear, isEnabled(ReturnsFrontend))))
+        EitherT.rightT(Ok(view(poa.taxYear)))
       } recover logAndRedirect
   }
 }

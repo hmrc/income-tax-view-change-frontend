@@ -20,7 +20,6 @@ import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
 import hub.v2.controllers.agent.routes as hubV2AgentRoutes
 import play.api.Configuration
-import returns.controllers.routes as returnsRoutes
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait ExternalRedirectHelper {
@@ -33,45 +32,45 @@ trait ExternalRedirectHelper {
   lazy val baseUrl: String = servicesConfig.getString("base.url")
   lazy val baseFullUrl: String = s"$baseUrl$basePath"
   lazy val agentBaseFullUrl: String = s"$baseUrl$agentBasePath"
-  
+
   lazy val hubBasePath: String = servicesConfig.getString("base.context-root-hub")
-    
+
   lazy val agentHubBasePath: String = s"$hubBasePath/agents"
 
   lazy val hubBaseUrl: String = s"$baseUrl$hubBasePath"
-    
+
   lazy val hubAgentBaseUrl: String = s"$hubBaseUrl/agents"
-  
+
   lazy val individualHomeUrl: String = s"$hubBaseUrl/income-tax"
 
   def individualHomeUrlWithOrigin(origin: Option[String]): String =
-      origin.fold(individualHomeUrl)(o => s"$individualHomeUrl?origin=$o")
+    origin.fold(individualHomeUrl)(o => s"$individualHomeUrl?origin=$o")
 
   lazy val agentHomeUrl: String = s"$hubAgentBaseUrl/client-income-tax"
-    
+
   def homePageUrl(isAgent: Boolean, origin: Option[String] = None): String = {
     if (isAgent) agentHomeUrl else individualHomeUrlWithOrigin(origin)
   }
 
   lazy val individualYourTasksUrl: String = s"$hubBaseUrl/your-tasks"
-    
+
   lazy val agentYourTasksUrl: String = s"$hubAgentBaseUrl/your-tasks"
-    
+
   def enterClientsUTRUrl(utr: Option[String] = None): String = {
-      utr.fold(hubV2AgentRoutes.EnterClientsUTRController.show().url)(
-        utrValue => hubV2AgentRoutes.EnterClientsUTRController.showWithUtr(utrValue).url)
+    utr.fold(hubV2AgentRoutes.EnterClientsUTRController.show().url)(
+      utrValue => hubV2AgentRoutes.EnterClientsUTRController.showWithUtr(utrValue).url)
   }
 
   lazy val confirmClientUTRUrl: String = hubV2AgentRoutes.ConfirmClientUTRController.show().url
 
   //Obligation routes
-  
+
   lazy val obligationsBaseUrl: String = servicesConfig.getString("income-tax-obligations-frontend.baseUrl")
   lazy val obligationsAgentBaseUrl: String = s"$obligationsBaseUrl/agents"
 
   def obligationsNextUpdatesUrl(isAgent: Boolean): String =
     val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
-      s"$newBaseUrl/submission-deadlines"
+    s"$newBaseUrl/submission-deadlines"
 
   def obligationsReportingFrequencyUrl(isAgent: Boolean): String =
     val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
@@ -92,13 +91,13 @@ trait ExternalRedirectHelper {
       businessDetailsManageBusinessesIndividualUrl
 
   def triggeredMigrationCompleteStepsUrl(isAgent: Boolean): String = {
-      val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
-      s"$baseUri/complete-steps"
+    val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
+    s"$baseUri/complete-steps"
   }
 
   def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean): String = {
-      val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
-      s"$baseUri/check-your-active-businesses/hmrc-record"
+    val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
+    s"$baseUri/check-your-active-businesses/hmrc-record"
   }
 
   //Financials routes
@@ -165,7 +164,7 @@ trait ExternalRedirectHelper {
     else
       financialsRoutes.ChargeSummaryController.showAgent(taxYear, transactionId, isAccruingInterest).url
   }
-  
+
   lazy val financialsMoneyInAccountIndividualUrl: Boolean => String = financialsFrontendEnabled =>
     if (financialsFrontendEnabled)
       s"$financialsBaseUrl/money-in-your-account"
@@ -188,7 +187,7 @@ trait ExternalRedirectHelper {
     if (financialsFrontendEnabled)
       s"$financialsBaseUrl/payment-refund-history"
     else
-    financialsRoutes.PaymentHistoryController.show().url
+      financialsRoutes.PaymentHistoryController.show().url
 
   lazy val financialsPaymentHistoryAgentUrl: Boolean => String = financialsFrontendEnabled =>
     if (financialsFrontendEnabled)
@@ -208,41 +207,25 @@ trait ExternalRedirectHelper {
   lazy val returnsAgentBaseUrl: String = s"$returnsBaseUrl/agents"
 
 
-  lazy val returnsTaxYearsIndividualUrl: Boolean => String = returnsFrontendEnabled =>
-    if (returnsFrontendEnabled)
-      s"$returnsBaseUrl/tax-years"
-    else
-      returnsRoutes.TaxYearsController.showTaxYears().url
+  lazy val returnsTaxYearsIndividualUrl: String = s"$returnsBaseUrl/tax-years"
 
-  lazy val returnsTaxYearsAgentUrl: Boolean => String = returnsFrontendEnabled =>
-    if (returnsFrontendEnabled)
-      s"$returnsAgentBaseUrl/tax-years"
-    else
-      returnsRoutes.TaxYearsController.showAgentTaxYears().url
+  lazy val returnsTaxYearsAgentUrl: String = s"$returnsAgentBaseUrl/tax-years"
 
-  def returnsTaxYearsUrl(isAgent: Boolean, returnsFrontendEnabled: Boolean): String =
+  def returnsTaxYearsUrl(isAgent: Boolean): String =
     if (isAgent)
-      returnsTaxYearsAgentUrl(returnsFrontendEnabled)
+      returnsTaxYearsAgentUrl
     else
-      returnsTaxYearsIndividualUrl(returnsFrontendEnabled)
+      returnsTaxYearsIndividualUrl
 
-  def taxYearSummaryUrl(isAgent: Boolean, taxYear: Int, origin: Option[String] = None, fragment: Option[String] = None, returnsEnabled: Boolean = false): String =
-    def taxYearSummaryAction(taxYear: Int) =
-      if isAgent
-      then returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
-      else returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear)
-      
-    val baseUri = if returnsEnabled
-      then s"${if isAgent then returnsAgentBaseUrl else returnsBaseUrl}/tax-year-summary/$taxYear"
-      else taxYearSummaryAction(taxYear).path
-
+  def taxYearSummaryUrl(isAgent: Boolean, taxYear: Int, origin: Option[String] = None, fragment: Option[String] = None): String =
+    val baseUri = s"${if isAgent then returnsAgentBaseUrl else returnsBaseUrl}/tax-year-summary/$taxYear"
     val baseUriWithMaybeOrigin = origin.fold(baseUri)(o => s"$baseUri?origin=$o")
 
     fragment.fold(baseUriWithMaybeOrigin)(fragment => s"$baseUriWithMaybeOrigin#$fragment")
 
-  def proofOfIncomeUrl(isAgent: Boolean, returnsEnabled: Boolean): String = (isAgent, returnsEnabled) match 
-    case (false, false) => returnsRoutes.ProofOfYourIncomeController.show().path
-    case (true, false) => returnsRoutes.ProofOfYourIncomeController.showAgent().path
-    case (false, true) => returnsBaseUrl + "/mortgage-evidence/proof-of-income"
-    case (true, true) => returnsAgentBaseUrl + "/mortgage-evidence/proof-of-income"
+  def proofOfIncomeUrl(isAgent: Boolean): String =
+    if isAgent
+    then returnsAgentBaseUrl + "/mortgage-evidence/proof-of-income"
+    else returnsBaseUrl + "/mortgage-evidence/proof-of-income"
+
 }

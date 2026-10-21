@@ -22,7 +22,6 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.Annual
 import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testUtils.TestSupport
-import common.models.admin.ReturnsFrontend
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
@@ -105,7 +104,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           "testBackURL",
           isSupportingAgent = isSupportingAgent,
           taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status),
-          isReturnsEnabled = isEnabled(ReturnsFrontend),
           penaltyAndAppealEnabled = true
         )(implicitly, user)
       ))

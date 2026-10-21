@@ -53,8 +53,7 @@
         isRecentActivityEnabled: Boolean,
         creditsRefundsRepayEnabled: Boolean,
         mortgageEvidenceEnabled: Boolean,
-        financialsFrontendEnabled: Boolean, 
-        returnsFrontendEnabled: Boolean)(
+        financialsFrontendEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
@@ -126,7 +125,7 @@
     @incomeSection(isAgent = false)
     @SectionBreak
 
-@taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled, returnsFrontendEnabled = returnsFrontendEnabled)    @SectionBreak
+@taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled)    @SectionBreak
 
     @if(penaltiesAndAppealsEnabled){
         @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
@@ -148,7 +147,7 @@
     @incomeSection(isAgent = true)
     @SectionBreak
 
-@taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled, returnsFrontendEnabled = returnsFrontendEnabled)    @SectionBreak
+@taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled)    @SectionBreak
 
     @if(penaltiesAndAppealsEnabled){
         @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty) , isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
