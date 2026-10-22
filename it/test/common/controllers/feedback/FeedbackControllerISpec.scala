@@ -17,7 +17,7 @@
 package common.controllers.feedback
 
 import common.controllers.ControllerISpecHelper
-import common.controllers.feedback.routes as feedbackRoutes
+import hub.v2.controllers.feedback.routes as feedbackRoutes
 import common.enums.{MTDIndividual, MTDPrimaryAgent}
 import common.helpers.FeedbackConnectorStub
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
