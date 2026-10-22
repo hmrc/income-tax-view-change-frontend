@@ -105,7 +105,6 @@ trait ControllerISpecBase
     "microservice.services.pay-api.port" -> mockPort,
     "microservice.services.income-tax-calculation.host" -> mockHost,
     "microservice.services.income-tax-calculation.port" -> mockPort,
-    "microservice.services.address-lookup-frontend.port" -> mockPort,
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
     "encryption.isEnabled" -> "false",
     "microservice.services.contact-frontend.host" -> mockHost,

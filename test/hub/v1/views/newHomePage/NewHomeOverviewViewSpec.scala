@@ -21,7 +21,7 @@ import common.auth.actions.AuthActionsTestData.getMtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
-import common.models.admin.{BusinessDetailsFrontend, FinancialsFrontend, ObligationsFrontend, ReturnsFrontend}
+import common.models.admin.{FinancialsFrontend, ObligationsFrontend, ReturnsFrontend}
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.{TestSupport, ViewSpec}
 import financials.models.*
@@ -106,7 +106,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         isRecentActivityEnabled,
         creditsRefundsRepayEnabled,
         mortgageEvidenceEnabled,
-        businessDetailsFrontendEnabled = isEnabled(BusinessDetailsFrontend),
         obligationsFrontendEnabled = isEnabled(ObligationsFrontend),
         financialsFrontendEnabled = isEnabled(FinancialsFrontend),
         returnsFrontendEnabled = isEnabled(ReturnsFrontend),
