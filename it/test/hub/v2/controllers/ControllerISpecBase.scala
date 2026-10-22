@@ -22,7 +22,6 @@ import common.implicits.ImplicitDateFormatterImpl
 import common.services.{DateService, DateServiceInterface}
 import common.testConstants.BaseIntegrationTestConstants.testSessionId
 import hub.v2.helpers.WiremockHelper
-import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -72,9 +71,7 @@ trait ControllerISpecBase
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-
-  implicit val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
-
+  
   implicit val dateService: DateService =
     new DateService()(frontendAppConfig = testAppConfig) {
 

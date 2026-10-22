@@ -42,6 +42,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   val url = s"http://$wiremockHost:$wiremockPort"
   val basePath = MicroserviceSpecificConstants.basePath
   val baseUrl = MicroserviceSpecificConstants.baseUrl
+  val obligationsBaseUrl = MicroserviceSpecificConstants.obligationsBaseUrl
   val hubBasePath: String = MicroserviceSpecificConstants.hubBasePath
   val hubBaseUrl: String = MicroserviceSpecificConstants.hubBaseUrl
 
