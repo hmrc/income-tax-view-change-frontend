@@ -54,6 +54,4 @@ GET         /cannot-view-page                                             hub.v2
 #Uplift Success
 GET         /uplift-success                                               hub.v2.controllers.UpliftSuccessController.success()
 
-#BTA Partial
-GET         /partial                                                      hub.v2.controllers.bta.BTAPartialController.setupPartial()
 

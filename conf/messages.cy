@@ -197,13 +197,6 @@ timeout.signIn.1                                                = Er mwyn gweld 
 timeout.signIn.2                                                = fewngofnodi
 timeout.signIn.3                                                = gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) Porth y Llywodraeth.
 
-
-## BTA Partial ##
-bta_partial.heading                                             = Rhoi gwybod am eich Treth Incwm drwy feddalwedd
-bta_partial.p1                                                  = Rydych wedi cofrestru i roi gwybod am eich Treth Incwm drwy feddalwedd. Bydd hyn yn disodli’ch Ffurflen Dreth Hunanasesiad.
-bta_partial.p2                                                  = Gallwch fwrw golwg ar ddyddiadau cau eich adroddiadau, eich biliau ac amcangyfrif ar gyfer y flwyddyn dreth nesaf.
-bta_partial.home_button                                         = Bwrw golwg ar fanylion eich Treth Incwm
-
 ## Not Enrolled
 not_enrolled.heading                                            = Ni allwch gael mynediad at y gwasanaeth hwn
 not_enrolled.sign-up                                            = Mae angen i chi
