@@ -57,7 +57,6 @@ POST        /manage-self-assessment/test-only/feature-switch                    
 
 GET        /manage-self-assessment/test-only/enable-all-feature-switches          testOnly.controllers.FeatureSwitchController.enableAll()
 
-GET         /manage-self-assessment/test-only/bta-partial                          testOnly.controllers.TestBTAPartialController.viewBTAPartial()
 
 GET        /manage-self-assessment/test-only/calc-id-to-session/:calculationId    testOnly.controllers.SessionAlterationController.addCalcId(calculationId: String)
 
