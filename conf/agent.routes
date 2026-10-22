@@ -1,5 +1,5 @@
 # agent specific routes
-GET         /*path                                                        hub.v1.controllers.NewServiceRedirectController.showAgent(path: String)
+GET         /*path                                                        hub.v1.controllers.agent.NewServiceAgentRedirectController.showAgent(path: String)
 
 # Enter Clients UTR
 GET         /client-utr                                                    hub.v1.controllers.agent.EnterClientsUTRController.show()
