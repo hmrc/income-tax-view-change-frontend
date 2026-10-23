@@ -25,7 +25,6 @@ import common.implicits.ImplicitDateFormatterImpl
 import common.models.admin.FeatureSwitch
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
-import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -85,11 +84,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
   with SessionCookieBaker {
-  
+
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
   val basePath: String = WiremockHelper.basePath
+  val obligationsBaseUrl: String = WiremockHelper.obligationsBaseUrl
   val hubBasePath: String = WiremockHelper.hubBasePath
   val hubBaseUrl: String = WiremockHelper.hubBaseUrl
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
@@ -102,7 +102,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
-  implicit val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
   implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
@@ -194,8 +193,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "time-machine.add-years" -> "0",
     "time-machine.add-days" -> "0"
   )
-
-  val btaPartialUrl = "/business-account/partial/service-info"
 
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.of(2023, 4, 4)

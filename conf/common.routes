@@ -44,5 +44,3 @@ GET         /cannot-view-page                                             common
 #Uplift Success
 GET         /uplift-success                                               common.controllers.UpliftSuccessController.success()
 
-#BTA Partial
-GET         /partial                                                      common.controllers.bta.BTAPartialController.setupPartial()

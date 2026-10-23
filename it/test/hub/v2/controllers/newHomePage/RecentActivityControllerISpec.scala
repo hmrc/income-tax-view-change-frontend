@@ -25,11 +25,10 @@ import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
-import common.testConstants.BaseIntegrationTestConstants.{address, b2TradingStart, testIncomeSource, testMtditid, testNino}
+import common.testConstants.BaseIntegrationTestConstants.*
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import hub.helpers.NextUpdatesStub
-import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import java.time.LocalDate
 import common.helpers.GetInsourceDetailsStub
 

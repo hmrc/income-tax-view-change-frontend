@@ -21,12 +21,12 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
-import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.*
 import financials.models.creditsandrefunds.CreditsModel
 import hub.models.newHomePage.*
 import hub.models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import hub.models.newHomePage.YourTasksCard.*
+import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}

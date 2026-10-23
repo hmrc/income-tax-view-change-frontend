@@ -67,12 +67,12 @@ trait ExternalRedirectHelper {
   lazy val obligationsAgentBaseUrl: String = s"$obligationsBaseUrl/agents"
 
   def obligationsNextUpdatesUrl(isAgent: Boolean): String =
-    val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
-    s"$newBaseUrl/submission-deadlines"
+    val baseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
+    s"$baseUrl/submission-deadlines"
 
   def obligationsReportingFrequencyUrl(isAgent: Boolean): String =
-    val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
-    s"$newBaseUrl/reporting-frequency"
+    val baseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
+    s"$baseUrl/reporting-frequency"
 
   //Business Details routes
   lazy val businessDetailsBaseUrl: String = servicesConfig.getString("income-tax-business-details-frontend.baseUrl")

@@ -28,7 +28,6 @@ import hub.helpers.NextUpdatesStub
 import hub.helpers.serviceMocks.PenaltyDetailsStub
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import hub.testConstants.messages.HomeMessages.*
-import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest

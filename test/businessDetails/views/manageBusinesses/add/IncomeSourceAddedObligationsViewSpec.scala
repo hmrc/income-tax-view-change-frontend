@@ -31,7 +31,6 @@ import businessDetails.views.constants.IncomeSourceAddedObligationsConstants.*
 import common.testUtils.ViewSpec
 import common.config.featureswitch.FeatureSwitching
 
-
 import java.time.LocalDate
 
 class IncomeSourceAddedObligationsViewSpec extends ViewSpec with FeatureSwitching {

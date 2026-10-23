@@ -15,8 +15,6 @@
  *@
 
 @import hub.views.html.partials.newHome.overview.OverviewCard
-@import obligations.controllers.routes.NextUpdatesController
-@import obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController
 @import common.config.FrontendAppConfig
 
 @this(overviewCard: OverviewCard)
@@ -26,8 +24,6 @@
 @viewUpdatesUrl: String = @{appConfig.obligationsNextUpdatesUrl(isAgent)}
 
 @reportingFreqUrl: String = @{appConfig.obligationsReportingFrequencyUrl(isAgent)}
-
-
 
 <div id="deadlines-overview-section">
     <h2 class="govuk-heading-m">@messages("new.home.overview.deadlines.sub-heading")</h2>
