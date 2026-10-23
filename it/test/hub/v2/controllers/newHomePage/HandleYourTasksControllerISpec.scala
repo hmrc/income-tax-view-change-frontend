@@ -24,7 +24,7 @@ import common.helpers.{GetInsourceDetailsStub, WiremockHelper}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub}
-import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, FinancialsFrontend, ObligationsFrontend, PenaltiesAndAppeals, ReturnsFrontend, TriggeredMigration}
+import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, PenaltiesAndAppeals, TriggeredMigration}
 import common.helpers.servicemocks.YearOfMigrationStub
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -146,7 +146,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val overallOverdueChargeTag = "Due 29 Mar 2017"
   }
 
-  val featureSwitchList = List(CreditsRefundsRepay, ObligationsFrontend, ReturnsFrontend, FinancialsFrontend)
+  val featureSwitchList = List(CreditsRefundsRepay)
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val path = getPath(mtdUserRole)
@@ -714,7 +714,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
-          val trigMigUrl: String = if(mtdUserRole.isAgent) "/report-quarterly/income-and-expenses/view/agents/complete-steps" else "/report-quarterly/income-and-expenses/view/complete-steps"
+          val trigMigUrl: String = if(mtdUserRole.isAgent) "http://localhost:9088/manage-self-assessment/businesses/agents/complete-steps" else "http://localhost:9088/manage-self-assessment/businesses/complete-steps"
 
           val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
 

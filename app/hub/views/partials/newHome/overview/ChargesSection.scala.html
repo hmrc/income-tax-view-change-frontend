@@ -19,23 +19,23 @@
 @import financials.models.WYOClaimToAdjustViewModel
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean, noChargesToPay: Boolean, moneyInYourAccount: Boolean, ctaViewModel: WYOClaimToAdjustViewModel, creditsRefundsRepayEnabled: Boolean, financialsFrontendEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
+@(isAgent: Boolean, noChargesToPay: Boolean, moneyInYourAccount: Boolean, ctaViewModel: WYOClaimToAdjustViewModel, creditsRefundsRepayEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 
 @whatYouOweUrl: String = @{
-    appConfig.financialsWhatYouOweUrl(isAgent, financialsFrontendEnabled = financialsFrontendEnabled)
+    appConfig.financialsWhatYouOweUrl(isAgent)
 }
 
 @paymentHistoryUrl: String = @{
-    appConfig.financialsPaymentHistoryUrl(isAgent, financialsFrontendEnabled = financialsFrontendEnabled)
+    appConfig.financialsPaymentHistoryUrl(isAgent)
 }
 
 @moneyInAccountUrl: String = @{
-    appConfig.financialsMoneyInAccountUrl(isAgent, financialsFrontendEnabled = financialsFrontendEnabled)
+    appConfig.financialsMoneyInAccountUrl(isAgent)
 }
 
 @amendablePoaUrl: String = @{
-    appConfig.financialsAmendablePoaUrl(isAgent, financialsFrontendEnabled = financialsFrontendEnabled)
+    appConfig.financialsAmendablePoaUrl(isAgent)
 }
 
 

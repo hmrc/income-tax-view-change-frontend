@@ -143,7 +143,7 @@ class TaxYearSummaryControllerSpec
 
               "downstream returns only a latest calculation" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
@@ -171,7 +171,7 @@ class TaxYearSummaryControllerSpec
 
               "downstream returns both the latest and previous calculations" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccessWithAmendment(testMtditid, taxYear = testTaxYear, previousCalc = Some(liabilityCalculationModelSuccessful))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
@@ -197,7 +197,7 @@ class TaxYearSummaryControllerSpec
 
               "downstream returns both the latest calculation but the previous calculation doesn't exist" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccessWithAmendment(testMtditid, taxYear = testTaxYear, previousCalc = Some(LiabilityCalculationError(404, "not found")))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
@@ -226,7 +226,7 @@ class TaxYearSummaryControllerSpec
 
               "crystallised is false and the show forecast data is true" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousNotCrystallised(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
@@ -248,7 +248,7 @@ class TaxYearSummaryControllerSpec
                   showForecastData = false,
                   ctaViewModel = emptyCTAViewModel,
                   LPP2Url = "",
-                  pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false
+                  pfaEnabled = false, hideUnknownBusinessName = false
                 )
 
                 val expectedContent: String =
@@ -279,7 +279,7 @@ class TaxYearSummaryControllerSpec
 
               "crystallisation is true and show forecast data is false" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
@@ -304,7 +304,7 @@ class TaxYearSummaryControllerSpec
                     testChargesList,
                     testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false
+                    pfaEnabled = false, hideUnknownBusinessName = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -328,7 +328,7 @@ class TaxYearSummaryControllerSpec
 
               "no calc data is returned" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousNotFound(testMtditid, taxYear = testTaxYear)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -354,7 +354,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false
+                    pfaEnabled = false, hideUnknownBusinessName = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -378,7 +378,7 @@ class TaxYearSummaryControllerSpec
 
               "POAs are for the tax year on the page" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
@@ -424,7 +424,7 @@ class TaxYearSummaryControllerSpec
             }
             "doesn't have a the poa section" when {
               "POAs are for the tax year of a different year" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
@@ -447,7 +447,7 @@ class TaxYearSummaryControllerSpec
                 contentAsString(result).contains("Adjust payments on account") shouldBe true
               }
               "There are no valid POAs" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
@@ -472,7 +472,7 @@ class TaxYearSummaryControllerSpec
 
             "Review and Reconcile debit charges in the charges table" when {
               "the user has Review and Reconcile debit charges" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
@@ -493,9 +493,9 @@ class TaxYearSummaryControllerSpec
                 val result = action(fakeRequest)
 
                 def chargeSummaryUrl(id: String) = if (isAgent) {
-                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, false, true)
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, false)
                 } else {
-                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, false, None, true)
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, false, None)
                 }
 
                 status(result) shouldBe OK
@@ -505,7 +505,7 @@ class TaxYearSummaryControllerSpec
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe chargeSummaryUrl("RARDEBIT02")
               }
               "the user has Review and Reconcile debit charges with accruing interest" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAccruingInterestReviewAndReconcileDebits)
@@ -526,9 +526,9 @@ class TaxYearSummaryControllerSpec
                 val result = action(fakeRequest)
 
                 def chargeSummaryUrl(id: String, isInterestCharge: Boolean = false) = if (isAgent) {
-                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, isInterestCharge, true)
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, isInterestCharge)
                 } else {
-                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, isInterestCharge, None, true)
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, isInterestCharge, None)
                 }
 
                 status(result) shouldBe OK
@@ -543,7 +543,7 @@ class TaxYearSummaryControllerSpec
             "Penalties in the charges table" when {
 
               "the user has penalties and the penalties FS is enabled" in {
-                setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals, FinancialsFrontend))
+                setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
@@ -564,9 +564,9 @@ class TaxYearSummaryControllerSpec
                 val result = action(fakeRequest)
 
                 def chargeSummaryUrl(id: String) = if (isAgent) {
-                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, false, true)
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, false)
                 } else {
-                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, false, None, true)
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, false, None)
                 }
 
                 status(result) shouldBe OK
@@ -585,7 +585,7 @@ class TaxYearSummaryControllerSpec
             "Not show penalties in the charges table" when {
 
               "the penalties FS is disabled" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
@@ -609,7 +609,7 @@ class TaxYearSummaryControllerSpec
 
             "has a back link to the home page" in {
 
-              setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+              setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockLatestAndPreviousSuccess(testMtditid)
               mockFinancialDetailsSuccess()
@@ -639,7 +639,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel,
                     LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
+                    pfaEnabled = false, hideUnknownBusinessName = false),
                   backUrl = homeBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent,
@@ -664,7 +664,7 @@ class TaxYearSummaryControllerSpec
 
             "include Class 2 Nics in the charges list" when {
               "Class 2 Nics is present" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(
@@ -696,7 +696,7 @@ class TaxYearSummaryControllerSpec
                     charges = class2NicsChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
+                    pfaEnabled = false, hideUnknownBusinessName = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -721,7 +721,7 @@ class TaxYearSummaryControllerSpec
 
               "Paye is present" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(
@@ -753,7 +753,7 @@ class TaxYearSummaryControllerSpec
                     charges = payeChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
+                    pfaEnabled = false, hideUnknownBusinessName = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -775,7 +775,7 @@ class TaxYearSummaryControllerSpec
 
               "the user has MFA debit charge" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = MFADebitsFinancialDetails)
 
@@ -808,7 +808,7 @@ class TaxYearSummaryControllerSpec
                     charges = charges,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false
+                    pfaEnabled = false, hideUnknownBusinessName = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -830,7 +830,7 @@ class TaxYearSummaryControllerSpec
 
             "no charges" when {
               "the financial charges returns not found" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsNotFound()
@@ -857,7 +857,7 @@ class TaxYearSummaryControllerSpec
                       testEmptyChargesList,
                       testObligationsModel,
                       ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                      pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
+                      pfaEnabled = false, hideUnknownBusinessName = false),
                     backUrl = taxYearsBackLink(isAgent),
                     isAgent = isAgent,
                     ctaLink = ctaLink(isAgent),
@@ -885,7 +885,7 @@ class TaxYearSummaryControllerSpec
 
               "calculation service returned not found" in {
 
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousNotFound(testMtditid)
                 mockFinancialDetailsSuccess()
@@ -908,7 +908,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
+                    pfaEnabled = false, hideUnknownBusinessName = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -929,7 +929,7 @@ class TaxYearSummaryControllerSpec
 
             "show the Tax Year Summary Page with error messages" when {
               "liability Calculation has error messages" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
                 mockLatestAndPreviousWithErrorMessages(testMtditid)
@@ -957,7 +957,7 @@ class TaxYearSummaryControllerSpec
                     charges = testChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, financialsFrontendEnabled = true, hideUnknownBusinessName = false),
+                    pfaEnabled = false, hideUnknownBusinessName = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -982,7 +982,7 @@ class TaxYearSummaryControllerSpec
           "render the error page" when {
             "getPoaTaxYearForEntryPoint returns an error" in {
 
-              setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+              setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("TEST")))
               mockFinancialDetailsSuccess()
@@ -998,7 +998,7 @@ class TaxYearSummaryControllerSpec
             }
             "getFinancialDetails returns an error" in {
 
-              setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+              setupMockSuccess(mtdUserRole)
               mockFinancialDetailsFailed()
 
               when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
@@ -1011,7 +1011,7 @@ class TaxYearSummaryControllerSpec
 
             "getNextUpdates returns an error" in {
 
-              setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+              setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockFinancialDetailsNotFound()
 
@@ -1033,7 +1033,7 @@ class TaxYearSummaryControllerSpec
 
             if (mtdUserRole == MTDIndividual) {
               "provided with a negative tax year" in {
-                setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+                setupMockSuccess(mtdUserRole)
                 mockPropertyIncomeSource()
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -1052,7 +1052,7 @@ class TaxYearSummaryControllerSpec
             }
             "the calculation returned from the calculation service was an error" in {
 
-              setupMockSuccess(mtdUserRole, enabledFeatures = List(FinancialsFrontend))
+              setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockFinancialDetailsSuccess()
 
@@ -1072,7 +1072,7 @@ class TaxYearSummaryControllerSpec
             }
 
             "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
-              setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals, FinancialsFrontend))
+              setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
               mockLatestAndPreviousSuccess(testMtditid)
               mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithLPP2NoChargeRef)

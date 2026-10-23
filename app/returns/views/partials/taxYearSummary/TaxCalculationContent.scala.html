@@ -35,8 +35,7 @@
         showNoTaxCalc: Boolean,
         viewTaxCalcLink: Option[String],
         selfAssessmentLink: String,
-        contactHmrcLink: String,
-        financialsFrontendEnabled: Boolean
+        contactHmrcLink: String
 )(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @taxCalculationOverview(
@@ -51,7 +50,6 @@
     showNoTaxCalc = showNoTaxCalc,
     viewTaxCalcLink = viewTaxCalcLink,
     selfAssessmentLink = selfAssessmentLink,
-    contactHmrcLink = contactHmrcLink,
-    financialsFrontendEnabled = financialsFrontendEnabled
+    contactHmrcLink = contactHmrcLink
 )
 

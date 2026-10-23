@@ -22,7 +22,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.connectors.IncomeTaxCalculationConnector
 import common.controllers.BaseController
 import common.enums.TaxYearSummary.CalculationRecord.LATEST
-import common.models.admin.{BusinessDetailsFrontend, TriggeredMigration}
+import common.models.admin.TriggeredMigration
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, YearOfMigrationService}
 import play.api.Logging
@@ -74,7 +74,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                           Future.successful(Right(req))
                         } else {
                           Future.successful(
-                            Left(Redirect(appConfig.triggeredMigrationCompleteStepsUrl(req.isAgent, isEnabled(BusinessDetailsFrontend))))
+                            Left(Redirect(appConfig.triggeredMigrationCompleteStepsUrl(req.isAgent)))
                           )
                         }
                       case Left(errorResult) =>

@@ -36,7 +36,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.models.admin.{DisplayBusinessStartDate, HideBusinessName, ObligationsFrontend}
+import common.models.admin.{DisplayBusinessStartDate, HideBusinessName}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, PropertyDetailsModel, QuarterReportingType, QuarterTypeElection, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateService, ITSAStatusService}
@@ -169,8 +169,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         viewModel = viewModel,
         isAgent = isAgent,
         showStartDate = isEnabled(DisplayBusinessStartDate),
-        backUrl = backUrl,
-        newObligationsEnabled = isEnabled(ObligationsFrontend)
+        backUrl = backUrl
       ))
     }
 
@@ -199,8 +198,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             viewModel = viewModel,
             isAgent = isAgent,
             showStartDate = isEnabled(DisplayBusinessStartDate),
-            backUrl = backUrl,
-            newObligationsEnabled = isEnabled(ObligationsFrontend)
+            backUrl = backUrl
           ))
         }.recover {
           case ex =>

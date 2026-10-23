@@ -28,22 +28,21 @@ trait FallBackBackLinks {
   def getPaymentAllocationBackUrl(isAgent: Boolean,
                                   gatewayPageOpt: Option[GatewayPage],
                                   taxYearOpt: Option[Int],
-                                  origin: Option[String],
-                                  isReturnsFrontendEnabled: Boolean = false)(implicit user: MtdItUser[_]): String =
+                                  origin: Option[String])(implicit user: MtdItUser[_]): String =
     (gatewayPageOpt, taxYearOpt) match
       case (Some(TaxYearSummaryPage), Some(taxYear)) =>
-        appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"), isReturnsFrontendEnabled)
+        appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"))
       case (Some(TaxYearSummaryPage), None) => appConfig.homePageUrl(isAgent, origin)
       case (Some(WhatYouOwePage), _) => whatYouOweUrl(isAgent, origin)
       case (Some(PaymentHistoryPage), _) => paymentHistoryUrl(isAgent, origin)
       case _ => appConfig.homePageUrl(isAgent, origin)
 
   def getChargeSummaryBackUrl(isAgent: Boolean, gatewayPageOpt: Option[GatewayPage],
-                              taxYear: Int, origin: Option[String], isReturnsFrontendEnabled: Boolean = false)
+                              taxYear: Int, origin: Option[String])
                              (implicit user: MtdItUser[_]): String =
     gatewayPageOpt match
       case Some(TaxYearSummaryPage) =>
-        appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"), isReturnsFrontendEnabled)
+        appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"))
       case Some(WhatYouOwePage) => whatYouOweUrl(isAgent, origin)
       case Some(PaymentHistoryPage) => paymentHistoryUrl(isAgent, origin)
       case _ => appConfig.homePageUrl(isAgent, origin)

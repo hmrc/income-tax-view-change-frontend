@@ -25,7 +25,6 @@ import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.views.html.manageBusinesses.manage.ManageObligationsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.models.admin.ObligationsFrontend
 import common.services.DateService
 import common.models.incomeSourceDetails.TaxYear.getTaxYearModel
 import businessDetails.services.NextUpdatesService
@@ -116,8 +115,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                   changeTo = changeTo,
                   isAgent = isAgent,
                   postAction = successPostUrl(isAgent),
-                  isCurrentTaxYear = dateService.getCurrentTaxYearStart.getYear == years.startYear,
-                  newObligationsEnabled = isEnabled(ObligationsFrontend)
+                  isCurrentTaxYear = dateService.getCurrentTaxYearStart.getYear == years.startYear
                 ))
               }
           case None =>

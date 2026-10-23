@@ -43,8 +43,7 @@
     caption: Option[String] = None,
     origin: Option[String] = None,
     isLatest: Boolean = false,
-    isPrevious: Boolean = false,
-    financialsFrontendEnabled: Boolean
+    isPrevious: Boolean = false
 )(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @import implicitDateFormatter._
@@ -68,11 +67,11 @@
 }
 
 @paymentsLink = @{
-    appConfig.financialsPaymentHistoryUrl(isAgent, financialsFrontendEnabled)
+    appConfig.financialsPaymentHistoryUrl(isAgent)
 }
 
 @whatYouOweLink = @{
-    appConfig.financialsWhatYouOweUrl(isAgent, None, financialsFrontendEnabled)
+    appConfig.financialsWhatYouOweUrl(isAgent, None)
 }
 
 @overviewDescription = @{
