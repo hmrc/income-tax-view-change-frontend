@@ -21,7 +21,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.GatewayPage.GatewayPage
 import common.implicits.ImplicitDateFormatterImpl
-import common.models.admin.{CreditsRefundsRepay, ReturnsFrontend}
+import common.models.admin.CreditsRefundsRepay
 import common.models.core.Nino
 import common.services.AuditingService
 import financials.controllers.agent.errors.routes as agentErrorRoutes
@@ -81,7 +81,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
       case Right(paymentAllocations: PaymentAllocationViewModel) =>
         val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.flatMap(_.getTaxYearOpt))
-        val backUrl = getPaymentAllocationBackUrl(isAgent, sessionGatewayPage, taxYearOpt, origin, isEnabled(ReturnsFrontend))
+        val backUrl = getPaymentAllocationBackUrl(isAgent, sessionGatewayPage, taxYearOpt, origin)
         auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
         Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
           serviceNavigationPartial = user.serviceNavigationPartial,

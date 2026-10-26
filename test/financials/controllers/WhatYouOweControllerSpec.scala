@@ -134,7 +134,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
                    LPP2Url: String = "",
                    hasOverdueOrAccruingInterestCharges: Boolean = false,
                    poaTaxYear: Option[TaxYear] = None,
-                   returnsFrontendEnabled: Boolean = false,
                    moneyInYourAccountUrlOpt: Option[String] = None,
                   ): WhatYouOweViewModel = WhatYouOweViewModel(
     currentDate = mockDateServiceInjected.getCurrentDate,
@@ -150,7 +149,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
     },
     creditAndRefundEnabled = true,
     taxYearSummaryUrl = taxYearEnd => 
-      appConfig.taxYearSummaryUrl(isAgent, taxYearEnd, returnsEnabled = returnsFrontendEnabled),
+      appConfig.taxYearSummaryUrl(isAgent, taxYearEnd),
     claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(ctaViewModel(adjustPaymentsOnAccountFSEnabled, poaTaxYear)),
     lpp2Url = LPP2Url,
     adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url,
@@ -177,8 +176,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
     when(mockDateServiceInjected.getCurrentTaxYearStart).thenReturn(LocalDate.of(fixedDate.getYear, 4, 6))
     when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(TaxYear(fixedDate.getYear, fixedDate.getYear + 1))
   }
-  
-  //ToDo Update these tests to have returnsFrontendEnabled = true when the FS is built
+
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgent() else testController.show()

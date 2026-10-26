@@ -52,10 +52,7 @@
         penaltiesAndAppealsEnabled: Boolean,
         isRecentActivityEnabled: Boolean,
         creditsRefundsRepayEnabled: Boolean,
-        mortgageEvidenceEnabled: Boolean,
-        obligationsFrontendEnabled: Boolean,
-        financialsFrontendEnabled: Boolean, 
-        returnsFrontendEnabled: Boolean)(
+        mortgageEvidenceEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
@@ -96,7 +93,6 @@
         captionId = Some("sub-heading")
     )
 
-
     @user.saUtr.map { utr =>
         <div id="utr-reference-heading" class="form-hint heading-xl-addon">
             @messages("home.unique.taxpayer.reference", utr)
@@ -116,18 +112,17 @@
 }
 
 
-
 @IndividualSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled, financialsFrontendEnabled)
-    @SectionBreak
+@chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled)
+@SectionBreak
 
-    @deadlinesSection(isAgent = false, obligationsFrontendEnabled)
-    @SectionBreak
+@deadlinesSection(isAgent = false)
+@SectionBreak
 
-    @incomeSection(isAgent = false)
-    @SectionBreak
+@incomeSection(isAgent = false)
+@SectionBreak
 
-@taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled, returnsFrontendEnabled = returnsFrontendEnabled)    @SectionBreak
+@taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled) @SectionBreak
 
     @if(penaltiesAndAppealsEnabled){
         @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
@@ -140,16 +135,16 @@
 }
 
 @AgentSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled, financialsFrontendEnabled)
-    @SectionBreak
+@chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled)
+@SectionBreak
 
-    @deadlinesSection(isAgent = true, obligationsFrontendEnabled)
-    @SectionBreak
+@deadlinesSection(isAgent = true)
+@SectionBreak
 
-    @incomeSection(isAgent = true)
-    @SectionBreak
+@incomeSection(isAgent = true)
+@SectionBreak
 
-@taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled, returnsFrontendEnabled = returnsFrontendEnabled)    @SectionBreak
+@taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled) @SectionBreak
 
     @if(penaltiesAndAppealsEnabled){
         @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty) , isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
@@ -159,10 +154,10 @@
 
 @SupportingAgentSections() = {
 
-    @deadlinesSection(isAgent = true, obligationsFrontendEnabled)
-    @SectionBreak
+@deadlinesSection(isAgent = true)
+@SectionBreak
 
-    @incomeSection(isAgent = true)
+@incomeSection(isAgent = true)
 }
 
 

@@ -21,8 +21,6 @@ import common.testUtils.TestSupport
 
 class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
-  val returnsFrontendEnabled: Boolean = true
-
   private val testTaxYear = 2018
 
   "FallBackBacklinks trait" when {

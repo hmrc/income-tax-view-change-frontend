@@ -84,8 +84,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink,
-            financialsFrontendEnabled = true
+            contactHmrcLink = contactHmrcLink
           )
 
         val doc = Jsoup.parse(partial.body)
@@ -120,8 +119,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink,
-            financialsFrontendEnabled = true
+            contactHmrcLink = contactHmrcLink
           )
 
         val doc = Jsoup.parse(partial.body)
@@ -156,8 +154,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink,
-            financialsFrontendEnabled = true
+            contactHmrcLink = contactHmrcLink
           )
 
         val doc = Jsoup.parse(partial.body)
@@ -193,8 +190,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink,
-            financialsFrontendEnabled = true
+            contactHmrcLink = contactHmrcLink
           )
 
         val doc = Jsoup.parse(partial.body)
@@ -229,8 +225,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
-            contactHmrcLink = contactHmrcLink,
-            financialsFrontendEnabled = true
+            contactHmrcLink = contactHmrcLink
           )
 
         val doc = Jsoup.parse(partial.body)

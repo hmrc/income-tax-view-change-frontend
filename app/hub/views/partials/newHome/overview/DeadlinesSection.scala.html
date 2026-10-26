@@ -19,7 +19,7 @@
 
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean, obligationsEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
+@(isAgent: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @viewUpdatesUrl: String = @{appConfig.obligationsNextUpdatesUrl(isAgent)}
 

@@ -99,8 +99,7 @@ class HomeController @Inject()(val newHomeRecentActivityView: NewHomeRecentActiv
         Ok(newHomeOverviewView(origin, user.isSupportingAgent, dateService.getCurrentTaxYear,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
-          isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence),
-          isEnabled(ObligationsFrontend), isEnabled(FinancialsFrontend), isEnabled(ReturnsFrontend)))
+          isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence)))
       }
     }
   }
