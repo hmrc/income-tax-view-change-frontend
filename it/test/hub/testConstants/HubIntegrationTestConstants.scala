@@ -17,6 +17,7 @@
 package hub.testConstants
 
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import common.testConstants.BaseIntegrationTestConstants.{business1, testMtditid, testNino, getCurrentTaxYearEnd}
 
 import java.time.LocalDate
@@ -36,6 +37,14 @@ object HubIntegrationTestConstants {
   val endYear = getCurrentTaxYearEnd.getYear - 4
 
   val b2CessationDate = LocalDate.of(endYear, 12, 31)
+
+  val liabilityCalculationModelSuccessfulNotCrystallised: LiabilityCalculationResponse = LiabilityCalculationResponse(
+    inputs = Inputs(PersonalInformation(taxRegime = "UK")),
+    metadata = Metadata(calculationTimestamp = Some("2019-02-15T09:35:15.094Z"), calculationType = "inYear"),
+    messages = None,
+    calculation = None,
+    submissionChannel = None
+  )
 
 
 }
