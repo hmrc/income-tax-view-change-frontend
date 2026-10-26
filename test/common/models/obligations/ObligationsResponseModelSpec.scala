@@ -20,8 +20,8 @@ import common.implicits.ImplicitDateFormatter
 import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import common.testConstants.BaseTestConstants
 import common.testConstants.BaseTestConstants.*
+import common.testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType
 import common.testUtils.TestSupport
-import obligations.testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import shared.testConstants.NextUpdatesTestConstants
