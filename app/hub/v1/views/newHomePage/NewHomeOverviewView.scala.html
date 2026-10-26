@@ -53,7 +53,6 @@
         isRecentActivityEnabled: Boolean,
         creditsRefundsRepayEnabled: Boolean,
         mortgageEvidenceEnabled: Boolean,
-        businessDetailsFrontendEnabled: Boolean,
         obligationsFrontendEnabled: Boolean,
         financialsFrontendEnabled: Boolean, 
         returnsFrontendEnabled: Boolean)(
@@ -125,7 +124,7 @@
     @deadlinesSection(isAgent = false, obligationsFrontendEnabled)
     @SectionBreak
 
-    @incomeSection(isAgent = false, businessDetailsFrontendEnabled = businessDetailsFrontendEnabled)
+    @incomeSection(isAgent = false)
     @SectionBreak
 
 @taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled, returnsFrontendEnabled = returnsFrontendEnabled)    @SectionBreak
@@ -147,7 +146,7 @@
     @deadlinesSection(isAgent = true, obligationsFrontendEnabled)
     @SectionBreak
 
-    @incomeSection(isAgent = true, businessDetailsFrontendEnabled = businessDetailsFrontendEnabled)
+    @incomeSection(isAgent = true)
     @SectionBreak
 
 @taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled, returnsFrontendEnabled = returnsFrontendEnabled)    @SectionBreak
@@ -163,7 +162,7 @@
     @deadlinesSection(isAgent = true, obligationsFrontendEnabled)
     @SectionBreak
 
-    @incomeSection(isAgent = true, businessDetailsFrontendEnabled = businessDetailsFrontendEnabled)
+    @incomeSection(isAgent = true)
 }
 
 

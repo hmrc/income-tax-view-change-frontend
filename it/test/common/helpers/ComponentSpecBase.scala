@@ -172,7 +172,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.stub.port" -> mockPort,
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
-    "microservice.services.address-lookup-frontend.port" -> mockPort,
     "auditing.enabled" -> "true",
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
     "encryption.isEnabled" -> "false",

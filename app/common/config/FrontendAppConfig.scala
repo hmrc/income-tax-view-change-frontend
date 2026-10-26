@@ -57,9 +57,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Income tax financial details service
   lazy val incomeTaxFinancialDetailsService: String = servicesConfig.baseUrl("income-tax-financial-details")
 
-  //Address lookup service
-  lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
-  lazy val addressLookupExternalHost: String = servicesConfig.getString("address-lookup.external-host")
   lazy val accessibilityHost: String = servicesConfig.getString("accessibility-statement.host")
   lazy val accessibilityUrl: String = accessibilityHost + "/accessibility-statement" + servicesConfig.getString("accessibility-statement.service-path")
   //View L&P
@@ -258,12 +255,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
     messages.lang.code match {
       case "cy" => "https://www.gov.uk/anawsterau-talu-cthem"
       case _ => "https://www.gov.uk/difficulties-paying-hmrc"
-    }
-
-  def findOutHowLink(implicit messages: Messages): String =
-    messages.lang.code match {
-      case "cy" => "https://www.gov.uk/government/collections/troi-treth-yn-ddigidol-ar-gyfer-treth-incwm.cy"
-      case _ => "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
     }
 
   lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
