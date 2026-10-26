@@ -56,7 +56,7 @@
 )(implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @pageHeading = @{
-    if(user.isAgent) {
+    if (user.isAgent) {
         user.optClientNameAsString.fold(messages("home.agent.heading")) {
             clientName => messages("home.agent.headingWithClientName", clientName)
         }
@@ -64,9 +64,9 @@
 }
 
 @caption = @{
-    if(user.usersRole == MTDSupportingAgent) {
+    if (user.usersRole == MTDSupportingAgent) {
         messages("home.agent.supporting.caption")
-    } else if(user.isAgent) {
+    } else if (user.isAgent) {
         messages("home.agent.primary.caption")
     } else {
         user.userName.fold("")(_.name.getOrElse(""))
@@ -79,7 +79,7 @@
 }
 
 @mainTemplate(
-    pageTitle = if(user.isAgent) messages("home.agent.heading") else messages("home.heading.new"),
+    pageTitle = if (user.isAgent) messages("home.agent.heading") else messages("home.heading.new"),
     backUrl = None,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
@@ -87,11 +87,7 @@
     @h1WithCaption(
         heading = pageHeading,
         captionMsg = caption,
-        extraClasses = if(user.saUtr.isDefined) {
-            "margin-bottom-zero"
-        } else {
-            ""
-        },
+        extraClasses = if(user.saUtr.isDefined) { "margin-bottom-zero" } else {""},
         headingId = Some("income-tax-heading"),
         captionId = Some("sub-heading")
     )
@@ -107,13 +103,11 @@
 
     <div class="govuk-!-padding-bottom-6"></div>
 
-    @{
-        (user.isAgent, isSupportingAgent) match {
-            case (true, false) => AgentSections(noChargesToPay)
-            case (_, true) => SupportingAgentSections()
-            case _ => IndividualSections(noChargesToPay)
-        }
-    }
+    @{(user.isAgent, isSupportingAgent) match {
+        case (true, false) => AgentSections(noChargesToPay)
+        case (_, true) => SupportingAgentSections()
+        case _ => IndividualSections(noChargesToPay)
+    }}
 }
 
 
@@ -129,9 +123,9 @@
 
 @taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled) @SectionBreak
 
-@if(penaltiesAndAppealsEnabled) {
-    @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
-}
+    @if(penaltiesAndAppealsEnabled){
+        @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    }
 }
 
 
@@ -151,9 +145,9 @@
 
 @taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled) @SectionBreak
 
-@if(penaltiesAndAppealsEnabled) {
-    @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
-}
+    @if(penaltiesAndAppealsEnabled){
+        @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty) , isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    }
 }
 
 

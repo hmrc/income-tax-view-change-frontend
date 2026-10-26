@@ -16,6 +16,8 @@
 
 package common.config
 
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.controllers.routes as financialsRoutes
 import hub.v2.controllers.agent.routes as hubV2AgentRoutes
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -78,25 +80,17 @@ trait ExternalRedirectHelper {
   lazy val businessDetailsBaseUrl: String = servicesConfig.getString("income-tax-business-details-frontend.baseUrl")
   lazy val businessDetailsAgentBaseUrl: String = s"$businessDetailsBaseUrl/agents"
 
-  lazy val businessDetailsManageBusinessesIndividualUrl: String = s"$businessDetailsBaseUrl/manage-your-businesses"
-
-  lazy val businessDetailsManageBusinessesAgentUrl: String = s"$businessDetailsAgentBaseUrl/manage-your-businesses"
-
   def manageBusinessesUrl(isAgent: Boolean): String =
-    if (isAgent)
-      businessDetailsManageBusinessesAgentUrl
-    else
-      businessDetailsManageBusinessesIndividualUrl
+    val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
+    s"$baseUri/manage-your-businesses"
 
-  def triggeredMigrationCompleteStepsUrl(isAgent: Boolean): String = {
+  def triggeredMigrationCompleteStepsUrl(isAgent: Boolean): String =
     val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
     s"$baseUri/complete-steps"
-  }
 
-  def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean): String = {
+  def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean): String =
     val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
     s"$baseUri/check-your-active-businesses/hmrc-record"
-  }
 
   //Financials routes
 

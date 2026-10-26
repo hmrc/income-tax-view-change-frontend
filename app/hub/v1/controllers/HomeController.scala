@@ -16,7 +16,6 @@
 
 package hub.v1.controllers
 
-import hub.v1.auth.AuthActions
 import common.auth.MtdItUser
 import common.config.*
 import common.config.featureswitch.*
@@ -27,6 +26,7 @@ import financials.models.*
 import financials.services.*
 import hub.services.{NextUpdatesService, PenaltyDetailsService}
 import hub.utils.HomePageUtils
+import hub.v1.auth.AuthActions
 import hub.v1.views.html.newHomePage.*
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
