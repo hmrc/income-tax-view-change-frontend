@@ -16,8 +16,6 @@
 
 package common.config
 
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
-import financials.controllers.routes as financialsRoutes
 import hub.v2.controllers.agent.routes as hubV2AgentRoutes
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
