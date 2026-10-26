@@ -36,4 +36,3 @@ POST        /choose-tax-years-range                                       hub.v1
 ->          /                                                             common.Routes
 ->          /                                                             financialDetails.Routes
 ->          /                                                             claimToAdjustPoa.Routes
-->          /                                                             returns.Routes
