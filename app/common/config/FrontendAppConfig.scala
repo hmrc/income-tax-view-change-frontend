@@ -62,11 +62,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
-  //individual sa302
-  def sa302:String = s"$baseFullUrl/mortgage-evidence/proof-of-income"
-  //agent sa302
-  def sa302Agent:String = s"$agentBaseFullUrl/mortgage-evidence/proof-of-income"
-
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = s"$hubBaseUrl/sign-in"
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
@@ -117,17 +112,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Payment Redirect route
   lazy val agentPaymentRedirectUrl: String = s"$agentBaseFullUrl/what-you-owe"
 
-
-  // Submission service
-  // This URL has a set year and environment. Please use submissionFrontendTaxOverviewUrl instead.
-  lazy val submissionFrontendTaxOverviewUrl: Int => String = taxYear =>
-    servicesConfig.getString("income-tax-submission-frontend.host") + s"/update-and-submit-income-tax-return/$taxYear/view"
-
-  lazy val submissionFrontendFinalDeclarationUrl: Int => String = taxYear =>
-    servicesConfig.getString("income-tax-submission-frontend.host") + s"/update-and-submit-income-tax-return/$taxYear/declaration"
-
-  lazy val submissionFrontendTaxYearsPage: Int => String = taxYear =>
-    servicesConfig.getString("income-tax-submission-frontend.host") + s"/update-and-submit-income-tax-return/$taxYear/start"
 
   // Disagree with a tax decision
   lazy val taxAppealsUrl: String = servicesConfig.getString("tax-appeals.url")
@@ -215,9 +199,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case "cy" => "https://www.gov.uk/ffurflenni-treth-hunanasesiad/trosolwg"
       case _ => "https://www.gov.uk/self-assessment-tax-returns"
     }
-
-  def findHmrcContactsSALink(): String =
-    "https://www.gov.uk/find-hmrc-contacts/self-assessment-general-enquiries"
 
 
   def compatibleSoftwareLink(implicit messages: Messages): String =

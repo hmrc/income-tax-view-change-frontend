@@ -17,7 +17,6 @@
 package hub.v2.controllers.newHomePage
 
 import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
-import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import hub.v2.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.{GetInsourceDetailsStub, WiremockHelper}
@@ -35,7 +34,7 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import financials.enums.ChargeType.ITSA_NI
 import financials.models.creditsandrefunds.CreditsModel
 import hub.helpers.{FinancialDetailsStub, NextUpdatesStub}
-import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
+import hub.testConstants.HubIntegrationTestConstants.{b2CessationDate, liabilityCalculationModelSuccessfulNotCrystallised}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import play.api.libs.ws.WSResponse
