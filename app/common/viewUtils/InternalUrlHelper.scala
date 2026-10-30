@@ -19,7 +19,6 @@ package common.viewUtils
 import hub.v2.controllers.agent.errors.routes as hubAgentErrorRoutes
 import hub.v2.controllers.agent.routes as hubAgentRoutes
 import hub.v2.controllers.errors.routes as hubErrorRoutes
-import hub.v2.controllers.feedback.routes as hubFeedbackRoutes
 import hub.v2.controllers.routes as hubAppRoutes
 import hub.v2.controllers.timeout.routes as hubTimeoutRoutes
 object InternalUrlHelper {
@@ -44,10 +43,6 @@ object InternalUrlHelper {
 
   val timeoutUrl = timeoutCall.url
   
-  val feedbackUrl = hubFeedbackRoutes.FeedbackController.show().url
-
-  val agentFeedbackUrl = hubFeedbackRoutes.FeedbackController.showAgent().url
-
   val agentErrorCall = hubAgentErrorRoutes.AgentErrorController.show()
   
   def noIncomeSourceUrl(isAgent: Boolean) = {
