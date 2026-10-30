@@ -82,10 +82,6 @@ trait ExternalRedirectHelper {
     val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
     s"$baseUri/complete-steps"
 
-  def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean): String =
-    val baseUri = if (isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
-    s"$baseUri/check-your-active-businesses/hmrc-record"
-
   //Financials routes
 
   lazy val financialsBaseUrl: String = servicesConfig.getString("income-tax-financials-frontend.baseUrl")

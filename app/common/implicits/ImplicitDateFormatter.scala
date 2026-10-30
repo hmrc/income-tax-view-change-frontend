@@ -20,7 +20,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{LocalDate, LocalDateTime}
 import javax.inject.{Inject, Singleton}
 import scala.language.implicitConversions
 
@@ -74,14 +74,9 @@ trait ImplicitDateParser {
     def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
 
     def toLocalDateTime: LocalDateTime = LocalDateTime.parse(s, DateTimeFormatter.ISO_DATE_TIME)
-
-    def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
   }
 
   implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
 
   def toTaxYearStartDate(year: Int): LocalDate = localDate(s"$year-4-6").toLocalDate
-
-  def toTaxYearEndDate(year: Int): LocalDate = localDate(s"$year-4-5").toLocalDate
-
 }
