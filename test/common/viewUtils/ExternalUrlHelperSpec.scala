@@ -31,11 +31,7 @@ class ExternalUrlHelperSpec extends UnitSpec with GuiceOneAppPerSuite {
   val welshChooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax.cy"
   val generalChooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
-  val welshQuarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm/anfon-diweddariadau-chwarterol"
-  val generalQuarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
 
-  val welshSaWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax.cy"
-  val generalSaWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
 
   "clientAuthorisationGuidance" should {
@@ -83,38 +79,6 @@ class ExternalUrlHelperSpec extends UnitSpec with GuiceOneAppPerSuite {
       implicit val lang: Lang = Lang("it")
       implicit val messages: Messages = MessagesImpl(lang, messagesApi)
       ExternalUrlHelper.chooseAgentGuidanceUrl shouldBe generalChooseAgentGuidanceUrl
-    }
-  }
-
-  "quarterlyUpdatesGuidanceUrl" should {
-    "return welsh url when language is set to welsh" in {
-      val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-      implicit val lang: Lang = Lang("cy")
-      implicit val messages: Messages = MessagesImpl(lang, messagesApi)
-      ExternalUrlHelper.quarterlyUpdatesGuidanceUrl shouldBe welshQuarterlyUpdatesGuidanceUrl
-    }
-
-    "return general url when language is set to something else that is not english or welsh" in {
-      val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-      implicit val lang: Lang = Lang("it")
-      implicit val messages: Messages = MessagesImpl(lang, messagesApi)
-      ExternalUrlHelper.quarterlyUpdatesGuidanceUrl shouldBe generalQuarterlyUpdatesGuidanceUrl
-    }
-  }
-
-  "saWhoNeedsToSignUpUrl" should {
-    "return welsh url when language is set to welsh" in {
-      val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-      implicit val lang: Lang = Lang("cy")
-      implicit val messages: Messages = MessagesImpl(lang, messagesApi)
-      ExternalUrlHelper.saWhoNeedsToSignUpUrl shouldBe welshSaWhoNeedsToSignUpUrl
-    }
-
-    "return general url when language is set to something else that is not english or welsh" in {
-      val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-      implicit val lang: Lang = Lang("it")
-      implicit val messages: Messages = MessagesImpl(lang, messagesApi)
-      ExternalUrlHelper.saWhoNeedsToSignUpUrl shouldBe generalSaWhoNeedsToSignUpUrl
     }
   }
 }

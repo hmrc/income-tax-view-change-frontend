@@ -57,8 +57,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Income tax financial details service
   lazy val incomeTaxFinancialDetailsService: String = servicesConfig.baseUrl("income-tax-financial-details")
 
-  lazy val accessibilityHost: String = servicesConfig.getString("accessibility-statement.host")
-  lazy val accessibilityUrl: String = accessibilityHost + "/accessibility-statement" + servicesConfig.getString("accessibility-statement.service-path")
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
@@ -172,8 +170,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   val cacheTtl: Int = config.get[Int]("mongodb.timeToLiveInSeconds")
 
-  val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
-
   lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
 
   lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-time-machine")
@@ -185,22 +181,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val isHipRepaymentApiEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-hip-repayment-api")
 
   //External-Urls
-  def logInFileSelfAssessmentTaxReturnLink(implicit messages: Messages): String =
-    messages.lang.code match {
-      case "en" => "https://www.gov.uk/log-in-file-self-assessment-tax-return"
-      case "cy" => "https://www.gov.uk/cyflwyno-ch-ffurflen-dreth-hunanasesiad-ar-lein"
-      case _ => "https://www.gov.uk/log-in-file-self-assessment-tax-return"
-    }
-
-  def selfAssessmentTaxReturnLink(isAgent: Boolean)(implicit messages: Messages): String =
-    messages.lang.code match {
-      case _ if isAgent => "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
-      case "en" => "https://www.gov.uk/self-assessment-tax-returns"
-      case "cy" => "https://www.gov.uk/ffurflenni-treth-hunanasesiad/trosolwg"
-      case _ => "https://www.gov.uk/self-assessment-tax-returns"
-    }
-
-
   def compatibleSoftwareLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "en" => "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
@@ -237,10 +217,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case "cy" => "https://www.gov.uk/anawsterau-talu-cthem"
       case _ => "https://www.gov.uk/difficulties-paying-hmrc"
     }
-
-  lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
-  lazy val threshold2027 = servicesConfig.getString("thresholds.threshold2027")
-  lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")
 
   lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
 }

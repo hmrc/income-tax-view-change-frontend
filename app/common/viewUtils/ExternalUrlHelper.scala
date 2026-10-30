@@ -46,20 +46,6 @@ object ExternalUrlHelper {
       case _ => "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
     }
 
-  def quarterlyUpdatesGuidanceUrl(implicit messages: Messages): String =
-    messages.lang.code match {
-      case "en" => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
-      case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm/anfon-diweddariadau-chwarterol"
-      case _ => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
-    }
-
-  def saWhoNeedsToSignUpUrl(implicit messages: Messages): String =
-    messages.lang.code match {
-      case "en" => "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
-      case "cy" => "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax.cy"
-      case _ => "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
-    }
-
   val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
 
   val currentLPAndRepaymentInterestRatesUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
