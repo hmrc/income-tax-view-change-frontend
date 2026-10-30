@@ -37,8 +37,6 @@ case class LatencyYearsAnnual(firstYear: Option[Boolean], secondYear: Option[Boo
 
 case class LatencyYearsQuarterlyAndAnnualStatus(latencyYearsQuarterly: LatencyYearsQuarterly, latencyYearsAnnual: LatencyYearsAnnual)
 
-case class LatencyYearsCrystallised(firstYear: Option[Boolean], secondYear: Option[Boolean])
-
 object LatencyDetails {
   implicit val format: Format[LatencyDetails] = Json.format[LatencyDetails]
 }

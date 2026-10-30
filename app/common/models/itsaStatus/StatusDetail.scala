@@ -47,19 +47,6 @@ object ITSAStatus extends Enumeration {
 
   type ITSAStatus = Value
 
-  def fromString(string: String): ITSAStatus = {
-    string match {
-      case "UnknownStatus" => UnknownStatus
-      case "No Status" => NoStatus
-      case "MTD Mandated" => Mandated
-      case "MTD Voluntary" => Voluntary
-      case "Annual" => Annual
-      case "Digitally Exempt" => DigitallyExempt
-      case "Dormant" => Dormant
-      case "MTD Exempt" => Exempt
-    }
-  }
-
   val UnknownStatus = Value("UnknownStatus")
   val NoStatus = Value("No Status")
   val Mandated = Value("MTD Mandated")
@@ -68,12 +55,6 @@ object ITSAStatus extends Enumeration {
   val DigitallyExempt = Value("Digitally Exempt")
   val Dormant = Value("Dormant")
   val Exempt = Value("MTD Exempt")
-
-  def isExemptionStatus(status: ITSAStatus): Boolean =
-    Set(Exempt, DigitallyExempt).contains(status)
-
-  def isNonExemptStatus(status: ITSAStatus): Boolean =
-    Set(Mandated, Voluntary, Annual).contains(status)
 
   implicit val itsaStatusReads: Reads[ITSAStatus] = Reads.enumNameReads(ITSAStatus)
   implicit val itsaStatusWrite: Writes[ITSAStatus.Value] = Writes.enumNameWrites[ITSAStatus.type]
