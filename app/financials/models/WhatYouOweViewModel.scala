@@ -17,7 +17,6 @@
 package financials.models
 
 import common.services.DateServiceInterface
-import financials.controllers.routes as financialsRoutes
 
 import java.time.LocalDate
 
@@ -66,12 +65,5 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
   val chargeIsNotDueAndChargesDefinedAndGreaterThanZero: Boolean = whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero &&
     whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined &&
     whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)
-
-  def paymentHistoryControllerURL(isAgent: Boolean, origin: Option[String] = None) =
-    if(isAgent){
-      financialsRoutes.PaymentHistoryController.showAgent().url
-    } else {
-      financialsRoutes.PaymentHistoryController.show(origin).url
-    }
 
 }
