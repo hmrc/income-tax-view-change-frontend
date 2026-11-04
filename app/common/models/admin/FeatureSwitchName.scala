@@ -37,20 +37,12 @@ object FeatureSwitchName extends Logging {
   implicit val writes: Writes[FeatureSwitchName] = (o: FeatureSwitchName) => JsString(o.name)
 
   implicit val reads: Reads[FeatureSwitchName] = {
-    case JsString(ITSASubmissionIntegration.name) =>
-      JsSuccess(ITSASubmissionIntegration)
     case JsString(ChargeHistory.name) =>
       JsSuccess(ChargeHistory)
     case JsString(CreditsRefundsRepay.name) =>
       JsSuccess(CreditsRefundsRepay)
     case JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
-    case JsString(OptOutFs.name) =>
-      JsSuccess(OptOutFs)
-    case JsString(SignUpFs.name) =>
-      JsSuccess(SignUpFs)
-    case JsString(DisplayBusinessStartDate.name) =>
-      JsSuccess(DisplayBusinessStartDate)
     case JsString(PenaltiesAndAppeals.name) =>
       JsSuccess(PenaltiesAndAppeals)
     case JsString(PenaltiesBackendEnabled.name) =>
@@ -61,22 +53,14 @@ object FeatureSwitchName extends Logging {
       JsSuccess(TriggeredMigration)
     case JsString(SubmitClaimToAdjustToNrs.name) =>
       JsSuccess(SubmitClaimToAdjustToNrs)
-    case JsString(PostFinalisationAmendmentsR18.name) =>
-      JsSuccess(PostFinalisationAmendmentsR18)
-    case JsString(OverseasBusinessAddress.name) =>
-      JsSuccess(OverseasBusinessAddress)
     case JsString(RecentActivity.name) =>
       JsSuccess(RecentActivity)
     case JsString(MortgageEvidence.name) =>
       JsSuccess(MortgageEvidence)
-    case JsString(IdempotencyKeyForCreateIncomeSource.name) =>
-      JsSuccess(IdempotencyKeyForCreateIncomeSource)
     case JsString(NoIncomeSourcesRedirect.name) =>
       JsSuccess(NoIncomeSourcesRedirect)
     case JsString(RevenueAmendments.name) =>
       JsSuccess(RevenueAmendments)
-    case JsString(HideBusinessName.name) =>
-      JsSuccess(HideBusinessName)
     case JsString(StoodOverCharges.name) =>
       JsSuccess(StoodOverCharges)
     case JsString(InterstitialPage.name) =>
@@ -105,37 +89,23 @@ object FeatureSwitchName extends Logging {
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(
-      ITSASubmissionIntegration,
       ChargeHistory,
       CreditsRefundsRepay,
       PaymentHistoryRefunds,
-      OptOutFs,
-      SignUpFs,
-      DisplayBusinessStartDate,
       PenaltiesAndAppeals,
       PenaltiesBackendEnabled,
       SubmitClaimToAdjustToNrs,
       SelfServeTimeToPayR17,
       TriggeredMigration,
-      PostFinalisationAmendmentsR18,
-      OverseasBusinessAddress,
       RecentActivity,
       MortgageEvidence,
-      IdempotencyKeyForCreateIncomeSource,
       NoIncomeSourcesRedirect,
       RevenueAmendments,
-      HideBusinessName,
       StoodOverCharges,
       InterstitialPage
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
-}
-
-case object ITSASubmissionIntegration extends FeatureSwitchName {
-  override val name: String = "itsa-submission-integration"
-
-  override def toString: String = "ITSA Submission Integration"
 }
 
 case object ChargeHistory extends FeatureSwitchName {
@@ -156,24 +126,9 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
   override def toString: String = "Payment History Refunds"
 }
 
-case object OptOutFs extends FeatureSwitchName {
-  override val name = "opt-out"
-  override val toString = "Opt Out"
-}
-
-case object SignUpFs extends FeatureSwitchName {
-  override val name = "sign-up"
-  override val toString = "Sign Up"
-}
-
 case object InvalidFS extends FeatureSwitchName {
   override val name: String = "invalid-feature-switch"
   override val toString: String = "Invalid feature Switch"
-}
-
-case object DisplayBusinessStartDate extends FeatureSwitchName {
-  override val name: String = "display-business-start-date"
-  override val toString: String = "Display Business Start Date"
 }
 
 case object PenaltiesAndAppeals extends FeatureSwitchName {
@@ -201,16 +156,6 @@ case object SubmitClaimToAdjustToNrs extends FeatureSwitchName {
   override val toString: String = "Submit Claim to Adjust to NRS"
 }
 
-case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {
-  override val name: String = "post-finalisation-amendments-r18"
-  override val toString: String = "Post Finalisation Amendments R18"
-}
-
-case object OverseasBusinessAddress extends FeatureSwitchName {
-  override val name: String = "overseas-business-address"
-  override val toString: String = "Overseas Business Address"
-}
-
 case object RecentActivity extends FeatureSwitchName {
   override val name: String = "recent-activity"
   override val toString: String = "Recent Activity"
@@ -221,11 +166,6 @@ case object MortgageEvidence extends FeatureSwitchName {
   override val toString: String = "mortgage-evidence"
 }
 
-case object IdempotencyKeyForCreateIncomeSource extends FeatureSwitchName {
-  override val name: String = "idempotency-key-for-create-income-source"
-  override val toString: String = "Idempotency Key for Create an Income Source"
-}
-
 case object NoIncomeSourcesRedirect extends FeatureSwitchName {
   override val name: String = "no-income-sources-redirect"
   override val toString: String = "No Income Sources Redirect"
@@ -234,11 +174,6 @@ case object NoIncomeSourcesRedirect extends FeatureSwitchName {
 case object RevenueAmendments extends FeatureSwitchName {
   override val name: String = "revenue-amendments"
   override val toString: String = "Revenue Amendments"
-}
-
-case object HideBusinessName extends FeatureSwitchName {
-  override val name: String = "hide-business-name"
-  override val toString: String = "Hide business name when unknown"
 }
 
 case object StoodOverCharges extends FeatureSwitchName {
