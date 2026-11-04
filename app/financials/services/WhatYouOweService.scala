@@ -19,14 +19,12 @@ package financials.services
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals, SelfServeTimeToPayR17}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateServiceInterface}
 import financials.connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import financials.models.*
 import financials.models.ChargeItem.isAKnownTypeOfCharge
-import financials.models.audit.WhatYouOweResponseAuditModel
 import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import play.api.Logging
@@ -155,71 +153,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .fold(if (totalBalance > 0) Some(totalBalance) else None)(_ => None)
   }
 
-  def createWhatYouOweViewModel(backUrl: String,
-                                moneyInYourAccountUrl: String,
-                                taxYearSummaryUrl: Int => String,
-                                adjustPoaUrl: String,
-                                chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
-                                interstitialUrl: Long => String,
-                                paymentHandoffUrl: Long => String)
-                               (implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
-    for {
-      whatYouOweChargesList <- getWhatYouOweChargesList(isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
-      ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
-      lpp2Url = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent)
-      isAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isRARAccruingInterest()(dateService))
-      hasAccruingInterestCharges = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest)
-      startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney
-      optTotalBalance = getTotalBalance(whatYouOweChargesList)
-    } yield lpp2Url match {
-      case  None =>
-        logger.error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-        None
-      case Some(lpp2Url) =>
-        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList) (dateService))
-
-        Some(WhatYouOweViewModel(
-          currentDate = dateService.getCurrentDate,
-          hasOverdueOrAccruingInterestCharges = hasAccruingInterestCharges || isAccruingInterestRARCharges,
-          whatYouOweChargesList = whatYouOweChargesList,
-          hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-          currentTaxYear = dateService.getCurrentTaxYearEnd,
-          backUrl = backUrl,
-          utr = user.saUtr,
-          dunningLock = whatYouOweChargesList.hasDunningLock,
-          moneyInYourAccountUrl = moneyInYourAccountUrl,
-          creditAndRefundEnabled = isEnabled(CreditsRefundsRepay)(user),
-          taxYearSummaryUrl = taxYearSummaryUrl,
-          claimToAdjustViewModel = ctaViewModel,
-          lpp2Url = lpp2Url,
-          adjustPoaUrl = adjustPoaUrl,
-          chargeSummaryUrl = chargeSummaryUrl,
-          interstitialUrl = interstitialUrl,
-          paymentHandoffUrl = paymentHandoffUrl,
-          selfServeTimeToPayEnabled = isEnabled(SelfServeTimeToPayR17)(user),
-          totalBalance = optTotalBalance,
-          totalFormalAndInformal = whatYouOweChargesList.balanceDetails.totalFormalAndInformal
-        ))
-    }
-  }
-
-  private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
-    case x if x.remainingToPayByChargeOrInterest > 0 => x
-  }
-
-  private def getSecondLatePaymentPenaltyLink(chargeItems: List[ChargeItem], isAgent: Boolean): Option[String] = {
-
-    val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
-
-    LPP2 match {
-      case Some(charge) => charge.chargeReference match {
-        case Some(value) if isAgent => Some(appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(value))
-        case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
-        case None => None
-      }
-      case None => Some("")
-    }
-  }
 
   def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
     claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
