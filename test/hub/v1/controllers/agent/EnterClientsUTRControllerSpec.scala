@@ -130,7 +130,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           setupMockFeatureSwitches()
           val validUTR: String = "1234567890"
           setupMockAgentAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
-          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
@@ -156,7 +155,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           val validUTR: String = "1234567890"
           setupMockFeatureSwitches()
           setupMockAgentAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
-          setupMockHasMandatedOrVoluntaryStatusCurrentYearDefaultParam(true)
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
@@ -186,7 +184,6 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
           setupMockFeatureSwitches()
           setupMockAgentAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
-          setupMockHasMandatedOrVoluntaryStatusCurrentYearDefaultParam(true)
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))

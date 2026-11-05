@@ -46,14 +46,12 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     CreditsRefundsRepay,
     PaymentHistoryRefunds,
     PenaltiesAndAppeals,
-    PenaltiesBackendEnabled,
     SelfServeTimeToPayR17,
     SubmitClaimToAdjustToNrs,
     TriggeredMigration,
     RecentActivity,
     MortgageEvidence,
     NoIncomeSourcesRedirect,
-    RevenueAmendments,
     StoodOverCharges,
     InterstitialPage
   )

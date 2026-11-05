@@ -58,10 +58,6 @@ case object LowConfidenceLevelIvHandoff extends TransactionName {
   val name = "low-confidence-level-IV-handoff"
 }
 
-case object ViewObligationsResponse extends TransactionName {
-  val name = "view-obligations-response"
-}
-
 case object PaymentAllocations extends TransactionName {
   val name = "payment-allocations-response"
 }

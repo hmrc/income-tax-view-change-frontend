@@ -74,12 +74,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   def ggSignOutUrl(identifier: String): String = s"$ggUrl/bas-gateway/sign-out-without-state?continue=${exitSurveyUrl(identifier)}"
 
-  //Business Tax Account
-  lazy val btaService: String = servicesConfig.baseUrl("business-account")
-  lazy val businessTaxAccount: String = servicesConfig.getString("business-tax-account.url")
-  lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
-  lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
-
   // NRS
   lazy val nrsBaseUrl: String = servicesConfig.baseUrl("non-repudiation")
   lazy val nrsApiKey: String = servicesConfig.getString("microservice.services.non-repudiation.xApiKey")
@@ -103,8 +97,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val repaymentsUrl: String = servicesConfig.baseUrl("repayment-api")
 
-  lazy val hipRepaymentsUrl: String = servicesConfig.baseUrl("hip-repayment-api")
-
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$baseFullUrl/what-you-owe"
   //Payment Redirect route
@@ -126,14 +118,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val incomeTaxPenaltiesFrontendLPP2Calculation: String => String = chargeRef => servicesConfig.getString("income-tax-penalties-frontend.homeUrl") + s"/second-lpp-calculation?penaltyId=$chargeRef"
   lazy val incomeTaxPenaltiesFrontendLPP2CalculationAgent: String => String = chargeRef => servicesConfig.getString("income-tax-penalties-frontend.homeUrl") + s"/agent-second-lpp-calculation?penaltyId=$chargeRef"
 
-  lazy val incomeTaxVcFsAndStubUrl: String = servicesConfig.getString("income-tax-vc-fs-and-stub.url")
-
   // API timeout
-
   lazy val claimToAdjustTimeout: Int = servicesConfig.getInt("claim-to-adjust.timeout")
-
-  // enrolment-store-proxy url
-  lazy val enrolmentStoreProxyUrl: String = servicesConfig.baseUrl("enrolment-store-proxy")
 
   lazy val agentServicesAccountFrontend: String = servicesConfig.baseUrl("agent-services-account-frontend")
 
@@ -177,8 +163,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val timeMachineAddDays: Int = servicesConfig.getInt("time-machine.add-days")
 
   lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
-
-  lazy val isHipRepaymentApiEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-hip-repayment-api")
 
   //External-Urls
   def compatibleSoftwareLink(implicit messages: Messages): String =

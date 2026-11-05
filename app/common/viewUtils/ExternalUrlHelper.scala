@@ -39,13 +39,6 @@ object ExternalUrlHelper {
       case _ => "https://www.gov.uk/self-employed-national-insurance-rates"
     }
 
-  def chooseAgentGuidanceUrl(implicit messages: Messages): String =
-    messages.lang.code match {
-      case "en" => "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
-      case "cy" => "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax.cy"
-      case _ => "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
-    }
-
   val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
 
   val currentLPAndRepaymentInterestRatesUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"

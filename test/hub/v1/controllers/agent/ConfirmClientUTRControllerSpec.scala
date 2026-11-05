@@ -220,7 +220,6 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
             mockItsaStatusRetrievalAction()
 
             setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
-            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
             val result = testConfirmClientUTRController.submit()(fakeRequest)
 

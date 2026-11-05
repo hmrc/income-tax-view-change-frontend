@@ -34,21 +34,7 @@ case class PropertyDetailsModel(
                                  quarterTypeElection: Option[QuarterTypeElection] = None
                                ) {
 
-  def isUkProperty: Boolean = incomeSourceType.contains("uk-property")
-
-  def isForeignProperty: Boolean = incomeSourceType.contains("foreign-property")
-
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
-
-  def isOngoingUkProperty: Boolean = isUkProperty && !isCeased
-
-  def isOngoingForeignProperty: Boolean = isForeignProperty && !isCeased
-
-  def getTradingStartDateForCessation: LocalDate = (tradingStartDate, contextualTaxYear) match {
-    case (Some(startDate), _) => startDate
-    case (None, Some(taxYear)) => TaxYear(taxYear.toInt - 1, taxYear.toInt).toFinancialYearStart
-    case (None, None) => LocalDate.MIN
-  }
 }
 
 object PropertyDetailsModel {

@@ -28,8 +28,6 @@ class ExternalUrlHelperSpec extends UnitSpec with GuiceOneAppPerSuite {
   val welshNationalInsuranceRatesUrl = "https://www.gov.uk/cyfraddau-yswiriant-gwladol-ir-hunangyflogedig"
   val generalNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
 
-  val welshChooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax.cy"
-  val generalChooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
 
 
@@ -66,19 +64,4 @@ class ExternalUrlHelperSpec extends UnitSpec with GuiceOneAppPerSuite {
     }
   }
 
-  "chooseAgentGuidanceUrl" should {
-    "return welsh url when language is set to welsh" in {
-      val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-      implicit val lang: Lang = Lang("cy")
-      implicit val messages: Messages = MessagesImpl(lang, messagesApi)
-      ExternalUrlHelper.chooseAgentGuidanceUrl shouldBe welshChooseAgentGuidanceUrl
-    }
-
-    "return general url when language is set to something else that is not english or welsh" in {
-      val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-      implicit val lang: Lang = Lang("it")
-      implicit val messages: Messages = MessagesImpl(lang, messagesApi)
-      ExternalUrlHelper.chooseAgentGuidanceUrl shouldBe generalChooseAgentGuidanceUrl
-    }
-  }
 }

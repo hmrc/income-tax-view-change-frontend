@@ -45,8 +45,6 @@ object FeatureSwitchName extends Logging {
       JsSuccess(PaymentHistoryRefunds)
     case JsString(PenaltiesAndAppeals.name) =>
       JsSuccess(PenaltiesAndAppeals)
-    case JsString(PenaltiesBackendEnabled.name) =>
-      JsSuccess(PenaltiesBackendEnabled)
     case JsString(SelfServeTimeToPayR17.name) =>
       JsSuccess(SelfServeTimeToPayR17)
     case JsString(TriggeredMigration.name) =>
@@ -59,8 +57,6 @@ object FeatureSwitchName extends Logging {
       JsSuccess(MortgageEvidence)
     case JsString(NoIncomeSourcesRedirect.name) =>
       JsSuccess(NoIncomeSourcesRedirect)
-    case JsString(RevenueAmendments.name) =>
-      JsSuccess(RevenueAmendments)
     case JsString(StoodOverCharges.name) =>
       JsSuccess(StoodOverCharges)
     case JsString(InterstitialPage.name) =>
@@ -93,14 +89,12 @@ object FeatureSwitchName extends Logging {
       CreditsRefundsRepay,
       PaymentHistoryRefunds,
       PenaltiesAndAppeals,
-      PenaltiesBackendEnabled,
       SubmitClaimToAdjustToNrs,
       SelfServeTimeToPayR17,
       TriggeredMigration,
       RecentActivity,
       MortgageEvidence,
       NoIncomeSourcesRedirect,
-      RevenueAmendments,
       StoodOverCharges,
       InterstitialPage
     )
@@ -136,11 +130,6 @@ case object PenaltiesAndAppeals extends FeatureSwitchName {
   override val toString: String = "Penalties and Appeals"
 }
 
-case object PenaltiesBackendEnabled extends FeatureSwitchName {
-  override val name: String = "penalties-backend"
-  override val toString: String = "Penalties Backend"
-}
-
 case object SelfServeTimeToPayR17 extends FeatureSwitchName {
   override val name: String = "self-serve-time-to-pay-r17"
   override val toString: String = "Self Serve Time To Pay R17"
@@ -169,11 +158,6 @@ case object MortgageEvidence extends FeatureSwitchName {
 case object NoIncomeSourcesRedirect extends FeatureSwitchName {
   override val name: String = "no-income-sources-redirect"
   override val toString: String = "No Income Sources Redirect"
-}
-
-case object RevenueAmendments extends FeatureSwitchName {
-  override val name: String = "revenue-amendments"
-  override val toString: String = "Revenue Amendments"
 }
 
 case object StoodOverCharges extends FeatureSwitchName {

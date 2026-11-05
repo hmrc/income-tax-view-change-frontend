@@ -44,12 +44,6 @@ case class TaxYear(startYear: Int, endYear: Int) {
 
   def nextYear: TaxYear = addYears(+1)
 
-  def isSameAs(taxYear: TaxYear): Boolean = this.startYear == taxYear.startYear && this.endYear == taxYear.endYear
-
-  def isAfter(taxYear: TaxYear): Boolean = this.startYear > taxYear.startYear
-
-  def isBefore(taxYear: TaxYear): Boolean = this.startYear < taxYear.startYear
-
   private val April = 4
   private val Sixth = 6
   private val Fifth = 5
@@ -95,26 +89,6 @@ object TaxYear {
     year.length == 4 &&
       year.forall(_.isDigit) &&
       Try(year.toInt).toOption.isDefined
-
-  private def areValidYears(yearOne: String, yearTwo: String): Boolean = {
-    def differenceIsOne(yearOne: String, yearTwo: String): Boolean =
-      yearOne.toInt + 1 == yearTwo.toInt
-
-    isValidYear(yearOne) &&
-      isValidYear(yearTwo) &&
-      differenceIsOne(yearOne, yearTwo)
-  }
-
-  def getTaxYearModel(years: String): Option[TaxYear] = {
-
-    years.split('-') match {
-      case Array(yearOne, yearTwo) if areValidYears(yearOne, yearTwo) =>
-        Some(
-          TaxYear(yearOne.toInt, yearTwo.toInt)
-        )
-      case _ => None
-    }
-  }
 
   def getTaxYear(localDate: LocalDate): TaxYear = {
     if (localDate.isBefore(LocalDate.of(localDate.getYear, 4, 6))) {

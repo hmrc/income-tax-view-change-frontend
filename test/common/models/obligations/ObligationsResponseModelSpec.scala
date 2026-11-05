@@ -17,10 +17,8 @@
 package common.models.obligations
 
 import common.implicits.ImplicitDateFormatter
-import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import common.testConstants.BaseTestConstants
 import common.testConstants.BaseTestConstants.*
-import common.testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType
 import common.testUtils.TestSupport
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
@@ -99,13 +97,6 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
         valid => valid) shouldBe nextUpdatesDataSelfEmploymentSuccessModel
     }
 
-    "call to .currentCrystDeadlines should return sorted obligations by Crystallised obligationType" in {
-      val nextUpdatesModel = GroupedObligationsModel(testSelfEmploymentId,
-        List(openObligation, crystallisedObligation, quarterlyBusinessObligation, crystallisedObligationTwo))
-
-      nextUpdatesModel.currentCrystDeadlines shouldBe List(crystallisedObligation, crystallisedObligationTwo)
-    }
-
   }
 
   "The NextUpdatesErrorModel" should {
@@ -127,82 +118,4 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
     }
   }
 
-  "The ObligationsModel" should {
-
-    "return a list of all models with source in date order" when {
-
-      "calling .allDeadlinesWithSource" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource(false, false)(
-          BaseTestConstants.testMtdItUser) shouldBe List(
-          ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", overdueQuarterlyObligation),
-          ObligationWithIncomeType("nextUpdates.business", overdueObligation),
-          ObligationWithIncomeType("nextUpdates.business", openObligation),
-          ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", openQuarterlyObligation),
-          ObligationWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
-        )
-      }
-    }
-
-    "return a list of all models with source in dateReceived order if the previous flag is set to true" when {
-
-      "calling .allDeadlinesWithSource" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous = true, false)(
-          BaseTestConstants.testMtdItUser) shouldBe List(
-          ObligationWithIncomeType("nextUpdates.business", openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1)))),
-          ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", overdueQuarterlyObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
-          ObligationWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6))))
-        )
-      }
-    }
-
-    "return an empty list" when {
-
-      "calling .allDeadlinesWithSource" in {
-        obligationsAllDeadlinesSuccessNotValidObligationType.allDeadlinesWithSource(false, false)(
-          BaseTestConstants.testMtdItUserNoIncomeSource) shouldBe List()
-      }
-    }
-
-    "return a list of only specific updates with source in date order" when {
-
-      "calling .allQuarterly" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allQuarterly(false)(
-          BaseTestConstants.testMtdItUser) shouldBe List(
-          ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", overdueQuarterlyObligation),
-          ObligationWithIncomeType("nextUpdates.business", overdueObligation),
-          ObligationWithIncomeType("nextUpdates.business", openObligation),
-          ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", openQuarterlyObligation)
-        )
-      }
-
-      "calling .allCrystallised" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(false)(
-          BaseTestConstants.testMtdItUser) shouldBe List(
-          ObligationWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
-        )
-      }
-
-      "calling .groupByQuarterPeriod" in {
-        val nextUpdateModelWithIncomeTypeList: Seq[ObligationWithIncomeType] = List(
-          ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", overdueQuarterlyObligation),
-          ObligationWithIncomeType("nextUpdates.business", overdueObligation),
-          ObligationWithIncomeType("nextUpdates.business", openObligation),
-          ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", openQuarterlyObligation),
-          ObligationWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
-        )
-
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.groupByQuarterPeriod(
-          nextUpdateModelWithIncomeTypeList) shouldBe Map(
-          None -> List(
-            ObligationWithIncomeType("nextUpdates.crystallisedAll", SingleObligationModel("2017-10-01", "2018-10-30", "2017-10-31", "Crystallisation", None, "", StatusFulfilled))),
-          Some(QuarterTypeCalendar) -> List(
-            ObligationWithIncomeType("nextUpdates.business", SingleObligationModel("2017-07-01", "2017-09-30", "2017-10-30", "Quarterly", None, "#002", StatusFulfilled)),
-            ObligationWithIncomeType("nextUpdates.business", SingleObligationModel("2017-07-01", "2017-09-30", "2017-10-31", "Quarterly", None, "#003", StatusFulfilled))),
-          Some(QuarterTypeStandard) -> List(
-            ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", SingleObligationModel("2017-04-06", "2018-04-05", "2017-10-01", "Quarterly", None, "#002", StatusFulfilled)),
-            ObligationWithIncomeType("nextUpdates.r17.tab.quarterly.table.income.source.property", SingleObligationModel("2017-04-06", "2018-04-05", "2017-10-31", "Quarterly", None, "#003", StatusFulfilled)))
-        )
-      }
-    }
-  }
 }

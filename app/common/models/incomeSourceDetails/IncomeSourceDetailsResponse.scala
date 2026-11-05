@@ -16,10 +16,6 @@
 
 package common.models.incomeSourceDetails
 
-import businessDetails.core.IncomeSourceId.mkIncomeSourceId
-import businessDetails.core.{IncomeSourceId, IncomeSourceIdHash}
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.auth.MtdItUser
 import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json, OFormat}
@@ -94,107 +90,8 @@ case class IncomeSourceDetailsModel(
 
   override def toJson: JsValue = Json.toJson(this)
 
-  def sanitise: IncomeSourceDetailsModel = {
-    val property2 = properties.map(propertyDetailsModel => propertyDetailsModel.copy(incomeSourceId = "", accountingPeriod = None))
-    val businesses2 = businesses.map(businessDetailsModel => businessDetailsModel.copy(incomeSourceId = "", accountingPeriod = None))
-    this.copy(properties = property2, businesses = businesses2)
-  }
-
-  def earliestSubmissionTaxYear: Option[Int] = {
-    val allEndYears = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
-      .map(_.getYear)
-    allEndYears.sorted.headOption
-  }
-
-  def getForeignProperty: Option[PropertyDetailsModel] = {
-    properties.find(_.isOngoingForeignProperty)
-  }
-
-  def getUKProperty: Option[PropertyDetailsModel] = {
-    properties.find(_.isOngoingUkProperty)
-  }
-
-  def getSoleTraderBusiness(id: String): Option[BusinessDetailsModel] = {
-    businesses.find(_.isOngoingSoleTraderBusiness(id))
-  }
-
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[IncomeSourceId] = {
-    (incomeSourceType, soleTraderBusinessId) match {
-      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(m => mkIncomeSourceId(m.incomeSourceId))
-      case (UkProperty, _) => getUKProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
-      case (ForeignProperty, _) => getForeignProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
-      case _ => None
-    }
-  }
-
-  def getIncomeSourceBusinessName(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
-    (incomeSourceType, soleTraderBusinessId) match {
-      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.tradingName.getOrElse("Unknown"))
-      case (UkProperty, _) => Some("UK property")
-      case (ForeignProperty, _) => Some("Foreign property")
-      case _ => None
-    }
-  }
-
-  def getLatencyDetails(incomeSourceType: IncomeSourceType, id: String): Option[LatencyDetails] = {
-    incomeSourceType match {
-      case SelfEmployment => getSoleTraderBusiness(id).flatMap(_.latencyDetails)
-      case UkProperty => getUKProperty.flatMap(_.latencyDetails)
-      case ForeignProperty => getForeignProperty.flatMap(_.latencyDetails)
-    }
-  }
-
-  def compareHashToQueryString(incomeSourceIdHash: IncomeSourceIdHash)
-                              (implicit user: MtdItUser[_]): Either[Throwable, IncomeSourceId] = {
-    val allUserIncomeSourceIds: List[IncomeSourceId] = user.incomeSources.businesses.filterNot(_.isCeased).map(m => mkIncomeSourceId(m.incomeSourceId))
-    incomeSourceIdHash.findIncomeSourceIdMatchingHash(ids = allUserIncomeSourceIds)
-  }
-
-  def areAllBusinessesCeased: Boolean = businesses.forall(_.isCeased) && properties.forall(_.isCeased)
-
-  def remainingActiveBusinessesCount: Int = businesses.filterNot(_.isCeased).size + properties.filterNot(_.isCeased).size
-
-  def isAnyOfActiveBusinessesLatent: Boolean = businesses.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty) ||
-    properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
-
   def isConfirmedUser: Boolean = {
     Set(CustomerLed.getValue, HmrcConfirmed.getValue).contains(channel)
-  }
-
-  def getAllUniqueBusinessAddresses: List[ChooseSoleTraderAddressUserAnswer] = {
-    val allAddresses = businesses.flatMap { thisBusiness =>
-      thisBusiness.address.map { address =>
-        (address.addressLine1, address.postCode, address.countryCode) match {
-          case (Some(addressLine1), Some(postCode), Some("GB")) =>
-            Some(ChooseSoleTraderAddressUserAnswer(
-              Some(addressLine1),
-              address.addressLine2,
-              address.addressLine3,
-              address.addressLine4,
-              Some(postCode),
-              Some("GB"),
-              false
-            ))
-          case (Some(addressLine1), postCode, Some(countryCode)) if countryCode != "GB" =>
-            Some(ChooseSoleTraderAddressUserAnswer(
-              Some(addressLine1),
-              address.addressLine2,
-              address.addressLine3,
-              address.addressLine4,
-              postCode,
-              Some(countryCode),
-              false
-            ))
-          case _ => None
-        }
-      }
-    }
-
-    allAddresses.flatten.distinct
-  }
-
-  def getAllUniqueBusinessAddressesWithIndex: Seq[(ChooseSoleTraderAddressUserAnswer, Int)] = {
-    getAllUniqueBusinessAddresses.zipWithIndex
   }
 }
 

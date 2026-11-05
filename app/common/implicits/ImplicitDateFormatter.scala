@@ -38,11 +38,6 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
 
   implicit class longDate(d: LocalDate)(implicit messages: Messages) {
 
-    def toLongDateNoYear: String = {
-      val dt = languageUtils.Dates.formatDate(d)(messages)
-      dt.split(" ")(0) + " " + dt.split(" ")(1)
-    }
-
     def toLongDateShort: String = {
       val shortFormattedDate = d.format(DateTimeFormatter.ofPattern("d MMM yyyy"))
       val shortDay = shortFormattedDate.split(" ").head
@@ -55,12 +50,6 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
 
     def toLongDate: String = {
       languageUtils.Dates.formatDate(d)(messages)
-    }
-  }
-
-  implicit class longDateTime(dt: LocalDateTime)(implicit messages: Messages) {
-    def toLongDateTime: String = {
-      languageUtils.Dates.formatDate(dt.toLocalDate)(messages)
     }
   }
 
@@ -77,6 +66,4 @@ trait ImplicitDateParser {
   }
 
   implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
-
-  def toTaxYearStartDate(year: Int): LocalDate = localDate(s"$year-4-6").toLocalDate
 }

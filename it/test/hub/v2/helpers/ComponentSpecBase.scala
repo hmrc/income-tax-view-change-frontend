@@ -72,11 +72,6 @@ class TestDateService extends DateServiceInterface {
   }
 
   override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = true
-
-  override def isWithin30Days(date: LocalDate): Boolean = {
-    val currentDate = getCurrentDate
-    date.minusDays(30).isBefore(currentDate)
-  }
 }
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
@@ -138,8 +133,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.income-tax-business-details.port" -> mockPort,
     "microservice.services.self-assessment-api.host" -> mockHost,
     "microservice.services.self-assessment-api.port" -> mockPort,
-    "microservice.services.business-account.host" -> mockHost,
-    "microservice.services.business-account.port" -> mockPort,
     "microservice.services.financial-transactions.host" -> mockHost,
     "microservice.services.financial-transactions.port" -> mockPort,
     "microservice.services.repayment-api.host" -> mockHost,

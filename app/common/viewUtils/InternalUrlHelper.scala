@@ -29,14 +29,6 @@ object InternalUrlHelper {
   
   val signoutUrl = hubAppRoutes.SignOutController.signOut().url
 
-  val switchItvcLangToEnglishCall= hubAppRoutes.ItvcLanguageController.switchToEnglish(None)
-  
-  val switchItvcLangToWelshCall= hubAppRoutes.ItvcLanguageController.switchToWelsh(None)
-  
-  val switchLocaleToWelshUrl = hubAppRoutes.LocalLanguageController.switchToLanguage("cymraeg").url
-
-  val switchLocaleToEnglishUrl = hubAppRoutes.LocalLanguageController.switchToLanguage("english").url
-
   val keepAliveUrl = hubTimeoutRoutes.SessionTimeoutController.keepAlive().url
 
   val timeoutCall = hubTimeoutRoutes.SessionTimeoutController.timeout()
