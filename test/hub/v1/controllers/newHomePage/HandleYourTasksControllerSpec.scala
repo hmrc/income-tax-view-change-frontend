@@ -167,8 +167,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
         setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
         setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
         setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
         when(mockedCreditService.getAllCredits(any(), any()))
           .thenReturn(Future.successful(
             ANewCreditAndRefundModel()

@@ -16,11 +16,10 @@
 
 package common.mocks.services
 
-import common.models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
-import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
+import common.models.incomeSourceDetails.TaxYear
+import common.models.itsaStatus.ITSAStatusResponseModel
 import common.services.ITSAStatusService
 import common.testUtils.UnitSpec
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -37,30 +36,8 @@ trait MockITSAStatusService extends UnitSpec with BeforeAndAfterEach {
     reset(mockITSAStatusService)
   }
 
-  def setupMockGetStatusTillAvailableFutureYears(taxYear: TaxYear)(out: Future[Map[TaxYear, StatusDetail]]): OngoingStubbing[Future[Map[TaxYear, StatusDetail]]] = {
-    when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any, any, any))
-      .thenReturn(out)
-  }
-
   def setupMockITSAStatusDetail(taxYear: TaxYear)(out: Future[List[ITSAStatusResponseModel]]): OngoingStubbing[Future[List[ITSAStatusResponseModel]]] = {
     when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(out)
-  }
-
-  def setupMockHasMandatedOrVoluntaryStatusCurrentYear(response: Boolean): Unit = {
-    when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(
-      ArgumentMatchers.any[StatusDetail => Boolean]())(any(), any(), any()))
-      .thenReturn(Future.successful(response))
-  }
-
-  def setupMockHasMandatedOrVoluntaryStatusCurrentYearDefaultParam(response: Boolean): Unit = {
-    when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any())(any(), any(), any())).thenReturn(Future.successful(response))
-  }
-
-  def setupMockLatencyYearsQuarterlyAndAnnualStatus(taxYear1Status: Boolean, taxYear2Status: Boolean): Unit = {
-    when(mockITSAStatusService.latencyYearsQuarterlyAndAnnualStatus(any[Option[LatencyDetails]])(any(), any(), any()))
-      .thenReturn(Future.successful(
-        LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(taxYear1Status), Some(taxYear2Status)),
-          LatencyYearsAnnual(Some(!taxYear1Status), Some(!taxYear2Status)))))
   }
 
 }

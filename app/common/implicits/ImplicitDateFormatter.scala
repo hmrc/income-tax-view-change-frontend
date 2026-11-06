@@ -20,7 +20,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.{LocalDate, LocalDateTime}
 import javax.inject.{Inject, Singleton}
 import scala.language.implicitConversions
 
@@ -38,11 +38,6 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
 
   implicit class longDate(d: LocalDate)(implicit messages: Messages) {
 
-    def toLongDateNoYear: String = {
-      val dt = languageUtils.Dates.formatDate(d)(messages)
-      dt.split(" ")(0) + " " + dt.split(" ")(1)
-    }
-
     def toLongDateShort: String = {
       val shortFormattedDate = d.format(DateTimeFormatter.ofPattern("d MMM yyyy"))
       val shortDay = shortFormattedDate.split(" ").head
@@ -58,12 +53,6 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
     }
   }
 
-  implicit class longDateTime(dt: LocalDateTime)(implicit messages: Messages) {
-    def toLongDateTime: String = {
-      languageUtils.Dates.formatDate(dt.toLocalDate)(messages)
-    }
-  }
-
 }
 
 trait ImplicitDateParser {
@@ -74,14 +63,7 @@ trait ImplicitDateParser {
     def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
 
     def toLocalDateTime: LocalDateTime = LocalDateTime.parse(s, DateTimeFormatter.ISO_DATE_TIME)
-
-    def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
   }
 
   implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
-
-  def toTaxYearStartDate(year: Int): LocalDate = localDate(s"$year-4-6").toLocalDate
-
-  def toTaxYearEndDate(year: Int): LocalDate = localDate(s"$year-4-5").toLocalDate
-
 }

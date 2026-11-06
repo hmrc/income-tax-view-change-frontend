@@ -42,26 +42,16 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
   }
 
   val allFeatureSwitches: Set[FeatureSwitchName] = Set(
-    ITSASubmissionIntegration,
     ChargeHistory,
     CreditsRefundsRepay,
     PaymentHistoryRefunds,
-    OptOutFs,
-    SignUpFs,
-    DisplayBusinessStartDate,
     PenaltiesAndAppeals,
-    PenaltiesBackendEnabled,
     SelfServeTimeToPayR17,
     SubmitClaimToAdjustToNrs,
     TriggeredMigration,
-    PostFinalisationAmendmentsR18,
-    OverseasBusinessAddress,
     RecentActivity,
     MortgageEvidence,
-    IdempotencyKeyForCreateIncomeSource,
     NoIncomeSourcesRedirect,
-    RevenueAmendments,
-    HideBusinessName,
     StoodOverCharges,
     InterstitialPage
   )
@@ -123,7 +113,7 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
 
     "use MongoDB feature switch status if MongoDB is enabled in config" in {
 
-      val featureSwitchName = OverseasBusinessAddress
+      val featureSwitchName = ChargeHistory
 
       when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
 
@@ -134,7 +124,7 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
 
     "use MongoDB feature switch status when disabled for featureSwitches list" in {
 
-      val featureSwitchName = OverseasBusinessAddress
+      val featureSwitchName = ChargeHistory
 
       when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
 

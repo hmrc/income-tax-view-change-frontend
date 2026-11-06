@@ -19,7 +19,6 @@ package common.config
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 
 import javax.inject.{Inject, Singleton}
 
@@ -30,6 +29,3 @@ class FrontendAuthConnector @Inject()(config: ServicesConfig,
   val serviceUrl: String = config.baseUrl("auth")
   lazy val httpClientV2 = WSHttp
 }
-
-@Singleton
-class ItvcHeaderCarrierForPartialsConverter @Inject() extends HeaderCarrierForPartialsConverter {}

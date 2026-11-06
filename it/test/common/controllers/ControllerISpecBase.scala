@@ -97,8 +97,6 @@ trait ControllerISpecBase
     "microservice.services.itvc-dynamic-stub.port" -> mockPort,
     "microservice.services.self-assessment-api.host" -> mockHost,
     "microservice.services.self-assessment-api.port" -> mockPort,
-    "microservice.services.business-account.host" -> mockHost,
-    "microservice.services.business-account.port" -> mockPort,
     "microservice.services.financial-transactions.host" -> mockHost,
     "microservice.services.financial-transactions.port" -> mockPort,
     "microservice.services.pay-api.host" -> mockHost,

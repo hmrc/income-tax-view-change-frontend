@@ -16,7 +16,7 @@
 
 package common.enums
 
-import common.enums.GatewayPage.{GatewayPage, NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage, YourSelfAssessmentChargeSummaryPage}
+import common.enums.GatewayPage.{GatewayPage, NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -26,7 +26,6 @@ class GatewayPageSpec extends AnyWordSpec with Matchers{
     "return correct page based on the name passed" in {
 
       GatewayPage("whatYouOwe") shouldBe WhatYouOwePage
-      GatewayPage("yourSelfAssessmentChargeSummary") shouldBe YourSelfAssessmentChargeSummaryPage
       GatewayPage("paymentHistory") shouldBe PaymentHistoryPage
       GatewayPage("taxYearSummary") shouldBe TaxYearSummaryPage
       GatewayPage("any_name") shouldBe NoMatch

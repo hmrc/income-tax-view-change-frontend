@@ -19,7 +19,6 @@ package common.viewUtils
 import hub.v2.controllers.agent.errors.routes as hubAgentErrorRoutes
 import hub.v2.controllers.agent.routes as hubAgentRoutes
 import hub.v2.controllers.errors.routes as hubErrorRoutes
-import hub.v2.controllers.feedback.routes as hubFeedbackRoutes
 import hub.v2.controllers.routes as hubAppRoutes
 import hub.v2.controllers.timeout.routes as hubTimeoutRoutes
 object InternalUrlHelper {
@@ -30,24 +29,12 @@ object InternalUrlHelper {
   
   val signoutUrl = hubAppRoutes.SignOutController.signOut().url
 
-  val switchItvcLangToEnglishCall= hubAppRoutes.ItvcLanguageController.switchToEnglish(None)
-  
-  val switchItvcLangToWelshCall= hubAppRoutes.ItvcLanguageController.switchToWelsh(None)
-  
-  val switchLocaleToWelshUrl = hubAppRoutes.LocalLanguageController.switchToLanguage("cymraeg").url
-
-  val switchLocaleToEnglishUrl = hubAppRoutes.LocalLanguageController.switchToLanguage("english").url
-
   val keepAliveUrl = hubTimeoutRoutes.SessionTimeoutController.keepAlive().url
 
   val timeoutCall = hubTimeoutRoutes.SessionTimeoutController.timeout()
 
   val timeoutUrl = timeoutCall.url
   
-  val feedbackUrl = hubFeedbackRoutes.FeedbackController.show().url
-
-  val agentFeedbackUrl = hubFeedbackRoutes.FeedbackController.showAgent().url
-
   val agentErrorCall = hubAgentErrorRoutes.AgentErrorController.show()
   
   def noIncomeSourceUrl(isAgent: Boolean) = {

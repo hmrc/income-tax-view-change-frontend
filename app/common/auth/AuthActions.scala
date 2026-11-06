@@ -131,14 +131,6 @@ class AuthActions @Inject()(
       incomeSourceRetrievalAction
   }
 
-  def asMTDIndividualOrAgentWithClient(isAgent: Boolean, triggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
-    if (isAgent) {
-      asMTDAgentWithConfirmedClient(triggeredMigrationPage)
-    } else {
-      asMTDIndividual(triggeredMigrationPage)
-    }
-  }
-
   def asMTDIndividualOrPrimaryAgentWithClient(isAgent: Boolean, triggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
     if (isAgent) {
       asMTDPrimaryAgent(triggeredMigrationPage)
