@@ -86,7 +86,8 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfM
       redirectLocation(result) shouldBe Some(hub.v2.controllers.newHomePage.routes.HandleYourTasksController.show().url)
       verifyExtendedAudit(ChooseTaxYearsRangeSubmittedAuditModel(
         taxYearsPresented = Seq("2018 to 2019 onwards", "2017 to 2018 and earlier"),
-        taxYearRangeSelected = ChooseTaxYearsRangeForm.mtdOption
+        taxYearRangeSelected = ChooseTaxYearsRangeForm.mtdOption,
+        taxYearRadioSelected = "2018 to 2019 onwards"
       ))
     }
 
@@ -102,6 +103,11 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfM
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(appConfig.saViewLandPService(testSaUtr))
+      verifyExtendedAudit(ChooseTaxYearsRangeSubmittedAuditModel(
+        taxYearsPresented = Seq("2020 to 2021 onwards", "2019 to 2020 and earlier"),
+        taxYearRangeSelected = ChooseTaxYearsRangeForm.legacyOption,
+        taxYearRadioSelected = "2019 to 2020 and earlier"
+      ))
     }
 
     "redirect to home when user does not have IR-SA enrolment" in {

@@ -73,11 +73,12 @@ class ChooseTaxYearsRangeController @Inject()(
                           labels
                         )
 
-  private def auditSubmission(labels: TaxYearRangeLabels, taxYearRangeSelected: String)(implicit user: MtdItUser[_]): Unit =
+  private def auditSubmission(labels: TaxYearRangeLabels, taxYearRangeSelected: String, taxYearRadioSelected: String)(implicit user: MtdItUser[_]): Unit =
     auditingService.extendedAudit(
       ChooseTaxYearsRangeSubmittedAuditModel(
         taxYearsPresented = labels.presentedTaxYears,
-        taxYearRangeSelected = taxYearRangeSelected
+        taxYearRangeSelected = taxYearRangeSelected,
+        taxYearRadioSelected = taxYearRadioSelected
       )
     )
 
@@ -101,11 +102,11 @@ class ChooseTaxYearsRangeController @Inject()(
           formWithErrors => BadRequest(renderView(formWithErrors, taxYearRangeLabels(year))),
           form => form.selection match {
             case Some(ChooseTaxYearsRangeForm.mtdOption) =>
-              auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.mtdOption)
+              auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.mtdOption, taxYearRangeLabels(year).mtdTaxYearRange)
               Redirect(newHomePage.routes.HandleYourTasksController.show())
 
             case Some(ChooseTaxYearsRangeForm.legacyOption) =>
-              auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.legacyOption)
+              auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.legacyOption, taxYearRangeLabels(year).saTaxYearRange)
               val utr = user.saUtr.getOrElse(
                 throw new IllegalStateException("SA UTR is missing for legacy SA redirect")
               )
