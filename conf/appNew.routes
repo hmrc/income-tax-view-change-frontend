@@ -2,8 +2,10 @@
 GET         /                                                             hub.v2.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   hub.v2.controllers.HomeController.show(origin: Option[String] ?= None)
 
-GET         /choose-tax-years-range                                      hub.v2.controllers.ChooseTaxYearsRangeController.show()
-POST        /choose-tax-years-range                                      hub.v2.controllers.ChooseTaxYearsRangeController.submit()
+GET         /choose-tax-years-range                                       hub.v2.controllers.ChooseTaxYearsRangeController.show()
+POST        /choose-tax-years-range                                       hub.v2.controllers.ChooseTaxYearsRangeController.submit()
+GET         /choose-tax-years-range-sa                                    hub.v2.controllers.ChooseTaxYearsRangeController.showPtaMultipleEnrolment()
+POST        /choose-tax-years-range-sa                                    hub.v2.controllers.ChooseTaxYearsRangeController.submitPtaMultipleEnrolment()
 GET         /agents/client-income-tax                                     hub.v2.controllers.HomeController.showAgent()
 GET         /agents                                                       hub.v2.controllers.HomeController.showAgent()
 GET         /your-tasks                                                   hub.v2.controllers.newHomePage.HandleYourTasksController.show()
@@ -24,8 +26,8 @@ GET         /switch-to-welsh                                              hub.v2
 GET         /switch-to-english                                            hub.v2.controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
 
 # No Income Sources Error page
-GET         /no-income-sources                                              hub.v2.controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
-GET         /agents/no-income-sources                                       hub.v2.controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
+GET         /no-income-sources                                            hub.v2.controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
+GET         /agents/no-income-sources                                     hub.v2.controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
 
 #Feedback Routes
 GET         /feedback                                                     hub.v2.controllers.feedback.FeedbackController.show()
