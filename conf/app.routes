@@ -30,6 +30,8 @@ GET         /agents/help                                                  hub.v1
 
 GET         /choose-tax-years-range                                       hub.v1.controllers.ChooseTaxYearsRangeController.show()
 POST        /choose-tax-years-range                                       hub.v1.controllers.ChooseTaxYearsRangeController.submit()
+GET         /choose-tax-years-range-sa                                    hub.v1.controllers.ChooseTaxYearsRangeController.showPtaMultipleEnrolment()
+POST        /choose-tax-years-range-sa                                    hub.v1.controllers.ChooseTaxYearsRangeController.submitPtaMultipleEnrolment()
 
 
 
