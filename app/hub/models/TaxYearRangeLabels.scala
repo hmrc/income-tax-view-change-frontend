@@ -17,8 +17,10 @@
 package hub.models
 
 case class TaxYearRangeLabels(mtdFromYear: String, mtdToYear: String, saFromYear: String, saToYear: String) {
+  def mtdTaxYearRange: String = s"$mtdFromYear to $mtdToYear onwards"
+  def saTaxYearRange: String = s"$saFromYear to $saToYear and earlier"
   def presentedTaxYears: Seq[String] = Seq(
-    s"$mtdFromYear to $mtdToYear onwards",
-    s"$saFromYear to $saToYear and earlier"
+    mtdTaxYearRange,
+    saTaxYearRange
   )
 }
