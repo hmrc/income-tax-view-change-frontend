@@ -1,46 +1,56 @@
-GET        /language/:lang                                                common.controllers.LocalLanguageController.switchToLanguage(lang: String)
-GET        /agents/language/:lang                                         common.controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
+# NOTE: the two Assets routes below are redundant duplicates of the ones in conf/app.routes.
+# They exist only so that this routes file's compilation unit also contributes the Assets
+# reverse-route helper (controllers.routes.Assets) for templates - see Play's known limitation
+# where two separate routes files declaring actions in the same controller package cause one
+# file's reverse-route helper generation to clobber the other's (conf/app.routes's catch-all
+# "/*path" route must stay ordered before these, so the authoritative forward-routing entries
+# for /assets/*file remain in conf/app.routes; do not remove those).
+GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file)
+GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
-GET         /language/:lang                                               common.controllers.ItvcLanguageController.switchToLanguage(lang: String)
-GET         /switch-to-welsh                                              common.controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
-GET         /switch-to-english                                            common.controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
+GET        /language/:lang                                                controllers.LocalLanguageController.switchToLanguage(lang: String)
+GET        /agents/language/:lang                                         controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
+
+GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
+GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
+GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
 
 # Client Relationship Failure
-GET         /agents/not-authorised-to-view-client                         common.controllers.agent.ClientRelationshipFailureController.show()
+GET         /agents/not-authorised-to-view-client                         controllers.agent.ClientRelationshipFailureController.show()
 
-GET         /agents/no-assignment                                         common.controllers.agent.NoAssignmentController.show()
+GET         /agents/no-assignment                                         controllers.agent.NoAssignmentController.show()
 
 # No Income Sources Error page
-GET         /no-income-sources                                              common.controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
-GET         /agents/no-income-sources                                       common.controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
+GET         /no-income-sources                                              controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
+GET         /agents/no-income-sources                                       controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
 
 #Feedback Routes
-GET         /feedback                                                     common.controllers.feedback.FeedbackController.show()
-GET         /agents/feedback                                              common.controllers.feedback.FeedbackController.showAgent()
-POST        /feedback                                                     common.controllers.feedback.FeedbackController.submit()
-POST        /agents/feedback                                              common.controllers.feedback.FeedbackController.submitAgent()
-GET         /thankyou                                                     common.controllers.feedback.FeedbackController.thankYou()
-GET         /agents/thankyou                                              common.controllers.feedback.FeedbackController.thankYouAgent()
+GET         /feedback                                                     controllers.feedback.FeedbackController.show()
+GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
+POST        /feedback                                                     controllers.feedback.FeedbackController.submit()
+POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent()
+GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou()
+GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent()
 
 #Timeout Routes
-GET         /session-timeout                                              common.controllers.timeout.SessionTimeoutController.timeout()
-GET         /keep-alive                                                   common.controllers.timeout.SessionTimeoutController.keepAlive()
+GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout()
+GET         /keep-alive                                                   controllers.timeout.SessionTimeoutController.keepAlive()
 
 #Sign Out Routes
-GET         /sign-out                                                     common.controllers.SignOutController.signOut()
+GET         /sign-out                                                     controllers.SignOutController.signOut()
 
 #Sign In Routes
-GET         /sign-in                                                      common.controllers.SignInController.signIn()
+GET         /sign-in                                                      controllers.SignInController.signIn()
 
 #Not Enrolled
-GET         /cannot-access-service                                        common.controllers.errors.NotEnrolledController.show()
+GET         /cannot-access-service                                        controllers.errors.NotEnrolledController.show()
 
 #Agent Error
-GET         /agents/agent-error                                           common.controllers.agent.errors.AgentErrorController.show()
+GET         /agents/agent-error                                           controllers.agent.errors.AgentErrorController.show()
 
 #Uplift Failed
-GET         /cannot-view-page                                             common.controllers.errors.UpliftFailedController.show()
+GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show()
 
 #Uplift Success
-GET         /uplift-success                                               common.controllers.UpliftSuccessController.success()
+GET         /uplift-success                                               controllers.UpliftSuccessController.success()
 

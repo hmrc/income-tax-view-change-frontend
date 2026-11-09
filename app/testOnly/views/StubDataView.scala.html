@@ -15,13 +15,13 @@
  *@
 
 @import testOnly.views.html.helpers.{SummaryErrorHelper, DropdownHelper, InputHelper, TextAreaHelper}
-@import common.views.html.components._
+@import views.html.components._
 @import testOnly.models.DataModel
 @import testOnly.forms.StubDataForm._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import common.views.html.helpers.injected.ErrorSummary
-@import common.views.html.layouts.unifiedLayout
-@import common.config.FrontendAppConfig
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.layouts.unifiedLayout
+@import config.FrontendAppConfig
 
 @this(unifiedLayout: unifiedLayout, h1: h1, form: FormWithCSRF, errorSummary: ErrorSummary, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
 

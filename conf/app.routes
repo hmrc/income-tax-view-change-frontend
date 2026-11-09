@@ -7,29 +7,29 @@ GET         /assets/*file                                                 contro
 # Assets
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
-GET         /agents/*path                                                 hub.v1.controllers.NewServiceRedirectController.showAgent(path: String)
-GET         /*path                                                        hub.v1.controllers.NewServiceRedirectController.show(path: String)
+GET         /agents/*path                                                 v1.controllers.NewServiceRedirectController.showAgent(path: String)
+GET         /*path                                                        v1.controllers.NewServiceRedirectController.show(path: String)
 
 #Home Controller
 
-GET         /                                                             hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
-GET         /income-tax                                                   hub.v1.controllers.HomeController.show(origin: Option[String] ?= None)
-GET         /agents/client-income-tax                                     hub.v1.controllers.HomeController.showAgent()
-GET         /agents                                                       hub.v1.controllers.HomeController.showAgent()
-GET         /your-tasks                                                   hub.v1.controllers.newHomePage.HandleYourTasksController.show()
-GET         /agents/your-tasks                                            hub.v1.controllers.newHomePage.HandleYourTasksController.showAgent()
+GET         /                                                             v1.controllers.HomeController.show(origin: Option[String] ?= None)
+GET         /income-tax                                                   v1.controllers.HomeController.show(origin: Option[String] ?= None)
+GET         /agents/client-income-tax                                     v1.controllers.HomeController.showAgent()
+GET         /agents                                                       v1.controllers.HomeController.showAgent()
+GET         /your-tasks                                                   v1.controllers.newHomePage.HandleYourTasksController.show()
+GET         /agents/your-tasks                                            v1.controllers.newHomePage.HandleYourTasksController.showAgent()
 
 
-GET         /recent-activity                                              hub.v1.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
-GET         /agents/recent-activity                                       hub.v1.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
+GET         /recent-activity                                              v1.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
+GET         /agents/recent-activity                                       v1.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
 
-GET         /overview                                                     hub.v1.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = false)
-GET         /help                                                         hub.v1.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)
-GET         /agents/overview                                              hub.v1.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
-GET         /agents/help                                                  hub.v1.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
+GET         /overview                                                     v1.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = false)
+GET         /help                                                         v1.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)
+GET         /agents/overview                                              v1.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
+GET         /agents/help                                                  v1.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
 
-GET         /choose-tax-years-range                                       hub.v1.controllers.ChooseTaxYearsRangeController.show()
-POST        /choose-tax-years-range                                       hub.v1.controllers.ChooseTaxYearsRangeController.submit()
+GET         /choose-tax-years-range                                       v1.controllers.ChooseTaxYearsRangeController.show()
+POST        /choose-tax-years-range                                       v1.controllers.ChooseTaxYearsRangeController.submit()
 
 
 

@@ -16,10 +16,10 @@
 
 package testOnly.services.admin
 
-import common.config.FrontendAppConfig
-import common.config.featureswitch.FeatureSwitching
-import common.connectors.FeatureSwitchConnector
-import common.models.admin.{FeatureSwitch, FeatureSwitchName}
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
+import connectors.FeatureSwitchConnector
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 

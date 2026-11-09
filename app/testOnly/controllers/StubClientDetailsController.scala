@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import common.config.FrontendAppConfig
+import config.FrontendAppConfig
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -56,7 +56,7 @@ class StubClientDetailsController @Inject()(
   def submitWithParams(nino: String, utr: String): Action[AnyContent] =
     Action.async { implicit request =>
       matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)).map { _ =>
-        val redirectUrl = hub.v2.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr)
+        val redirectUrl = v2.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr)
         Redirect(redirectUrl)
       }
     }
@@ -70,7 +70,7 @@ class StubClientDetailsController @Inject()(
         ))), { data =>
           matchingStubConnector.stubClient(data).map { response =>
             logger.info(s"[submit] matching stub, status: ${response.status}, body: ${response.body}")
-            val redirectUrl = hub.v2.controllers.agent.routes.EnterClientsUTRController.show()
+            val redirectUrl = v2.controllers.agent.routes.EnterClientsUTRController.show()
             Redirect(redirectUrl)
           }
         }

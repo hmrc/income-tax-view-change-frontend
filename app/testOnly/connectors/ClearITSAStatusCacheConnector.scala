@@ -16,7 +16,7 @@
 
 package testOnly.connectors
 
-import common.connectors.RawResponseReads
+import connectors.RawResponseReads
 import testOnly.TestOnlyAppConfig
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
