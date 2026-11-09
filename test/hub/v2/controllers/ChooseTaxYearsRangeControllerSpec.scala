@@ -45,20 +45,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfM
   private lazy val controller = app.injector.instanceOf[ChooseTaxYearsRangeController]
 
   "show" should {
-    "render the landing page without an SA enrolment or the interstitial feature enabled" in {
-      setupMockSuccess(MTDIndividual)
-      setupMockUserAuthNoSAUtr
-      mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-      setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
-
-      val result = controller.show()(fakeGetRequestBasedOnMTDUserType(MTDIndividual))
-
-      status(result) shouldBe OK
-      contentAsString(result) should include("choose-tax-years-range-form")
-    }
-
-    "render the page when user has HMRC-MTD-IT and IR-SA enrolments" in {
+    "render the page" in {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
