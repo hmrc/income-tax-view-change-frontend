@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package helpers.servicemocks
+package helpers.serviceMocks
 
 import helpers.ComponentSpecBase
 import play.api.libs.json.{JsString, JsValue, Json}

@@ -18,7 +18,7 @@ package v2.controllers.newHomePage
 
 import v2.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.ITSAStatusDetailsStub
+import helpers.serviceMocks.ITSAStatusDetailsStub
 import models.admin.{FeatureSwitchName, RecentActivity}
 import models.itsaStatus.ITSAStatus
 import ITSAStatus.ITSAStatus

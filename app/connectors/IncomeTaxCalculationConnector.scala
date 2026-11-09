@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import enums.TaxYearSummary.CalculationRecord
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
+import models.liabilityCalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logging
 import play.api.http.Status.*
 import uk.gov.hmrc.http.client.HttpClientV2

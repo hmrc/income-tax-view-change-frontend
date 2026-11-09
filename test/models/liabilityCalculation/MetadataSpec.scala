@@ -18,7 +18,6 @@ package models.liabilityCalculation
 
 import enums.TaxYearSummary.CalculationType.*
 import mocks.services.MockDateService
-import models.liabilitycalculation.Metadata
 import testUtils.UnitSpec
 import org.scalatest.matchers.should.Matchers
 

@@ -17,7 +17,7 @@
 package testConstants
 
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
+import models.liabilityCalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import testConstants.BaseIntegrationTestConstants.{business1, testMtditid, testNino, getCurrentTaxYearEnd}
 
 import java.time.LocalDate

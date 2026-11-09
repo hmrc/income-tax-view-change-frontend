@@ -22,7 +22,7 @@ import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCooki
 import testConstants.HubIntegrationTestConstants.businessOnlyResponse
 import play.api.http.Status.*
 import helpers.GetInsourceDetailsStub
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
 
 class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 

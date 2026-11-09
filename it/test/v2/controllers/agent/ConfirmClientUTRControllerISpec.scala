@@ -18,8 +18,8 @@ package v2.controllers.agent
 
 import v2.controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import helpers.servicemocks.AuditStub
-import helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
+import helpers.serviceMocks.AuditStub
+import helpers.serviceMocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.HubIntegrationTestConstants.businessOnlyResponse
 import audit.models.ConfirmClientDetailsAuditModel
@@ -27,7 +27,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.*
 import helpers.GetInsourceDetailsStub
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
 
 class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 

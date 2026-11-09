@@ -17,7 +17,6 @@
 package models.liabilityCalculation
 
 import exceptions.MissingFieldException
-import models.liabilitycalculation.StudentLoan
 import testUtils.TestSupport
 import org.scalatest.matchers.should.Matchers
 

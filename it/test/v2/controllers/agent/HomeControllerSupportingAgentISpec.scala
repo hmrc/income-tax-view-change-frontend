@@ -19,7 +19,7 @@ package v2.controllers.agent
 import auth.MtdItUser
 import v2.controllers.ControllerISpecHelper
 import enums.MTDSupportingAgent
-import helpers.servicemocks.ITSAStatusDetailsStub
+import helpers.serviceMocks.ITSAStatusDetailsStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}

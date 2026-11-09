@@ -23,7 +23,7 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.*
 import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import helpers.servicemocks.MTDAgentAuthStub.bakeSessionCookie
+import helpers.serviceMocks.MTDAgentAuthStub.bakeSessionCookie
 import testConstants.BaseIntegrationTestConstants.testSessionId
 import v2.testConstants.MicroserviceSpecificConstants
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}

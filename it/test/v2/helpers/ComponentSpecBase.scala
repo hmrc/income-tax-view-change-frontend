@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import auth.{AuthorisedAndEnrolledRequest, MtdItUser}
 import config.FrontendAppConfig
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.AuditStub
+import helpers.serviceMocks.AuditStub
 import helpers.{CustomMatchers, SessionCookieBaker}
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitch

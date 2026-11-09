@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.liabilitycalculation
+package models.liabilityCalculation
 
 import play.api.libs.json.*
 

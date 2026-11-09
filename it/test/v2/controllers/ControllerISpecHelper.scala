@@ -22,10 +22,10 @@ import v2.controllers.agent.routes as agentRoutes
 import v2.controllers.errors.routes as errorRoutes
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import v2.helpers.ComponentSpecBase
-import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
-import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
-import helpers.servicemocks.FeatureSwitchStub.{featureSwitchesResponse, stubGetFeatureSwitches}
-import helpers.servicemocks.{AuditStub, MTDAgentAuthStub, MTDIndividualAuthStub, SessionDataStub}
+import helpers.serviceMocks.BusinessDetailsStub.stubGetBusinessDetails
+import helpers.serviceMocks.CitizenDetailsStub.stubGetCitizenDetails
+import helpers.serviceMocks.FeatureSwitchStub.{featureSwitchesResponse, stubGetFeatureSwitches}
+import helpers.serviceMocks.{AuditStub, MTDAgentAuthStub, MTDIndividualAuthStub, SessionDataStub}
 import models.admin.FeatureSwitchName
 import models.audit.AccessDeniedForSupportingAgentAuditModel
 import v2.viewUtils.InternalUrlHelper

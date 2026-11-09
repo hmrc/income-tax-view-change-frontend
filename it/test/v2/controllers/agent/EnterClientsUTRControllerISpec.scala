@@ -19,8 +19,8 @@ package v2.controllers.agent
 import v2.controllers.ControllerISpecHelper
 import v2.controllers.agent.errors.routes as agentErrorRoutes
 import enums.MTDPrimaryAgent
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
-import helpers.servicemocks.{AuditStub, BusinessDetailsStub, CitizenDetailsStub, MTDAgentAuthStub}
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.{AuditStub, BusinessDetailsStub, CitizenDetailsStub, MTDAgentAuthStub}
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.IncomeSourceIntegrationTestConstants.*
 import v2.viewUtils.InternalUrlHelper

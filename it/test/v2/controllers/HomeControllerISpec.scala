@@ -19,7 +19,7 @@ package v2.controllers
 import auth.MtdItUser
 import enums.MTDIndividual
 import helpers.GetInsourceDetailsStub
-import helpers.servicemocks.{MTDIndividualAuthStub, YearOfMigrationStub}
+import helpers.serviceMocks.{MTDIndividualAuthStub, YearOfMigrationStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}

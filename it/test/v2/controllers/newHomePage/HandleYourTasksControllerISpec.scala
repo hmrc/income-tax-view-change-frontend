@@ -20,11 +20,11 @@ import enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import v2.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.{GetInsourceDetailsStub, WiremockHelper}
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub}
+import helpers.serviceMocks.AuditStub.verifyAuditContainsDetail
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub}
 import models.admin.{CreditsRefundsRepay, FeatureSwitchName, PenaltiesAndAppeals, TriggeredMigration}
-import helpers.servicemocks.YearOfMigrationStub
+import helpers.serviceMocks.YearOfMigrationStub
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models.liabilitycalculation
+package models.liabilityCalculation
 
 import exceptions.MissingFieldException
-import models.liabilitycalculation.taxcalculation.TaxCalculation
+import models.liabilityCalculation.taxCalculation.TaxCalculation
 import play.api.libs.json.{Json, OFormat}
 
 case class Calculation(

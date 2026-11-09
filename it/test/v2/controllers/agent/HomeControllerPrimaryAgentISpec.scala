@@ -28,7 +28,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import helpers.GetInsourceDetailsStub
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
 
 class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 

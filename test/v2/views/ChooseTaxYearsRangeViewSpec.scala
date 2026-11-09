@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package v2.views
 
 import testUtils.TestSupport
 import v1.controllers.routes

@@ -20,8 +20,8 @@ import v2.controllers.ControllerISpecHelper
 import v2.controllers.feedback.routes as feedbackRoutes
 import enums.{MTDIndividual, MTDPrimaryAgent}
 import helpers.FeedbackConnectorStub
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
-import helpers.servicemocks.{MTDAgentAuthStub, MTDIndividualAuthStub}
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.{MTDAgentAuthStub, MTDIndividualAuthStub}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 

@@ -17,7 +17,7 @@
 package connectors.agent
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import helpers.servicemocks.AuditStub
+import helpers.serviceMocks.AuditStub
 import helpers.{ComponentSpecBase, WiremockHelper}
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import org.scalatest.wordspec.AnyWordSpec

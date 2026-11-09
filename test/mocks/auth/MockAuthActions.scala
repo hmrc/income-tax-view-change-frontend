@@ -31,7 +31,7 @@ import services.admin.FeatureSwitchService
 import viewUtils.InternalUrlHelper
 import models.itsaStatus.StatusReason.MtdItsaOptOut
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
-import models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, LiabilityCalculationResponseModel, Metadata, PersonalInformation}
+import models.liabilityCalculation.{Inputs, LiabilityCalculationResponse, LiabilityCalculationResponseModel, Metadata, PersonalInformation}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*

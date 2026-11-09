@@ -17,8 +17,8 @@
 package models.incomeSourceDetails
 
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
-import testUtils.{TestSupport, UnitSpec}
 import play.api.libs.json.*
+import testUtils.{TestSupport, UnitSpec}
 
 import java.time.LocalDate
 

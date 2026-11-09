@@ -16,11 +16,11 @@
 
 package v2.controllers.agent
 
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
 import v2.controllers.agent.errors.routes as agentErrorRoutes
 import v2.controllers.agent.routes as agentRoutes
 import v2.helpers.ComponentSpecBase
-import helpers.servicemocks.MTDAgentAuthStub
+import helpers.serviceMocks.MTDAgentAuthStub
 import v2.viewUtils.InternalUrlHelper
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse

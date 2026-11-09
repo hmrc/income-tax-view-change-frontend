@@ -19,7 +19,7 @@ package connectors
 import enums.TaxYearSummary.CalculationRecord
 import mocks.MockHttpV2
 import CalculationRecord.PREVIOUS
-import models.liabilitycalculation.*
+import models.liabilityCalculation.*
 import testUtils.TestSupport
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, Json}

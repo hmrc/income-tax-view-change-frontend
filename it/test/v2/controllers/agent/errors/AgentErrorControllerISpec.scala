@@ -16,9 +16,9 @@
 
 package v2.controllers.agent.errors
 
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
 import v2.controllers.ControllerISpecHelper
-import helpers.servicemocks.MTDAgentAuthStub
+import helpers.serviceMocks.MTDAgentAuthStub
 import play.api.http.Status.*
 
 class AgentErrorControllerISpec extends ControllerISpecHelper {

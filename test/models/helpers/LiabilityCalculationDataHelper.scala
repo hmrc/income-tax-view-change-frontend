@@ -16,10 +16,10 @@
 
 package models.helpers
 
-import models.liabilitycalculation.{AllowancesAndDeductions, Calculation, ChargeableEventGainsIncome, DividendsIncome, EmploymentAndPensionsIncome, EmploymentExpenses, EndOfYearEstimate, ForeignIncome, ForeignTaxCreditRelief, GiftAid, GiftAidTaxReductionWhereBasicRateDiffers, IncomeSource, IncomeSummaryTotals, Inputs, LiabilityCalculationResponse, MarriageAllowanceTransferOut, MarriageAllowanceTransferredIn, Message, Messages, Metadata, OverseasIncomeAndGains, PersonalInformation, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, SavingsAndGainsIncome, ShareSchemesIncome, StateBenefitsIncome, TaxDeductedAtSource, TopSlicingRelief}
-import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, OtherGains, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
-import models.liabilitycalculation.*
-import models.liabilitycalculation.taxcalculation.*
+import models.liabilityCalculation.{AllowancesAndDeductions, Calculation, ChargeableEventGainsIncome, DividendsIncome, EmploymentAndPensionsIncome, EmploymentExpenses, EndOfYearEstimate, ForeignIncome, ForeignTaxCreditRelief, GiftAid, GiftAidTaxReductionWhereBasicRateDiffers, IncomeSource, IncomeSummaryTotals, Inputs, LiabilityCalculationResponse, MarriageAllowanceTransferOut, MarriageAllowanceTransferredIn, Message, Messages, Metadata, OverseasIncomeAndGains, PersonalInformation, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, SavingsAndGainsIncome, ShareSchemesIncome, StateBenefitsIncome, TaxDeductedAtSource, TopSlicingRelief}
+import models.liabilityCalculation.taxCalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, OtherGains, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
+import models.liabilityCalculation.*
+import models.liabilityCalculation.taxCalculation.*
 
 import java.time.LocalDate
 

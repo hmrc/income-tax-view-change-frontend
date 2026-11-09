@@ -17,8 +17,8 @@
 package controllers.agent
 
 import helpers.ComponentSpecBase
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
-import helpers.servicemocks.MTDAgentAuthStub
+import helpers.serviceMocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.serviceMocks.MTDAgentAuthStub
 import viewUtils.InternalUrlHelper
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse
