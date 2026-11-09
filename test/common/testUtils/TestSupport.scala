@@ -20,7 +20,8 @@ import common.auth.actions.AuthActionsTestData
 import common.auth.actions.AuthActionsTestData.*
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import common.config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import common.config.FrontendAppConfig
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
@@ -107,8 +108,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   lazy val messagesApi: MessagesApi = inject[MessagesApi]
 
-  implicit lazy val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter =
-    mock(classOf[ItvcHeaderCarrierForPartialsConverter])
+  implicit lazy val mockItvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter =
+    mock(classOf[HeaderCarrierForPartialsConverter])
 
   implicit val headerCarrier: HeaderCarrier =
     HeaderCarrier(sessionId = Some(SessionId("session-123456")), deviceID = Some("some device Id")).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
@@ -138,10 +139,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     override def isBeforeLastDayOfTaxYear: Boolean = false
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = LocalDate.of(2024, 4, 5)
-
-    override def isWithin30Days(date: LocalDate): Boolean = {
-      date.minusDays(30).isBefore(fixedDate)
-    }
   }
 
   lazy val tsTestUser: MtdItUser[_] =

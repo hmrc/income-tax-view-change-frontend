@@ -91,16 +91,6 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     TaxYear.forYearEnd(yearEnd)
   }
 
-  def getNextTaxYear: TaxYear = {
-    val yearEnd = getCurrentTaxYearEnd + 1
-    TaxYear.forYearEnd(yearEnd)
-  }
-
-  def isWithin30Days(date: LocalDate): Boolean = {
-    val currentDate = getCurrentDate
-    date.minusDays(30).isBefore(currentDate)
-  }
-
 }
 
 @ImplementedBy(classOf[DateService])
@@ -121,6 +111,4 @@ trait DateServiceInterface {
   def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean
 
   def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate
-
-  def isWithin30Days(date: LocalDate): Boolean
 }

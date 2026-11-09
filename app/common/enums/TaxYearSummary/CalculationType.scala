@@ -33,22 +33,6 @@ enum CalculationType(val value: String) {
 
 object CalculationType {
 
-  def fromStringToCalculationTypeValue(string: String): CalculationType =
-    string match {
-      case "CR"              => CalculationType.DeclareCrystallisation
-      case "AM"              => CalculationType.Amendment
-      case "DF"              => CalculationType.DeclareFinalisation
-      case "CA"              => CalculationType.ConfirmAmendment
-      case "CO"              => CalculationType.Correction
-      case "IA"              => CalculationType.IntentToAmend
-      case "IC"              => CalculationType.IntentToCrystallise
-      case "IY"              => CalculationType.InYear
-      case "IF"              => CalculationType.IntentToFinalise
-      case "crystallisation" => CalculationType.Crystallisation
-      case "inYear"          => CalculationType.LegacyInYear
-      case _                 => CalculationType.UnknownCalculationType
-    }
-
   val notCrystallisedTypes: Set[CalculationType] =
     Set(
       CalculationType.InYear,

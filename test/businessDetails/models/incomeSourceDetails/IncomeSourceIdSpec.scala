@@ -19,7 +19,7 @@ package businessDetails.models.incomeSourceDetails
 import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import businessDetails.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.exceptions.NoIncomeSourceFound
-import common.testConstants.BaseTestConstants.{testMtdItUser, testSelfEmploymentId}
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import common.testUtils.{TestSupport, UnitSpec}
 
 class IncomeSourceIdSpec extends UnitSpec with TestSupport {
@@ -41,11 +41,7 @@ class IncomeSourceIdSpec extends UnitSpec with TestSupport {
     "return an Option containing an incomeSourceId" when {
       "provided an input of type Option[Right[IncomeSourceId]]" in {
 
-        val user = testMtdItUser
-
-        val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = Option(mkIncomeSourceId(testSelfEmploymentId).toHash)
-
-        val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = incomeSourceIdHashMaybe.map(x => user.incomeSources.compareHashToQueryString(x))
+        val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = Some(Right(mkIncomeSourceId(testSelfEmploymentId)))
 
         val result: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
 

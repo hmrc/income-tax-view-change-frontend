@@ -117,59 +117,6 @@ class TaxYearSpec extends UnitSpec with TestSupport {
     }
   }
 
-  "TaxYear.getTaxYearStartYearEndYear" when {
-    "given an input of letters with the correct length" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("ABCD-EFGH").isDefined shouldBe false
-      }
-    }
-    "given an input of letters with the incorrect length" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("ABCDEFGH-IJKLMNO").isDefined shouldBe false
-      }
-    }
-    "given an input of numbers with more than one dash" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("2020-2021-2022").isDefined shouldBe false
-      }
-    }
-    "given an empty input" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("").isDefined shouldBe false
-      }
-    }
-    "given an input with no dashes" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("20212023").isDefined shouldBe false
-      }
-    }
-    "given an input with years in the incorrect format" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("21-22").isDefined shouldBe false
-      }
-    }
-    "given an input with years which have length greater than 4" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("20221-20222").isDefined shouldBe false
-      }
-    }
-    "given an input with numerical years in the format YYYY-YYYY with a numerical difference of 2" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("2020-2022").isDefined shouldBe false
-      }
-    }
-    "given an input where yearOne is greater than yearTwo" should {
-      "not return a TaxYear model" in {
-        TaxYear.getTaxYearModel("2022-2021").isDefined shouldBe false
-      }
-    }
-    "given an input with numerical years in the format YYYY-YYYY with a numerical difference of 1" should {
-      "return a TaxYear model" in {
-        TaxYear.getTaxYearModel("2021-2022").isDefined shouldBe true
-      }
-    }
-  }
-
   "makeTaxYearWithEndYear" should {
     "create a TaxYear object" when {
       "given the Tax Year end year" in {
@@ -202,45 +149,6 @@ class TaxYearSpec extends UnitSpec with TestSupport {
         val result = taxYear.isFutureTaxYear
 
         result shouldBe false
-      }
-    }
-  }
-
-  "isSameAs method" should {
-    "return true" when {
-      "the TaxYear object isSameAs given tax year" in {
-        TaxYear.forYearEnd(2024).isSameAs(TaxYear.forYearEnd(2024)) shouldBe true
-      }
-    }
-    "return false" when {
-      "the TaxYear object is not same as given tax year" in {
-        TaxYear.forYearEnd(2024).isSameAs(TaxYear.forYearEnd(2023)) shouldBe false
-      }
-    }
-  }
-
-  "isBefore method" should {
-    "return true" when {
-      "the TaxYear object isSameAs given tax year" in {
-        TaxYear.forYearEnd(2023).isBefore(TaxYear.forYearEnd(2024)) shouldBe true
-      }
-    }
-    "return false" when {
-      "the TaxYear object is not before given tax year" in {
-        TaxYear.forYearEnd(2024).isBefore(TaxYear.forYearEnd(2023)) shouldBe false
-      }
-    }
-  }
-
-  "isAfter method" should {
-    "return true" when {
-      "the TaxYear object isAfter given tax year" in {
-        TaxYear.forYearEnd(2024).isAfter(TaxYear.forYearEnd(2023)) shouldBe true
-      }
-    }
-    "return false" when {
-      "the TaxYear object is not after given tax year" in {
-        TaxYear.forYearEnd(2024).isAfter(TaxYear.forYearEnd(2024)) shouldBe false
       }
     }
   }

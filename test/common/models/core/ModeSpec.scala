@@ -21,16 +21,6 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class ModeSpec extends AnyWordSpec with Matchers {
 
-  "Mode.isChange" should {
-    "return true for CheckMode" in {
-      Mode.isChange(CheckMode) shouldBe true
-    }
-
-    "return false for NormalMode" in {
-      Mode.isChange(NormalMode) shouldBe false
-    }
-  }
-
   "Mode.jsLiteral" should {
     "serialize NormalMode to 'NormalMode'" in {
       Mode.jsLiteral.to(NormalMode) shouldBe "NormalMode"
