@@ -1,0 +1,76 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package connectors
+
+import auth.MtdItUser
+import config.FrontendAppConfig
+import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
+import play.api.Logging
+import play.api.http.Status
+import play.api.http.Status.CREATED
+import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+
+class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
+                                            config: FrontendAppConfig
+                                           )(implicit ec: ExecutionContext) extends Logging {
+  val journeyStartUrl: String = config.setUpAPaymentPlanUrl + "/essttp-backend/sa/itsa/journey/start"
+
+  private val bodyWYO: MtdItUser[_] => JsValue = user => Json.parse(
+    s"""
+       {
+        "returnUrl": "${config.homePageUrl(false)}",
+        "backUrl": "${config.financialsWhatYouOweUrl(false)}"
+       }
+      """.stripMargin
+  )
+
+  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[SelfServeTimeToPayJourneyResponse] = {
+    val body = bodyWYO
+
+    http
+      .post(url"$journeyStartUrl")
+      .withBody(body(user))
+      .execute[HttpResponse]
+      .map {
+        case response if response.status == CREATED =>
+          response.json.validate[SelfServeTimeToPayJourneyResponseModel].fold(
+            invalid => {
+              logger.error(s"[startSelfServeTimeToPayJourney] Invalid Json with $invalid")
+              SelfServeTimeToPayJourneyErrorResponse(response.status, "Invalid Json")
+            },
+            valid => valid
+          )
+        case response => if (response.status >= 400) {
+          logger.error(s"Self Serve Time To Pay journey start error with response code: ${response.status} and body: ${response.body}")
+        } else {
+          logger.warn(s"Self Serve Time To Pay journey start error with response code: ${response.status} and body: ${response.body}")
+        }
+          SelfServeTimeToPayJourneyErrorResponse(response.status, response.body)
+      }
+  }.recover {
+    case ex: Exception =>
+      logger.error(s"[startSelfServeTimeToPayJourney] Unexpected future failed error, ${ex.getMessage}")
+      SelfServeTimeToPayJourneyErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
+  }
+}

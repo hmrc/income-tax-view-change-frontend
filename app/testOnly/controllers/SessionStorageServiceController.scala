@@ -16,11 +16,11 @@
 
 package testOnly.controllers
 
-import common.auth.FrontendAuthorisedFunctions
-import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import common.services.SessionDataService
-import common.models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
-import common.auth.AuthActions
+import auth.FrontendAuthorisedFunctions
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import services.SessionDataService
+import models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
+import auth.AuthActions
 import play.api.Logging
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier

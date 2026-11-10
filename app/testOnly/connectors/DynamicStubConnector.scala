@@ -16,7 +16,7 @@
 
 package testOnly.connectors
 
-import common.connectors.RawResponseReads
+import connectors.RawResponseReads
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.Json

@@ -16,7 +16,7 @@
 
 package testOnly
 
-import common.config.FrontendAppConfig
+import config.FrontendAppConfig
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

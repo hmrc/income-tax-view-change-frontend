@@ -1,0 +1,99 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package connectors
+
+import helpers.{ComponentSpecBase, WiremockHelper}
+import models.core.Nino
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.test.Injecting
+import testConstants.BaseIntegrationTestConstants.testMtditid
+import models.calculationList.{CalculationListErrorModel, CalculationListModel}
+
+class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
+
+  lazy val connector: CalculationListConnector = app.injector.instanceOf[CalculationListConnector]
+
+  val nino = "AA123456A"
+  val taxYearEnd = "2024"
+
+  "CalculationListConnector" when {
+    ".getCalculationList()" when {
+      "sending a request" should {
+        "return a successful response (not crystallised)" in {
+          val responseBody =
+            """
+              |{
+              |  "calculations": [
+              |    {
+              |      "calculationId": "TEST_ID",
+              |      "calculationTimestamp": "TEST_STAMP",
+              |      "calculationType": "inYear",
+              |      "crystallised": false
+              |    }
+              |  ]
+              |}
+              |""".stripMargin
+
+          WiremockHelper.stubGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd", OK, responseBody)
+
+          val result = connector.getCalculationList(Nino(nino), taxYearEnd, testMtditid).futureValue
+
+          result shouldBe CalculationListModel(Some(false))
+          WiremockHelper.verifyGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd")
+        }
+        "return a successful response (crystallised, not the first entry in the calculations list)" in {
+          val responseBody =
+            """
+              |{
+              |  "calculations": [
+              |    {
+              |      "calculationId": "TEST_ID_1",
+              |      "calculationTimestamp": "TEST_STAMP_1",
+              |      "calculationType": "inYear"
+              |    },
+              |    {
+              |      "calculationId": "TEST_ID_2",
+              |      "calculationTimestamp": "TEST_STAMP_2",
+              |      "calculationType": "crystallisation",
+              |      "crystallised": true
+              |    }
+              |  ]
+              |}
+              |""".stripMargin
+
+          WiremockHelper.stubGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd", OK, responseBody)
+
+          val result = connector.getCalculationList(Nino(nino), taxYearEnd, testMtditid).futureValue
+
+          result shouldBe CalculationListModel(Some(true))
+          WiremockHelper.verifyGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd")
+        }
+        "return an error when the request fails" in {
+          val responseBody = "{}"
+
+          WiremockHelper.stubGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd", INTERNAL_SERVER_ERROR, responseBody)
+
+          val result = connector.getCalculationList(Nino(nino), taxYearEnd, testMtditid).futureValue
+
+          result shouldBe CalculationListErrorModel(INTERNAL_SERVER_ERROR, "{}")
+          WiremockHelper.verifyGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd")
+        }
+      }
+    }
+  }
+}
