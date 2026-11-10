@@ -17,7 +17,6 @@
 package models.liabilityCalculation
 
 import models.helpers.LiabilityCalculationDataHelper
-import models.liabilitycalculation.*
 import testUtils.TestSupport
 import play.api.http.Status
 import play.api.libs.json.*
