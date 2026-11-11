@@ -137,6 +137,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val personalTaxAccountCheckProgressUrl: String = s"$trackingBase/track"
   lazy val personalTaxAccountProfileUrl: String = s"$ptaFrontendBase/profile-and-settings"
   lazy val personalTaxAccountBtaUrl: String = s"$btaFrontendBase"
+  lazy val personalTaxAccountWrongAccountUrl: String = s"$ptaFrontendBase/self-assessment/signed-in-wrong-account"
 
   //Translation
   def languageMap: Map[String, Lang] = Map(

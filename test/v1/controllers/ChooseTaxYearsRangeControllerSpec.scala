@@ -45,7 +45,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfM
   private lazy val controller = app.injector.instanceOf[ChooseTaxYearsRangeController]
 
   "show" should {
-    "render the page when user has HMRC-MTD-IT and IR-SA enrolments" in {
+    "render the page" in {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -55,20 +55,6 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfM
 
       status(result) shouldBe OK
     }
-
-    "redirect to home when user does not have IR-SA enrolment" in {
-      setupMockUserAuthNoSAUtr
-      mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-      setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
-
-      val result = controller.show()(fakeGetRequestBasedOnMTDUserType(MTDIndividual))
-
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(appConfig.homePageUrl(isAgent = false))
-    }
-
-    testMTDIndividualAuthFailures(controller.show())
   }
 
   "submit" should {
@@ -105,20 +91,6 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfM
       redirectLocation(result) shouldBe Some(appConfig.saViewLandPService(testSaUtr))
     }
 
-    "redirect to home when user does not have IR-SA enrolment" in {
-      setupMockUserAuthNoSAUtr
-      mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-      setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-      val result = controller.submit()(
-        fakePostRequestBasedOnMTDUserType(MTDIndividual)
-          .withFormUrlEncodedBody(ChooseTaxYearsRangeForm.response -> ChooseTaxYearsRangeForm.mtdOption)
-      )
-
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(appConfig.homePageUrl(isAgent = false))
-    }
-
     "return BadRequest when no option is selected" in {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -132,5 +104,67 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions with MockYearOfM
     }
 
     testMTDIndividualAuthFailures(controller.submit())
+  }
+
+  "showPtaMultipleEnrolment" should {
+    "render the page" in {
+      setupMockSuccess(MTDIndividual)
+      mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+      setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
+
+      val result = controller.showPtaMultipleEnrolment()(fakeGetRequestBasedOnMTDUserType(MTDIndividual))
+
+      status(result) shouldBe OK
+    }
+  }
+
+  "submitPtaMultipleEnrolment" should {
+    "redirect to your-tasks when MTD onwards option is selected" in {
+      setupMockSuccess(MTDIndividual)
+      mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+      setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2018"))))
+
+      val result = controller.submitPtaMultipleEnrolment()(
+        fakePostRequestBasedOnMTDUserType(MTDIndividual)
+          .withFormUrlEncodedBody(ChooseTaxYearsRangeForm.response -> ChooseTaxYearsRangeForm.mtdOption)
+      )
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(v1.controllers.newHomePage.routes.HandleYourTasksController.show().url)
+      verifyExtendedAudit(ChooseTaxYearsRangeSubmittedAuditModel(
+        taxYearsPresented = Seq("2018 to 2019 onwards", "2017 to 2018 and earlier"),
+        taxYearRangeSelected = ChooseTaxYearsRangeForm.mtdOption
+      ))
+    }
+
+    "redirect to PTA Wrong Account Page when legacy option is selected" in {
+      setupMockSuccess(MTDIndividual)
+      mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+      setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
+      val result = controller.submitPtaMultipleEnrolment()(
+        fakePostRequestBasedOnMTDUserType(MTDIndividual)
+          .withFormUrlEncodedBody(ChooseTaxYearsRangeForm.response -> ChooseTaxYearsRangeForm.legacyOption)
+      )
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(appConfig.personalTaxAccountWrongAccountUrl)
+    }
+
+    "return BadRequest when no option is selected" in {
+      setupMockSuccess(MTDIndividual)
+      mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+      setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+      setupMockYearOfMigration(testNino)(Future.successful(ITSAStatusYearOfMigrationModel(Some("2020"))))
+
+      val result = controller.submitPtaMultipleEnrolment()(fakePostRequestBasedOnMTDUserType(MTDIndividual))
+
+      status(result) shouldBe BAD_REQUEST
+      contentAsString(result) should include("Select which tax years you want to view and manage")
+    }
+
+    testMTDIndividualAuthFailures(controller.submitPtaMultipleEnrolment())
   }
 }

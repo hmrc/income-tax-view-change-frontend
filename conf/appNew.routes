@@ -8,6 +8,8 @@ GET         /agents/client-income-tax                                     v2.con
 GET         /agents                                                       v2.controllers.HomeController.showAgent()
 GET         /your-tasks                                                   v2.controllers.newHomePage.HandleYourTasksController.show()
 GET         /agents/your-tasks                                            v2.controllers.newHomePage.HandleYourTasksController.showAgent()
+GET         /choose-tax-years-range-sa                                   v2.controllers.ChooseTaxYearsRangeController.showPtaMultipleEnrolment()
+POST        /choose-tax-years-range-sa                                   v2.controllers.ChooseTaxYearsRangeController.submitPtaMultipleEnrolment()
 
 GET         /recent-activity                                              v2.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/recent-activity                                       v2.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
@@ -53,5 +55,4 @@ GET         /cannot-view-page                                             v2.con
 
 #Uplift Success
 GET         /uplift-success                                               v2.controllers.UpliftSuccessController.success()
-
 

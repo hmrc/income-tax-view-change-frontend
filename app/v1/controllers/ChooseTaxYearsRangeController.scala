@@ -16,19 +16,17 @@
 
 package v1.controllers
 
-import auth.MtdItUser
-import auth.AuthActions
+import auth.{AuthActions, MtdItUser}
 import config.FrontendAppConfig
 import services.{AuditingService, YearOfMigrationService}
 import audit.models.ChooseTaxYearsRangeSubmittedAuditModel
-import forms.{ChooseTaxYearsRangeForm, ChooseTaxYearsRangeOption}
+import forms.ChooseTaxYearsRangeForm
 import models.TaxYearRangeLabels
 import views.html.ChooseTaxYearsRangeView
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,6 +46,10 @@ class ChooseTaxYearsRangeController @Inject()(
     val submitRoute = routes.ChooseTaxYearsRangeController.submit()
     Call(submitRoute.method, appConfig.appUrl(submitRoute.url))
   }
+  private val submitPtaMultipleEnrolmentCall = {
+    val submitRoute = routes.ChooseTaxYearsRangeController.submitPtaMultipleEnrolment()
+    Call(submitRoute.method, appConfig.appUrl(submitRoute.url))
+  }
 
   private def migrationYear(user: MtdItUser[_])(implicit hc: HeaderCarrier): Future[Int] =
     yearOfMigrationService.getYearOfMigration(user.nino)
@@ -64,15 +66,6 @@ class ChooseTaxYearsRangeController @Inject()(
       saToYear = yearOfMigration.toString
     )
 
-  private def renderView(
-                          form: Form[ChooseTaxYearsRangeOption],
-                          labels: TaxYearRangeLabels
-                        )(implicit request: Request[_], messages: Messages) = view(
-                          form,
-                          submitCall,
-                          labels
-                        )
-
   private def auditSubmission(labels: TaxYearRangeLabels, taxYearRangeSelected: String)(implicit user: MtdItUser[_]): Unit =
     auditingService.extendedAudit(
       ChooseTaxYearsRangeSubmittedAuditModel(
@@ -81,42 +74,59 @@ class ChooseTaxYearsRangeController @Inject()(
       )
     )
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividualWithIncomeSources().async { implicit user =>
+  def show(): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     migrationYear(user).map {
-      year =>
-        if user.saUtr.isDefined then
-          Ok(renderView(ChooseTaxYearsRangeForm(), taxYearRangeLabels(year)))
-        else 
-          Redirect(appConfig.homePageUrl(isAgent = false))
+      year => Ok(view(ChooseTaxYearsRangeForm(), submitCall, taxYearRangeLabels(year)))
     }
   }
 
-  def submit(): Action[AnyContent] = authActions.asMTDIndividualWithIncomeSources().async { implicit user =>
-    if (user.saUtr.isEmpty) {
-      Future.successful(Redirect(appConfig.homePageUrl(isAgent = false)))
-    } else {
-      migrationYear(user).map { year =>
-
-        ChooseTaxYearsRangeForm().bindFromRequest().fold(
-          formWithErrors => BadRequest(renderView(formWithErrors, taxYearRangeLabels(year))),
-          form => form.selection match {
-            case Some(ChooseTaxYearsRangeForm.mtdOption) =>
-              auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.mtdOption)
-              Redirect(newHomePage.routes.HandleYourTasksController.show())
-
-            case Some(ChooseTaxYearsRangeForm.legacyOption) =>
-              auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.legacyOption)
-              val utr = user.saUtr.getOrElse(
-                throw new IllegalStateException("SA UTR is missing for legacy SA redirect")
-              )
-              Redirect(appConfig.saViewLandPService(utr))
-
-            case Some(other) => throw new IllegalStateException(s"Unexpected tax years range selection: $other")
-            case None => throw new IllegalStateException("Missing tax years range selection after successful form bind")
-          }
-        )
+  def submit(): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
+      migrationYear(user).map {
+        year =>
+          ChooseTaxYearsRangeForm().bindFromRequest().fold(
+            formWithErrors => BadRequest(view(formWithErrors, submitCall, taxYearRangeLabels(year))),
+            form => form.selection match
+              case Some(ChooseTaxYearsRangeForm.mtdOption) =>
+                auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.mtdOption)
+                Redirect(newHomePage.routes.HandleYourTasksController.show())
+  
+              case Some(ChooseTaxYearsRangeForm.legacyOption) =>
+                auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.legacyOption)
+                val utr = user.saUtr.getOrElse(throw new IllegalStateException("SA UTR is missing for legacy SA redirect"))
+                Redirect(appConfig.saViewLandPService(utr))
+  
+              case Some(other) => throw new IllegalStateException(s"Unexpected tax years range selection: $other")
+              case None => throw new IllegalStateException("Missing tax years range selection after successful form bind")
+            
+          )
       }
     }
+  
+  def showPtaMultipleEnrolment(): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
+    migrationYear(user).map {
+      year => Ok(view(ChooseTaxYearsRangeForm(), submitPtaMultipleEnrolmentCall, taxYearRangeLabels(year)))
+    }
   }
+
+  def submitPtaMultipleEnrolment(): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
+      migrationYear(user).map {
+        year =>
+          ChooseTaxYearsRangeForm().bindFromRequest().fold(
+            formWithErrors => BadRequest(view(formWithErrors, submitPtaMultipleEnrolmentCall, taxYearRangeLabels(year))),
+            form => form.selection match
+              case Some(ChooseTaxYearsRangeForm.mtdOption) =>
+                auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.mtdOption)
+                Redirect(newHomePage.routes.HandleYourTasksController.show())
+  
+              case Some(ChooseTaxYearsRangeForm.legacyOption) =>
+                auditSubmission(taxYearRangeLabels(year), ChooseTaxYearsRangeForm.legacyOption)
+                Redirect(appConfig.personalTaxAccountWrongAccountUrl)
+  
+              case Some(other) => throw new IllegalStateException(s"Unexpected tax years range selection: $other")
+              case None => throw new IllegalStateException("Missing tax years range selection after successful form bind")
+            
+          )
+      }
+    }
 }
                                           
