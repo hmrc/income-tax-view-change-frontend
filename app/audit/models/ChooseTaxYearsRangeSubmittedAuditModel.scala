@@ -23,7 +23,7 @@ import models.audit.ExtendedAuditModel
 import utils.audit.Utilities
 import play.api.libs.json.{JsValue, Json}
 
-case class ChooseTaxYearsRangeSubmittedAuditModel(taxYearsPresented: Seq[String], taxYearRangeSelected: String)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+case class ChooseTaxYearsRangeSubmittedAuditModel(taxYearsPresented: Seq[String], taxYearRangeSelected: String, taxYearRadioSelected: String)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
   override val transactionName: String = TransactionName.ChooseTaxYearsRangeSubmitted
   override val auditType: String = ChooseTaxYearsRangeSubmitted
 
@@ -31,6 +31,7 @@ case class ChooseTaxYearsRangeSubmittedAuditModel(taxYearsPresented: Seq[String]
     Utilities.userAuditDetails(user) ++
       Json.obj(
         "taxYearsPresented" -> taxYearsPresented,
-        "taxYearRangeSelected" -> taxYearRangeSelected
+        "taxYearRangeSelected" -> taxYearRangeSelected,
+        "taxYearRadioSelected" -> taxYearRadioSelected
       )
 }
