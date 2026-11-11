@@ -61,6 +61,23 @@ object FeatureSwitchName extends Logging {
       JsSuccess(StoodOverCharges)
     case JsString(InterstitialPage.name) =>
       JsSuccess(InterstitialPage)
+    // Switches used only by the dedicated frontends (see note at the bottom of this file)
+    case JsString(DisplayBusinessStartDate.name) =>
+      JsSuccess(DisplayBusinessStartDate)
+    case JsString(HideBusinessName.name) =>
+      JsSuccess(HideBusinessName)
+    case JsString(IdempotencyKeyForCreateIncomeSource.name) =>
+      JsSuccess(IdempotencyKeyForCreateIncomeSource)
+    case JsString(ITSASubmissionIntegration.name) =>
+      JsSuccess(ITSASubmissionIntegration)
+    case JsString(OptOutFs.name) =>
+      JsSuccess(OptOutFs)
+    case JsString(OverseasBusinessAddress.name) =>
+      JsSuccess(OverseasBusinessAddress)
+    case JsString(PostFinalisationAmendmentsR18.name) =>
+      JsSuccess(PostFinalisationAmendmentsR18)
+    case JsString(SignUpFs.name) =>
+      JsSuccess(SignUpFs)
     case invalidName =>
       logger.error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -96,7 +113,16 @@ object FeatureSwitchName extends Logging {
       MortgageEvidence,
       NoIncomeSourcesRedirect,
       StoodOverCharges,
-      InterstitialPage
+      InterstitialPage,
+      // Switches used only by the dedicated frontends
+      DisplayBusinessStartDate,
+      HideBusinessName,
+      IdempotencyKeyForCreateIncomeSource,
+      ITSASubmissionIntegration,
+      OptOutFs,
+      OverseasBusinessAddress,
+      PostFinalisationAmendmentsR18,
+      SignUpFs
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -168,4 +194,56 @@ case object StoodOverCharges extends FeatureSwitchName {
 case object InterstitialPage extends FeatureSwitchName {
   override val name: String = "interstitial-page"
   override val toString: String = "Interstitial Page"
+}
+
+// The switches below are NOT read by this service anymore. They are read by the dedicated
+// frontends  (business-details, obligations, returns)  and are kept here only so the test-only
+// feature switch page can show and toggle them.
+
+// income-tax-business-details-frontend
+case object DisplayBusinessStartDate extends FeatureSwitchName {
+  override val name: String = "display-business-start-date"
+  override val toString: String = "Display Business Start Date"
+}
+
+// income-tax-business-details-frontend, income-tax-obligations-frontend, income-tax-returns-frontend
+case object HideBusinessName extends FeatureSwitchName {
+  override val name: String = "hide-business-name"
+  override val toString: String = "Hide business name when unknown"
+}
+
+// income-tax-business-details-frontend
+case object IdempotencyKeyForCreateIncomeSource extends FeatureSwitchName {
+  override val name: String = "idempotency-key-for-create-income-source"
+  override val toString: String = "Idempotency Key for Create an Income Source"
+}
+
+// income-tax-returns-frontend
+case object ITSASubmissionIntegration extends FeatureSwitchName {
+  override val name: String = "itsa-submission-integration"
+  override val toString: String = "ITSA Submission Integration"
+}
+
+// income-tax-obligations-frontend
+case object OptOutFs extends FeatureSwitchName {
+  override val name: String = "opt-out"
+  override val toString: String = "Opt Out"
+}
+
+// income-tax-business-details-frontend
+case object OverseasBusinessAddress extends FeatureSwitchName {
+  override val name: String = "overseas-business-address"
+  override val toString: String = "Overseas Business Address"
+}
+
+// income-tax-returns-frontend
+case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {
+  override val name: String = "post-finalisation-amendments-r18"
+  override val toString: String = "Post Finalisation Amendments R18"
+}
+
+// income-tax-obligations-frontend
+case object SignUpFs extends FeatureSwitchName {
+  override val name: String = "sign-up"
+  override val toString: String = "Sign Up"
 }
