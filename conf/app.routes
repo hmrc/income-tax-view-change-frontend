@@ -11,7 +11,6 @@ GET         /agents/*path                                                 v1.con
 GET         /*path                                                        v1.controllers.NewServiceRedirectController.show(path: String)
 
 #Home Controller
-
 GET         /                                                             v1.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   v1.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/client-income-tax                                     v1.controllers.HomeController.showAgent()
@@ -33,6 +32,49 @@ POST        /choose-tax-years-range                                       v1.con
 GET         /choose-tax-years-range-sa                                    v1.controllers.ChooseTaxYearsRangeController.showPtaMultipleEnrolment()
 POST        /choose-tax-years-range-sa                                    v1.controllers.ChooseTaxYearsRangeController.submitPtaMultipleEnrolment()
 
+#Common routes
+GET         /language/:lang                                               controllers.LocalLanguageController.switchToLanguage(lang: String)
+GET         /agents/language/:lang                                        controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
 
+GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
+GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
+GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
 
-->          /                                                             common.Routes
+# Client Relationship Failure
+GET         /agents/not-authorised-to-view-client                         controllers.agent.ClientRelationshipFailureController.show()
+
+GET         /agents/no-assignment                                         controllers.agent.NoAssignmentController.show()
+
+# No Income Sources Error page
+GET         /no-income-sources                                            controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
+GET         /agents/no-income-sources                                     controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
+
+#Feedback Routes
+GET         /feedback                                                     controllers.feedback.FeedbackController.show()
+GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
+POST        /feedback                                                     controllers.feedback.FeedbackController.submit()
+POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent()
+GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou()
+GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent()
+
+#Timeout Routes
+GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout()
+GET         /keep-alive                                                   controllers.timeout.SessionTimeoutController.keepAlive()
+
+#Sign Out Routes
+GET         /sign-out                                                     controllers.SignOutController.signOut()
+
+#Sign In Routes
+GET         /sign-in                                                      controllers.SignInController.signIn()
+
+#Not Enrolled
+GET         /cannot-access-service                                        controllers.errors.NotEnrolledController.show()
+
+#Agent Error
+GET         /agents/agent-error                                           controllers.agent.errors.AgentErrorController.show()
+
+#Uplift Failed
+GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show()
+
+#Uplift Success
+GET         /uplift-success                                               controllers.UpliftSuccessController.success()
