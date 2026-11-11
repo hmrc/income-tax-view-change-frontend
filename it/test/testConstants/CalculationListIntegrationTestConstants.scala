@@ -1,0 +1,66 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package testConstants
+
+import play.api.libs.json.{JsValue, Json}
+import models.calculationList.CalculationListModel
+
+object CalculationListIntegrationTestConstants {
+  val successResponseCrystallised: JsValue = Json.parse(
+    """
+      |{
+      |   "calculations": [
+      |     { "calculationId": "id1", "calculationType": "crystallisation", "crystallised": true }
+      |   ]
+      |}""".stripMargin)
+
+  val successResponseNotCrystallised: JsValue = Json.parse(
+    """
+      |{
+      |   "calculations": [
+      |     { "calculationId": "id1", "calculationType": "inYear", "crystallised": false }
+      |   ]
+      |}""".stripMargin)
+
+
+  val calculationListCrystallised: CalculationListModel = {
+    CalculationListModel(
+      crystallised = Some(true)
+    )
+  }
+
+  val successResponseNonCrystallised: JsValue = Json.parse(
+    """
+      |{
+      |   "calculations": [
+      |     { "calculationId": "id1", "calculationType": "inYear", "crystallised": false }
+      |   ]
+      |}""".stripMargin)
+
+  val calculationListNonCrystallised: CalculationListModel = {
+    CalculationListModel(
+      crystallised = Some(false)
+    )
+  }
+
+  val calculationListMin: CalculationListModel = {
+    CalculationListModel(
+      crystallised = None
+    )
+  }
+
+}

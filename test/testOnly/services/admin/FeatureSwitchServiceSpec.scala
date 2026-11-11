@@ -16,10 +16,10 @@
 
 package testOnly.services.admin
 
-import common.config.FrontendAppConfig
-import common.mocks.connectors.MockFeatureSwitchConnector
-import common.models.admin.{FeatureSwitch, FeatureSwitchName}
-import common.testUtils.TestSupport
+import config.FrontendAppConfig
+import mocks.connectors.MockFeatureSwitchConnector
+import models.admin.{FeatureSwitch, FeatureSwitchName}
+import testUtils.TestSupport
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}

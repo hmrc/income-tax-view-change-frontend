@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import common.models.admin.{FeatureSwitch, FeatureSwitchName}
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 import testOnly.services.admin.FeatureSwitchService
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}

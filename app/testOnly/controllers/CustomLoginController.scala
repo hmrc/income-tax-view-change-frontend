@@ -16,11 +16,11 @@
 
 package testOnly.controllers
 
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.config.featureswitch.FeatureSwitching
-import common.controllers.BaseController
-import common.models.incomeSourceDetails.TaxYear
-import common.services.{DateServiceInterface, ITSAStatusService}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.FeatureSwitching
+import controllers.BaseController
+import models.incomeSourceDetails.TaxYear
+import services.{DateServiceInterface, ITSAStatusService}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

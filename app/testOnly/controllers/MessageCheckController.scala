@@ -16,11 +16,11 @@
 
 package testOnly.controllers
 
-import common.controllers.ItvcLanguageController
+import controllers.ItvcLanguageController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.MessageCheckView
 import uk.gov.hmrc.play.language.LanguageUtils
-import common.config.FrontendAppConfig
+import config.FrontendAppConfig
 
 import javax.inject.Inject
 

@@ -1,0 +1,311 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package connectors
+
+import auth.MtdItUser
+import config.FrontendAppConfig
+import models.core.ResponseModel.{ResponseModel, UnexpectedError}
+import models.core.Nino
+import models.incomeSourceDetails.{TaxYear, TaxYearRange}
+import utils.Headers.checkAndAddTestHeader
+import models.*
+import models.core.CorrelationId
+import models.creditsandrefunds.CreditsModel
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
+import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
+import play.api.Logging
+import play.api.http.Status
+import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class FinancialDetailsConnector @Inject()(
+                                           httpV2: HttpClientV2,
+                                           appConfig: FrontendAppConfig
+                                         )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
+
+  private[connectors] val baseUrl = s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details"
+
+  private[connectors] def getChargesUrl(nino: String, from: String, to: String): String =
+    baseUrl + s"/$nino/financial-details/charges/from/$from/to/$to"
+
+  private[connectors] def getCreditAndRefundUrl(nino: String, from: String, to: String): String =
+    baseUrl + s"/$nino/financial-details/credits/from/$from/to/$to"
+
+  private[connectors] def getPaymentsUrl(nino: String, from: String, to: String): String =
+    baseUrl + s"/$nino/financial-details/payments/from/$from/to/$to"
+
+  private[connectors] def getFinancialDetailsByDocumentIdUrl(nino: String, documentNumber: String): String =
+    baseUrl + s"/$nino/financial-details/charges/documentId/$documentNumber"
+
+  private[connectors] def getPaymentAllocationsUrl(nino: String, paymentLot: String, paymentLotItem: String): String =
+    baseUrl + s"/$nino/payment-allocations/$paymentLot/$paymentLotItem"
+
+  def isErrorLevelStatus(status: Int): Boolean =
+    status >= 500 && (status != SERVICE_UNAVAILABLE && status != BAD_GATEWAY)
+
+  def getPaymentAllocations(
+                             nino: Nino,
+                             paymentLot: String,
+                             paymentLotItem: String
+                           )(implicit headerCarrier: HeaderCarrier): Future[PaymentAllocationsResponse] = {
+
+    val url = getPaymentAllocationsUrl(nino.value, paymentLot, paymentLotItem)
+    logger.debug(s"[getPaymentAllocations] GET $url")
+
+    httpV2
+      .get(url"$url")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            logger.debug(s"[getPaymentAllocations] Status: ${response.status}, json: ${response.json}")
+            response.json.validate[PaymentAllocations].fold(
+              invalid => {
+                logger.error(s"[getPaymentAllocations] Json Validation Error: $invalid")
+                PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Payment Allocations Data Response")
+              },
+              valid => valid
+            )
+          case status if isErrorLevelStatus(status) =>
+            logger.error(s"[getPaymentAllocations] Status: ${response.status}, body: ${response.body}")
+            PaymentAllocationsError(response.status, response.body)
+          case _ =>
+            logger.warn(s"[getPaymentAllocations] Status: ${response.status}, body: ${response.body}")
+            PaymentAllocationsError(response.status, response.body)
+        }
+      }.recover {
+        case ex =>
+          logger.error(s"[getPaymentAllocations] Unexpected failure, ${ex.getMessage}", ex)
+          PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+      }
+  }
+
+  def getCreditsAndRefund(taxYear: TaxYear, nino: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
+
+    val url = getCreditAndRefundUrl(nino, taxYear.financialYearStartString, taxYear.financialYearEndString)
+    logger.debug(s"[getCreditsAndRefund(taxYear, nino)] GET $url")
+
+    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    val correlationId =
+      CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
+
+    httpV2
+      .get(url"$url")
+      .setHeader(correlationId.asHeader())
+      .execute[ResponseModel[CreditsModel]]
+      .recover {
+        case e =>
+          logger.error(s"[getCreditsAndRefund(taxYear, nino)] ${e.getMessage}")
+          Left(UnexpectedError)
+      }
+  }
+
+  def getCreditsAndRefund(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
+
+    val url = getCreditAndRefundUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
+    logger.debug(s"[getCreditsAndRefund(taxYear, taxYearTo, nino)] GET $url")
+
+    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    val correlationId =
+      CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
+
+    httpV2
+      .get(url"$url")
+      .setHeader(correlationId.asHeader())
+      .execute[ResponseModel[CreditsModel]]
+      .recover {
+        case e =>
+          logger.error(s"[getCreditsAndRefund(taxYear, taxYearTo, nino)] ${e.getMessage}")
+          Left(UnexpectedError)
+      }
+  }
+
+  def getFinancialDetails(taxYear: Int, nino: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+
+    val dateFrom: String = (taxYear - 1).toString + "-04-06"
+    val dateTo: String = taxYear.toString + "-04-05"
+
+    val url = getChargesUrl(nino, dateFrom, dateTo)
+    logger.debug(s"[getFinancialDetails] GET $url")
+
+    val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    httpV2
+      .get(url"$url")
+      .setHeader(hc.extraHeaders: _*)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            logger.debug(s"[getFinancialDetails] Status: ${response.status}, json: ${response.json}")
+            response.json.validate[FinancialDetailsModel].fold(
+              invalid => {
+                logger.error(s"[getFinancialDetails] Json Validation Error: $invalid ")
+                FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
+              },
+              valid => valid
+            )
+          case status if isErrorLevelStatus(status) =>
+            logger.error(s"[getFinancialDetails] Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+          case _ =>
+            logger.warn(s"[getFinancialDetails] Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+        }
+      }.recover {
+        case ex =>
+          logger.error(s"[getFinancialDetails] Unexpected failure, ${ex.getMessage}", ex)
+          FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+      }
+  }
+
+  def getFinancialDetailsByTaxYearRange(taxYearRange: TaxYearRange, nino: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+
+    val url = getChargesUrl(nino, taxYearRange.startYear.financialYearStartString, taxYearRange.endYear.financialYearEndString)
+    logger.debug(s"[getFinancialDetailsByTaxYearRange] GET $url")
+
+    val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    httpV2
+      .get(url"$url")
+      .setHeader(hc.extraHeaders: _*)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            logger.debug(s"[getFinancialDetailsByTaxYearRange] Status: ${response.status}, json: ${response.json}")
+            response.json.validate[FinancialDetailsModel].fold(
+              invalid => {
+                logger.error(s"[getFinancialDetailsByTaxYearRange] Json Validation Error: $invalid")
+                FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
+              },
+              valid => valid
+            )
+          case status if isErrorLevelStatus(status) =>
+            logger.error(s"[getFinancialDetailsByTaxYearRange] Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+          case _ =>
+            logger.warn(s"[getFinancialDetailsByTaxYearRange] Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+        }
+      }.recover {
+        case ex =>
+          logger.error(s"[getFinancialDetailsByTaxYearRange] Unexpected failure, ${ex.getMessage}", ex)
+          FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+      }
+  }
+
+  def getPayments(taxYear: TaxYear)
+                 (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
+
+    val url: String = getPaymentsUrl(mtdUser.nino, taxYear.toFinancialYearStart.toString, taxYear.toFinancialYearEnd.toString)
+    logger.debug(s"[getPayments(taxYear)] GET $url")
+
+    httpV2
+      .get(url"$url")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            logger.debug(s"[getPayments(taxYear)] Status: ${response.status}, json: ${response.json}")
+            response.json.validate[Seq[Payment]].fold(
+              invalid => {
+                logger.error(s"[getPayments(taxYear)] Json validation error: $invalid")
+                PaymentsError(response.status, "Json validation error")
+              },
+              valid => Payments(valid)
+            )
+          case status if isErrorLevelStatus(status) =>
+            logger.error(s"[getPayments(taxYear)] Status: ${response.status}, body: ${response.body}")
+            PaymentsError(status, response.body)
+          case status =>
+            logger.warn(s"[getPayments(taxYear)] Status ${response.status}, body: ${response.body}")
+            PaymentsError(status, response.body)
+        }
+      }
+  }
+
+  def getPayments(taxYearFrom: TaxYear, taxYearTo: TaxYear)
+                 (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
+
+    val url: String = getPaymentsUrl(mtdUser.nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
+    logger.debug(s"[getPayments(taxYearFrom, taxYearTo)] GET $url")
+
+    httpV2
+      .get(url"$url")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            logger.info(s"[getPayments(taxYearFrom, taxYearTo)] Status: ${response.status}, json: ${response.json}")
+            response.json.validate[Seq[Payment]].fold(
+              invalid => {
+                logger.error(s"[getPayments(taxYearFrom, taxYearTo)] Json validation error: $invalid")
+                PaymentsError(response.status, "Json validation error")
+              },
+              valid => Payments(valid)
+            )
+          case status if isErrorLevelStatus(status) =>
+            logger.error(s"[getPayments(taxYearFrom, taxYearTo)] Status: ${response.status}, body: ${response.body}")
+            PaymentsError(status, response.body)
+          case status =>
+            logger.warn(s"[getPayments(taxYearFrom, taxYearTo)] Status ${response.status}, body: ${response.body}")
+            PaymentsError(status, response.body)
+        }
+      }
+  }
+
+  def getFinancialDetailsByDocumentId(
+                                       nino: Nino,
+                                       documentNumber: String
+                                     )(implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
+    val url = getFinancialDetailsByDocumentIdUrl(nino.value, documentNumber)
+    httpV2
+      .get(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            response.json.validate[FinancialDetailsWithDocumentDetailsModel].fold(
+              invalid => {
+                logger.error(s"[getFinancialDetailsByDocumentId] Json validation error parsing calculation response, error $invalid")
+                FinancialDetailsWithDocumentDetailsErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+              },
+              valid => valid
+            )
+          case status if isErrorLevelStatus(status) =>
+            logger.error(s"[getFinancialDetailsByDocumentId] Response status: ${response.status}, body: ${response.body}")
+            FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
+          case _ =>
+            logger.warn(s"[getFinancialDetailsByDocumentId] Response status: ${response.status}, body: ${response.body}")
+            FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
+        }
+      }
+  }
+}

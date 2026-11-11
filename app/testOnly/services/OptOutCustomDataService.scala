@@ -16,11 +16,11 @@
 
 package testOnly.services
 
-import common.config.FrontendAppConfig
-import common.models.incomeSourceDetails.TaxYear
-import common.services.DateServiceInterface
-import common.models.itsaStatus.ITSAStatus.ITSAStatus
-import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
+import config.FrontendAppConfig
+import models.incomeSourceDetails.TaxYear
+import services.DateServiceInterface
+import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json, OWrites, Writes}

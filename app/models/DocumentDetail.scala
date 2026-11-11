@@ -1,0 +1,295 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package models
+
+import services.DateServiceInterface
+import play.api.Logging
+import play.api.libs.json.*
+import enums.CodingOutType.*
+import enums.DocumentType
+import enums.DocumentType.*
+
+import java.time.LocalDate
+
+case class DocumentDetail(
+                           taxYear: Int,
+                           transactionId: String,
+                           documentDescription: Option[String],
+                           documentText: Option[String],
+                           outstandingAmount: BigDecimal,
+                           originalAmount: BigDecimal,
+                           documentDate: LocalDate,
+                           interestOutstandingAmount: Option[BigDecimal] = None,
+                           interestRate: Option[BigDecimal] = None,
+                           latePaymentInterestId: Option[String] = None,
+                           latePaymentInterestAmount: Option[BigDecimal] = None,
+                           interestFromDate: Option[LocalDate] = None,
+                           interestEndDate: Option[LocalDate] = None,
+                           accruingInterestAmount: Option[BigDecimal] = None,
+                           lpiWithDunningLock: Option[BigDecimal] = None,
+                           paymentLotItem: Option[String] = None,
+                           paymentLot: Option[String] = None,
+                           effectiveDateOfPayment: Option[LocalDate] = None,
+                           amountCodedOut: Option[BigDecimal] = None,
+                           chargeClassification: Option[String] = None,
+                           documentDueDate: Option[LocalDate] = None,
+                           poaRelevantAmount: Option[BigDecimal] = None,
+                           formBundleNumber: Option[String] = None,
+                           creditReason: Option[String] = None,
+                           lastClearingDate: Option[LocalDate] = None,
+                           lastClearingReason: Option[String] = None,
+                           lastClearedAmount: Option[BigDecimal] = None,
+                           statisticalFlag: String = "",
+                           informationCode: Option[String] = None,
+                           documentNumberReducedCharge: Option[String] = None,
+                           chargeTypeReducedCharge: Option[String] = None,
+                           amendmentDateReducedCharge: Option[LocalDate] = None,
+                           taxYearReducedCharge: Option[String] = None,
+                           totalSoAmt: Option[BigDecimal] = None,
+                           collectableAmt: Option[BigDecimal] = None
+                         ) extends Logging {
+
+  def findTaxYear: Int = taxYear match {
+    case year if taxYear != 9999 => year
+    case year if effectiveDateOfPayment.isDefined => effectiveDateOfPayment.get.getYear
+    case _ => documentDate.getYear
+  }
+
+
+  def credit: Option[BigDecimal] = originalAmount match {
+    case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
+    case _ if (originalAmount >= 0) => None
+    case credit => Some(credit * -1)
+  }
+
+  def outstandingAmountZero: Boolean =
+    outstandingAmount == 0
+
+  val isAccruingInterest: Boolean = accruingInterestAmount.exists(_ > 0)
+
+  def isPaid: Boolean = outstandingAmount match {
+    case amount if amount == 0 => true
+    case _ => false
+  }
+
+  def interestIsPaid: Boolean = interestOutstandingAmount match {
+    case Some(amount) if amount == 0 => true
+    case _ => false
+  }
+
+  val isPartPaid: Boolean = outstandingAmount != originalAmount
+
+  def remainingToPay: BigDecimal = {
+    if (isPaid) BigDecimal(0)
+    else outstandingAmount
+  }
+
+  def interestRemainingToPay: BigDecimal = {
+    if (interestIsPaid) BigDecimal(0)
+    else interestOutstandingAmount.getOrElse(accruingInterestAmount.getOrElse(BigDecimal(0)))
+  }
+
+  def getChargePaidStatus: String = {
+    if (isPaid) "paid"
+    else if (isPartPaid) "part-paid"
+    else "unpaid"
+  }
+
+  def isCodingOutDocumentDetail: Boolean =
+    (isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
+      case (true, _) => true
+      case (_, true) => true
+      case _ => false
+    }
+
+  def isNotCodingOutDocumentDetail: Boolean = !isPayeSelfAssessment && !isCancelledPayeSelfAssessment
+
+  def isClass2Nic: Boolean = documentText match {
+    case Some(documentText) if documentText == CODING_OUT_CLASS2_NICS.name => true
+    case _ => false
+  }
+
+  def isPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
+    case (Some(TRMNewCharge.key) | Some(TRMAmendCharge.key), Some(CODING_OUT_ACCEPTED.name)) => true
+    case _ => false
+  }
+
+  def isCancelledPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
+    case (Some(TRMNewCharge.key) | Some(TRMAmendCharge.key), Some(CODING_OUT_CANCELLED.name)) => true
+    case _ => false
+  }
+
+  def isBalancingCharge: Boolean = getDocumentChargeTypeKey == "balancingCharge.text"
+
+  def isBalancingChargeZero: Boolean = {
+    (isBalancingCharge, this.originalAmount) match {
+      case (true, value) => value == BigDecimal(0.0)
+      case _ => false
+    }
+  }
+
+  def getBalancingChargeDueDate: Option[LocalDate] = {
+    isBalancingChargeZero match {
+      case true => None
+      case _ => documentDueDate
+    }
+  }
+
+  def isCodingOutFullyCollectedPoa(financialDetails: List[FinancialDetail]): Boolean = {
+    financialDetails.exists { financialDetail =>
+      financialDetail.items.exists { subItems =>
+        subItems.exists { subItem =>
+          subItem.codedOutStatus.contains(CODING_OUT_FULLY_COLLECTED.code)
+        }
+      }
+    }
+  }
+
+  def getDocumentChargeTypeKey: String = documentDescription match {
+    case Some(poa1) if poa1.replace(" ", "") == Poa1Charge.key.replace(" ", "") => "paymentOnAccount1.text"
+    case Some(poa2) if poa2.replace(" ", "") == Poa2Charge.key.replace(" ", "") => "paymentOnAccount2.text"
+    case Some(Poa1ReconciliationDebit.key) => "poa1ExtraCharge.text"
+    case Some(Poa2ReconciliationDebit.key) => "poa2ExtraCharge.text"
+    case Some(BalancingCharge.key) => "balancingCharge.text"
+    case Some(LateSubmissionPenalty.key) => "lateSubmissionPenalty.text"
+    case Some(FirstLatePaymentPenalty.key) => "firstLatePaymentPenalty.text"
+    case Some(SecondLatePaymentPenalty.key) => "secondLatePaymentPenalty.text"
+    case Some(TRMNewCharge.key) | Some(TRMAmendCharge.key) => (isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
+      case (true, false, false) => "class2Nic.text"
+      case (false, true, false) => "codingOut.text"
+      case (false, false, true) => "cancelledPayeSelfAssessment.text"
+      case _ => "balancingCharge.text"
+    }
+    case error =>
+      logger.error(s"Missing or non-matching charge type: $error found")
+      "unknownCharge"
+  }
+
+  def getDueDate: Option[LocalDate] = {
+    if (isAccruingInterest) {
+      interestEndDate
+    } else {
+      documentDueDate
+    }
+  }
+
+  def getDocType: DocumentType = {
+    documentDescription match {
+      case Some(poa1) if poa1.replace(" ", "") == Poa1Charge.key.replace(" ", "") => Poa1Charge
+      case Some(poa2) if poa2.replace(" ", "") == Poa2Charge.key.replace(" ", "") => Poa2Charge
+      case Some(Poa1ReconciliationDebit.key) => Poa1ReconciliationDebit
+      case Some(Poa2ReconciliationDebit.key) => Poa2ReconciliationDebit
+      case Some(BalancingCharge.key) => BalancingCharge
+      case Some(TRMNewCharge.key) => TRMNewCharge
+      case Some(TRMAmendCharge.key) => TRMAmendCharge
+      case _ => OtherCharge
+    }
+  }
+}
+
+
+case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
+                                     isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
+                                     isMFADebit: Boolean = false,
+                                     isReviewAndReconcilePoaOneDebit: Boolean = false,
+                                     isReviewAndReconcilePoaTwoDebit: Boolean = false
+                                    )(implicit val dateService: DateServiceInterface) {
+
+  val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
+
+  def isReviewAndReconcileDebit: Boolean = isReviewAndReconcilePoaOneDebit || isReviewAndReconcilePoaTwoDebit
+
+  def isAccruingInterest: Boolean = {
+    isReviewAndReconcileDebit && !documentDetail.isPaid && !isOverdue
+  }
+}
+
+
+object DocumentDetail {
+
+  def apply(
+             taxYear: Int,
+             transactionId: String,
+             documentDescription: Option[String],
+             documentText: Option[String],
+             outstandingAmount: BigDecimal,
+             originalAmount: BigDecimal,
+             documentDate: LocalDate
+           ): DocumentDetail =
+    new DocumentDetail(
+      taxYear = taxYear,
+      transactionId = transactionId,
+      documentDescription = documentDescription,
+      documentText = documentText,
+      outstandingAmount = outstandingAmount,
+      originalAmount = originalAmount,
+      documentDate = documentDate
+    )
+
+  private val normalise: Reads[JsObject] = Reads { json =>
+    json.validate[JsObject].map { obj =>
+      val taxYearRenamed: Seq[(String, JsValue)] =
+        (obj \ "taxYear").asOpt[Int]
+          .orElse((obj \ "taxYear").asOpt[String].flatMap(_.toIntOption))
+          .map(v => "taxYear" -> Json.toJson(v)).toSeq
+      val transactionIdRenamed: Seq[(String, JsValue)] =
+        (obj \ "transactionId").asOpt[String]
+          .orElse((obj \ "documentID").asOpt[String])
+          .map(v => "transactionId" -> Json.toJson(v)).toSeq
+      val originalAmountRenamed: Seq[(String, JsValue)] =
+        (obj \ "originalAmount").asOpt[BigDecimal]
+          .orElse((obj \ "totalAmount").asOpt[BigDecimal])
+          .map(v => "originalAmount" -> Json.toJson(v)).toSeq
+      val outstandingAmountRenamed: Seq[(String, JsValue)] =
+        (obj \ "outstandingAmount").asOpt[BigDecimal]
+          .orElse((obj \ "documentOutstandingAmount").asOpt[BigDecimal])
+          .map(v => "outstandingAmount" -> Json.toJson(v)).toSeq
+      val latePaymentInterestIdRenamed: Seq[(String, JsValue)] =
+        (obj \ "latePaymentInterestId").asOpt[String]
+          .orElse((obj \ "latePaymentInterestID").asOpt[String])
+          .map(v => "latePaymentInterestId" -> Json.toJson(v)).toSeq
+      val lpiWithDunningLockRenamed: Seq[(String, JsValue)] =
+        (obj \ "lpiWithDunningBlock").asOpt[BigDecimal]
+          .orElse((obj \ "lpiWithDunningLock").asOpt[BigDecimal])
+          .map(v => "lpiWithDunningLock" -> Json.toJson(v)).toSeq
+
+      // merges objects, RHS overriding LHS
+      obj ++ JsObject(
+        taxYearRenamed ++ transactionIdRenamed ++ originalAmountRenamed ++
+          outstandingAmountRenamed ++ latePaymentInterestIdRenamed ++ lpiWithDunningLockRenamed
+      )
+    }
+  }
+  private val macroReads: Reads[DocumentDetail] = Json.using[Json.WithDefaultValues].reads[DocumentDetail]
+
+  implicit val reads: Reads[DocumentDetail] = normalise.andThen(macroReads)
+
+  private val macroWrites: OWrites[DocumentDetail] = Json.writes[DocumentDetail]
+
+  private val legacyRename: Map[String, String] = Map(
+    "transactionId" -> "documentID",
+    "originalAmount" -> "totalAmount",
+    "outstandingAmount" -> "documentOutstandingAmount",
+    "latePaymentInterestId" -> "latePaymentInterestID"
+  )
+
+  implicit val writes: OWrites[DocumentDetail] = OWrites { d =>
+    val base = macroWrites.writes(d).fields.filterNot { case (_, v) => v == JsNull }
+    val renamed = base.map { case (k, v) => legacyRename.getOrElse(k, k) -> v }
+    JsObject(renamed) ++ Json.obj("taxYear" -> d.taxYear.toString)
+  }
+}

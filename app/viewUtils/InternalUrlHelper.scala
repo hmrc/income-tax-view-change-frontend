@@ -1,0 +1,54 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package viewUtils
+
+import v2.controllers.agent.errors.routes as hubAgentErrorRoutes
+import v2.controllers.agent.routes as hubAgentRoutes
+import v2.controllers.errors.routes as hubErrorRoutes
+import v2.controllers.routes as hubAppRoutes
+import v2.controllers.timeout.routes as hubTimeoutRoutes
+object InternalUrlHelper {
+
+  val signinCall = hubAppRoutes.SignInController.signIn()
+
+  val signinUrl = signinCall.url
+  
+  val signoutUrl = hubAppRoutes.SignOutController.signOut().url
+
+  val keepAliveUrl = hubTimeoutRoutes.SessionTimeoutController.keepAlive().url
+
+  val timeoutCall = hubTimeoutRoutes.SessionTimeoutController.timeout()
+
+  val timeoutUrl = timeoutCall.url
+
+  val agentErrorCall = hubAgentErrorRoutes.AgentErrorController.show()
+  
+  def noIncomeSourceUrl(isAgent: Boolean) = {
+      hubAppRoutes.NoIncomeSourcesController.show(isAgent)
+  }
+
+  val upliftSuccessUrl = hubAppRoutes.UpliftSuccessController.success().url
+
+  val upliftFailureUrl = hubErrorRoutes.UpliftFailedController.show().url
+
+  val clientRelationshipFailureCall = hubAgentRoutes.ClientRelationshipFailureController.show()
+
+  val noAssignmentCall = hubAgentRoutes.NoAssignmentController.show().url
+
+  val notEnrolledCall = hubErrorRoutes.NotEnrolledController.show().url
+
+}
