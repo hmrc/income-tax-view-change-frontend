@@ -106,5 +106,7 @@ object TaxYear {
     require(isValidYear(endYear.toString), "invalid year")
     TaxYear(startYear = endYear - 1, endYear = endYear)
   }
+  
+  val current: TaxYear = getTaxYear(LocalDate.now)
 }
 
