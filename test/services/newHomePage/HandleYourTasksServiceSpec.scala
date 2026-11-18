@@ -18,7 +18,7 @@ package services.newHomePage
 
 import auth.MtdItUser
 import auth.actions.AuthActionsTestData.defaultMTDITUser
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.obligations.{SingleObligationModel, StatusOpen}
@@ -36,6 +36,9 @@ import java.time.LocalDate
 class HandleYourTasksServiceSpec extends TestSupport {
 
   val service = new HandleYourTasksService(appConfig)
+
+  val currentTaxYear: TaxYear = TaxYear.current
+  val dynamicDate: LocalDate = LocalDate.of(currentTaxYear.endYear, 12, 15)
 
   def singleObligation(currentDate: LocalDate, isQuarterly: Boolean) = {
     val obligationType = if(isQuarterly) "Quarterly" else "Crystallisation"
@@ -73,8 +76,8 @@ class HandleYourTasksServiceSpec extends TestSupport {
 
   val moneyInYourAccountTask: DatelessTaskCard = DatelessTaskCard("newHome.yourTasks.selfAssessment.money-in-account", "newHome.yourTasks.selfAssessment.money-in-account.h1", "http://localhost:9092/manage-self-assessment/financials/money-in-your-account", Some("£1,000.00"), FINANCIALS)
 
-  val upcomingAnnualSubmissionsTaskCard: UpcomingTaskCard = UpcomingTaskCard("new.home.yourTasks.upcoming-annual-updates-body", "new.home.yourTasks.updates-and-deadlines", "http://localhost:9075/manage-self-assessment/obligations/submission-deadlines", "new.home.yourTasks.upcoming-annual-updates-label", Some(LocalDate.of(2026, 12, 15)), None, Upcoming, SUBMISSIONS)
-  val upcomingQuarterlySubmissionsTaskCard: UpcomingTaskCard = UpcomingTaskCard("new.home.yourTasks.upcoming-quarterly-updates-body", "new.home.yourTasks.updates-and-deadlines", "http://localhost:9075/manage-self-assessment/obligations/submission-deadlines", "new.home.yourTasks.upcoming-quarterly-updates-label", Some(LocalDate.of(2026, 12, 15)), None, Upcoming, SUBMISSIONS)
+  val upcomingAnnualSubmissionsTaskCard: UpcomingTaskCard = UpcomingTaskCard("new.home.yourTasks.upcoming-annual-updates-body", "new.home.yourTasks.updates-and-deadlines", "http://localhost:9075/manage-self-assessment/obligations/submission-deadlines", "new.home.yourTasks.upcoming-annual-updates-label", Some(dynamicDate), None, Upcoming, SUBMISSIONS)
+  val upcomingQuarterlySubmissionsTaskCard: UpcomingTaskCard = UpcomingTaskCard("new.home.yourTasks.upcoming-quarterly-updates-body", "new.home.yourTasks.updates-and-deadlines", "http://localhost:9075/manage-self-assessment/obligations/submission-deadlines", "new.home.yourTasks.upcoming-quarterly-updates-label", Some(dynamicDate), None, Upcoming, SUBMISSIONS)
 
   val upcomingChargeCard: UpcomingTaskCard = UpcomingTaskCard("newHome.yourTasks.selfAssessment.upcomingCharge", "newHome.yourTasks.selfAssessment", "http://localhost:9092/manage-self-assessment/financials/what-you-owe", "newHome.yourTasks.selfAssessment.upcomingCharge.label", Some(fixedDate.plusYears(100)), None, Upcoming, FINANCIALS)
   
@@ -89,8 +92,8 @@ class HandleYourTasksServiceSpec extends TestSupport {
                   chargeItemList: List[ChargeItem] = List.empty,
                   penaltiesAndAppealsEnabled: Boolean = true) {
 
-    val nextQuarterlyDueDate = if(hasUpcomingQuarterlyDate) Some(fixedDate.plusYears(3)) else None
-    val nextTaxReturnDueDate = if (hasUpcomingAnnualDate) Some(fixedDate.plusYears(3)) else None
+    val nextQuarterlyDueDate = if(hasUpcomingQuarterlyDate) Some(dynamicDate) else None
+    val nextTaxReturnDueDate = if (hasUpcomingAnnualDate) Some(dynamicDate) else None
 
     val submissionsViewModel = SubmissionDeadlinesViewModel(obligations, fixedDate, nextQuarterlyDueDate, nextTaxReturnDueDate)
 
@@ -146,15 +149,15 @@ class HandleYourTasksServiceSpec extends TestSupport {
     }
 
     "return the correct upcoming task cards" when {
-      "there is a future annual submission" in new TestSetup(hasUpcomingAnnualDate = true, obligations = Seq(singleObligation(fixedDate.plusYears(2), isQuarterly = false))) {
+      "there is a future annual submission" in new TestSetup(hasUpcomingAnnualDate = true, obligations = Seq(singleObligation(dynamicDate, isQuarterly = false))) {
         resultViewModel shouldBe HandleYourTasksViewModel(Seq.empty, Seq.empty, Seq(upcomingAnnualSubmissionsTaskCard))
       }
 
-      "there is a future quarterly submission and the user's ITSA status is mandated" in new TestSetup(hasUpcomingQuarterlyDate = true, currentItsaStatus = ITSAStatus.Mandated, obligations = Seq(singleObligation(fixedDate.plusYears(2), isQuarterly = true))) {
+      "there is a future quarterly submission and the user's ITSA status is mandated" in new TestSetup(hasUpcomingQuarterlyDate = true, currentItsaStatus = ITSAStatus.Mandated, obligations = Seq(singleObligation(dynamicDate, isQuarterly = true))) {
         resultViewModel shouldBe HandleYourTasksViewModel(Seq.empty, Seq.empty, Seq(upcomingQuarterlySubmissionsTaskCard))
       }
 
-      "there is a future quarterly submission and the user's ITSA status is voluntary" in new TestSetup(hasUpcomingQuarterlyDate = true, currentItsaStatus = ITSAStatus.Voluntary, obligations = Seq(singleObligation(fixedDate.plusYears(2), isQuarterly = true))) {
+      "there is a future quarterly submission and the user's ITSA status is voluntary" in new TestSetup(hasUpcomingQuarterlyDate = true, currentItsaStatus = ITSAStatus.Voluntary, obligations = Seq(singleObligation(dynamicDate, isQuarterly = true))) {
         resultViewModel shouldBe HandleYourTasksViewModel(Seq.empty, Seq.empty, Seq(upcomingQuarterlySubmissionsTaskCard))
       }
 

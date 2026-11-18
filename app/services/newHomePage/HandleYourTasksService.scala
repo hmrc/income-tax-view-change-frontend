@@ -44,7 +44,7 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
                         credits: CreditsModel,
                         creditsRefundsRepayEnabled: Boolean,
                         currentItsaStatus: ITSAStatus,
-                        penaltiesAndAppealsEnabled: Boolean)(implicit user: MtdItUser[_]) = {
+                        penaltiesAndAppealsEnabled: Boolean)(implicit user: MtdItUser[_]): HandleYourTasksViewModel = {
 
     val isQuarterly = currentItsaStatus == ITSAStatus.Mandated || currentItsaStatus == ITSAStatus.Voluntary
 
