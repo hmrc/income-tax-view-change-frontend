@@ -29,7 +29,6 @@ import connectors.CalculationListConnector
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -109,21 +108,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         chargeHistoryModelMaybe <- EitherT(getChargeHistory(chargeHistoryConnector, financialDetails.flatMap(_.chargeReference)))
       } yield chargeHistoryModelMaybe.flatMap(_.poaAdjustmentReason)
     }.value
-  }
-
-
-  //TODO: Merge the two functions below, lots of code duplication
-  @unused
-  private def getNonCrystallisedFinancialDetails(nino: Nino)
-                                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
-    checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, user, calculationListConnector, ec).flatMap {
-      case None => Future.successful(Right(None))
-      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
-        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
-        case _ => Right(None)
-      }
-    }
   }
 
   private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)
